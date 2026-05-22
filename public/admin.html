@@ -80,7 +80,12 @@
           <label>Type</label>
           <select id="f-type"><option>mcq</option><option>true_false</option><option>short_answer</option><option>mechanism_svg</option></select>
           <label>Question text</label><textarea id="f-question"></textarea>
-          <label>SMILES (optional)</label><input id="f-smiles" placeholder="e.g. CC(=O)O">
+          <label>SMILES — single molecule (optional)</label>
+          <input id="f-smiles" placeholder="e.g. CC(=O)O">
+          <label>Reaction SMILES (optional — use instead of SMILES for reactions)</label>
+          <input id="f-reaction-smiles" placeholder="e.g. CC(C)(C)Br>H2O>CC(C)(C)O">
+          <label>Reagent label above arrow (default: {reagents})</label>
+          <input id="f-reagent-label" placeholder="e.g. KOtBu / E2">
           <label>Answer options</label>
           <div class="options-editor" id="opts-editor"></div>
           <button class="secondary" style="margin-top:0.5rem;font-size:0.78rem" onclick="addOption()">+ Add option</button>
@@ -155,6 +160,8 @@ function selectQ(i) {
   document.getElementById('f-type').value = q.type;
   document.getElementById('f-question').value = q.question;
   document.getElementById('f-smiles').value = q.smiles || '';
+  document.getElementById('f-reaction-smiles').value = q.reaction_smiles || '';
+  document.getElementById('f-reagent-label').value = q.reagent_label || '';
   document.getElementById('f-answer').value = q.answer;
   document.getElementById('f-explanation').value = q.explanation || '';
   renderOptsEditor(q.options);
@@ -176,10 +183,15 @@ function newQuestion() {
 function saveQuestion() {
   if(selQ===null) return;
   const q = questions[selQ];
-  q.topic=document.getElementById('f-topic').value; q.difficulty=document.getElementById('f-diff').value;
-  q.type=document.getElementById('f-type').value; q.question=document.getElementById('f-question').value;
-  q.smiles=document.getElementById('f-smiles').value; q.answer=document.getElementById('f-answer').value;
-  q.explanation=document.getElementById('f-explanation').value;
+  q.topic       = document.getElementById('f-topic').value;
+  q.difficulty  = document.getElementById('f-diff').value;
+  q.type        = document.getElementById('f-type').value;
+  q.question    = document.getElementById('f-question').value;
+  q.smiles      = document.getElementById('f-smiles').value;
+  q.reaction_smiles = document.getElementById('f-reaction-smiles').value || undefined;
+  q.reagent_label   = document.getElementById('f-reagent-label').value || undefined;
+  q.answer      = document.getElementById('f-answer').value;
+  q.explanation = document.getElementById('f-explanation').value;
   persist();
 }
 function deleteQuestion() {
