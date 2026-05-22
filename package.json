@@ -1,0 +1,1 @@
+{\n  "name": "oc-quiz",\n  "version": "1.0.0",\n  "description": "Modifiable organic chemistry quiz with admin panel and print export",\n  "main": "server.js",\n  "scripts": { "start": "node server.js" },\n  "dependencies": { "express": "^4.18.2" }\n}\n
