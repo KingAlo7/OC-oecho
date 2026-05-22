@@ -1,0 +1,87 @@
+[
+  {
+    "id": "t1",
+    "title": "SN1 vs SN2 Comparison",
+    "headers": ["Feature", "SN1", "SN2"],
+    "rows": [
+      ["Substrate",      "3° > 2° >> 1°",           "1° > 2° >> 3°"],
+      ["Nucleophile",    "Weak (solvent ok)",        "Strong, unhindered"],
+      ["Solvent",        "Polar protic",             "Polar aprotic"],
+      ["Kinetics",       "1st order (substrate)",    "2nd order (substrate + Nu)"],
+      ["Stereochemistry","Racemisation",             "Inversion (Walden)"],
+      ["Carbocation",    "Formed (rate-limiting)",   "Not formed"]
+    ]
+  },
+  {
+    "id": "t2",
+    "title": "Common Carbonyl Reactions",
+    "headers": ["Reaction", "Reagent(s)", "Product"],
+    "rows": [
+      ["Reduction (aldehyde/ketone)",  "NaBH₄ or LiAlH₄",          "Alcohol"],
+      ["Reduction (ester)",            "LiAlH₄",                    "Primary alcohol"],
+      ["Reduction (acid) → aldehyde",  "DIBAL-H, −78 °C",           "Aldehyde"],
+      ["Grignard addition",            "RMgBr, then H₃O⁺",          "Alcohol"],
+      ["Wittig",                       "Ph₃P=CR₂",                  "Alkene"],
+      ["Aldol condensation",           "Base or acid catalyst",      "β-hydroxy carbonyl → enone"],
+      ["Nucleophilic acyl substitution","RNH₂ / ROH / H₂O + acid",  "Amide / Ester / Acid"]
+    ]
+  },
+  {
+    "id": "t3",
+    "title": "IR Absorption Reference",
+    "headers": ["Bond / Group", "Wavenumber (cm⁻¹)", "Notes"],
+    "rows": [
+      ["O–H (alcohol)",         "3200–3550",   "Broad"],
+      ["O–H (carboxylic acid)", "2500–3300",   "Very broad"],
+      ["N–H",                   "3300–3500",   "1 or 2 peaks (primary/secondary)"],
+      ["C–H (sp³)",             "2850–3000",   ""],
+      ["C–H (sp²/aromatic)",    "3000–3100",   ""],
+      ["C≡N",                   "2200–2260",   "Sharp"],
+      ["C≡C",                   "2100–2260",   "Weak or absent (symmetrical)"],
+      ["C=O (aldehyde)",        "1720–1740",   ""],
+      ["C=O (ketone)",          "1705–1725",   ""],
+      ["C=O (ester)",           "1730–1750",   "Also C–O stretch 1000–1300"],
+      ["C=O (amide)",           "1630–1690",   "Lower due to resonance"],
+      ["C=O (carboxylic acid)", "1700–1725",   ""],
+      ["C=C (alkene)",          "1620–1680",   ""],
+      ["C–O",                   "1000–1300",   "Ether, ester, alcohol"]
+    ]
+  },
+  {
+    "id": "t4",
+    "title": "Named Reactions Summary",
+    "headers": ["Reaction", "Key Reagent", "Transformation"],
+    "rows": [
+      ["Wittig",               "Ph₃P=CR₂",            "Ketone/Aldehyde → Alkene"],
+      ["Grignard",             "RMgBr",                "Carbonyl → Alcohol"],
+      ["Diels-Alder",          "Diene + dienophile",   "[4+2] cycloaddition → cyclohexene"],
+      ["Aldol",                "Base or acid",         "2× carbonyl → β-hydroxy carbonyl"],
+      ["Fischer Esterification","ROH + RCOOH, H⁺",    "Carboxylic acid + alcohol → ester"],
+      ["Beckmann Rearrangement","H₂SO₄ / PCl₅",       "Ketoxime → amide"],
+      ["Baeyer-Villiger",      "mCPBA or H₂O₂",       "Ketone → ester/lactone"],
+      ["Mitsunobu",            "DIAD + PPh₃",          "Alcohol → inverted ester/N-alkylation"],
+      ["Swern Oxidation",      "DMSO/oxalyl chloride", "Alcohol → aldehyde/ketone (mild)"]
+    ]
+  },
+  {
+    "id": "t5",
+    "title": "Functional Group Interconversions",
+    "headers": ["From", "To", "Reagent"],
+    "rows": [
+      ["Alkene",          "Alkane",            "H₂ / Pd-C"],
+      ["Alkene",          "Epoxide",           "mCPBA"],
+      ["Alkene",          "Diol (syn)",        "OsO₄ / NMO"],
+      ["Alkene",          "Diol (anti)",       "1. mCPBA  2. H₂O, H⁺"],
+      ["Alkyl halide",    "Alkene",            "KOtBu (E2)"],
+      ["Alkyl halide",    "Alcohol",           "NaOH(aq) (SN)"],
+      ["Alcohol",         "Alkyl halide",      "SOCl₂ / PBr₃"],
+      ["Alcohol",         "Aldehyde/ketone",   "PCC / Swern / Dess-Martin"],
+      ["Aldehyde",        "Carboxylic acid",   "KMnO₄ or CrO₃"],
+      ["Carboxylic acid", "Acyl chloride",     "SOCl₂"],
+      ["Acyl chloride",   "Ester",             "ROH + base"],
+      ["Acyl chloride",   "Amide",             "RNH₂"],
+      ["Ester",           "Carboxylic acid",   "NaOH / H₂O then H⁺ (saponification)"],
+      ["Nitrile",         "Carboxylic acid",   "H₂O / H⁺ or OH⁻, heat"]
+    ]
+  }
+]
