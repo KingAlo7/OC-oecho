@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OC-Quiz — Export</title>
-<script src="https://unpkg.com/smiles-drawer@1.1.3/dist/smiles-drawer.min.js"></script>
+<script src="https://unpkg.com/smiles-drawer@2/dist/smiles-drawer.min.js"></script>
+<script src="/reaction-drawer.js"></script>
 <style>
   :root { --accent: #6c8ef7; }
   * { box-sizing: border-box; }
@@ -25,6 +26,8 @@
   .options-list li.correct-opt { background: #f0fdf4; border-color: #86efac; font-weight: 600; color: #166534; }
   .explanation { font-size: 0.82rem; color: #555; margin-top: 0.6rem; border-left: 3px solid var(--accent); padding-left: 0.7rem; }
   canvas.smiles-canvas { display: block; margin: 0.5rem 0; }
+  .reaction-wrap { display: flex; justify-content: flex-start; align-items: center; margin: 0.5rem 0; background: #fafafa; border-radius: 6px; padding: 0.5rem; overflow-x: auto; }
+  .reaction-wrap svg { display: block; max-width: 100%; height: auto; }
   table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 1rem; }
   th { background: var(--accent); color: #fff; padding: 0.4rem 0.6rem; text-align: left; }
   td { padding: 0.35rem 0.6rem; border-bottom: 1px solid #e8e8e8; }
@@ -39,7 +42,7 @@
   <label><input type="checkbox" id="show-tables" checked> Include reference tables</label>
   <button onclick="renderExport()">Update</button>
   <button onclick="window.print()" style="background:#22c55e">Print / PDF</button>
-  <a href="/" style="color:#7a7f9a;font-size:0.85rem;margin-left:auto;text-decoration:none">← Back to quiz</a>
+  <a href="/" style="color:#7a7f9a;font-size:0.85rem;margin-left:auto;text-decoration:none">← Back</a>
 </div>
 <div class="page" id="export-page"><p style="color:#888">Loading…</p></div>
 <script>
@@ -63,23 +66,26 @@ function renderExport() {
   const topics  = [...new Set(qs.map(q => q.topic))];
   let html = `<h1>OC-Quiz — ${topic||'All Topics'}${diff?' · '+diff:''}</h1>`;
   html += `<p style="color:#888;font-size:0.85rem">${qs.length} question${qs.length!==1?'s':''}${showAns?' — answers shown':' — answers hidden'} · ${new Date().toLocaleDateString('en-AT')}</p>`;
-  let canvasData = [];
+  let molCanvases = [], rxnSvgs = [];
   topics.forEach(t => {
     const tqs = qs.filter(q => q.topic===t);
     html += `<div class="section-title">${t}</div>`;
-    tqs.forEach((q,qi) => {
-      const cid = `ec-${t.replace(/\s/g,'_')}-${qi}`;
+    tqs.forEach((q, qi) => {
+      const cid = `mol-${t.replace(/\W/g,'_')}-${qi}`;
+      const rid = `rxn-${t.replace(/\W/g,'_')}-${qi}`;
       html += `<div class="question-block">
         <div class="meta">${q.id} · ${q.difficulty} · ${q.type}</div>
         <p><strong>Q${qi+1}.</strong> ${q.question}</p>
-        ${q.smiles?`<canvas id="${cid}" class="smiles-canvas" width="240" height="140"></canvas>`:''}
+        ${q.smiles ? `<canvas id="${cid}" class="smiles-canvas" width="220" height="130"></canvas>` : ''}
+        ${q.reaction_smiles ? `<div class="reaction-wrap"><svg id="${rid}" xmlns="http://www.w3.org/2000/svg"></svg></div>` : ''}
         <ul class="options-list">${q.options.map(o=>`<li class="${showAns&&o===q.answer?'correct-opt':''}">${o}</li>`).join('')}</ul>
         ${showAns&&q.explanation?`<div class="explanation">${q.explanation}</div>`:''}
       </div>`;
-      if(q.smiles) canvasData.push({id:cid,smiles:q.smiles});
+      if (q.smiles)          molCanvases.push({ id: cid, smiles: q.smiles });
+      if (q.reaction_smiles) rxnSvgs.push({ id: rid, smiles: q.reaction_smiles, label: q.reagent_label || '{reagents}' });
     });
   });
-  if(showTbl && tables.length) {
+  if (showTbl && tables.length) {
     html += `<h2 style="margin-top:3rem">Reference Tables</h2>`;
     tables.forEach(t => {
       html += `<p class="section-title">${t.title}</p><table><thead><tr>${t.headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>`;
@@ -89,9 +95,13 @@ function renderExport() {
   }
   document.getElementById('export-page').innerHTML = html;
   requestAnimationFrame(() => {
-    canvasData.forEach(({id,smiles}) => {
-      const drawer = new SmilesDrawer.Drawer({width:240,height:140});
-      SmilesDrawer.parse(smiles, tree => drawer.draw(tree,id,'light'), err => console.warn(err));
+    const SD = window.SmilesDrawer;
+    molCanvases.forEach(({ id, smiles }) => {
+      const drawer = new SD.Drawer({ width: 220, height: 130 });
+      SD.parse(smiles, tree => drawer.draw(tree, id, 'light'), err => console.warn(err));
+    });
+    rxnSvgs.forEach(({ id, smiles, label }) => {
+      ReactionRenderer.draw(smiles, id, 'light', label);
     });
   });
 }
