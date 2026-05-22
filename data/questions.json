@@ -4,33 +4,33 @@
     "topic": "Substitution",
     "difficulty": "easy",
     "type": "mcq",
-    "question": "Which mechanism applies to (CH₃)₃CBr reacting with OH⁻ in aqueous solvent?",
+    "question": "Which mechanism applies to (CH\u2083)\u2083CBr reacting with OH\u207b in aqueous solvent?",
     "smiles": "CC(C)(C)Br",
     "options": ["SN1", "SN2", "E1", "E2"],
     "answer": "SN1",
-    "explanation": "Tertiary substrate forms a stable 3° carbocation. Aqueous (polar protic) solvent stabilises the ion pair. SN2 is sterically blocked."
+    "explanation": "Tertiary substrate forms a stable 3\u00b0 carbocation. Aqueous (polar protic) solvent stabilises the ion pair. SN2 is sterically blocked."
   },
   {
     "id": "q2",
     "topic": "Substitution",
     "difficulty": "easy",
     "type": "mcq",
-    "question": "CH₃Br + CN⁻ in DMSO proceeds via …",
+    "question": "CH\u2083Br + CN\u207b in DMSO proceeds via \u2026",
     "smiles": "CBr",
     "options": ["SN1", "SN2", "E1", "E2"],
     "answer": "SN2",
-    "explanation": "Primary substrate, strong nucleophile, aprotic solvent — classic SN2 conditions. Inversion of configuration at carbon."
+    "explanation": "Primary substrate, strong nucleophile, aprotic solvent \u2014 classic SN2 conditions. Inversion of configuration at carbon."
   },
   {
     "id": "q3",
     "topic": "Elimination",
     "difficulty": "medium",
     "type": "mcq",
-    "question": "Treatment of 2-bromo-2-methylbutane with KOtBu/tBuOH gives predominantly …",
+    "question": "Treatment of 2-bromo-2-methylbutane with KOtBu/tBuOH gives predominantly \u2026",
     "smiles": "CCC(C)(C)Br",
     "options": ["2-methylbut-1-ene (less substituted)", "2-methylbut-2-ene (more substituted)", "SN2 product", "No reaction"],
     "answer": "2-methylbut-2-ene (more substituted)",
-    "explanation": "Bulky base (KOtBu) favours E2. Zaitsev's rule: more substituted (thermodynamic) alkene predominates."
+    "explanation": "Bulky base (KOtBu) favours E2. Zaitsev\u2019s rule: more substituted (thermodynamic) alkene predominates."
   },
   {
     "id": "q4",
@@ -39,27 +39,27 @@
     "type": "mcq",
     "question": "Which reagent converts a carboxylic acid directly to a primary alcohol in one step?",
     "smiles": "CC(=O)O",
-    "options": ["NaBH₄", "LiAlH₄", "DIBAL-H (1 eq, −78 °C)", "H₂/Pd"],
-    "answer": "LiAlH₄",
-    "explanation": "LiAlH₄ is strong enough to reduce RCOOH → RCH₂OH. NaBH₄ is too mild. DIBAL-H at −78 °C stops at the aldehyde."
+    "options": ["NaBH\u2084", "LiAlH\u2084", "DIBAL-H (1 eq, \u221278 \u00b0C)", "H\u2082/Pd"],
+    "answer": "LiAlH\u2084",
+    "explanation": "LiAlH\u2084 is strong enough to reduce RCOOH \u2192 RCH\u2082OH. NaBH\u2084 is too mild. DIBAL-H at \u221278 \u00b0C stops at the aldehyde."
   },
   {
     "id": "q5",
     "topic": "Named Reactions",
     "difficulty": "hard",
     "type": "mcq",
-    "question": "The Wittig reaction converts a ketone into an alkene using …",
+    "question": "The Wittig reaction converts a ketone into an alkene using \u2026",
     "smiles": "CC(=O)C",
-    "options": ["Phosphorus ylide (Ph₃P=CHR)", "Grignard reagent", "Enamine (Stork)", "Horner–Wadsworth–Emmons reagent"],
-    "answer": "Phosphorus ylide (Ph₃P=CHR)",
-    "explanation": "Wittig uses Ph₃P=CR₂ (phosphorus ylide) to give the alkene with defined geometry. HWE is a related, modified version."
+    "options": ["Phosphorus ylide (Ph\u2083P=CHR)", "Grignard reagent", "Enamine (Stork)", "Horner\u2013Wadsworth\u2013Emmons reagent"],
+    "answer": "Phosphorus ylide (Ph\u2083P=CHR)",
+    "explanation": "Wittig uses Ph\u2083P=CR\u2082 (phosphorus ylide) to give the alkene with defined geometry. HWE is a related, modified version."
   },
   {
     "id": "q6",
     "topic": "Carbonyl",
     "difficulty": "hard",
     "type": "mcq",
-    "question": "In an aldol condensation under acidic conditions, the nucleophile is …",
+    "question": "In an aldol condensation under acidic conditions, the nucleophile is \u2026",
     "smiles": "CC=O",
     "options": ["Enolate anion", "Enol tautomer", "Acylium ion", "Carbocation"],
     "answer": "Enol tautomer",
@@ -81,10 +81,34 @@
     "topic": "Stereochemistry",
     "difficulty": "medium",
     "type": "mcq",
-    "question": "SN2 at a chiral centre proceeds with …",
+    "question": "SN2 at a chiral centre proceeds with \u2026",
     "smiles": "C[C@@H](Br)CC",
     "options": ["Retention of configuration", "Inversion of configuration (Walden inversion)", "Racemisation", "No stereospecificity"],
     "answer": "Inversion of configuration (Walden inversion)",
-    "explanation": "Backside attack in SN2 inverts all three remaining substituents — classic Walden inversion."
+    "explanation": "Backside attack in SN2 inverts all three remaining substituents \u2014 classic Walden inversion."
+  },
+  {
+    "id": "q9",
+    "topic": "Substitution",
+    "difficulty": "medium",
+    "type": "mcq",
+    "question": "What is the major organic product of this reaction?",
+    "reaction_smiles": "CC(C)(C)Br>O>CC(C)(C)O",
+    "reagent_label": "H\u2082O / SN1",
+    "options": ["(CH\u2083)\u2083COH", "(CH\u2083)\u2083CBr", "(CH\u2083)\u2082C=CH\u2082", "(CH\u2083)\u2083CCl"],
+    "answer": "(CH\u2083)\u2083COH",
+    "explanation": "Tertiary substrate undergoes SN1 solvolysis in water to give tert-butanol."
+  },
+  {
+    "id": "q10",
+    "topic": "Elimination",
+    "difficulty": "hard",
+    "type": "mcq",
+    "question": "Identify the major product of this elimination reaction.",
+    "reaction_smiles": "CCC(C)Br>CC(C)(C)[O-]>CCC(=C)",
+    "reagent_label": "KOtBu / E2",
+    "options": ["2-methylbut-1-ene (Hofmann)", "2-methylbut-2-ene (Zaitsev)", "SN2 alcohol", "No reaction"],
+    "answer": "2-methylbut-1-ene (Hofmann)",
+    "explanation": "Bulky KOtBu gives the Hofmann (less substituted) alkene via E2 \u2014 steric preference for the less hindered \u03b2-hydrogen."
   }
 ]
