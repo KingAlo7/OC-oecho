@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OC Reference</title>
+<title>OC Referenz</title>
 <script src="https://unpkg.com/smiles-drawer@2/dist/smiles-drawer.min.js"></script>
 <script src="./reaction-drawer.js"></script>
 <style>
@@ -19,7 +19,6 @@
 html,body{height:100%;overflow:hidden;}
 body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;}
 
-/* ── Header ── */
 header{
   background:var(--surface);border-bottom:1px solid var(--border);
   padding:0 1.25rem;height:52px;display:flex;align-items:center;gap:1rem;
@@ -43,10 +42,8 @@ header{
 .count-badge{font-size:0.75rem;color:var(--muted);background:var(--surface2);
   border:1px solid var(--border);border-radius:20px;padding:0.2rem 0.65rem;}
 
-/* ── Layout ── */
 .layout{display:flex;flex:1;overflow:hidden;height:calc(100vh - 52px);}
 
-/* ── Sidebar ── */
 .sidebar{
   width:var(--sidebar);background:var(--surface);
   border-right:1px solid var(--border);
@@ -94,12 +91,10 @@ header{
 .rxn-link.active{color:var(--accent);border-left-color:var(--accent);background:#1a1f38;}
 .rxn-link.hidden{display:none;}
 
-/* ── Main ── */
 .main{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
 .main::-webkit-scrollbar{width:5px;}
 .main::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
 
-/* ── Welcome ── */
 .welcome{
   flex:1;display:flex;flex-direction:column;
   align-items:center;justify-content:center;
@@ -126,7 +121,6 @@ header{
 .cat-card-name{font-size:0.83rem;font-weight:600;margin-bottom:0.2rem;}
 .cat-card-count{font-size:0.72rem;color:var(--muted);}
 
-/* ── Reaction card ── */
 .rxn-page{padding:2rem 2.5rem;max-width:860px;}
 .rxn-breadcrumb{
   font-size:0.75rem;color:var(--muted);margin-bottom:0.65rem;
@@ -146,7 +140,6 @@ header{
   letter-spacing:0.02em;
 }
 
-/* ── Drawing area ── */
 .rxn-drawing{
   background:#0c0e16;border:1px solid var(--border);border-radius:12px;
   padding:1.75rem 1.5rem;margin-bottom:1.5rem;
@@ -159,13 +152,12 @@ header{
   line-height:2.2;font-family:monospace;white-space:pre-wrap;
 }
 
-/* ── Details table ── */
 .rxn-details{
   background:var(--surface);border:1px solid var(--border);
   border-radius:10px;overflow:hidden;margin-bottom:1.5rem;
 }
 .detail-row{
-  display:grid;grid-template-columns:150px 1fr;
+  display:grid;grid-template-columns:160px 1fr;
   border-bottom:1px solid var(--border);font-size:0.86rem;
 }
 .detail-row:last-child{border-bottom:none;}
@@ -177,7 +169,6 @@ header{
 }
 .detail-value{padding:0.65rem 1.1rem;line-height:1.55;color:var(--text);}
 
-/* ── Sections ── */
 .section-head{
   font-size:0.72rem;font-weight:700;text-transform:uppercase;
   letter-spacing:0.1em;color:var(--accent);
@@ -203,7 +194,6 @@ header{
   margin-bottom:1.5rem;
 }
 
-/* ── Nav arrows ── */
 .rxn-nav{
   display:flex;justify-content:space-between;align-items:center;
   margin-top:2.5rem;padding-top:1.5rem;
@@ -220,7 +210,6 @@ header{
 .nav-btn-label{font-size:0.75rem;color:var(--muted);max-width:180px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
-/* ── Mobile ── */
 @media(max-width:700px){
   .sidebar{position:fixed;left:-100%;top:52px;height:calc(100vh - 52px);
     z-index:30;transition:left 0.25s;width:min(300px,85vw);}
@@ -231,13 +220,15 @@ header{
   .rxn-page{padding:1.25rem;}
   .detail-row{grid-template-columns:120px 1fr;}
 }
-.export-link{
+.nav-link{
   font-size:0.8rem;font-weight:600;text-decoration:none;
   color:var(--accent);border:1px solid var(--accent);
   border-radius:7px;padding:0.3rem 0.75rem;
   transition:background 0.15s;white-space:nowrap;
 }
-.export-link:hover{background:var(--accent);color:#fff;}
+.nav-link:hover{background:var(--accent);color:#fff;}
+.nav-link.muted{color:var(--muted);border-color:var(--border2);}
+.nav-link.muted:hover{background:var(--border2);color:var(--text);}
 @media(min-width:701px){.hamburger{display:none;}}
 .overlay{display:none;position:fixed;inset:0;background:#0008;z-index:25;}
 .overlay.open{display:block;}
@@ -246,15 +237,16 @@ header{
 <body>
 
 <header>
-  <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">☰</button>
-  <div class="logo">⚗ OC Reference</div>
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Menü">☰</button>
+  <div class="logo">⚗ OC Referenz</div>
   <div class="search-wrap">
     <span class="search-icon">⌕</span>
-    <input id="search" type="text" placeholder="Search reactions, tags…" oninput="globalSearch(this.value)" autocomplete="off">
+    <input id="search" type="text" placeholder="Reaktionen, Tags suchen…" oninput="globalSearch(this.value)" autocomplete="off">
   </div>
-  <a href="./export.html" class="export-link" title="Export to LaTeX/PDF">Export ↗</a>
+  <a href="./export.html" class="nav-link" title="Exportieren (PDF/Druck)">Export ↗</a>
+  <a href="./admin.html" class="nav-link muted" title="Adminbereich (nur lokal)">Admin</a>
   <div class="header-right">
-    <span class="count-badge" id="count-badge">— reactions</span>
+    <span class="count-badge" id="count-badge">— Reaktionen</span>
   </div>
 </header>
 
@@ -263,13 +255,12 @@ header{
 <div class="layout">
   <nav class="sidebar" id="sidebar">
     <div class="sidebar-top">
-      <div class="sidebar-label">Categories</div>
+      <div class="sidebar-label">Kategorien</div>
     </div>
     <div id="cat-list"></div>
   </nav>
 
   <main class="main" id="main">
-    <!-- content injected here -->
   </main>
 </div>
 
@@ -278,34 +269,40 @@ let reactions = [];
 let activeId  = null;
 const SD      = window.SmilesDrawer;
 
-/* emoji per category */
 const CAT_ICONS = {
+  'Nukleophile Substitution': '⇌',
+  'Eliminierung': '↑',
+  'Elektrophile Addition': '⊕',
+  'Carbonylchemie': 'C=O',
+  'Grignard-Reagenzien': '⚗',
+  'Oxidation': '↗',
+  'Reduktion': '↙',
+  'Aromatische Chemie': '⬡',
+  'Namenreaktionen': '★',
+  'Schutzgruppen': '□',
+  'Rearrangierungen': '↻',
   'Nucleophilic Substitution': '⇌',
   'Elimination': '↑',
-  'Electrophilic Addition': '⊕',
   'Carbonyl Chemistry': 'C=O',
   'Named Reactions': '★',
-  'Oxidation': '↗',
-  'Reduction': '↙',
   'Aromatic Chemistry': '⬡',
+  'Reduction': '↙',
 };
 
-/* ── Init ─────────────────────────────────────────────────────── */
 async function init() {
   try {
     reactions = await fetch('./data/reactions.json').then(r => r.json());
   } catch(e) {
-    showError('Could not load reactions.json. If running locally, start the server: <code>node server.js</code>');
+    showError('Reaktionen konnten nicht geladen werden. Bei lokaler Nutzung Server starten: <code>node server.js</code>');
     return;
   }
-  document.getElementById('count-badge').textContent = reactions.length + ' reactions';
+  document.getElementById('count-badge').textContent = reactions.length + ' Reaktionen';
   buildSidebar();
   showWelcome();
   const hash = location.hash.slice(1);
   if (hash) { const r = reactions.find(x => x.id === hash); if (r) showReaction(hash); }
 }
 
-/* ── Sidebar ──────────────────────────────────────────────────── */
 function categories() { return [...new Set(reactions.map(r => r.category))]; }
 
 function buildSidebar() {
@@ -335,14 +332,13 @@ function openSidebarFor(id) {
   setTimeout(() => link.scrollIntoView({block:'nearest',behavior:'smooth'}), 50);
 }
 
-/* ── Welcome ──────────────────────────────────────────────────── */
 function showWelcome() {
   const cats = categories();
   document.getElementById('main').innerHTML = `
     <div class="welcome">
       <div class="welcome-logo">⚗</div>
-      <h1>Organic Chemistry Reference</h1>
-      <p>A concise reaction encyclopaedia — mechanisms, conditions, scope, and key insights for core organic transformations. Select a reaction from the sidebar or explore a category below.</p>
+      <h1>Organische Chemie Referenz</h1>
+      <p>Ein kompaktes Nachschlagewerk — Mechanismen, Bedingungen, Substratumfang und zentrale Erkenntnisse zu den wichtigsten organischen Transformationen. Reaktion aus der Seitenleiste wählen oder Kategorie erkunden.</p>
       <div class="cat-grid">
         ${cats.map(cat => {
           const n = reactions.filter(r => r.category === cat).length;
@@ -350,7 +346,7 @@ function showWelcome() {
           return `<div class="cat-card" onclick="openCategory('${cat}')">
             <div class="cat-card-icon">${icon}</div>
             <div class="cat-card-name">${cat}</div>
-            <div class="cat-card-count">${n} reaction${n!==1?'s':''}</div>
+            <div class="cat-card-count">${n} Reaktion${n!==1?'en':''}</div>
           </div>`;
         }).join('')}
       </div>
@@ -360,23 +356,21 @@ function showWelcome() {
 function openCategory(cat) {
   const first = reactions.find(r => r.category === cat);
   if (first) showReaction(first.id);
-  // Open accordion
   document.querySelectorAll('.cat-header').forEach(h => {
     if (h.querySelector('span:nth-child(2)')?.textContent === cat) h.classList.add('open');
   });
 }
 
-/* ── Reaction page ────────────────────────────────────────────── */
 const DETAIL_FIELDS = [
-  {key:'conditions',      label:'Conditions'},
-  {key:'substrate_scope', label:'Substrate scope'},
-  {key:'nucleophile',     label:'Nucleophile'},
-  {key:'leaving_group',   label:'Leaving group'},
-  {key:'reagents',        label:'Reagents'},
-  {key:'mechanism',       label:'Mechanism'},
-  {key:'stereochemistry', label:'Stereochemistry'},
-  {key:'kinetics',        label:'Kinetics'},
-  {key:'solvent',         label:'Solvent'},
+  {key:'conditions',      label:'Bedingungen'},
+  {key:'substrate_scope', label:'Substratumfang'},
+  {key:'nucleophile',     label:'Nukleophil'},
+  {key:'leaving_group',   label:'Abgangsgruppe'},
+  {key:'reagents',        label:'Reagenzien'},
+  {key:'mechanism',       label:'Mechanismus'},
+  {key:'stereochemistry', label:'Stereochemie'},
+  {key:'kinetics',        label:'Kinetik'},
+  {key:'solvent',         label:'Lösungsmittel'},
 ];
 
 function showReaction(id) {
@@ -390,7 +384,6 @@ function showReaction(id) {
   openSidebarFor(id);
   history.replaceState(null,'','#'+id);
 
-  // Find prev/next within same category
   const catItems = reactions.filter(x => x.category === r.category);
   const idx = catItems.findIndex(x => x.id === id);
   const prev = catItems[idx-1] || null;
@@ -401,7 +394,7 @@ function showReaction(id) {
     ? `<svg id="${svgId}" xmlns="http://www.w3.org/2000/svg"></svg>`
     : r.general_scheme
       ? `<div class="scheme-text">${r.general_scheme}</div>`
-      : `<div class="scheme-text" style="color:var(--muted)">No structure available</div>`;
+      : `<div class="scheme-text" style="color:var(--muted)">Keine Struktur verfügbar</div>`;
 
   const detailsHtml = DETAIL_FIELDS.filter(f => r[f.key]).map(f => `
     <div class="detail-row">
@@ -412,11 +405,11 @@ function showReaction(id) {
   const tagsHtml = (r.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('');
 
   const keyPointsHtml = (r.key_points||[]).length ? `
-    <div class="section-head">Key Points</div>
+    <div class="section-head">Schlüsselpunkte</div>
     <ul class="key-points">${(r.key_points).map(p=>`<li>${p}</li>`).join('')}</ul>` : '';
 
   const notesHtml = r.notes ? `
-    <div class="section-head">Notes</div>
+    <div class="section-head">Notizen</div>
     <div class="notes-block">${r.notes}</div>` : '';
 
   document.getElementById('main').innerHTML = `
@@ -449,10 +442,8 @@ function showReaction(id) {
       </div>
     </div>`;
 
-  // Scroll to top
   document.getElementById('main').scrollTop = 0;
 
-  // Draw reaction
   if (r.reaction_smiles) {
     requestAnimationFrame(() => {
       const svgEl = document.getElementById(svgId);
@@ -461,10 +452,8 @@ function showReaction(id) {
   }
 }
 
-/* ── Search ───────────────────────────────────────────────────── */
 function globalSearch(q) {
   const s = q.toLowerCase().trim();
-  // filter sidebar
   document.querySelectorAll('.cat-group').forEach(group => {
     const links = group.querySelectorAll('.rxn-link');
     let any = false;
@@ -487,13 +476,11 @@ function globalSearch(q) {
   });
 }
 
-/* ── Mobile sidebar ───────────────────────────────────────────── */
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('overlay').classList.toggle('open');
 }
 
-/* ── Misc ─────────────────────────────────────────────────────── */
 function showError(msg) {
   document.getElementById('main').innerHTML = `
     <div style="padding:3rem;text-align:center;color:var(--red)">

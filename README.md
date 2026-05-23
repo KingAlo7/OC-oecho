@@ -1,68 +1,67 @@
-# OC Reference
+# OC Referenz
 
-An interactive organic chemistry reaction reference for IChO-level study. Browse 49+ named reactions with structures (rendered from SMILES), conditions, scope, and mechanistic notes. Fully static — deployable to GitHub Pages with zero configuration.
+Interaktives Nachschlagewerk für organische Chemie auf IChO-Niveau. Über 49 benannte Reaktionen mit Strukturen (aus SMILES gerendert), Bedingungen, Substratumfang und mechanistischen Hinweisen. Vollständig statisch — auf GitHub Pages deploybar.
 
-**Live site:** https://kingalo7.github.io/OC-oecho/
-
----
-
-## Features
-
-- Categorised sidebar with collapsible groups and full-text search
-- Reaction structures rendered via [smiles-drawer v2](https://github.com/reymond-group/smilesDrawer) (CDN, no build step)
-- Print/PDF export via `export.html`
-- Local admin panel for editing quiz questions and reference tables
-- Hash-based deep links (`#reaction-id`)
-- Mobile-responsive
+**Live:** https://kingalo7.github.io/OC-oecho/
 
 ---
 
-## Tech stack
+## Funktionen
 
-| Layer | Choice | Notes |
+- Kategorisierte Seitenleiste mit aufklappbaren Gruppen und Volltextsuche
+- Reaktionsstrukturen via [smiles-drawer v2](https://github.com/reymond-group/smilesDrawer) (CDN, kein Build-Schritt)
+- Druck-/PDF-Export via `export.html`
+- Lokaler Admin-Bereich zum Bearbeiten und direkt Committen von Reaktionen
+- Hash-basierte Direktlinks (`#reaktions-id`)
+- Mobil-responsiv
+- UI vollständig auf **Deutsch**
+
+---
+
+## Tech-Stack
+
+| Schicht | Wahl | Anmerkung |
 |---|---|---|
-| Deployment | GitHub Pages | Automatic on push to `main` |
-| Local server | Node.js + Express | Only needed for admin writes |
-| Frontend | Vanilla JS + HTML | No build step, no framework |
-| Data | JSON files | Human-readable, git-friendly |
-| Structure drawing | smiles-drawer v2 (CDN) | Loaded from unpkg |
+| Deployment | GitHub Pages | Automatisch bei Push nach `main` |
+| Lokaler Server | Node.js + Express | Nur für Admin-Schreibzugriff nötig |
+| Frontend | Vanilla JS + HTML | Kein Build-Schritt, kein Framework |
+| Daten | JSON-Dateien | Menschenlesbar, git-freundlich |
+| Strukturzeichnung | smiles-drawer v2 (CDN) | Von unpkg geladen |
 
 ---
 
-## Repository structure
+## Repository-Struktur
 
 ```
 OC-oecho/
-├── index.html              ← Reaction browser (GitHub Pages entry point)
-├── export.html             ← Print/PDF export view
-├── admin.html              ← Admin panel — questions & tables editor (local only)
-├── reaction-drawer.js      ← smiles-drawer v2 wrapper (ReactionRenderer)
+├── index.html              ← Reaktionsbrowser (GitHub Pages Einstiegspunkt)
+├── export.html             ← Druck-/PDF-Exportansicht
+├── admin.html              ← Admin-Bereich — Reaktionseditor + GitHub Commit (nur lokal)
+├── reaction-drawer.js      ← smiles-drawer v2 Wrapper (ReactionRenderer)
 ├── logo.svg
-├── server.js               ← Local Express server (admin API)
+├── server.js               ← Lokaler Express-Server (Admin-API)
 ├── package.json
 ├── .gitignore
-├── .nojekyll               ← Prevents Jekyll processing on GitHub Pages
+├── .nojekyll
 │
 ├── data/
-│   ├── reactions.json      ← Reaction entries for the reference browser
-│   ├── questions.json      ← Quiz questions (admin panel)
-│   └── tables.json         ← Reference tables (admin panel)
+│   └── reactions.json      ← Alle Reaktionseinträge — die einzige Datei, die Redakteure bearbeiten
 │
 └── .github/workflows/
-    └── pages.yml           ← Auto-deploy to GitHub Pages on push to main
+    └── pages.yml           ← Auto-Deploy nach GitHub Pages bei Push auf main
 ```
 
-> **Note:** `public/` and `export/` subdirectories contain deprecated files with redirect stubs. Do not edit them — they exist only to avoid dead links from old references.
+> **Hinweis:** `public/` und `export/` enthalten veraltete Redirect-Stubs. Nicht bearbeiten.
 
 ---
 
-## Getting started
+## Lokale Einrichtung
 
-### Prerequisites
+### Voraussetzungen
 
-- Node.js ≥ 18 (only needed for local admin writes; not needed for static browsing)
+- Node.js ≥ 18 (nur für Admin-Schreibzugriff; für statisches Browsing nicht erforderlich)
 
-### Run locally
+### Starten
 
 ```bash
 git clone https://github.com/KingAlo7/OC-oecho.git
@@ -71,171 +70,115 @@ npm install
 node server.js
 ```
 
-Then open:
-
-| URL | What it is |
+| URL | Inhalt |
 |---|---|
-| `http://localhost:3000` | Reaction browser |
-| `http://localhost:3000/admin.html` | Admin panel |
-| `http://localhost:3000/export.html` | Export/print view |
-
-> `index.html` and `export.html` also work when opened directly from the filesystem (`file:///...`), but CORS will block the `fetch('./data/reactions.json')` call in some browsers. Use the server if that happens.
+| `http://localhost:3000` | Reaktionsbrowser |
+| `http://localhost:3000/admin.html` | Admin-Bereich |
+| `http://localhost:3000/export.html` | Export-/Druckansicht |
 
 ---
 
-## Data schema
+## Datenschema — `data/reactions.json`
 
-### `data/reactions.json`
-
-Array of reaction objects. Minimum required fields:
+Array von Reaktionsobjekten. Mindestpflichtfelder:
 
 ```json
 {
-  "id": "sn2-alkyl-halide",
-  "category": "Nucleophilic Substitution",
-  "name": "SN2 — Bimolecular Substitution",
+  "id": "sn2-alkylhalogenid",
+  "category": "Nukleophile Substitution",
+  "name": "SN2 — Bimolekulare Substitution",
   "reaction_smiles": "CCBr.[OH-]>>CCO.[Br-]",
   "reagent_label": "NaOH / H₂O",
-  "tags": ["SN2", "inversion", "primary"],
-  "conditions": "Primary substrate; polar aprotic or protic solvent",
+  "tags": ["SN2", "Inversion", "primär"],
+  "conditions": "Primäres Substrat; polar aprotisches oder protisches Lösungsmittel",
   "key_points": [
-    "Concerted — no carbocation intermediate",
-    "Walden inversion (backside attack)",
-    "Rate = k[RX][Nu] — second order"
+    "Konzertiert — kein Carbenium-Intermediat",
+    "Walden-Inversion (Rückseitenangriff)",
+    "Geschwindigkeit = k[RX][Nu] — zweite Ordnung"
   ],
-  "notes": "Preferred over SN1 for primary and unhindered secondary substrates."
+  "notes": "Bevorzugt gegenüber SN1 bei primären und ungehinderten sekundären Substraten."
 }
 ```
 
-Full field reference:
+Vollständige Feldreferenz:
 
-| Field | Type | Required | Description |
+| Feld | Typ | Pflicht | Beschreibung |
 |---|---|---|---|
-| `id` | `string` | ✅ | Unique slug; used as URL hash (`#sn2-alkyl-halide`) |
-| `category` | `string` | ✅ | Sidebar group (e.g. `"Nucleophilic Substitution"`) |
-| `name` | `string` | ✅ | Display name |
-| `subtitle` | `string` | | One-line italic description under the name |
-| `reaktionstyp` | `string` | | Mechanism type abbreviation (`SN1`, `E2`, `AN`, …) |
-| `transformation` | `string` | | Short substrate → product summary |
-| `reaction_smiles` | `string` | | Reaction SMILES (`reactants>reagents>products`) |
-| `reagent_label` | `string` | | Text above the reaction arrow (overrides SMILES reagent field) |
-| `general_scheme` | `string` | | Plaintext fallback when no SMILES is available |
-| `tags` | `string[]` | | Searchable tags |
-| `conditions` | `string` | | Reaction conditions |
-| `key_points` | `string[]` | | Bullet-point mechanistic notes |
-| `notes` | `string` | | Extended context / synth relevance |
+| `id` | `string` | ✅ | Eindeutiger Slug; als URL-Hash verwendet (`#sn2-alkylhalogenid`) |
+| `category` | `string` | ✅ | Seitenleistengruppe |
+| `name` | `string` | ✅ | Anzeigename |
+| `subtitle` | `string` | | Kursive Kurzbeschreibung unter dem Namen |
+| `reaktionstyp` | `string` | | Mechanismustyp-Kürzel (`SN1`, `E2`, `AN`, …) |
+| `transformation` | `string` | | Kurzdarstellung Substrat → Produkt |
+| `reaction_smiles` | `string` | | Reaktions-SMILES (`Reaktanten>Reagenz>Produkte`) |
+| `reagent_label` | `string` | | Text über dem Reaktionspfeil |
+| `general_scheme` | `string` | | Textfallback wenn kein SMILES vorhanden |
+| `tags` | `string[]` | | Suchbare Tags |
+| `conditions` | `string` | | Reaktionsbedingungen |
+| `key_points` | `string[]` | | Mechanistische Stichpunkte |
+| `notes` | `string` | | Erweiterter Kontext / Syntheserelevanz |
 | `substrate_scope` | `string` | | |
 | `stereochemistry` | `string` | | |
 | `kinetics` | `string` | | |
 | `solvent` | `string` | | |
 
-**Validating SMILES:** Test reaction SMILES at the [smiles-drawer demo](https://reymond-group.github.io/smilesDrawer/) before committing.
+---
 
-### `data/questions.json`
+## Admin-Bereich (`admin.html`)
 
-Quiz question objects, edited via the admin panel:
+Zwei Tabs:
 
-| Field | Type | Description |
-|---|---|---|
-| `id` | `string` | Unique ID |
-| `topic` | `string` | Category label |
-| `difficulty` | `"easy"` \| `"medium"` \| `"hard"` | |
-| `type` | `"mcq"` \| `"true_false"` \| `"short_answer"` \| `"mechanism_svg"` | |
-| `question` | `string` | Question text |
-| `smiles` | `string` | Single-molecule SMILES (optional) |
-| `reaction_smiles` | `string` | Reaction SMILES (optional) |
-| `options` | `string[]` | Answer choices |
-| `answer` | `string` | Correct answer — must match one option exactly |
-| `explanation` | `string` | Post-answer explanation |
-| `tags` | `string[]` | |
-| `flagged` | `boolean` | Marks items for review |
+### ⚗ Reaktionen
 
-### `data/tables.json`
+- Linkes Panel: durchsuchbare Liste aller Reaktionen, nach Kategorie gruppiert
+- Rechtes Panel: vollständiger Editor für alle Felder inkl. Live-SMILES-Vorschau
+- **Kategorie-Auswahl**: Dropdown mit allen vorhandenen Kategorien + Option „— Neue Kategorie —“ zum Erstellen neuer Kategorien
+- Aktionen: Lokal speichern / Duplizieren / Löschen / JSON-Import
 
-Array of reference table objects:
+### ↑ Commit
 
-```json
-[
-  {
-    "id": "fg-table",
-    "title": "Functional Groups",
-    "headers": ["Group", "Suffix", "Example"],
-    "rows": [
-      ["Alcohol", "-ol", "ethanol"]
-    ]
-  }
-]
-```
+1. **GitHub Konfiguration**: Owner, Repository, Personal Access Token (im Browser-`localStorage` gespeichert, wird nie woanders übertragen)
+2. **Dateistatus**: Vergleich lokal vs. remote (Eintragszähler)
+3. **Commit & Push**: Überträgt `reactions.json` direkt per GitHub REST API nach `main`; GitHub Actions redeployt Pages automatisch
+4. **Letzte Commits**: Zeigt die letzten 15 Commits am `data/`-Pfad mit SHA-Link, Nachricht, Autor und Datum
+
+**Wichtig:** Admin-Schreibzugriff (lokales Speichern via `/api/reactions`) erfordert den laufenden Node.js-Server. GitHub Commit/Push funktioniert auch ohne Server direkt über die GitHub API.
+
+### PAT einrichten
+
+1. Unter `github.com/settings/tokens` einen Token mit `repo`-Scope erstellen
+2. Im Admin-Bereich unter dem Commit-Tab eingeben und „Konfiguration speichern“ klicken
+3. „Verbindung testen“ drücken zur Bestätigung
 
 ---
 
-## `reaction-drawer.js` API
+## GitHub Pages Deployment
 
-A thin wrapper around smiles-drawer's `ReactionDrawer`. Requires smiles-drawer ≥ 2.x on the page.
+Konfiguriert in `.github/workflows/pages.yml`. Wird bei jedem Push nach `main` ausgelöst. Lädt das gesamte Repository-Root als Pages-Artefakt hoch — kein Build-Schritt erforderlich.
 
-```js
-// Draw into an existing <svg> element or by id
-ReactionRenderer.draw(reactionSmiles, svgElementOrId, theme, textAbove, textBelow);
-
-// Append a new <svg> into a container and draw
-ReactionRenderer.drawInto(reactionSmiles, containerElementOrId, theme, textAbove, textBelow);
-```
-
-- `theme`: `'dark'` (default) or `'light'`
-- `textAbove`: label above the arrow; defaults to `'{reagents}'` which uses the SMILES reagent field
-- Returns the `<svg>` element, or `null` on error (error rendered inline in the SVG)
+Die `/api/*`-Routen sind auf Pages nicht verfügbar (kein Server). GitHub Commit aus dem Admin funktioniert weiterhin (direkte API-Aufrufe).
 
 ---
 
-## Admin panel
+## Beitragen
 
-`/admin.html` makes `POST /api/*` requests to the Express server and writes JSON to disk directly. **It does not work on GitHub Pages** — the server must be running locally.
+### Reaktionen hinzufügen oder bearbeiten
 
-Features:
-- Add / edit / delete quiz questions with SMILES input fields
-- Add / edit reference tables as editable JSON
-- Raw JSON editor tab for bulk changes
-- 🚩 Flag questions for review
+1. `admin.html` lokal öffnen (Server starten), Reaktion bearbeiten, „Lokal speichern“ klicken
+2. Im Commit-Tab Nachricht eingeben und „Commit & Push“ klicken
+3. GitHub Actions deployt Pages automatisch neu
 
-After editing, persist to the repo:
+Alternativ: `data/reactions.json` direkt im Texteditor bearbeiten und `git push`.
 
-```bash
-git add data/
-git commit -m "data: update questions"
-git push
-```
+### Code-Stil
 
-GitHub Actions will re-deploy Pages automatically.
+- Vanilla ES6+, kein Build-System, keine Module
+- CSS Custom Properties für Theming (alle in `:root` in `index.html`)
+- Daten in `data/`, Logik in `.js`, UI in `.html`
+- Keine neuen Abhängigkeiten außer Express (lokaler Server)
 
----
+### Pull Requests
 
-## GitHub Pages deployment
-
-Configured in `.github/workflows/pages.yml`. Triggers on every push to `main`. Uploads the entire repo root as the Pages artifact — no build step required.
-
-The `/api/*` routes and admin writes are **not** available on Pages; they require the local Node.js server.
-
----
-
-## Contributing
-
-### Adding or editing reactions
-
-1. Edit `data/reactions.json` directly in a text editor or via `PATCH /api/reactions` when running the local server.
-2. Follow the schema above. `id` must be unique across all entries.
-3. Validate reaction SMILES before committing.
-4. Keep `category` values consistent with existing ones to avoid sidebar fragmentation.
-
-### Code style
-
-- Vanilla ES6+, no modules, no bundler — keep it that way.
-- CSS custom properties for theming (all defined in `:root` in `index.html`).
-- Data in `data/`, rendering logic in `.js`, UI in `.html` — maintain the separation.
-- No dependencies beyond Express (local server) and smiles-drawer (CDN).
-
-### Pull requests
-
-- One concern per PR.
-- If adding reactions, include the literature source or reference in the PR description.
-- Test locally before pushing: verify both `http://localhost:3000` and `http://localhost:3000/export.html`.
-- The GitHub Actions deploy is automatic — no manual step needed after merge to `main`.
+- Ein Anliegen pro PR
+- Bei neuen Reaktionen Quellenangabe in der PR-Beschreibung
+- Lokal testen bevor pushen: `node server.js` und beide `http://localhost:3000` und `http://localhost:3000/export.html` prüfen
