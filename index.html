@@ -231,6 +231,13 @@ header{
   .rxn-page{padding:1.25rem;}
   .detail-row{grid-template-columns:120px 1fr;}
 }
+.export-link{
+  font-size:0.8rem;font-weight:600;text-decoration:none;
+  color:var(--accent);border:1px solid var(--accent);
+  border-radius:7px;padding:0.3rem 0.75rem;
+  transition:background 0.15s;white-space:nowrap;
+}
+.export-link:hover{background:var(--accent);color:#fff;}
 @media(min-width:701px){.hamburger{display:none;}}
 .overlay{display:none;position:fixed;inset:0;background:#0008;z-index:25;}
 .overlay.open{display:block;}
@@ -245,6 +252,7 @@ header{
     <span class="search-icon">⌕</span>
     <input id="search" type="text" placeholder="Search reactions, tags…" oninput="globalSearch(this.value)" autocomplete="off">
   </div>
+  <a href="./export.html" class="export-link" title="Export to LaTeX/PDF">Export ↗</a>
   <div class="header-right">
     <span class="count-badge" id="count-badge">— reactions</span>
   </div>
