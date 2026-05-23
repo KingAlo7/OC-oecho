@@ -4,306 +4,621 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OC Reference — Admin</title>
+<script src="https://unpkg.com/smiles-drawer@2/dist/smiles-drawer.min.js"></script>
+<script src="./reaction-drawer.js"></script>
 <style>
-  :root{--bg:#0f1117;--surface:#1a1d27;--border:#2a2d3a;--accent:#6c8ef7;--accent2:#a78bfa;--text:#e8eaf0;--muted:#7a7f9a;--green:#4ade80;--red:#f87171;--yellow:#fbbf24;--flag:#f59e0b;}
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;}
-  header{background:var(--surface);border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;align-items:center;gap:1rem;}
-  header h1{font-size:1.4rem;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-  .local-badge{font-size:0.7rem;background:#2a1a00;color:var(--flag);border:1px solid var(--flag);border-radius:20px;padding:0.15rem 0.55rem;margin-left:0.3rem;}
-  header nav{margin-left:auto;display:flex;gap:0.75rem;}
-  header nav a{color:var(--muted);text-decoration:none;font-size:0.9rem;padding:0.3rem 0.7rem;border-radius:6px;}
-  header nav a:hover{background:var(--border);color:var(--text);}
-  .container{max-width:1100px;margin:0 auto;padding:2rem;}
-  .tabs{display:flex;margin-bottom:2rem;border-bottom:1px solid var(--border);}
-  .tab{padding:0.6rem 1.2rem;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;font-size:0.9rem;}
-  .tab.active{color:var(--accent);border-bottom-color:var(--accent);}
-  .tab-content{display:none;}
-  .tab-content.active{display:block;}
-  .two-col{display:grid;grid-template-columns:1fr 2fr;gap:1.5rem;}
-  @media(max-width:700px){.two-col{grid-template-columns:1fr;}}
-  .panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.2rem;}
-  .panel h3{font-size:0.9rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:1rem;}
-  .q-list{display:flex;flex-direction:column;gap:0.35rem;max-height:70vh;overflow-y:auto;}
-  .q-item{padding:0.55rem 0.8rem;border-radius:8px;cursor:pointer;font-size:0.83rem;border:1px solid transparent;transition:background 0.15s;display:flex;align-items:center;gap:0.5rem;}
-  .q-item:hover{background:var(--border);}
-  .q-item.selected{background:#1e2540;border-color:var(--accent);}
-  .q-item .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-  .dot.easy{background:var(--green);}.dot.medium{background:var(--yellow);}.dot.hard{background:var(--red);}
-  .q-item .flag-icon{font-size:0.75rem;opacity:0.5;}
-  .q-item .flag-icon.on{opacity:1;color:var(--flag);}
-  .q-item .label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  label{display:block;font-size:0.82rem;color:var(--muted);margin-bottom:0.3rem;margin-top:0.85rem;}
-  input,select,textarea{width:100%;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:0.48rem 0.72rem;font-size:0.88rem;font-family:inherit;}
-  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);}
-  textarea{resize:vertical;min-height:70px;}
-  .options-editor{display:grid;grid-template-columns:1fr 1fr;gap:0.45rem;margin-top:0.45rem;}
-  .option-wrap{display:flex;gap:0.4rem;align-items:center;}
-  .option-wrap input{flex:1;}
-  .option-wrap .del{background:none;border:1px solid var(--border);color:var(--red);padding:0.3rem 0.5rem;border-radius:6px;cursor:pointer;font-size:0.75rem;}
-  .btn-row{display:flex;gap:0.55rem;margin-top:1rem;flex-wrap:wrap;align-items:center;}
-  button{background:var(--accent);color:#fff;border:none;padding:0.48rem 1rem;border-radius:8px;font-size:0.85rem;cursor:pointer;font-weight:600;}
-  button:hover{opacity:0.85;}
-  button.danger{background:#7f1d1d;color:var(--red);}
-  button.secondary{background:var(--surface);color:var(--text);border:1px solid var(--border);}
-  button.flag-toggle{background:none;border:1px solid var(--border);color:var(--muted);font-size:0.88rem;padding:0.4rem 0.8rem;}
-  button.flag-toggle.on{border-color:var(--flag);color:var(--flag);background:#2a1a00;}
-  .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:#1e2d1e;color:var(--green);border:1px solid var(--green);padding:0.7rem 1.2rem;border-radius:8px;font-size:0.85rem;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:100;}
-  .toast.show{opacity:1;}
-  #json-editor{width:100%;height:60vh;font-family:monospace;font-size:0.8rem;}
-  .tag-preview{display:flex;gap:0.3rem;flex-wrap:wrap;margin-top:0.4rem;}
-  .tag-chip{font-size:0.7rem;padding:0.15rem 0.5rem;border-radius:20px;background:#1e2030;color:var(--muted);border:1px solid var(--border);}
-  .offline-banner{background:#2a1a00;border:1px solid var(--flag);color:var(--flag);padding:0.7rem 1.2rem;border-radius:8px;margin-bottom:1.5rem;font-size:0.85rem;display:none;}
+:root{
+  --bg:#0f1117;--surface:#181b26;--surface2:#1e2235;
+  --border:#252838;--border2:#2e3350;
+  --accent:#6c8ef7;--accent2:#a78bfa;
+  --text:#e2e4f0;--muted:#7a7f9a;--muted2:#5a5f7a;
+  --green:#4ade80;--red:#f87171;--yellow:#fbbf24;--orange:#f59e0b;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;}
+
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.5rem;height:52px;display:flex;align-items:center;gap:0.75rem;flex-shrink:0;}
+.logo{font-size:1.1rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.local-badge{font-size:0.68rem;background:#2a1a00;color:var(--orange);border:1px solid var(--orange);border-radius:20px;padding:0.15rem 0.55rem;}
+.hnav{margin-left:auto;display:flex;gap:0.4rem;}
+.hnav a{color:var(--muted);text-decoration:none;font-size:0.82rem;padding:0.28rem 0.65rem;border-radius:6px;border:1px solid var(--border);}
+.hnav a:hover{color:var(--text);border-color:var(--border2);}
+
+.tab-bar{display:flex;background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.5rem;flex-shrink:0;}
+.tab-btn{padding:0.6rem 1rem;font-size:0.84rem;color:var(--muted);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;display:flex;align-items:center;gap:0.35rem;transition:color 0.15s;}
+.tab-btn:hover{color:var(--text);}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+.tbadge{font-size:0.65rem;background:var(--border2);color:var(--muted);border-radius:20px;padding:0.08rem 0.38rem;}
+.tbadge.warn{background:#2a1a00;color:var(--orange);}
+
+.app-body{flex:1;overflow:hidden;display:flex;flex-direction:column;}
+.tab-pane{display:none;flex:1;overflow:hidden;}
+.tab-pane.active{display:flex;}
+
+/* SPLIT */
+.split{display:flex;flex:1;overflow:hidden;}
+.list-panel{width:270px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.edit-scroll{flex:1;overflow-y:auto;padding:1.5rem 2rem 3rem;}
+.edit-scroll::-webkit-scrollbar{width:4px;}
+.edit-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+.list-top{padding:0.65rem;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:0.45rem;flex-shrink:0;}
+.search-box{width:100%;background:var(--bg);color:var(--text);border:1px solid var(--border2);border-radius:7px;padding:0.35rem 0.65rem;font-size:0.82rem;}
+.search-box:focus{outline:none;border-color:var(--accent);}
+.list-actions{display:flex;gap:0.35rem;}
+.bxs{font-size:0.74rem;padding:0.28rem 0.6rem;border-radius:6px;border:none;cursor:pointer;font-weight:600;background:var(--accent);color:#fff;}
+.bxs.sec{background:var(--surface2);color:var(--text);border:1px solid var(--border2);}
+.bxs:hover{opacity:0.83;}
+
+.list-scroll{flex:1;overflow-y:auto;}
+.list-scroll::-webkit-scrollbar{width:3px;}
+.list-scroll::-webkit-scrollbar-thumb{background:var(--border2);}
+.cat-hdr{padding:0.45rem 0.75rem;font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted2);border-top:1px solid var(--border);display:flex;justify-content:space-between;}
+.rxn-row{padding:0.42rem 0.85rem;font-size:0.82rem;cursor:pointer;border-left:2px solid transparent;color:var(--muted);transition:all 0.12s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rxn-row:hover{background:var(--surface2);color:var(--text);}
+.rxn-row.active{color:var(--accent);border-left-color:var(--accent);background:#1a1f38;}
+
+/* FORM */
+.empty-hint{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--muted);gap:0.65rem;}
+.empty-hint .ico{font-size:2.5rem;opacity:0.25;}
+.fsec{margin-bottom:1.75rem;}
+.fsec-title{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin-bottom:0.9rem;display:flex;align-items:center;gap:0.5rem;}
+.fsec-title::after{content:'';flex:1;height:1px;background:var(--border);}
+.field{margin-bottom:0.7rem;}
+field label,.field label{display:block;font-size:0.74rem;color:var(--muted);margin-bottom:0.28rem;font-weight:500;}
+.field input,.field select,.field textarea{width:100%;background:var(--bg);color:var(--text);border:1px solid var(--border2);border-radius:7px;padding:0.42rem 0.65rem;font-size:0.84rem;font-family:inherit;}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--accent);}
+.field textarea{resize:vertical;min-height:60px;line-height:1.5;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.7rem;}
+
+/* Tags */
+.tags-wrap{display:flex;flex-wrap:wrap;gap:0.3rem;padding:0.38rem 0.55rem;background:var(--bg);border:1px solid var(--border2);border-radius:7px;min-height:36px;align-items:center;cursor:text;}
+.tags-wrap:focus-within{border-color:var(--accent);}
+.chip{display:inline-flex;align-items:center;gap:0.2rem;font-size:0.71rem;padding:0.13rem 0.48rem;border-radius:20px;background:var(--surface2);color:var(--muted);border:1px solid var(--border2);}
+.chip button{background:none;border:none;color:var(--muted2);cursor:pointer;font-size:0.68rem;padding:0;line-height:1;}
+.chip button:hover{color:var(--red);}
+.tag-inp{border:none;background:none;color:var(--text);font-size:0.81rem;outline:none;flex:1;min-width:60px;padding:0;}
+
+/* Key points */
+.kp-list{display:flex;flex-direction:column;gap:0.35rem;margin-bottom:0.45rem;}
+.kp-row{display:flex;gap:0.35rem;}
+.kp-row input{flex:1;background:var(--bg);color:var(--text);border:1px solid var(--border2);border-radius:7px;padding:0.38rem 0.6rem;font-size:0.83rem;}
+.kp-row input:focus{outline:none;border-color:var(--accent);}
+.kp-del{background:none;border:1px solid var(--border);color:var(--muted2);padding:0.3rem 0.45rem;border-radius:6px;cursor:pointer;font-size:0.72rem;flex-shrink:0;}
+.kp-del:hover{color:var(--red);border-color:var(--red);}
+
+/* SMILES preview */
+.smi-preview{background:#0c0e16;border:1px solid var(--border);border-radius:8px;padding:1rem;min-height:90px;display:flex;align-items:center;justify-content:center;margin-top:0.45rem;overflow-x:auto;}
+.smi-placeholder{font-size:0.78rem;color:var(--muted2);font-style:italic;}
+
+/* Action bar */
+.act-bar{display:flex;gap:0.45rem;padding:1rem 0 0.5rem;border-top:1px solid var(--border);margin-top:0.75rem;}
+.btn{padding:0.45rem 1rem;border-radius:8px;border:none;cursor:pointer;font-size:0.84rem;font-weight:600;transition:opacity 0.15s;}
+.btn-pri{background:var(--accent);color:#fff;}
+.btn-sec{background:var(--surface2);color:var(--text);border:1px solid var(--border2);}
+.btn-del{background:#3d0c0c;color:var(--red);border:1px solid #7f1d1d;}
+.btn:hover:not(:disabled){opacity:0.82;}
+.btn:disabled{opacity:0.38;cursor:default;}
+
+/* COMMIT TAB */
+.commit-wrap{flex:1;overflow-y:auto;padding:1.5rem 2rem;max-width:820px;}
+.commit-wrap::-webkit-scrollbar{width:4px;}
+.commit-wrap::-webkit-scrollbar-thumb{background:var(--border2);}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:1.2rem;}
+.card-hdr{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;}
+.sdot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0;}
+.sdot-grey{background:var(--muted2);}
+.sdot-green{background:var(--green);}
+.sdot-orange{background:var(--orange);}
+.sdot-red{background:var(--red);}
+.conn-row{display:flex;align-items:center;gap:0.4rem;font-size:0.75rem;}
+
+.fstat-row{display:flex;align-items:center;gap:0.65rem;padding:0.55rem 0;border-bottom:1px solid var(--border);font-size:0.84rem;}
+.fstat-row:last-child{border-bottom:none;}
+.fstat-name{font-family:monospace;flex:1;}
+.fstat-info{font-size:0.73rem;color:var(--muted);}
+.slabel{font-size:0.7rem;padding:0.13rem 0.48rem;border-radius:20px;font-weight:600;}
+.slabel-ok{background:#0d2718;color:var(--green);}
+.slabel-mod{background:#2a1a00;color:var(--orange);}
+.slabel-unk{background:var(--surface2);color:var(--muted2);}
+
+.commit-files{display:flex;flex-direction:column;gap:0.35rem;margin-bottom:1rem;}
+.cf-row{display:flex;align-items:center;gap:0.55rem;font-size:0.84rem;padding:0.35rem 0;}
+.cf-row input[type=checkbox]{width:auto;accent-color:var(--accent);}
+
+.clog{display:flex;flex-direction:column;}
+.centry{display:flex;align-items:center;gap:0.65rem;padding:0.58rem 0;border-bottom:1px solid var(--border);}
+.centry:last-child{border-bottom:none;}
+.csha{font-family:monospace;font-size:0.73rem;color:var(--accent);background:var(--surface2);padding:0.13rem 0.38rem;border-radius:4px;text-decoration:none;flex-shrink:0;}
+.csha:hover{color:var(--accent2);}
+.cmsg{font-size:0.83rem;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cmeta{font-size:0.71rem;color:var(--muted);flex-shrink:0;}
+
+/* Toast */
+.toast{position:fixed;bottom:1.4rem;right:1.4rem;padding:0.65rem 1.1rem;border-radius:8px;font-size:0.83rem;opacity:0;transition:opacity 0.25s;pointer-events:none;z-index:100;}
+.toast.show{opacity:1;}
+.toast.ok{background:#1e2d1e;color:var(--green);border:1px solid var(--green);}
+.toast.err{background:#2d1e1e;color:var(--red);border:1px solid var(--red);}
+
+/* Spinner */
+.spin{display:inline-block;width:13px;height:13px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:rot 0.7s linear infinite;vertical-align:middle;}
+@keyframes rot{to{transform:rotate(360deg);}}
 </style>
 </head>
 <body>
+
 <header>
-  <h1>⚗ OC Reference — Admin</h1>
+  <div class="logo">⚗ OC Reference — Admin</div>
   <span class="local-badge">local only</span>
-  <nav>
+  <div class="hnav">
     <a href="/">Reference</a>
     <a href="/export.html">Export</a>
-  </nav>
+  </div>
 </header>
-<div class="container">
-  <div class="offline-banner" id="offline-banner">
-    ⚠ API not reachable. Start the local server first: <code>node server.js</code>
-  </div>
-  <div class="tabs">
-    <div class="tab active" onclick="switchTab('questions')">Questions</div>
-    <div class="tab" onclick="switchTab('tables')">Reference Tables</div>
-    <div class="tab" onclick="switchTab('raw')">Raw JSON</div>
-  </div>
 
-  <!-- Questions tab -->
-  <div id="tab-questions" class="tab-content active">
-    <div class="two-col">
-      <div class="panel">
-        <h3>Questions <button class="secondary" style="float:right;padding:0.2rem 0.5rem" onclick="newQuestion()">+ New</button></h3>
-        <div class="q-list" id="q-list"></div>
-      </div>
-      <div class="panel">
-        <h3 id="form-title">Select a question</h3>
-        <div id="q-form" style="display:none">
-          <label>ID</label><input id="f-id" readonly style="opacity:0.5">
-          <label>Topic</label><input id="f-topic" placeholder="e.g. Substitution">
-          <label>Difficulty</label>
-          <select id="f-diff"><option>easy</option><option>medium</option><option>hard</option></select>
-          <label>Type</label>
-          <select id="f-type"><option>mcq</option><option>true_false</option><option>short_answer</option><option>mechanism_svg</option></select>
-          <label>Question text</label><textarea id="f-question"></textarea>
-          <label>SMILES — single molecule (optional)</label>
-          <input id="f-smiles" placeholder="e.g. CC(=O)O">
-          <label>Reaction SMILES (optional — format: reactants>reagents>products)</label>
-          <input id="f-reaction-smiles" placeholder="e.g. CC(C)(C)Br>O>CC(C)(C)O">
-          <label>Reagent label above arrow (default: {reagents})</label>
-          <input id="f-reagent-label" placeholder="e.g. KOtBu / E2">
-          <label>Tags (comma-separated)</label>
-          <input id="f-tags" placeholder="e.g. reduction, carbonyl, advanced" oninput="updateTagPreview()">
-          <div class="tag-preview" id="tag-preview"></div>
-          <label>Answer options</label>
-          <div class="options-editor" id="opts-editor"></div>
-          <button class="secondary" style="margin-top:0.5rem;font-size:0.78rem" onclick="addOption()">+ Add option</button>
-          <label>Correct answer (exact match to one option)</label>
-          <input id="f-answer">
-          <label>Explanation</label><textarea id="f-explanation"></textarea>
-          <div class="btn-row">
-            <button onclick="saveQuestion()">Save</button>
-            <button class="danger" onclick="deleteQuestion()">Delete</button>
-            <button class="flag-toggle" id="flag-toggle-btn" onclick="toggleFlagField()">🚩 Flag</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Tables tab -->
-  <div id="tab-tables" class="tab-content">
-    <div class="two-col">
-      <div class="panel">
-        <h3>Tables <button class="secondary" style="float:right;padding:0.2rem 0.5rem" onclick="newTable()">+ New</button></h3>
-        <div class="q-list" id="t-list"></div>
-      </div>
-      <div class="panel">
-        <h3>Edit Table</h3>
-        <div id="t-form" style="display:none">
-          <label>ID</label><input id="tf-id" readonly style="opacity:0.5">
-          <label>Title</label><input id="tf-title">
-          <label>Raw JSON (headers + rows)</label>
-          <textarea id="tf-raw" style="height:40vh;font-family:monospace;font-size:0.8rem"></textarea>
-          <div class="btn-row">
-            <button onclick="saveTable()">Save</button>
-            <button class="danger" onclick="deleteTable()">Delete</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Raw JSON tab -->
-  <div id="tab-raw" class="tab-content">
-    <div class="panel">
-      <h3>Raw questions.json</h3>
-      <textarea id="json-editor"></textarea>
-      <div class="btn-row">
-        <button onclick="saveRaw()">Save JSON</button>
-        <button class="secondary" onclick="loadRaw()">Reload</button>
-      </div>
-    </div>
-  </div>
+<div class="tab-bar">
+  <button class="tab-btn active" id="tbtn-reactions" onclick="switchTab('reactions')">
+    ⚗ Reactions <span class="tbadge" id="badge-count">—</span>
+  </button>
+  <button class="tab-btn" id="tbtn-tables" onclick="switchTab('tables')">
+    ☰ Tables
+  </button>
+  <button class="tab-btn" id="tbtn-commit" onclick="switchTab('commit')">
+    ↑ Commit <span class="tbadge warn" id="badge-unsaved" style="display:none">unsaved</span>
+  </button>
 </div>
-<div class="toast" id="toast">Saved!</div>
+
+<div class="app-body">
+
+  <!-- REACTIONS TAB -->
+  <div class="tab-pane active" id="tab-reactions">
+    <div class="split">
+      <div class="list-panel">
+        <div class="list-top">
+          <input class="search-box" type="text" id="rxn-search" placeholder="Search…" oninput="renderRxnList(this.value)">
+          <div class="list-actions">
+            <button class="bxs" onclick="newRxn()">+ New</button>
+            <button class="bxs sec" onclick="dupRxn()">Dup</button>
+            <button class="bxs sec" onclick="importRxn()">Import</button>
+          </div>
+        </div>
+        <div class="list-scroll" id="rxn-list"></div>
+      </div>
+      <div class="edit-scroll" id="edit-panel">
+        <div class="empty-hint"><div class="ico">⚗</div><div>Select a reaction to edit</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLES TAB -->
+  <div class="tab-pane" id="tab-tables">
+    <div class="split">
+      <div class="list-panel">
+        <div class="list-top">
+          <div class="list-actions"><button class="bxs" onclick="newTable()">+ New Table</button></div>
+        </div>
+        <div class="list-scroll" id="table-list"></div>
+      </div>
+      <div class="edit-scroll" id="table-panel">
+        <div class="empty-hint"><div class="ico">☰</div><div>Select a table to edit</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMIT TAB -->
+  <div class="tab-pane" id="tab-commit">
+    <div class="commit-wrap">
+
+      <!-- Config -->
+      <div class="card">
+        <div class="card-hdr">
+          <span>GitHub Configuration</span>
+          <span class="conn-row"><span class="sdot sdot-grey" id="conn-dot"></span><span id="conn-text">Not configured</span></span>
+        </div>
+        <div class="row2">
+          <div class="field"><label>Owner</label><input id="gh-owner" placeholder="KingAlo7"></div>
+          <div class="field"><label>Repository</label><input id="gh-repo" placeholder="OC-oecho"></div>
+        </div>
+        <div class="field"><label>Personal Access Token <small style="color:var(--muted2)">(stored in browser localStorage — never sent anywhere except GitHub API)</small></label>
+          <input id="gh-pat" type="password" placeholder="ghp_…" autocomplete="off">
+        </div>
+        <div style="display:flex;gap:0.45rem;margin-top:0.75rem;align-items:center">
+          <button class="btn btn-pri" onclick="saveGhConfig()">Save Config</button>
+          <button class="btn btn-sec" onclick="testConn()">Test Connection</button>
+          <span id="conn-result" style="font-size:0.8rem;color:var(--muted);margin-left:0.3rem"></span>
+        </div>
+      </div>
+
+      <!-- File Status -->
+      <div class="card">
+        <div class="card-hdr"><span>File Status</span><button class="bxs sec" onclick="refreshStatus()">Refresh</button></div>
+        <div id="fstat-list">
+          <div class="fstat-row">
+            <span class="sdot sdot-grey" id="dot-r"></span>
+            <span class="fstat-name">data/reactions.json</span>
+            <span class="fstat-info" id="info-r">—</span>
+            <span class="slabel slabel-unk" id="lbl-r">unknown</span>
+          </div>
+          <div class="fstat-row">
+            <span class="sdot sdot-grey" id="dot-t"></span>
+            <span class="fstat-name">data/tables.json</span>
+            <span class="fstat-info" id="info-t">—</span>
+            <span class="slabel slabel-unk" id="lbl-t">unknown</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Commit -->
+      <div class="card">
+        <div class="card-hdr">Commit &amp; Push to main</div>
+        <div class="commit-files">
+          <label class="cf-row"><input type="checkbox" id="ci-r" checked><span>data/reactions.json</span></label>
+          <label class="cf-row"><input type="checkbox" id="ci-t"><span>data/tables.json</span></label>
+        </div>
+        <div class="field"><label>Commit message</label>
+          <input id="commit-msg" placeholder="data: update reactions"></div>
+        <div style="display:flex;align-items:center;gap:0.65rem;margin-top:0.75rem">
+          <button class="btn btn-pri" id="commit-btn" onclick="doCommit()">Commit &amp; Push</button>
+          <span id="commit-res" style="font-size:0.8rem;color:var(--muted)"></span>
+        </div>
+      </div>
+
+      <!-- Commit history -->
+      <div class="card">
+        <div class="card-hdr"><span>Recent Commits — data/</span><button class="bxs sec" onclick="loadHistory()">Load</button></div>
+        <div class="clog" id="clog">
+          <div style="color:var(--muted);font-size:0.82rem">Click “Load” to fetch recent commits from GitHub.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+<div class="toast" id="toast"></div>
 
 <script>
-let questions=[], tables=[], selQ=null, selT=null;
-let formFlagged=false;
+/* ── State ──────────────────────────────────────────────────── */
+let reactions = [], tables = [];
+let selRxn = null, selTable = null;
+let unsaved = false;
+let shas = { r: null, t: null }; // cached remote SHAs
 
+/* ── Boot ───────────────────────────────────────────────────── */
 async function init() {
   try {
-    [questions, tables] = await Promise.all([
-      fetch('/api/questions').then(r=>{ if(!r.ok) throw new Error(); return r.json(); }),
-      fetch('/api/tables').then(r=>{ if(!r.ok) throw new Error(); return r.json(); })
+    [reactions, tables] = await Promise.all([
+      fetch('/api/reactions').then(r => { if(!r.ok) throw 0; return r.json(); }),
+      fetch('/api/tables').then(r => { if(!r.ok) throw 0; return r.json(); })
     ]);
-    renderQList(); renderTList();
-  } catch(e) {
-    document.getElementById('offline-banner').style.display='block';
+  } catch { toast('Server not running — start with: node server.js', 'err'); }
+  renderRxnList(); renderTableList(); setBadge();
+  loadGhConfig();
+}
+
+/* ── Tabs ───────────────────────────────────────────────────── */
+function switchTab(name) {
+  ['reactions','tables','commit'].forEach(n => {
+    document.getElementById('tab-'+n).classList.toggle('active', n===name);
+    document.getElementById('tbtn-'+n).classList.toggle('active', n===name);
+  });
+}
+
+/* ── Reaction List ──────────────────────────────────────────── */
+function renderRxnList(q='') {
+  const f = q.toLowerCase();
+  const cats = [...new Set(reactions.map(r => r.category))];
+  document.getElementById('rxn-list').innerHTML = cats.map(cat => {
+    const items = reactions
+      .map((r,i) => ({r,i}))
+      .filter(({r}) => r.category===cat && (!f
+        || r.name.toLowerCase().includes(f)
+        || (r.tags||[]).some(t=>t.toLowerCase().includes(f))
+        || (r.id||'').toLowerCase().includes(f)));
+    if (!items.length) return '';
+    return `<div class="cat-hdr">${x(cat)}<span>${items.length}</span></div>`
+      + items.map(({r,i}) =>
+        `<div class="rxn-row${selRxn===i?' active':''}" id="rrow-${i}" onclick="selRxnFn(${i})">${x(r.name)}</div>`
+      ).join('');
+  }).join('') || '<div style="padding:1rem;color:var(--muted);font-size:0.81rem">No results</div>';
+}
+
+function setBadge() {
+  document.getElementById('badge-count').textContent = reactions.length;
+  document.getElementById('badge-unsaved').style.display = unsaved ? '' : 'none';
+}
+
+/* ── Reaction Editor ────────────────────────────────────────── */
+function selRxnFn(i) {
+  selRxn = i;
+  renderRxnList(document.getElementById('rxn-search').value);
+  buildForm(reactions[i]);
+}
+
+function buildForm(r) {
+  const cats = [...new Set(reactions.map(r=>r.category))];
+  document.getElementById('edit-panel').innerHTML = `
+
+  <div class="fsec">
+    <div class="fsec-title">Identity</div>
+    <div class="row2">
+      <div class="field"><label>ID <small style="color:var(--muted2)">(unique slug)</small></label>
+        <input id="f-id" value="${x(r.id)}" oninput="markU()"></div>
+      <div class="field"><label>Category</label>
+        <input id="f-cat" list="catlist" value="${x(r.category)}" oninput="markU()">
+        <datalist id="catlist">${cats.map(c=>`<option value="${x(c)}">`).join('')}</datalist></div>
+    </div>
+    <div class="field"><label>Name</label><input id="f-name" value="${x(r.name)}" oninput="markU()"></div>
+    <div class="row2">
+      <div class="field"><label>Subtitle</label><input id="f-sub" value="${x(r.subtitle||'')}" oninput="markU()"></div>
+      <div class="field"><label>Reaktionstyp</label><input id="f-rtyp" placeholder="SN1, E2, AN…" value="${x(r.reaktionstyp||'')}" oninput="markU()"></div>
+    </div>
+    <div class="field"><label>Transformation <small style="color:var(--muted2)">(substrate → product summary)</small></label>
+      <input id="f-trans" value="${x(r.transformation||'')}" oninput="markU()"></div>
+    <div class="field"><label>Tags</label>
+      <div class="tags-wrap" id="tags-wrap" onclick="document.getElementById('ti').focus()">
+        ${(r.tags||[]).map(t=>`<span class="chip">${x(t)}<button onclick="rmTag('${x(t)}')">x</button></span>`).join('')}
+        <input class="tag-inp" id="ti" placeholder="tag, Enter" onkeydown="tagKey(event)">
+      </div></div>
+  </div>
+
+  <div class="fsec">
+    <div class="fsec-title">Structure</div>
+    <div class="field"><label>Reaction SMILES <small style="color:var(--muted2)">reactants&gt;reagents&gt;products</small></label>
+      <input id="f-smi" value="${x(r.reaction_smiles||'')}" placeholder="CC(C)(C)Br&gt;H2O&gt;CC(C)(C)OH" oninput="markU();schedPreview()">
+    </div>
+    <div class="smi-preview" id="smi-prev">
+      <div class="smi-placeholder">Enter SMILES above to preview</div>
+    </div>
+    <div class="row2" style="margin-top:0.7rem">
+      <div class="field"><label>Reagent label <small style="color:var(--muted2)">(above arrow)</small></label>
+        <input id="f-rl" value="${x(r.reagent_label||'')}" placeholder="KOtBu / THF" oninput="markU();schedPreview()"></div>
+      <div class="field"><label>General scheme <small style="color:var(--muted2)">(text fallback)</small></label>
+        <input id="f-gs" value="${x(r.general_scheme||'')}" placeholder="R-X → R-OH" oninput="markU()"></div>
+    </div>
+  </div>
+
+  <div class="fsec">
+    <div class="fsec-title">Conditions &amp; Scope</div>
+    <div class="field"><label>Conditions</label><textarea id="f-cond" oninput="markU()">${x(r.conditions||'')}</textarea></div>
+    <div class="row3">
+      <div class="field"><label>Substrate scope</label><input id="f-scope" value="${x(r.substrate_scope||'')}" oninput="markU()"></div>
+      <div class="field"><label>Stereochemistry</label><input id="f-stereo" value="${x(r.stereochemistry||'')}" oninput="markU()"></div>
+      <div class="field"><label>Kinetics</label><input id="f-kin" value="${x(r.kinetics||'')}" oninput="markU()"></div>
+    </div>
+    <div class="field"><label>Solvent</label><input id="f-solv" value="${x(r.solvent||'')}" oninput="markU()"></div>
+  </div>
+
+  <div class="fsec">
+    <div class="fsec-title">Key Points &amp; Notes</div>
+    <div class="kp-list" id="kp-list">${(r.key_points||[]).map((p,i)=>`
+      <div class="kp-row"><input value="${x(p)}" oninput="markU()"><button class="kp-del" onclick="rmKP(${i})">x</button></div>`).join('')}
+    </div>
+    <button class="bxs sec" onclick="addKP()">+ Add key point</button>
+    <div class="field" style="margin-top:0.8rem"><label>Notes / synth context</label>
+      <textarea id="f-notes" style="min-height:80px" oninput="markU()">${x(r.notes||'')}</textarea></div>
+  </div>
+
+  <div class="act-bar">
+    <button class="btn btn-pri" onclick="saveRxn()">Save locally</button>
+    <button class="btn btn-sec" onclick="dupRxn()">Duplicate</button>
+    <button class="btn btn-del" onclick="delRxn()">Delete</button>
+  </div>`;
+
+  if (r.reaction_smiles) drawPreview(r.reaction_smiles, r.reagent_label);
+}
+
+/* tags */
+function getTags() { return [...document.querySelectorAll('#tags-wrap .chip')].map(c=>c.firstChild.textContent.trim()); }
+function rmTag(t) { document.querySelectorAll('#tags-wrap .chip').forEach(c=>{ if(c.firstChild.textContent.trim()===t) c.remove(); }); markU(); }
+function tagKey(e) {
+  if (e.key==='Enter'||e.key===',') {
+    e.preventDefault();
+    const v=e.target.value.trim().replace(/,$/,'');
+    if(v){ const w=document.getElementById('tags-wrap'); const s=document.createElement('span'); s.className='chip'; s.innerHTML=`${x(v)}<button onclick="rmTag('${x(v)}')">x</button>`; w.insertBefore(s,e.target); e.target.value=''; markU(); }
+  } else if(e.key==='Backspace'&&e.target.value==='') {
+    const chips=[...document.querySelectorAll('#tags-wrap .chip')]; if(chips.length){chips[chips.length-1].remove();markU();}
   }
 }
 
-function renderQList() {
-  document.getElementById('q-list').innerHTML = questions.map((q,i)=>`
-    <div class="q-item${selQ===i?' selected':''}" onclick="selectQ(${i})">
-      <div class="dot ${q.difficulty}"></div>
-      <span class="label">${q.topic} — ${q.question.substring(0,45)}…</span>
-      <span class="flag-icon${q.flagged?' on':''}">🚩</span>
-    </div>`).join('');
+/* key points */
+function addKP() { const l=document.getElementById('kp-list'); const i=l.children.length; const d=document.createElement('div'); d.className='kp-row'; d.innerHTML=`<input value="" oninput="markU()"><button class="kp-del" onclick="rmKP(${i})">x</button>`; l.appendChild(d); d.querySelector('input').focus(); markU(); }
+function rmKP(i) { document.getElementById('kp-list').children[i]?.remove(); markU(); }
+function getKPs() { return [...document.querySelectorAll('#kp-list input')].map(i=>i.value.trim()).filter(Boolean); }
+
+/* SMILES preview */
+let prevTimer;
+function schedPreview() { clearTimeout(prevTimer); prevTimer=setTimeout(()=>{ const s=document.getElementById('f-smi')?.value?.trim(); const l=document.getElementById('f-rl')?.value?.trim(); if(s) drawPreview(s,l); else { const b=document.getElementById('smi-prev'); if(b) b.innerHTML='<div class="smi-placeholder">Enter SMILES above to preview</div>'; } },500); }
+function drawPreview(smiles,label) { const b=document.getElementById('smi-prev'); if(!b) return; b.innerHTML='<svg id="psv" xmlns="http://www.w3.org/2000/svg"></svg>'; requestAnimationFrame(()=>{ const svg=document.getElementById('psv'); if(svg) ReactionRenderer.draw(smiles,svg,'dark',label||'{reagents}'); }); }
+
+/* collect form */
+function collect() {
+  const r={};
+  const get = id => document.getElementById(id)?.value?.trim();
+  r.id=get('f-id'); r.category=get('f-cat'); r.name=get('f-name');
+  const set=(k,v)=>{ if(v) r[k]=v; };
+  set('subtitle', get('f-sub')); set('reaktionstyp',get('f-rtyp')); set('transformation',get('f-trans'));
+  r.tags=getTags();
+  set('reaction_smiles',get('f-smi')); set('reagent_label',get('f-rl')); set('general_scheme',get('f-gs'));
+  set('conditions',get('f-cond')); set('substrate_scope',get('f-scope')); set('stereochemistry',get('f-stereo'));
+  set('kinetics',get('f-kin')); set('solvent',get('f-solv'));
+  const kps=getKPs(); if(kps.length) r.key_points=kps;
+  set('notes',get('f-notes'));
+  return r;
 }
 
-function selectQ(i) {
-  selQ=i; renderQList();
-  const q=questions[i];
-  formFlagged=!!q.flagged;
-  document.getElementById('form-title').textContent='Edit Question';
-  document.getElementById('q-form').style.display='block';
-  document.getElementById('f-id').value=q.id;
-  document.getElementById('f-topic').value=q.topic;
-  document.getElementById('f-diff').value=q.difficulty;
-  document.getElementById('f-type').value=q.type;
-  document.getElementById('f-question').value=q.question;
-  document.getElementById('f-smiles').value=q.smiles||'';
-  document.getElementById('f-reaction-smiles').value=q.reaction_smiles||'';
-  document.getElementById('f-reagent-label').value=q.reagent_label||'';
-  document.getElementById('f-tags').value=(q.tags||[]).join(', ');
-  document.getElementById('f-answer').value=q.answer;
-  document.getElementById('f-explanation').value=q.explanation||'';
-  updateTagPreview();
-  updateFlagBtn();
-  renderOptsEditor(q.options);
+async function saveRxn() {
+  if(selRxn===null) return;
+  const r=collect();
+  if(!r.id||!r.name||!r.category){toast('id, name, category required','err');return;}
+  if(reactions.some((x,i)=>x.id===r.id&&i!==selRxn)){toast('ID already exists','err');return;}
+  reactions[selRxn]=r;
+  await persist(); renderRxnList(document.getElementById('rxn-search').value);
+  unsaved=true; setBadge(); toast('Saved to local server');
 }
 
-function updateTagPreview() {
-  const raw=document.getElementById('f-tags').value;
-  const tags=raw.split(',').map(t=>t.trim()).filter(Boolean);
-  document.getElementById('tag-preview').innerHTML=tags.map(t=>`<span class="tag-chip">${t}</span>`).join('');
+function newRxn() {
+  const r={id:'new-'+Date.now(),category:(reactions[0]?.category||'Uncategorised'),name:'New Reaction',tags:[]};
+  reactions.push(r); selRxn=reactions.length-1;
+  renderRxnList(); buildForm(r); unsaved=true; setBadge();
 }
+function dupRxn() {
+  if(selRxn===null) return;
+  const r=JSON.parse(JSON.stringify(reactions[selRxn]));
+  r.id+='-copy'; r.name+=' (copy)'; reactions.push(r); selRxn=reactions.length-1;
+  renderRxnList(); buildForm(r); unsaved=true; setBadge();
+}
+async function delRxn() {
+  if(selRxn===null||!confirm(`Delete "${reactions[selRxn].name}"?`)) return;
+  reactions.splice(selRxn,1); selRxn=null;
+  await persist(); renderRxnList();
+  document.getElementById('edit-panel').innerHTML='<div class="empty-hint"><div class="ico">⚗</div><div>Select a reaction to edit</div></div>';
+  unsaved=true; setBadge();
+}
+function importRxn() {
+  const raw=prompt('Paste a reaction JSON object or array:'); if(!raw) return;
+  try { let d=JSON.parse(raw); if(!Array.isArray(d))d=[d]; let n=0; d.forEach(r=>{if(r.id&&r.name){reactions.push(r);n++;}}); renderRxnList(); toast(`Imported ${n}`); unsaved=true; setBadge(); }
+  catch(e){toast('JSON error: '+e.message,'err');}
+}
+async function persist() {
+  const res=await fetch('/api/reactions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(reactions)});
+  if(!res.ok) throw new Error('persist failed');
+}
+function markU(){unsaved=true;setBadge();}
 
-function toggleFlagField() { formFlagged=!formFlagged; updateFlagBtn(); }
-function updateFlagBtn() {
-  const btn=document.getElementById('flag-toggle-btn');
-  btn.classList.toggle('on', formFlagged);
-  btn.textContent=formFlagged?'🚩 Flagged':'🚩 Flag';
+/* ── Tables ─────────────────────────────────────────────────── */
+function renderTableList() {
+  document.getElementById('table-list').innerHTML = tables.map((t,i)=>
+    `<div class="rxn-row${selTable===i?' active':''}" onclick="selTableFn(${i})">${x(t.title||t.id)}</div>`).join('');
 }
-
-function renderOptsEditor(opts) {
-  document.getElementById('opts-editor').innerHTML=opts.map((o,i)=>`
-    <div class="option-wrap">
-      <input value="${o.replace(/"/g,'&quot;')}" onchange="updateOpt(${i},this.value)">
-      <button class="del" onclick="removeOpt(${i})">✕</button>
-    </div>`).join('');
+function selTableFn(i) {
+  selTable=i; renderTableList(); const t=tables[i];
+  document.getElementById('table-panel').innerHTML=`
+    <div class="fsec">
+      <div class="fsec-title">Edit Table</div>
+      <div class="row2">
+        <div class="field"><label>ID</label><input id="tf-id" value="${x(t.id)}" readonly style="opacity:0.5"></div>
+        <div class="field"><label>Title</label><input id="tf-title" value="${x(t.title||'')}"></div>
+      </div>
+      <div class="field"><label>JSON (headers + rows)</label>
+        <textarea id="tf-raw" style="min-height:40vh;font-family:monospace;font-size:0.79rem">${x(JSON.stringify({headers:t.headers,rows:t.rows},null,2))}</textarea></div>
+      <div class="act-bar">
+        <button class="btn btn-pri" onclick="saveTable()">Save</button>
+        <button class="btn btn-del" onclick="delTable()">Delete</button>
+      </div></div>`;
 }
-function updateOpt(i,v){if(selQ!==null)questions[selQ].options[i]=v;}
-function removeOpt(i){if(selQ===null)return;questions[selQ].options.splice(i,1);renderOptsEditor(questions[selQ].options);}
-function addOption(){if(selQ===null)return;questions[selQ].options.push('New option');renderOptsEditor(questions[selQ].options);}
-
-function newQuestion(){
-  const q={id:'q'+Date.now(),topic:'',difficulty:'medium',type:'mcq',tags:[],flagged:false,question:'',smiles:'',options:['A','B','C','D'],answer:'A',explanation:''};
-  questions.push(q);selQ=questions.length-1;renderQList();selectQ(selQ);
+function newTable(){tables.push({id:'t'+Date.now(),title:'New Table',headers:['Col1','Col2'],rows:[['a','b']]});selTable=tables.length-1;renderTableList();selTableFn(selTable);}
+async function saveTable(){
+  try{const raw=JSON.parse(document.getElementById('tf-raw').value);tables[selTable].title=document.getElementById('tf-title').value;tables[selTable].headers=raw.headers;tables[selTable].rows=raw.rows;await fetch('/api/tables',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(tables)});toast('Table saved');unsaved=true;setBadge();}catch(e){toast('JSON error: '+e.message,'err');}
 }
-
-function saveQuestion(){
-  if(selQ===null)return;
-  const q=questions[selQ];
-  q.topic=document.getElementById('f-topic').value;
-  q.difficulty=document.getElementById('f-diff').value;
-  q.type=document.getElementById('f-type').value;
-  q.question=document.getElementById('f-question').value;
-  q.smiles=document.getElementById('f-smiles').value;
-  q.reaction_smiles=document.getElementById('f-reaction-smiles').value||undefined;
-  q.reagent_label=document.getElementById('f-reagent-label').value||undefined;
-  q.tags=document.getElementById('f-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
-  q.flagged=formFlagged;
-  q.answer=document.getElementById('f-answer').value;
-  q.explanation=document.getElementById('f-explanation').value;
-  persist();
-}
-
-function deleteQuestion(){
-  if(selQ===null||!confirm('Delete this question?'))return;
-  questions.splice(selQ,1);selQ=null;
-  document.getElementById('q-form').style.display='none';
-  renderQList();persist();
-}
-
-function renderTList(){
-  document.getElementById('t-list').innerHTML=tables.map((t,i)=>`
-    <div class="q-item${selT===i?' selected':''}" onclick="selectT(${i})">
-      <span class="label">${t.title}</span>
-    </div>`).join('');
-}
-function selectT(i){
-  selT=i;renderTList();const t=tables[i];
-  document.getElementById('t-form').style.display='block';
-  document.getElementById('tf-id').value=t.id;
-  document.getElementById('tf-title').value=t.title;
-  document.getElementById('tf-raw').value=JSON.stringify({headers:t.headers,rows:t.rows},null,2);
-}
-function newTable(){
-  tables.push({id:'t'+Date.now(),title:'New Table',headers:['Col1','Col2'],rows:[['a','b']]});
-  selT=tables.length-1;renderTList();selectT(selT);
-}
-function saveTable(){
-  if(selT===null)return;
-  try{const r=JSON.parse(document.getElementById('tf-raw').value);tables[selT].title=document.getElementById('tf-title').value;tables[selT].headers=r.headers;tables[selT].rows=r.rows;persistTables();}
-  catch(e){alert('JSON error: '+e.message);}
-}
-function deleteTable(){
-  if(selT===null||!confirm('Delete?'))return;
-  tables.splice(selT,1);selT=null;
-  document.getElementById('t-form').style.display='none';
-  renderTList();persistTables();
-}
-
-function loadRaw(){document.getElementById('json-editor').value=JSON.stringify(questions,null,2);}
-function saveRaw(){
-  try{questions=JSON.parse(document.getElementById('json-editor').value);persist();renderQList();}
-  catch(e){alert('JSON error: '+e.message);}
-}
-
-async function persist(){
-  await fetch('/api/questions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(questions)});
-  toast();renderQList();
-}
-async function persistTables(){
+async function delTable(){
+  if(!confirm('Delete table?'))return;tables.splice(selTable,1);selTable=null;
   await fetch('/api/tables',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(tables)});
-  toast();renderTList();
+  renderTableList();document.getElementById('table-panel').innerHTML='<div class="empty-hint"><div class="ico">☰</div><div>Select a table to edit</div></div>';
+  unsaved=true;setBadge();
 }
-function toast(){const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
-function switchTab(name){
-  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',['questions','tables','raw'][i]===name));
-  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');
-  if(name==='raw')loadRaw();
+
+/* ── GitHub API ─────────────────────────────────────────────── */
+function ghCfg(){return{owner:localStorage.getItem('gh_owner')||'',repo:localStorage.getItem('gh_repo')||'',pat:localStorage.getItem('gh_pat')||''};}
+function saveGhConfig(){
+  localStorage.setItem('gh_owner',document.getElementById('gh-owner').value.trim());
+  localStorage.setItem('gh_repo', document.getElementById('gh-repo').value.trim());
+  localStorage.setItem('gh_pat',  document.getElementById('gh-pat').value.trim());
+  toast('Config saved'); setConn('configured');
 }
+function loadGhConfig(){
+  const c=ghCfg();
+  document.getElementById('gh-owner').value=c.owner;
+  document.getElementById('gh-repo').value=c.repo;
+  document.getElementById('gh-pat').value=c.pat;
+  if(c.owner&&c.repo&&c.pat) setConn('configured');
+}
+function setConn(state){
+  const dot=document.getElementById('conn-dot'); const txt=document.getElementById('conn-text');
+  const map={configured:['sdot-orange','Configured'],connected:['sdot-green','Connected'],error:['sdot-red','Error']};
+  const [cls,label]=map[state]||['sdot-grey','Not configured'];
+  dot.className='sdot '+cls; txt.textContent=label;
+}
+async function ghFetch(path,opts={}){
+  const {pat}=ghCfg(); if(!pat) throw new Error('No PAT configured');
+  const res=await fetch(`https://api.github.com${path}`,{...opts,headers:{'Authorization':`Bearer ${pat}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json',...(opts.headers||{})}});
+  if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.message||`HTTP ${res.status}`);}
+  return res.json();
+}
+async function testConn(){
+  const el=document.getElementById('conn-result'); el.innerHTML='<span class="spin"></span>';
+  try{const {owner,repo}=ghCfg();const d=await ghFetch(`/repos/${owner}/${repo}`);el.textContent=`✓ ${d.full_name}`;el.style.color='var(--green)';setConn('connected');}
+  catch(e){el.textContent='✗ '+e.message;el.style.color='var(--red)';setConn('error');}
+}
+async function refreshStatus(){
+  const {owner,repo,pat}=ghCfg(); if(!pat){toast('Configure GitHub first','err');return;}
+  const files=[{f:'data/reactions.json',local:reactions,dotId:'dot-r',infoId:'info-r',lblId:'lbl-r',shaKey:'r'},
+                {f:'data/tables.json',  local:tables,   dotId:'dot-t',infoId:'info-t',lblId:'lbl-t',shaKey:'t'}];
+  for(const item of files){
+    const dot=document.getElementById(item.dotId),info=document.getElementById(item.infoId),lbl=document.getElementById(item.lblId);
+    try{
+      const remote=await ghFetch(`/repos/${owner}/${repo}/contents/${item.f}`);
+      shas[item.shaKey]=remote.sha;
+      const rc=JSON.parse(atob(remote.content.replace(/\n/g,'')));
+      const changed=JSON.stringify(item.local)!==JSON.stringify(rc);
+      const ll=Array.isArray(item.local)?item.local.length:'?';
+      const rl=Array.isArray(rc)?rc.length:'?';
+      info.textContent=`local:${ll} remote:${rl}`;
+      if(changed){dot.className='sdot sdot-orange';lbl.className='slabel slabel-mod';lbl.textContent='modified';}
+      else{dot.className='sdot sdot-green';lbl.className='slabel slabel-ok';lbl.textContent='up to date';}
+    }catch(e){info.textContent=e.message;lbl.className='slabel slabel-unk';lbl.textContent='error';}
+  }
+}
+async function doCommit(){
+  const btn=document.getElementById('commit-btn'),res=document.getElementById('commit-res');
+  const msg=document.getElementById('commit-msg').value.trim();
+  if(!msg){toast('Enter a commit message','err');return;}
+  const doR=document.getElementById('ci-r').checked, doT=document.getElementById('ci-t').checked;
+  if(!doR&&!doT){toast('Select at least one file','err');return;}
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span> Pushing…'; res.textContent='';
+  const {owner,repo}=ghCfg();
+  try{
+    const toCommit=[];
+    if(doR) toCommit.push({f:'data/reactions.json',data:reactions,shaKey:'r'});
+    if(doT) toCommit.push({f:'data/tables.json',data:tables,shaKey:'t'});
+    for(const item of toCommit){
+      if(!shas[item.shaKey]){const remote=await ghFetch(`/repos/${owner}/${repo}/contents/${item.f}`);shas[item.shaKey]=remote.sha;}
+      const content=btoa(unescape(encodeURIComponent(JSON.stringify(item.data,null,2))));
+      const r=await ghFetch(`/repos/${owner}/${repo}/contents/${item.f}`,{method:'PUT',body:JSON.stringify({message:msg,content,sha:shas[item.shaKey],branch:'main'})});
+      shas[item.shaKey]=r.content.sha;
+    }
+    toast('Pushed successfully ✓');
+    res.textContent=`✓ ${toCommit.length} file(s) committed — Pages will redeploy automatically`;
+    res.style.color='var(--green)';
+    unsaved=false; setBadge(); document.getElementById('commit-msg').value='';
+    setTimeout(loadHistory,1500);
+  }catch(e){
+    toast('Commit failed: '+e.message,'err');
+    res.textContent='✗ '+e.message; res.style.color='var(--red)';
+  }finally{btn.disabled=false;btn.textContent='Commit & Push';}
+}
+async function loadHistory(){
+  const {owner,repo,pat}=ghCfg(); if(!pat){document.getElementById('clog').innerHTML='<div style="color:var(--muted);font-size:0.82rem">Configure GitHub first.</div>';return;}
+  const log=document.getElementById('clog'); log.innerHTML='<div style="color:var(--muted);font-size:0.82rem"><span class="spin"></span> Loading…</div>';
+  try{
+    const commits=await ghFetch(`/repos/${owner}/${repo}/commits?per_page=15&path=data`);
+    if(!commits.length){log.innerHTML='<div style="color:var(--muted);font-size:0.82rem">No commits found.</div>';return;}
+    log.innerHTML=commits.map(c=>{
+      const sha=c.sha.slice(0,7),url=c.html_url,msg=c.commit.message.split('\n')[0];
+      const author=c.commit.author.name;
+      const d=new Date(c.commit.author.date);
+      const date=d.toLocaleDateString('de-AT',{day:'2-digit',month:'2-digit',year:'2-digit'})+' '+d.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'});
+      return `<div class="centry"><a class="csha" href="${url}" target="_blank">${sha}</a><span class="cmsg" title="${x(msg)}">${x(msg)}</span><span class="cmeta">${x(author)} · ${date}</span></div>`;
+    }).join('');
+  }catch(e){log.innerHTML=`<div style="color:var(--red);font-size:0.82rem">✗ ${e.message}</div>`;}
+}
+
+/* ── Util ───────────────────────────────────────────────────── */
+function x(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+let _tt; function toast(msg,type='ok'){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast ${type} show`;clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),3000);}
+
 init();
 </script>
 </body>
