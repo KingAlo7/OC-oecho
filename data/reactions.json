@@ -12,7 +12,12 @@
       "Radikalkettenreaktion",
       "Oft Mehrfachhalogenierungen"
     ],
-    "tags": ["Alkan", "Halogenierung", "Radikalsubstitution", "SR"]
+    "tags": [
+      "Alkan",
+      "Halogenierung",
+      "Radikalsubstitution",
+      "SR"
+    ]
   },
   {
     "id": "alken-halogenaddition",
@@ -26,7 +31,12 @@
       "Elektrophile Addition",
       "1,2 und 1,4-Additionen bei konjugierten Dienen"
     ],
-    "tags": ["Alken", "Addition", "AE", "Halogenierung"]
+    "tags": [
+      "Alken",
+      "Addition",
+      "AE",
+      "Halogenierung"
+    ]
   },
   {
     "id": "alken-hydrohalogenierung",
@@ -41,7 +51,12 @@
       "Elektrophile Addition",
       "Folgt der Markownikow-Regel"
     ],
-    "tags": ["Alken", "Hydrohalogenierung", "AE", "Markownikow"]
+    "tags": [
+      "Alken",
+      "Hydrohalogenierung",
+      "AE",
+      "Markownikow"
+    ]
   },
   {
     "id": "alken-radikalische-addition",
@@ -56,7 +71,12 @@
       "Radikalische Addition",
       "Anti-Markownikow-Produkt"
     ],
-    "tags": ["Alken", "Radikal", "AR", "Anti-Markownikow"]
+    "tags": [
+      "Alken",
+      "Radikal",
+      "AR",
+      "Anti-Markownikow"
+    ]
   },
   {
     "id": "alken-allyl-halogenierung",
@@ -70,7 +90,12 @@
     "key_points": [
       "Br2 entsteht in situ aus NBS (N-Bromsuccinimid)"
     ],
-    "tags": ["Alken", "Allyl", "NBS", "SR"]
+    "tags": [
+      "Alken",
+      "Allyl",
+      "NBS",
+      "SR"
+    ]
   },
   {
     "id": "alken-hydratisierung",
@@ -85,7 +110,12 @@
       "Elektrophile Addition",
       "Markownikow-Produkt"
     ],
-    "tags": ["Alken", "Wasser", "AE", "Alkohol"]
+    "tags": [
+      "Alken",
+      "Wasser",
+      "AE",
+      "Alkohol"
+    ]
   },
   {
     "id": "alken-oxymercurierung",
@@ -100,7 +130,11 @@
       "Markownikow-Produkt",
       "Keine Umlagerung des intermediären Kations"
     ],
-    "tags": ["Alken", "Quecksilber", "AE"]
+    "tags": [
+      "Alken",
+      "Quecksilber",
+      "AE"
+    ]
   },
   {
     "id": "alken-halohydrin",
@@ -115,7 +149,11 @@
       "Anti-Addition",
       "OH greift das höher substituierte C-Atom an"
     ],
-    "tags": ["Alken", "Halohydrin", "AE"]
+    "tags": [
+      "Alken",
+      "Halohydrin",
+      "AE"
+    ]
   },
   {
     "id": "alken-dihydroxylierung-kmno4",
@@ -130,7 +168,12 @@
       "syn-Dihydroxylierung",
       "Dient oft als Doppelbindungsnachweis (Baeyer-Probe)"
     ],
-    "tags": ["Alken", "Oxidation", "Diol", "KMnO4"]
+    "tags": [
+      "Alken",
+      "Oxidation",
+      "Diol",
+      "KMnO4"
+    ]
   },
   {
     "id": "alken-dihydroxylierung-oso4",
@@ -145,7 +188,12 @@
       "syn-Dihydroxylierung",
       "OsO₄ kann katalytisch mit N-Morpholinoxid (NMO) aufoxidiert werden"
     ],
-    "tags": ["Alken", "Oxidation", "Diol", "OsO4"]
+    "tags": [
+      "Alken",
+      "Oxidation",
+      "Diol",
+      "OsO4"
+    ]
   },
   {
     "id": "alken-hydrierung",
@@ -159,7 +207,11 @@
     "key_points": [
       "syn-Addition von Wasserstoff"
     ],
-    "tags": ["Alken", "Reduktion", "Hydrierung"]
+    "tags": [
+      "Alken",
+      "Reduktion",
+      "Hydrierung"
+    ]
   },
   {
     "id": "alken-ozonolyse",
@@ -174,7 +226,12 @@
       "Hohe Bedeutung in der Strukturaufklärung",
       "Reduktive (Zn/H2O) oder oxidative (H2O2) Aufarbeitung möglich"
     ],
-    "tags": ["Alken", "Spaltung", "Oxidation", "Ozonolyse"]
+    "tags": [
+      "Alken",
+      "Spaltung",
+      "Oxidation",
+      "Ozonolyse"
+    ]
   },
   {
     "id": "alken-hydroborierung",
@@ -189,7 +246,11 @@
       "anti-Markownikow-Produkt",
       "syn-Addition"
     ],
-    "tags": ["Alken", "Bor", "Anti-Markownikow"]
+    "tags": [
+      "Alken",
+      "Bor",
+      "Anti-Markownikow"
+    ]
   },
   {
     "id": "alken-diels-alder",
@@ -205,7 +266,12 @@
       "Bildet ein syn-Addukt",
       "Stereospezifisch"
     ],
-    "tags": ["Alken", "Cycloaddition", "Dien", "Pericyclisch"]
+    "tags": [
+      "Alken",
+      "Cycloaddition",
+      "Dien",
+      "Pericyclisch"
+    ]
   },
   {
     "id": "alken-epoxidierung",
@@ -219,7 +285,11 @@
     "key_points": [
       "Hydrolyse der Epoxide liefert vicinale anti-Diole"
     ],
-    "tags": ["Alken", "Epoxid", "Persäure"]
+    "tags": [
+      "Alken",
+      "Epoxid",
+      "Persäure"
+    ]
   },
   {
     "id": "alken-carbenaddition",
@@ -232,7 +302,11 @@
     "key_points": [
       "Ermöglicht Synthese von Cyclopropanringen"
     ],
-    "tags": ["Alken", "Carben", "Cyclopropan"]
+    "tags": [
+      "Alken",
+      "Carben",
+      "Cyclopropan"
+    ]
   },
   {
     "id": "alkin-hydrierung-lindlar",
@@ -247,7 +321,12 @@
       "Partielle Reduktion der Dreifachbindung",
       "Liefert selektiv das (Z)-Alken (cis)"
     ],
-    "tags": ["Alkin", "Reduktion", "Lindlar", "Z-Alken"]
+    "tags": [
+      "Alkin",
+      "Reduktion",
+      "Lindlar",
+      "Z-Alken"
+    ]
   },
   {
     "id": "alkin-birch-reduktion",
@@ -262,7 +341,12 @@
       "Radikalanionen-Mechanismus",
       "Liefert selektiv das (E)-Alken (trans)"
     ],
-    "tags": ["Alkin", "Reduktion", "Birch", "E-Alken"]
+    "tags": [
+      "Alkin",
+      "Reduktion",
+      "Birch",
+      "E-Alken"
+    ]
   },
   {
     "id": "aromat-halogenierung",
@@ -276,7 +360,11 @@
     "key_points": [
       "Elektrophile aromatische Substitution (EAS)"
     ],
-    "tags": ["Aromat", "EAS", "Halogenierung"]
+    "tags": [
+      "Aromat",
+      "EAS",
+      "Halogenierung"
+    ]
   },
   {
     "id": "aromat-fc-alkylierung",
@@ -291,7 +379,12 @@
       "Gefahr der Mehrfachsubstitution",
       "Umlagerungen des Carbokations sind möglich"
     ],
-    "tags": ["Aromat", "EAS", "Friedel-Crafts", "Alkylierung"]
+    "tags": [
+      "Aromat",
+      "EAS",
+      "Friedel-Crafts",
+      "Alkylierung"
+    ]
   },
   {
     "id": "aromat-fc-acylierung",
@@ -306,7 +399,12 @@
       "Keine Mehrfachsubstitution (Acylgruppe ist deaktivierend)",
       "Keine Carbokation-Umlagerung"
     ],
-    "tags": ["Aromat", "EAS", "Friedel-Crafts", "Acylierung"]
+    "tags": [
+      "Aromat",
+      "EAS",
+      "Friedel-Crafts",
+      "Acylierung"
+    ]
   },
   {
     "id": "aromat-nitrierung",
@@ -321,7 +419,11 @@
       "Erzeugt das starke Elektrophil NO2+",
       "Anschließende Reduktion zum Amin möglich"
     ],
-    "tags": ["Aromat", "EAS", "Nitrierung"]
+    "tags": [
+      "Aromat",
+      "EAS",
+      "Nitrierung"
+    ]
   },
   {
     "id": "aromat-sulfonierung",
@@ -335,7 +437,11 @@
     "key_points": [
       "Reaktion ist reversibel (Desulfonierung in verd. H2SO4 unter Hitze)"
     ],
-    "tags": ["Aromat", "EAS", "Sulfonierung"]
+    "tags": [
+      "Aromat",
+      "EAS",
+      "Sulfonierung"
+    ]
   },
   {
     "id": "aromat-azokupplung",
@@ -349,7 +455,11 @@
       "Diazoniumkation reagiert als schwaches Elektrophil",
       "Findet nur mit stark aktivierten Aromaten (Phenole, Amine) statt"
     ],
-    "tags": ["Aromat", "EAS", "Azofarbstoff"]
+    "tags": [
+      "Aromat",
+      "EAS",
+      "Azofarbstoff"
+    ]
   },
   {
     "id": "aromat-nas",
@@ -363,7 +473,11 @@
       "Additions-Eliminierungs-Mechanismus über Meisenheimer-Komplex",
       "Fluorid ist hierbei die beste Abgangsgruppe"
     ],
-    "tags": ["Aromat", "NAS", "Substitution"]
+    "tags": [
+      "Aromat",
+      "NAS",
+      "Substitution"
+    ]
   },
   {
     "id": "aromat-seitenkettenoxidation",
@@ -378,7 +492,11 @@
       "Seitenkette wird komplett bis zur COOH-Gruppe oxidiert",
       "Mindestens ein benzylisches H-Atom ist erforderlich"
     ],
-    "tags": ["Aromat", "Oxidation", "Carbonsäure"]
+    "tags": [
+      "Aromat",
+      "Oxidation",
+      "Carbonsäure"
+    ]
   },
   {
     "id": "halogenalkan-sn-alkohol",
@@ -393,7 +511,11 @@
       "SN1 oder SN2 je nach Substrat (primär, sekundär, tertiär)",
       "Bei SN2: Walden-Umkehr!"
     ],
-    "tags": ["Halogenalkan", "SN", "Alkohol"]
+    "tags": [
+      "Halogenalkan",
+      "SN",
+      "Alkohol"
+    ]
   },
   {
     "id": "halogenalkan-williamson",
@@ -408,7 +530,12 @@
       "SN2-Reaktion",
       "Halogenalkan sollte primär sein, um E2-Eliminierung zu vermeiden"
     ],
-    "tags": ["Halogenalkan", "SN2", "Ether", "Williamson"]
+    "tags": [
+      "Halogenalkan",
+      "SN2",
+      "Ether",
+      "Williamson"
+    ]
   },
   {
     "id": "halogenalkan-doppelte-eliminierung",
@@ -422,7 +549,11 @@
     "key_points": [
       "Dient der Alkinsynthese aus vicinalen oder geminalen Dihalogeniden"
     ],
-    "tags": ["Halogenalkan", "E2", "Alkin"]
+    "tags": [
+      "Halogenalkan",
+      "E2",
+      "Alkin"
+    ]
   },
   {
     "id": "alkohol-alkoholatbildung",
@@ -437,7 +568,11 @@
       "Alkohol fungiert als schwache Säure",
       "Alkoholate sind wichtige Basen und Nucleophile"
     ],
-    "tags": ["Alkohol", "Säure-Base", "Alkoholat"]
+    "tags": [
+      "Alkohol",
+      "Säure-Base",
+      "Alkoholat"
+    ]
   },
   {
     "id": "alkohol-dehydratisierung",
@@ -452,7 +587,11 @@
       "E1-Mechanismus bei sek/tert Alkoholen (Carbokation-Umlagerungen möglich)",
       "Folgt oft der Zaitsev-Regel"
     ],
-    "tags": ["Alkohol", "Eliminierung", "Alken"]
+    "tags": [
+      "Alkohol",
+      "Eliminierung",
+      "Alken"
+    ]
   },
   {
     "id": "carbonyl-acetalbildung",
@@ -467,7 +606,11 @@
       "Bildung verläuft über ein Halbacetal",
       "Cyclische Acetale (aus Diolen) sind thermodynamisch begünstigt (Schutzgruppen)"
     ],
-    "tags": ["Carbonyl", "Acetal", "Addition"]
+    "tags": [
+      "Carbonyl",
+      "Acetal",
+      "Addition"
+    ]
   },
   {
     "id": "carbonyl-reduktion",
@@ -482,7 +625,11 @@
       "NaBH4 ist milder, reduziert nur Aldehyde/Ketone",
       "LiAlH4 ist reaktiver (auch für Ester und Carbonsäuren)"
     ],
-    "tags": ["Carbonyl", "Reduktion", "Hydrid"]
+    "tags": [
+      "Carbonyl",
+      "Reduktion",
+      "Hydrid"
+    ]
   },
   {
     "id": "carbonyl-grignard",
@@ -497,7 +644,11 @@
       "C-C-Kupplung",
       "Nucleophile Addition eines Carbanions"
     ],
-    "tags": ["Carbonyl", "Grignard", "C-C-Knüpfung"]
+    "tags": [
+      "Carbonyl",
+      "Grignard",
+      "C-C-Knüpfung"
+    ]
   },
   {
     "id": "carbonsaeure-veresterung",
@@ -512,7 +663,11 @@
       "Reaktion ist komplett reversibel (Gleichgewichtsreaktion)",
       "Wasserentzug verschiebt das Gleichgewicht auf die Produktseite"
     ],
-    "tags": ["Carbonsäure", "Ester", "Kondensation"]
+    "tags": [
+      "Carbonsäure",
+      "Ester",
+      "Kondensation"
+    ]
   },
   {
     "id": "amin-hofmann-eliminierung",
@@ -527,6 +682,10 @@
       "Eliminierung des quartären Ammoniumions",
       "Liefert bevorzugt das am wenigsten substituierte Alken (Hofmann-Produkt)"
     ],
-    "tags": ["Amin", "Eliminierung", "Hofmann"]
+    "tags": [
+      "Amin",
+      "Eliminierung",
+      "Hofmann"
+    ]
   }
 ]
