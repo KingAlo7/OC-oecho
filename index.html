@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OC Reference</title>
+<script src="https://unpkg.com/smiles-drawer@2/dist/smiles-drawer.min.js"></script>
+<script src="./reaction-drawer.js"></script>
+<style>
+:root {
+  --bg:#0f1117; --surface:#181b26; --surface2:#1e2235;
+  --border:#252838; --border2:#2e3350;
+  --accent:#6c8ef7; --accent2:#a78bfa;
+  --text:#e2e4f0; --muted:#7a7f9a; --muted2:#5a5f7a;
+  --green:#4ade80; --red:#f87171; --yellow:#fbbf24;
+  --sidebar:260px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;}
+
+/* ── Header ── */
+header{
+  background:var(--surface);border-bottom:1px solid var(--border);
+  padding:0 1.25rem;height:52px;display:flex;align-items:center;gap:1rem;
+  flex-shrink:0;z-index:20;
+}
+.logo{font-size:1.1rem;font-weight:700;white-space:nowrap;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.search-wrap{flex:1;max-width:380px;position:relative;}
+.search-icon{position:absolute;left:0.65rem;top:50%;transform:translateY(-50%);
+  color:var(--muted);font-size:0.85rem;pointer-events:none;}
+#search{
+  width:100%;background:var(--bg);color:var(--text);
+  border:1px solid var(--border2);border-radius:7px;
+  padding:0.38rem 0.8rem 0.38rem 2rem;font-size:0.85rem;
+  transition:border-color 0.15s;
+}
+#search:focus{outline:none;border-color:var(--accent);}
+#search::placeholder{color:var(--muted2);}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:0.5rem;}
+.count-badge{font-size:0.75rem;color:var(--muted);background:var(--surface2);
+  border:1px solid var(--border);border-radius:20px;padding:0.2rem 0.65rem;}
+
+/* ── Layout ── */
+.layout{display:flex;flex:1;overflow:hidden;height:calc(100vh - 52px);}
+
+/* ── Sidebar ── */
+.sidebar{
+  width:var(--sidebar);background:var(--surface);
+  border-right:1px solid var(--border);
+  overflow-y:auto;flex-shrink:0;
+  display:flex;flex-direction:column;
+}
+.sidebar::-webkit-scrollbar{width:3px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.sidebar-top{padding:0.75rem 0.75rem 0.5rem;border-bottom:1px solid var(--border);flex-shrink:0;}
+.sidebar-label{font-size:0.68rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.1em;color:var(--muted2);padding:0 0.25rem;margin-bottom:0.4rem;}
+.sidebar-search{
+  width:100%;background:var(--bg);color:var(--text);
+  border:1px solid var(--border2);border-radius:6px;
+  padding:0.35rem 0.65rem;font-size:0.8rem;
+}
+.sidebar-search:focus{outline:none;border-color:var(--accent);}
+
+.cat-group{border-bottom:1px solid var(--border);}
+.cat-header{
+  display:flex;align-items:center;gap:0.5rem;
+  padding:0.6rem 0.9rem;cursor:pointer;
+  font-size:0.75rem;font-weight:700;
+  color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;
+  transition:color 0.15s;user-select:none;
+}
+.cat-header:hover{color:var(--text);}
+.cat-header.open{color:var(--accent);}
+.cat-arrow{font-size:0.6rem;flex-shrink:0;transition:transform 0.2s;color:var(--muted2);}
+.cat-header.open .cat-arrow{transform:rotate(90deg);}
+.cat-count{margin-left:auto;font-size:0.68rem;background:var(--border2);
+  border-radius:20px;padding:0.05rem 0.4rem;color:var(--muted2);}
+
+.cat-items{display:none;padding:0.15rem 0;}
+.cat-header.open + .cat-items{display:block;}
+
+.rxn-link{
+  display:flex;align-items:center;
+  padding:0.42rem 0.9rem 0.42rem 1.6rem;
+  font-size:0.83rem;color:var(--muted);cursor:pointer;
+  border-left:2px solid transparent;
+  transition:all 0.12s;
+}
+.rxn-link:hover{color:var(--text);background:var(--surface2);}
+.rxn-link.active{color:var(--accent);border-left-color:var(--accent);background:#1a1f38;}
+.rxn-link.hidden{display:none;}
+
+/* ── Main ── */
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+.main::-webkit-scrollbar{width:5px;}
+.main::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* ── Welcome ── */
+.welcome{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:3rem 2rem;text-align:center;
+}
+.welcome-logo{font-size:3rem;margin-bottom:1.5rem;opacity:0.6;}
+.welcome h1{
+  font-size:1.8rem;font-weight:700;margin-bottom:0.6rem;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.welcome p{color:var(--muted);line-height:1.75;max-width:520px;margin-bottom:2.5rem;font-size:0.95rem;}
+.cat-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:0.65rem;max-width:680px;width:100%;
+}
+.cat-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:1rem;cursor:pointer;text-align:left;
+  transition:border-color 0.15s,transform 0.15s;
+}
+.cat-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.cat-card-icon{font-size:1.4rem;margin-bottom:0.5rem;}
+.cat-card-name{font-size:0.83rem;font-weight:600;margin-bottom:0.2rem;}
+.cat-card-count{font-size:0.72rem;color:var(--muted);}
+
+/* ── Reaction card ── */
+.rxn-page{padding:2rem 2.5rem;max-width:860px;}
+.rxn-breadcrumb{
+  font-size:0.75rem;color:var(--muted);margin-bottom:0.65rem;
+  display:flex;align-items:center;gap:0.35rem;
+}
+.rxn-breadcrumb .sep{color:var(--muted2);}
+.rxn-breadcrumb .cat-name{color:var(--accent);cursor:pointer;}
+.rxn-breadcrumb .cat-name:hover{text-decoration:underline;}
+
+.rxn-title{font-size:1.55rem;font-weight:700;margin-bottom:0.25rem;line-height:1.3;}
+.rxn-subtitle{font-size:0.9rem;color:var(--muted);margin-bottom:1rem;font-style:italic;}
+
+.rxn-tags{display:flex;gap:0.3rem;flex-wrap:wrap;margin-bottom:1.5rem;}
+.tag{
+  font-size:0.68rem;font-weight:600;padding:0.18rem 0.55rem;border-radius:20px;
+  background:#1e2235;color:var(--muted);border:1px solid var(--border2);
+  letter-spacing:0.02em;
+}
+
+/* ── Drawing area ── */
+.rxn-drawing{
+  background:#0c0e16;border:1px solid var(--border);border-radius:12px;
+  padding:1.75rem 1.5rem;margin-bottom:1.5rem;
+  display:flex;justify-content:center;align-items:center;
+  min-height:130px;overflow-x:auto;
+}
+.rxn-drawing svg{display:block;max-width:100%;height:auto;}
+.scheme-text{
+  font-size:0.9rem;color:var(--text);text-align:center;
+  line-height:2.2;font-family:monospace;white-space:pre-wrap;
+}
+
+/* ── Details table ── */
+.rxn-details{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;overflow:hidden;margin-bottom:1.5rem;
+}
+.detail-row{
+  display:grid;grid-template-columns:150px 1fr;
+  border-bottom:1px solid var(--border);font-size:0.86rem;
+}
+.detail-row:last-child{border-bottom:none;}
+.detail-label{
+  padding:0.65rem 1rem;color:var(--muted);font-weight:700;
+  font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;
+  background:#14161f;border-right:1px solid var(--border);
+  display:flex;align-items:flex-start;padding-top:0.75rem;
+}
+.detail-value{padding:0.65rem 1.1rem;line-height:1.55;color:var(--text);}
+
+/* ── Sections ── */
+.section-head{
+  font-size:0.72rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.1em;color:var(--accent);
+  margin:1.5rem 0 0.7rem;display:flex;align-items:center;gap:0.5rem;
+}
+.section-head::after{content:'';flex:1;height:1px;background:var(--border);}
+
+.key-points{list-style:none;display:flex;flex-direction:column;gap:0.5rem;margin-bottom:0.5rem;}
+.key-points li{
+  display:flex;align-items:flex-start;gap:0.65rem;
+  font-size:0.88rem;line-height:1.55;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:7px;padding:0.55rem 0.8rem;
+}
+.key-points li::before{
+  content:'→';color:var(--accent);flex-shrink:0;margin-top:0.05rem;font-weight:700;
+}
+
+.notes-block{
+  background:var(--surface2);border-left:3px solid var(--accent);
+  border-radius:0 8px 8px 0;padding:1rem 1.2rem;
+  font-size:0.88rem;line-height:1.75;color:#b0b5cc;
+  margin-bottom:1.5rem;
+}
+
+/* ── Nav arrows ── */
+.rxn-nav{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:2.5rem;padding-top:1.5rem;
+  border-top:1px solid var(--border);
+}
+.nav-btn{
+  background:var(--surface);border:1px solid var(--border);
+  color:var(--muted);padding:0.5rem 1rem;border-radius:8px;
+  font-size:0.82rem;cursor:pointer;transition:all 0.15s;
+  display:flex;align-items:center;gap:0.5rem;
+}
+.nav-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.nav-btn:disabled{opacity:0.3;cursor:default;}
+.nav-btn-label{font-size:0.75rem;color:var(--muted);max-width:180px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* ── Mobile ── */
+@media(max-width:700px){
+  .sidebar{position:fixed;left:-100%;top:52px;height:calc(100vh - 52px);
+    z-index:30;transition:left 0.25s;width:min(300px,85vw);}
+  .sidebar.open{left:0;}
+  .hamburger{display:flex;align-items:center;justify-content:center;
+    width:36px;height:36px;border:1px solid var(--border);border-radius:7px;
+    background:none;cursor:pointer;color:var(--text);font-size:1.1rem;}
+  .rxn-page{padding:1.25rem;}
+  .detail-row{grid-template-columns:120px 1fr;}
+}
+@media(min-width:701px){.hamburger{display:none;}}
+.overlay{display:none;position:fixed;inset:0;background:#0008;z-index:25;}
+.overlay.open{display:block;}
+</style>
+</head>
+<body>
+
+<header>
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+  <div class="logo">⚗ OC Reference</div>
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input id="search" type="text" placeholder="Search reactions, tags…" oninput="globalSearch(this.value)" autocomplete="off">
+  </div>
+  <div class="header-right">
+    <span class="count-badge" id="count-badge">— reactions</span>
+  </div>
+</header>
+
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-label">Categories</div>
+    </div>
+    <div id="cat-list"></div>
+  </nav>
+
+  <main class="main" id="main">
+    <!-- content injected here -->
+  </main>
+</div>
+
+<script>
+let reactions = [];
+let activeId  = null;
+const SD      = window.SmilesDrawer;
+
+/* emoji per category */
+const CAT_ICONS = {
+  'Nucleophilic Substitution': '⇌',
+  'Elimination': '↑',
+  'Electrophilic Addition': '⊕',
+  'Carbonyl Chemistry': 'C=O',
+  'Named Reactions': '★',
+  'Oxidation': '↗',
+  'Reduction': '↙',
+  'Aromatic Chemistry': '⬡',
+};
+
+/* ── Init ─────────────────────────────────────────────────────── */
+async function init() {
+  try {
+    reactions = await fetch('./data/reactions.json').then(r => r.json());
+  } catch(e) {
+    showError('Could not load reactions.json. If running locally, start the server: <code>node server.js</code>');
+    return;
+  }
+  document.getElementById('count-badge').textContent = reactions.length + ' reactions';
+  buildSidebar();
+  showWelcome();
+  const hash = location.hash.slice(1);
+  if (hash) { const r = reactions.find(x => x.id === hash); if (r) showReaction(hash); }
+}
+
+/* ── Sidebar ──────────────────────────────────────────────────── */
+function categories() { return [...new Set(reactions.map(r => r.category))]; }
+
+function buildSidebar() {
+  const cats = categories();
+  document.getElementById('cat-list').innerHTML = cats.map(cat => {
+    const items = reactions.filter(r => r.category === cat);
+    return `<div class="cat-group" data-cat="${cat}">
+      <div class="cat-header" onclick="toggleCat(this)">
+        <span class="cat-arrow">▶</span>
+        <span>${cat}</span>
+        <span class="cat-count">${items.length}</span>
+      </div>
+      <div class="cat-items">
+        ${items.map(r => `<div class="rxn-link" id="link-${r.id}" onclick="showReaction('${r.id}')">${r.name}</div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleCat(header) { header.classList.toggle('open'); }
+
+function openSidebarFor(id) {
+  const link = document.getElementById('link-'+id);
+  if (!link) return;
+  const header = link.closest('.cat-group')?.querySelector('.cat-header');
+  if (header) header.classList.add('open');
+  setTimeout(() => link.scrollIntoView({block:'nearest',behavior:'smooth'}), 50);
+}
+
+/* ── Welcome ──────────────────────────────────────────────────── */
+function showWelcome() {
+  const cats = categories();
+  document.getElementById('main').innerHTML = `
+    <div class="welcome">
+      <div class="welcome-logo">⚗</div>
+      <h1>Organic Chemistry Reference</h1>
+      <p>A concise reaction encyclopaedia — mechanisms, conditions, scope, and key insights for core organic transformations. Select a reaction from the sidebar or explore a category below.</p>
+      <div class="cat-grid">
+        ${cats.map(cat => {
+          const n = reactions.filter(r => r.category === cat).length;
+          const icon = CAT_ICONS[cat] || '◈';
+          return `<div class="cat-card" onclick="openCategory('${cat}')">
+            <div class="cat-card-icon">${icon}</div>
+            <div class="cat-card-name">${cat}</div>
+            <div class="cat-card-count">${n} reaction${n!==1?'s':''}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+}
+
+function openCategory(cat) {
+  const first = reactions.find(r => r.category === cat);
+  if (first) showReaction(first.id);
+  // Open accordion
+  document.querySelectorAll('.cat-header').forEach(h => {
+    if (h.querySelector('span:nth-child(2)')?.textContent === cat) h.classList.add('open');
+  });
+}
+
+/* ── Reaction page ────────────────────────────────────────────── */
+const DETAIL_FIELDS = [
+  {key:'conditions',      label:'Conditions'},
+  {key:'substrate_scope', label:'Substrate scope'},
+  {key:'nucleophile',     label:'Nucleophile'},
+  {key:'leaving_group',   label:'Leaving group'},
+  {key:'reagents',        label:'Reagents'},
+  {key:'mechanism',       label:'Mechanism'},
+  {key:'stereochemistry', label:'Stereochemistry'},
+  {key:'kinetics',        label:'Kinetics'},
+  {key:'solvent',         label:'Solvent'},
+];
+
+function showReaction(id) {
+  const r = reactions.find(x => x.id === id);
+  if (!r) return;
+  activeId = id;
+
+  document.querySelectorAll('.rxn-link').forEach(el => el.classList.remove('active'));
+  const lnk = document.getElementById('link-'+id);
+  if (lnk) lnk.classList.add('active');
+  openSidebarFor(id);
+  history.replaceState(null,'','#'+id);
+
+  // Find prev/next within same category
+  const catItems = reactions.filter(x => x.category === r.category);
+  const idx = catItems.findIndex(x => x.id === id);
+  const prev = catItems[idx-1] || null;
+  const next = catItems[idx+1] || null;
+
+  const svgId = 'rxn-svg-'+id;
+  const drawingHtml = r.reaction_smiles
+    ? `<svg id="${svgId}" xmlns="http://www.w3.org/2000/svg"></svg>`
+    : r.general_scheme
+      ? `<div class="scheme-text">${r.general_scheme}</div>`
+      : `<div class="scheme-text" style="color:var(--muted)">No structure available</div>`;
+
+  const detailsHtml = DETAIL_FIELDS.filter(f => r[f.key]).map(f => `
+    <div class="detail-row">
+      <div class="detail-label">${f.label}</div>
+      <div class="detail-value">${r[f.key]}</div>
+    </div>`).join('');
+
+  const tagsHtml = (r.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('');
+
+  const keyPointsHtml = (r.key_points||[]).length ? `
+    <div class="section-head">Key Points</div>
+    <ul class="key-points">${(r.key_points).map(p=>`<li>${p}</li>`).join('')}</ul>` : '';
+
+  const notesHtml = r.notes ? `
+    <div class="section-head">Notes</div>
+    <div class="notes-block">${r.notes}</div>` : '';
+
+  document.getElementById('main').innerHTML = `
+    <div class="rxn-page">
+      <div class="rxn-breadcrumb">
+        <span class="cat-name" onclick="openCategory('${r.category}')">${r.category}</span>
+        <span class="sep">›</span>
+        <span>${r.name}</span>
+      </div>
+
+      <h1 class="rxn-title">${r.name}</h1>
+      ${r.subtitle ? `<div class="rxn-subtitle">${r.subtitle}</div>` : ''}
+      <div class="rxn-tags">${tagsHtml}</div>
+
+      <div class="rxn-drawing">${drawingHtml}</div>
+
+      ${detailsHtml ? `<div class="rxn-details">${detailsHtml}</div>` : ''}
+
+      ${keyPointsHtml}
+      ${notesHtml}
+
+      <div class="rxn-nav">
+        <button class="nav-btn" onclick="${prev?`showReaction('${prev.id}')`:'void 0'}" ${prev?'':'disabled'}>
+          ← <span class="nav-btn-label">${prev?.name||''}</span>
+        </button>
+        <span style="font-size:0.75rem;color:var(--muted)">${idx+1} / ${catItems.length}</span>
+        <button class="nav-btn" onclick="${next?`showReaction('${next.id}')`:'void 0'}" ${next?'':'disabled'}>
+          <span class="nav-btn-label">${next?.name||''}</span> →
+        </button>
+      </div>
+    </div>`;
+
+  // Scroll to top
+  document.getElementById('main').scrollTop = 0;
+
+  // Draw reaction
+  if (r.reaction_smiles) {
+    requestAnimationFrame(() => {
+      const svgEl = document.getElementById(svgId);
+      if (svgEl) ReactionRenderer.draw(r.reaction_smiles, svgEl, 'dark', r.reagent_label||'{reagents}');
+    });
+  }
+}
+
+/* ── Search ───────────────────────────────────────────────────── */
+function globalSearch(q) {
+  const s = q.toLowerCase().trim();
+  // filter sidebar
+  document.querySelectorAll('.cat-group').forEach(group => {
+    const links = group.querySelectorAll('.rxn-link');
+    let any = false;
+    links.forEach(link => {
+      const id  = link.id.replace('link-','');
+      const r   = reactions.find(x => x.id === id);
+      const hit = !s
+        || r.name.toLowerCase().includes(s)
+        || r.category.toLowerCase().includes(s)
+        || (r.tags||[]).some(t => t.toLowerCase().includes(s))
+        || (r.subtitle||'').toLowerCase().includes(s)
+        || (r.notes||'').toLowerCase().includes(s);
+      link.classList.toggle('hidden', !hit);
+      if (hit) any = true;
+    });
+    group.style.display = any ? '' : 'none';
+    const header = group.querySelector('.cat-header');
+    if (s && any) header.classList.add('open');
+    else if (!s) { group.style.display=''; }
+  });
+}
+
+/* ── Mobile sidebar ───────────────────────────────────────────── */
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+
+/* ── Misc ─────────────────────────────────────────────────────── */
+function showError(msg) {
+  document.getElementById('main').innerHTML = `
+    <div style="padding:3rem;text-align:center;color:var(--red)">
+      <div style="font-size:2rem;margin-bottom:1rem">⚠</div>
+      <div>${msg}</div>
+    </div>`;
+}
+
+init();
+</script>
+</body>
+</html>

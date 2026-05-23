@@ -2,26 +2,21 @@ const express = require('express');
 const fs      = require('fs');
 const path    = require('path');
 
-const app      = express();
-const PORT     = process.env.PORT || 3000;
-const DATA_DIR = path.join(__dirname, 'data');
+const app  = express();
+const PORT = process.env.PORT || 3000;
 
-app.use(express.json({ limit: '5mb' }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json({limit:'5mb'}));
+app.use(express.static(__dirname));   // serve everything from root
 
-// ── Data helpers ───────────────────────────────────────────────────────────────
-const read  = file => JSON.parse(fs.readFileSync(path.join(DATA_DIR, file), 'utf8'));
-const write = (file, data) => fs.writeFileSync(path.join(DATA_DIR, file), JSON.stringify(data, null, 2));
+// API (for local admin editing only — not needed for GitHub Pages)
+const data = f => path.join(__dirname,'data',f);
+app.get('/api/reactions',  (_, res) => res.json(JSON.parse(fs.readFileSync(data('reactions.json'),'utf8'))));
+app.post('/api/reactions', (req, res) => {
+  fs.writeFileSync(data('reactions.json'), JSON.stringify(req.body,null,2));
+  res.json({ok:true});
+});
 
-// ── Questions ──────────────────────────────────────────────────────────────────
-app.get('/api/questions',       (_, res) => res.json(read('questions.json')));
-app.post('/api/questions', (req, res) => { write('questions.json', req.body); res.json({ ok: true }); });
-
-// ── Tables ─────────────────────────────────────────────────────────────────────
-app.get('/api/tables',          (_, res) => res.json(read('tables.json')));
-app.post('/api/tables',    (req, res) => { write('tables.json', req.body); res.json({ ok: true }); });
-
-// ── Export page ────────────────────────────────────────────────────────────────
-app.get('/export', (_, res) => res.sendFile(path.join(__dirname, 'export', 'index.html')));
-
-app.listen(PORT, () => console.log(`OC-Quiz running → http://localhost:${PORT}`));
+app.listen(PORT, () => {
+  console.log(`OC Reference running → http://localhost:${PORT}`);
+  console.log(`GitHub Pages URL     → https://kingalo7.github.io/OC-Quiz/`);
+});
