@@ -228,7 +228,7 @@ const opts = {
   inclDrawings: true, inclDetails: true, inclKeyPoints: true, inclNotes: true, inclTOC: true
 };
 
-/* ── Init ───────────────────────────────────────────────────────── */
+/* ── Init ─────────────────────────────────────────────── */
 async function init() {
   try {
     reactions = await fetch('./data/reactions.json').then(r => r.json());
@@ -241,7 +241,7 @@ async function init() {
   initOptionButtons();
 }
 
-/* ── Option buttons ─────────────────────────────────────────────── */
+/* ── Option buttons ─────────────────────────────────────── */
 function initOptionButtons() {
   document.getElementById('paper-group').addEventListener('click', e => {
     const btn = e.target.closest('.radio-btn'); if (!btn) return;
@@ -266,7 +266,7 @@ function initOptionButtons() {
   });
 }
 
-/* ── Reaction selector ──────────────────────────────────────────── */
+/* ── Reaction selector ──────────────────────────────────── */
 function categories() { return [...new Set(reactions.map(r => r.category))]; }
 function getChecked() { return [...document.querySelectorAll('.rxn-cb:checked')].map(cb => cb.value); }
 
@@ -319,7 +319,7 @@ function updateCount() {
   document.getElementById('sel-count').innerHTML = `<strong>${n}</strong> reaction${n!==1?'s':''} selected`;
 }
 
-/* ── LaTeX generation ───────────────────────────────────────────── */
+/* ── LaTeX generation ─────────────────────────────────── */
 function esc(str) {
   if (!str) return '';
   return str
@@ -427,15 +427,15 @@ function buildLatex(selectedReactions, withImages) {
 
   const graphicxPkg = withImages ? '\\usepackage{graphicx}' : '% graphicx not needed (no images)';
 
-  return `% ╔══════════════════════════════════════════════════════════════╗
+  return `% ╔══════════════════════════════════════════════════════════════
 % ║  OC Reference — Custom Reaction Compendium                  ║
 % ║  Generated ${today.padEnd(44)}║
 % ║  Compile with: pdflatex oc-reference.tex                    ║
-% ╚══════════════════════════════════════════════════════════════╝
+% ╝══════════════════════════════════════════════════════════════
 
 \\documentclass[${opts.paper},${opts.font}]{article}
 
-%%── Packages ──────────────────────────────────────────────────────
+%%── Packages ──────────────────────────────────────────────
 \\usepackage[${opts.paper},left=2.4cm,right=2.4cm,top=2.5cm,bottom=2.5cm]{geometry}
 \\usepackage[T1]{fontenc}
 \\usepackage[utf8]{inputenc}
@@ -453,20 +453,20 @@ function buildLatex(selectedReactions, withImages) {
 \\usepackage[hidelinks,bookmarksopen]{hyperref}
 ${graphicxPkg}
 
-%%── Colours ───────────────────────────────────────────────────────
+%%── Colours ──────────────────────────────────────────────
 \\definecolor{ocaccent}{RGB}{108,142,247}
 \\definecolor{ocmuted}{RGB}{100,105,130}
 \\definecolor{ocborder}{RGB}{50,55,80}
 \\definecolor{ocnotebg}{RGB}{243,245,255}
 
-%%── Section formatting ────────────────────────────────────────────
+%%── Section formatting ──────────────────────────────────
 \\titleformat{\\section}{\\large\\bfseries\\color{ocaccent}}{}{0em}{}%
   [{\\color{ocaccent!40}\\titlerule[0.6pt]}]
 \\titlespacing{\\section}{0pt}{1.5em}{0.65em}
 \\titleformat{\\subsection}{\\normalsize\\bfseries}{}{0em}{}
 \\titlespacing{\\subsection}{0pt}{1.1em}{0.3em}
 
-%%── Notes box (tcolorbox) ─────────────────────────────────────────
+%%── Notes box (tcolorbox) ───────────────────────────────
 \\tcbset{notebox/.style={
   enhanced,frame hidden,sharp corners,
   borderline west={2.5pt}{0pt}{ocaccent!60},
@@ -475,7 +475,7 @@ ${graphicxPkg}
   before skip=6pt,after skip=6pt,
 }}
 
-%%── Header / footer ───────────────────────────────────────────────
+%%── Header / footer ────────────────────────────────────
 \\pagestyle{fancy}
 \\fancyhf{}
 \\renewcommand{\\headrulewidth}{0.3pt}
@@ -484,12 +484,12 @@ ${graphicxPkg}
 \\fancyhead[R]{\\small\\color{ocmuted}\\nouppercase{\\leftmark}}
 \\fancyfoot[C]{\\small\\color{ocmuted}\\thepage}
 
-%%── Two-column switch ─────────────────────────────────────────────
+%%── Two-column switch ──────────────────────────────────
 ${twocol ? '\\usepackage{multicol}' : ''}
 
-%%═══════════════════════════════════════════════════════════════════
+%%═══════════════════════════════════════════════════════════════
 \\begin{document}
-%%═══════════════════════════════════════════════════════════════════
+%%═══════════════════════════════════════════════════════════════
 
 \\begin{center}
   {\\huge\\bfseries Organic Chemistry Reference}\\\\[8pt]
@@ -509,20 +509,20 @@ ${twocol ? '\\end{multicols}' : ''}
 `;
 }
 
-/* ── PNG rendering ──────────────────────────────────────────────── */
+/* ── PNG rendering ─────────────────────────────────────────── */
 function reactionToPng(r) {
   return new Promise(resolve => {
     if (!r.reaction_smiles) { resolve(null); return; }
 
-    /* Hide via an off-screen wrapper DIV instead of styling the SVG itself.
-       If we set visibility:hidden / display:none on the SVG, that inline
-       style is serialized and propagates to the standalone <img> render,
-       producing a blank PNG. */
+    /* Use an off-screen wrapper DIV to hide the render target.
+       Do NOT put visibility:hidden/display:none on the SVG itself —
+       inline styles survive XMLSerializer and make the standalone <img> blank.
+       Also do NOT pre-set xmlns/xmlns:xlink — smiles-drawer sets them
+       internally during draw(), which would produce duplicate attributes
+       in the serialized XML and cause browsers to reject the SVG image. */
     const wrap = document.createElement('div');
     wrap.style.cssText = 'position:absolute;left:-9999px;top:-9999px;width:0;height:0;overflow:hidden;';
     const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
-    svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    svg.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
     wrap.appendChild(svg);
     document.body.appendChild(wrap);
 
@@ -534,7 +534,7 @@ function reactionToPng(r) {
       return;
     }
 
-    /* Determine dimensions from the viewBox that smiles-drawer set. */
+    /* Determine dimensions from the viewBox smiles-drawer set. */
     const vb = svg.getAttribute('viewBox');
     let w = 600, h = 220;
     if (vb) {
@@ -542,15 +542,23 @@ function reactionToPng(r) {
       if (p.length >= 4 && p[2] > 0 && p[3] > 0) { w = p[2]; h = p[3]; }
     }
 
-    /* Force explicit width/height attributes on the serialized SVG.
-       Without them, browsers may default the standalone <img> to 300x150
-       (or 0x0) which results in cropped or blank PNGs. */
+    /* Set explicit width/height *attributes* on the root SVG so the browser
+       knows the intrinsic size when loading it as a standalone <img>.
+       Without these, Chrome defaults to 300×150 and the content may be clipped. */
     svg.setAttribute('width',  w);
     svg.setAttribute('height', h);
     if (!vb) svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
 
-    const svgData = new XMLSerializer().serializeToString(svg);
+    let svgData = new XMLSerializer().serializeToString(svg);
     document.body.removeChild(wrap);
+
+    /* XMLSerializer sometimes emits duplicate xmlns declarations when both
+       our code and smiles-drawer have set the same attribute.
+       Collapse any run of repeated xmlns="..." on the root element. */
+    svgData = svgData.replace(
+      /(<svg\b[^>]*?)(\s+xmlns="http:\/\/www\.w3\.org\/2000\/svg"){2,}/,
+      '$1 xmlns="http://www.w3.org/2000/svg"'
+    );
 
     const fullSvg = '<?xml version="1.0" encoding="UTF-8"?>\n' + svgData;
     const blob = new Blob([fullSvg], {type:'image/svg+xml;charset=utf-8'});
@@ -574,7 +582,7 @@ function reactionToPng(r) {
   });
 }
 
-/* ── Progress helpers ───────────────────────────────────────────── */
+/* ── Progress helpers ─────────────────────────────────────── */
 function showProgress(title) {
   document.getElementById('progress-title').textContent = title;
   document.getElementById('progress-label').textContent = '';
@@ -596,7 +604,7 @@ function triggerDownload(blob, filename) {
   setTimeout(() => URL.revokeObjectURL(url), 2000);
 }
 
-/* ── Actions ────────────────────────────────────────────────────── */
+/* ── Actions ──────────────────────────────────────────────── */
 async function doExport() {
   const ids = getChecked();
   if (!ids.length) { alert('Select at least one reaction.'); return; }

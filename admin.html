@@ -236,11 +236,22 @@ select.fi option{background:var(--surface);}
 <script>
 let reactions = [], selRxn = null, unsaved = false;
 let shas = { r: null };
+let serverMode = false; // true when node server.js is running
 
 async function init() {
   try {
+    // Try local API first (requires node server.js)
     reactions = await fetch('/api/reactions').then(r => { if(!r.ok) throw 0; return r.json(); });
-  } catch { toast('Server nicht gestartet — starten mit: node server.js', 'err'); }
+    serverMode = true;
+  } catch {
+    // Fall back to static file — read-only mode (GitHub commit still works)
+    try {
+      reactions = await fetch('./data/reactions.json').then(r => { if(!r.ok) throw 0; return r.json(); });
+      toast('Nur-Lesen-Modus: Server nicht aktiv. Zum lokalen Bearbeiten: node server.js', 'err');
+    } catch {
+      toast('reactions.json konnte nicht geladen werden', 'err');
+    }
+  }
   renderList(); setBadge(); loadGhCfg();
 }
 
@@ -251,7 +262,7 @@ function switchTab(n) {
   });
 }
 
-/* ─ Liste ──────────────────────────────────────────────── */
+/* ─ Liste ────────────────────────────────────────────── */
 function renderList(q='') {
   const f = q.toLowerCase();
   const cats = [...new Set(reactions.map(r => r.category))].sort();
@@ -272,7 +283,7 @@ function setBadge() {
   document.getElementById('badge-unsaved').style.display = unsaved ? '' : 'none';
 }
 
-/* ─ Editor ────────────────────────────────────────────── */
+/* ─ Editor ──────────────────────────────────────────── */
 function selFn(i) { selRxn=i; renderList(document.getElementById('rxn-search').value); buildForm(reactions[i]); }
 
 function buildForm(r) {
@@ -403,6 +414,7 @@ function collect() {
 }
 async function saveRxn() {
   if(selRxn===null)return;
+  if(!serverMode){toast('Lokal speichern erfordert node server.js — Commit über GitHub-Tab möglich','err');return;}
   const r=collect();
   if(!r.id||!r.name||!r.category){toast('ID, Name und Kategorie erforderlich','err');return;}
   if(reactions.some((y,i)=>y.id===r.id&&i!==selRxn)){toast('ID bereits vorhanden','err');return;}
@@ -423,6 +435,7 @@ function dupRxn(){
 }
 async function delRxn(){
   if(selRxn===null||!confirm(`"${reactions[selRxn].name}" löschen?`))return;
+  if(!serverMode){toast('Löschen erfordert node server.js','err');return;}
   reactions.splice(selRxn,1); selRxn=null;
   await persist(); renderList();
   document.getElementById('edit-panel').innerHTML='<div class="empty-hint"><div class="ico">⚗</div><div>Reaktion zum Bearbeiten auswählen</div></div>';
@@ -434,12 +447,13 @@ function importRxn(){
   catch(e){toast('JSON-Fehler: '+e.message,'err');}
 }
 async function persist(){
+  if(!serverMode) return; // no-op in read-only mode; GitHub commit is the save path
   const res=await fetch('/api/reactions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(reactions)});
   if(!res.ok)throw new Error('Speichern fehlgeschlagen');
 }
 function mu(){unsaved=true;setBadge();}
 
-/* ─ GitHub ───────────────────────────────────────────── */
+/* ─ GitHub ────────────────────────────────────────────── */
 function ghCfg(){return{owner:localStorage.getItem('gh_owner')||'',repo:localStorage.getItem('gh_repo')||'',pat:localStorage.getItem('gh_pat')||''};}
 function saveGhCfg(){
   localStorage.setItem('gh_owner',document.getElementById('gh-owner').value.trim());
@@ -522,7 +536,7 @@ async function loadHistory(){
   }catch(e){log.innerHTML=`<div style="color:var(--red);font-size:0.82rem">✗ ${e.message}</div>`;}
 }
 
-/* ─ Util ───────────────────────────────────────────────── */
+/* ─ Util ─────────────────────────────────────────────── */
 function x(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 let _tt; function toast(msg,type='ok'){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast ${type} show`;clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),3000);}
 
