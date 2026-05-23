@@ -513,18 +513,47 @@ ${twocol ? '\\end{multicols}' : ''}
 function reactionToPng(r) {
   return new Promise(resolve => {
     if (!r.reaction_smiles) { resolve(null); return; }
+
+    /* Hide via an off-screen wrapper DIV instead of styling the SVG itself.
+       If we set visibility:hidden / display:none on the SVG, that inline
+       style is serialized and propagates to the standalone <img> render,
+       producing a blank PNG. */
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'position:absolute;left:-9999px;top:-9999px;width:0;height:0;overflow:hidden;';
     const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
-    svg.style.cssText = 'position:absolute;left:-9999px;top:-9999px;visibility:hidden;';
-    document.body.appendChild(svg);
+    svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    svg.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+    wrap.appendChild(svg);
+    document.body.appendChild(wrap);
+
     try {
       ReactionRenderer.draw(r.reaction_smiles, svg, 'light', r.reagent_label||'');
-    } catch(e) { document.body.removeChild(svg); resolve(null); return; }
+    } catch(e) {
+      document.body.removeChild(wrap);
+      resolve(null);
+      return;
+    }
+
+    /* Determine dimensions from the viewBox that smiles-drawer set. */
     const vb = svg.getAttribute('viewBox');
     let w = 600, h = 220;
-    if (vb) { const p=vb.trim().split(/\s+/).map(Number); if(p[2]>0){w=p[2];h=p[3];} }
+    if (vb) {
+      const p = vb.trim().split(/\s+/).map(Number);
+      if (p.length >= 4 && p[2] > 0 && p[3] > 0) { w = p[2]; h = p[3]; }
+    }
+
+    /* Force explicit width/height attributes on the serialized SVG.
+       Without them, browsers may default the standalone <img> to 300x150
+       (or 0x0) which results in cropped or blank PNGs. */
+    svg.setAttribute('width',  w);
+    svg.setAttribute('height', h);
+    if (!vb) svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+
     const svgData = new XMLSerializer().serializeToString(svg);
-    document.body.removeChild(svg);
-    const blob = new Blob([svgData],{type:'image/svg+xml;charset=utf-8'});
+    document.body.removeChild(wrap);
+
+    const fullSvg = '<?xml version="1.0" encoding="UTF-8"?>\n' + svgData;
+    const blob = new Blob([fullSvg], {type:'image/svg+xml;charset=utf-8'});
     const url = URL.createObjectURL(blob);
     const img = new Image();
     img.onload = () => {
