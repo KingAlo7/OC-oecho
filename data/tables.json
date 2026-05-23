@@ -52,15 +52,15 @@
     "title": "Named Reactions Summary",
     "headers": ["Reaction", "Key Reagent", "Transformation"],
     "rows": [
-      ["Wittig",               "Ph₃P=CR₂",            "Ketone/Aldehyde → Alkene"],
-      ["Grignard",             "RMgBr",                "Carbonyl → Alcohol"],
-      ["Diels-Alder",          "Diene + dienophile",   "[4+2] cycloaddition → cyclohexene"],
-      ["Aldol",                "Base or acid",         "2× carbonyl → β-hydroxy carbonyl"],
-      ["Fischer Esterification","ROH + RCOOH, H⁺",    "Carboxylic acid + alcohol → ester"],
-      ["Beckmann Rearrangement","H₂SO₄ / PCl₅",       "Ketoxime → amide"],
-      ["Baeyer-Villiger",      "mCPBA or H₂O₂",       "Ketone → ester/lactone"],
-      ["Mitsunobu",            "DIAD + PPh₃",          "Alcohol → inverted ester/N-alkylation"],
-      ["Swern Oxidation",      "DMSO/oxalyl chloride", "Alcohol → aldehyde/ketone (mild)"]
+      ["Wittig",              "Ph₃P=CR₂",           "Ketone/Aldehyde → Alkene"],
+      ["Grignard",            "RMgBr",               "Carbonyl → Alcohol"],
+      ["Diels-Alder",         "Diene + dienophile",  "[4+2] cycloaddition → cyclohexene"],
+      ["Aldol",               "Base or acid",        "2× carbonyl → β-hydroxy carbonyl"],
+      ["Fischer Esterification","ROH + RCOOH, H⁺",  "Carboxylic acid + alcohol → ester"],
+      ["Beckmann Rearrangement","H₂SO₄ / PCl₅",     "Ketoxime → amide"],
+      ["Baeyer-Villiger",     "mCPBA or H₂O₂",      "Ketone → ester/lactone"],
+      ["Mitsunobu",           "DIAD + PPh₃",        "Alcohol → inverted ester/N-alkylation"],
+      ["Swern Oxidation",     "DMSO/oxalyl chloride","Alcohol → aldehyde/ketone (mild)"]
     ]
   },
   {

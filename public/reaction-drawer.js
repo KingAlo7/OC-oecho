@@ -6,10 +6,10 @@
  * Usage:
  *   // target can be an SVG element or its id string
  *   ReactionRenderer.draw('CCO.Cl>>ClCC.O', 'my-svg-id', 'dark');
- *   ReactionRenderer.draw('CCO.Cl>>ClCC.O', svgEl, 'light', '[H+]');
+ *   ReactionRenderer.draw('CCO.Cl>>ClCC.O', svgEl, 'light', '[H⁺]');
  *
  * Reaction SMILES format:
- *   reactants > reagents > products   (exactly two '>' required)
+ *   reactants > reagents > products
  *   e.g.  'CC(C)(C)Br>H2O>CC(C)(C)OH'
  *         'C=C.Br2>>BrCCBr'           (empty reagent field)
  */
@@ -27,10 +27,10 @@ const ReactionRenderer = (() => {
       thickness: 1.5
     },
     arrow: {
-      length:    70,
-      headSize:  7,
+      length:   70,
+      headSize: 7,
       thickness: 1.5,
-      margin:    4
+      margin:   4
     }
   };
 
@@ -38,7 +38,7 @@ const ReactionRenderer = (() => {
     width:  200,
     height: 200,
     scale:  1,
-    compactDrawing:    false,
+    compactDrawing: false,
     explicitHydrogens: false
   };
 
@@ -47,11 +47,11 @@ const ReactionRenderer = (() => {
   /**
    * Draw a reaction SMILES into an SVG element.
    *
-   * @param {string}           reactionSmiles  e.g. 'CC(C)(C)Br>H2O>CC(C)(C)OH'
-   * @param {string|SVGElement} target         SVG element or its id
-   * @param {'light'|'dark'}   theme           default 'dark'
-   * @param {string}           textAbove       label above arrow (default: reagents from SMILES)
-   * @param {string}           textBelow       label below arrow
+   * @param {string} reactionSmiles  e.g. 'CC(C)(C)Br>H2O>CC(C)(C)OH'
+   * @param {string|SVGElement} target  SVG element or its id
+   * @param {'light'|'dark'} theme  default 'dark'
+   * @param {string} textAbove  label above the arrow (default: reagents from SMILES)
+   * @param {string} textBelow  label below the arrow
    * @returns {SVGElement|null}
    */
   function draw(reactionSmiles, target, theme = 'dark', textAbove = '{reagents}', textBelow = '') {
@@ -91,7 +91,7 @@ const ReactionRenderer = (() => {
       const rd = new SD.ReactionDrawer(REACTION_OPTS, Object.assign({}, MOLECULE_OPTS));
       rd.draw(reaction, svgEl, theme, null, textAbove, textBelow);
 
-      /* Auto-size: read viewBox that ReactionDrawer writes and apply as width/height */
+      /* Auto-size: read viewBox that ReactionDrawer sets and apply as width/height */
       _applyDimensions(svgEl);
 
       return svgEl;
@@ -105,11 +105,11 @@ const ReactionRenderer = (() => {
   /**
    * Convenience: append a new <svg> into a container element and draw the reaction.
    *
-   * @param {string}           reactionSmiles
-   * @param {string|HTMLElement} container    id or element to append the SVG into
-   * @param {'light'|'dark'}   theme
-   * @param {string}           textAbove
-   * @param {string}           textBelow
+   * @param {string} reactionSmiles
+   * @param {string|HTMLElement} container  id or element to append the SVG into
+   * @param {'light'|'dark'} theme
+   * @param {string} textAbove
+   * @param {string} textBelow
    * @returns {SVGElement|null}
    */
   function drawInto(reactionSmiles, container, theme = 'dark', textAbove = '{reagents}', textBelow = '') {
@@ -144,6 +144,7 @@ const ReactionRenderer = (() => {
   }
 
   function _renderError(svgEl, msg) {
+    /* Clear and show a text error inside the SVG */
     while (svgEl.firstChild) svgEl.removeChild(svgEl.firstChild);
     svgEl.setAttribute('width',  300);
     svgEl.setAttribute('height', 40);

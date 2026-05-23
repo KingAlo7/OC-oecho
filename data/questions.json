@@ -4,99 +4,197 @@
     "topic": "Substitution",
     "difficulty": "easy",
     "type": "mcq",
-    "question": "Which mechanism applies to (CH\u2083)\u2083CBr reacting with OH\u207b in aqueous solvent?",
+    "tags": [
+      "SN1",
+      "carbocation",
+      "solvolysis"
+    ],
+    "flagged": false,
+    "question": "Which mechanism applies to (CH₃)₃CBr reacting with OH⁻ in aqueous solvent?",
     "smiles": "CC(C)(C)Br",
-    "options": ["SN1", "SN2", "E1", "E2"],
+    "options": [
+      "SN1",
+      "SN2",
+      "E1",
+      "E2"
+    ],
     "answer": "SN1",
-    "explanation": "Tertiary substrate forms a stable 3\u00b0 carbocation. Aqueous (polar protic) solvent stabilises the ion pair. SN2 is sterically blocked."
+    "explanation": "Tertiary substrate forms a stable 3° carbocation. Polar protic solvent stabilises the ion pair. SN2 is sterically blocked."
   },
   {
     "id": "q2",
     "topic": "Substitution",
     "difficulty": "easy",
     "type": "mcq",
-    "question": "CH\u2083Br + CN\u207b in DMSO proceeds via \u2026",
+    "tags": [
+      "SN2",
+      "backside-attack"
+    ],
+    "flagged": false,
+    "question": "CH₃Br + CN⁻ in DMSO proceeds via …",
     "smiles": "CBr",
-    "options": ["SN1", "SN2", "E1", "E2"],
+    "options": [
+      "SN1",
+      "SN2",
+      "E1",
+      "E2"
+    ],
     "answer": "SN2",
-    "explanation": "Primary substrate, strong nucleophile, aprotic solvent \u2014 classic SN2 conditions. Inversion of configuration at carbon."
+    "explanation": "Primary substrate, strong nucleophile, aprotic solvent — classic SN2 conditions. Inversion at carbon."
   },
   {
     "id": "q3",
     "topic": "Elimination",
     "difficulty": "medium",
     "type": "mcq",
-    "question": "Treatment of 2-bromo-2-methylbutane with KOtBu/tBuOH gives predominantly \u2026",
+    "tags": [
+      "E2",
+      "Zaitsev",
+      "base"
+    ],
+    "flagged": false,
+    "question": "Treatment of 2-bromo-2-methylbutane with KOtBu/tBuOH gives predominantly …",
     "smiles": "CCC(C)(C)Br",
-    "options": ["2-methylbut-1-ene (less substituted)", "2-methylbut-2-ene (more substituted)", "SN2 product", "No reaction"],
+    "options": [
+      "2-methylbut-1-ene (less substituted)",
+      "2-methylbut-2-ene (more substituted)",
+      "SN2 product",
+      "No reaction"
+    ],
     "answer": "2-methylbut-2-ene (more substituted)",
-    "explanation": "Bulky base (KOtBu) favours E2. Zaitsev\u2019s rule: more substituted (thermodynamic) alkene predominates."
+    "explanation": "Bulky base (KOtBu) favours E2. Zaitsev: more substituted alkene predominates."
   },
   {
     "id": "q4",
     "topic": "Carbonyl",
     "difficulty": "medium",
     "type": "mcq",
+    "tags": [
+      "reduction",
+      "LiAlH4",
+      "carboxylic-acid"
+    ],
+    "flagged": false,
     "question": "Which reagent converts a carboxylic acid directly to a primary alcohol in one step?",
     "smiles": "CC(=O)O",
-    "options": ["NaBH\u2084", "LiAlH\u2084", "DIBAL-H (1 eq, \u221278 \u00b0C)", "H\u2082/Pd"],
-    "answer": "LiAlH\u2084",
-    "explanation": "LiAlH\u2084 is strong enough to reduce RCOOH \u2192 RCH\u2082OH. NaBH\u2084 is too mild. DIBAL-H at \u221278 \u00b0C stops at the aldehyde."
+    "options": [
+      "NaBH₄",
+      "LiAlH₄",
+      "DIBAL-H (1 eq, −78 °C)",
+      "H₂/Pd"
+    ],
+    "answer": "LiAlH₄",
+    "explanation": "LiAlH₄ reduces RCOOH → RCH₂OH. NaBH₄ is too mild. DIBAL-H at −78 °C stops at the aldehyde."
   },
   {
     "id": "q5",
     "topic": "Named Reactions",
     "difficulty": "hard",
     "type": "mcq",
-    "question": "The Wittig reaction converts a ketone into an alkene using \u2026",
+    "tags": [
+      "Wittig",
+      "alkene-synthesis",
+      "ylide",
+      "advanced"
+    ],
+    "flagged": false,
+    "question": "The Wittig reaction converts a ketone into an alkene using …",
     "smiles": "CC(=O)C",
-    "options": ["Phosphorus ylide (Ph\u2083P=CHR)", "Grignard reagent", "Enamine (Stork)", "Horner\u2013Wadsworth\u2013Emmons reagent"],
-    "answer": "Phosphorus ylide (Ph\u2083P=CHR)",
-    "explanation": "Wittig uses Ph\u2083P=CR\u2082 (phosphorus ylide) to give the alkene with defined geometry. HWE is a related, modified version."
+    "options": [
+      "Phosphorus ylide (Ph₃P=CHR)",
+      "Grignard reagent",
+      "Enamine (Stork)",
+      "Horner–Wadsworth–Emmons reagent"
+    ],
+    "answer": "Phosphorus ylide (Ph₃P=CHR)",
+    "explanation": "Wittig uses Ph₃P=CR₂ to give the alkene with defined geometry. HWE is a related modified version."
   },
   {
     "id": "q6",
     "topic": "Carbonyl",
     "difficulty": "hard",
     "type": "mcq",
-    "question": "In an aldol condensation under acidic conditions, the nucleophile is \u2026",
+    "tags": [
+      "aldol",
+      "enolate",
+      "enol",
+      "advanced"
+    ],
+    "flagged": false,
+    "question": "In an aldol condensation under acidic conditions, the nucleophile is …",
     "smiles": "CC=O",
-    "options": ["Enolate anion", "Enol tautomer", "Acylium ion", "Carbocation"],
+    "options": [
+      "Enolate anion",
+      "Enol tautomer",
+      "Acylium ion",
+      "Carbocation"
+    ],
     "answer": "Enol tautomer",
-    "explanation": "Under acidic conditions the enol (not enolate) acts as nucleophile. Base catalysis generates the enolate."
+    "explanation": "Under acidic conditions the enol (not enolate) acts as nucleophile. Base catalysis gives the enolate."
   },
   {
     "id": "q7",
     "topic": "Functional Groups",
     "difficulty": "easy",
     "type": "true_false",
+    "tags": [
+      "ester",
+      "hydrolysis",
+      "saponification"
+    ],
+    "flagged": false,
     "question": "An ester can be hydrolysed under both acidic and basic conditions.",
     "smiles": "CC(=O)OC",
-    "options": ["True", "False"],
+    "options": [
+      "True",
+      "False"
+    ],
     "answer": "True",
-    "explanation": "Acid hydrolysis is reversible (Fischer); base hydrolysis (saponification) is irreversible due to carboxylate formation."
+    "explanation": "Acid hydrolysis is reversible (Fischer); base hydrolysis (saponification) is irreversible due to carboxylate."
   },
   {
     "id": "q8",
     "topic": "Stereochemistry",
     "difficulty": "medium",
     "type": "mcq",
-    "question": "SN2 at a chiral centre proceeds with \u2026",
+    "tags": [
+      "SN2",
+      "Walden-inversion",
+      "chiral-centre"
+    ],
+    "flagged": false,
+    "question": "SN2 at a chiral centre proceeds with …",
     "smiles": "C[C@@H](Br)CC",
-    "options": ["Retention of configuration", "Inversion of configuration (Walden inversion)", "Racemisation", "No stereospecificity"],
-    "answer": "Inversion of configuration (Walden inversion)",
-    "explanation": "Backside attack in SN2 inverts all three remaining substituents \u2014 classic Walden inversion."
+    "options": [
+      "Retention",
+      "Inversion (Walden inversion)",
+      "Racemisation",
+      "No stereospecificity"
+    ],
+    "answer": "Inversion (Walden inversion)",
+    "explanation": "Backside attack in SN2 inverts all three remaining substituents — classic Walden inversion."
   },
   {
     "id": "q9",
     "topic": "Substitution",
     "difficulty": "medium",
     "type": "mcq",
+    "tags": [
+      "SN1",
+      "solvolysis",
+      "carbocation"
+    ],
+    "flagged": false,
     "question": "What is the major organic product of this reaction?",
     "reaction_smiles": "CC(C)(C)Br>O>CC(C)(C)O",
-    "reagent_label": "H\u2082O / SN1",
-    "options": ["(CH\u2083)\u2083COH", "(CH\u2083)\u2083CBr", "(CH\u2083)\u2082C=CH\u2082", "(CH\u2083)\u2083CCl"],
-    "answer": "(CH\u2083)\u2083COH",
+    "reagent_label": "H₂O / SN1",
+    "options": [
+      "(CH₃)₃COH",
+      "(CH₃)₃CBr",
+      "(CH₃)₂C=CH₂",
+      "(CH₃)₃CCl"
+    ],
+    "answer": "(CH₃)₃COH",
     "explanation": "Tertiary substrate undergoes SN1 solvolysis in water to give tert-butanol."
   },
   {
@@ -104,11 +202,253 @@
     "topic": "Elimination",
     "difficulty": "hard",
     "type": "mcq",
+    "tags": [
+      "E2",
+      "Hofmann",
+      "bulky-base",
+      "advanced"
+    ],
+    "flagged": false,
     "question": "Identify the major product of this elimination reaction.",
     "reaction_smiles": "CCC(C)Br>CC(C)(C)[O-]>CCC(=C)",
     "reagent_label": "KOtBu / E2",
-    "options": ["2-methylbut-1-ene (Hofmann)", "2-methylbut-2-ene (Zaitsev)", "SN2 alcohol", "No reaction"],
+    "options": [
+      "2-methylbut-1-ene (Hofmann)",
+      "2-methylbut-2-ene (Zaitsev)",
+      "SN2 alcohol",
+      "No reaction"
+    ],
     "answer": "2-methylbut-1-ene (Hofmann)",
-    "explanation": "Bulky KOtBu gives the Hofmann (less substituted) alkene via E2 \u2014 steric preference for the less hindered \u03b2-hydrogen."
+    "explanation": "Bulky KOtBu gives the Hofmann alkene via E2 — steric preference for the less hindered β-hydrogen."
+  },
+  {
+    "id": "q11",
+    "topic": "Carbonyl",
+    "difficulty": "medium",
+    "type": "mcq",
+    "tags": [
+      "reduction",
+      "NaBH4",
+      "chemoselective",
+      "selectivity"
+    ],
+    "flagged": false,
+    "question": "NaBH₄ is added to a molecule containing both a ketone and an ester. Which group is reduced?",
+    "smiles": "CC(=O)CCC(=O)OCC",
+    "options": [
+      "Ketone only",
+      "Ester only",
+      "Both ketone and ester",
+      "Neither — NaBH₄ is too mild"
+    ],
+    "answer": "Ketone only",
+    "explanation": "NaBH₄ is mild enough to reduce ketones and aldehydes but not esters. LiAlH₄ is required for esters."
+  },
+  {
+    "id": "q12",
+    "topic": "Oxidation",
+    "difficulty": "easy",
+    "type": "mcq",
+    "tags": [
+      "oxidation",
+      "PCC",
+      "alcohol",
+      "aldehyde"
+    ],
+    "flagged": false,
+    "question": "PCC oxidises a primary alcohol to give …",
+    "smiles": "CCCO",
+    "options": [
+      "Aldehyde (stops there)",
+      "Carboxylic acid",
+      "Ketone",
+      "Ester"
+    ],
+    "answer": "Aldehyde (stops there)",
+    "explanation": "PCC (pyridinium chlorochromate) is a mild oxidant that stops at the aldehyde. KMnO₄ or CrO₃ would continue to the acid."
+  },
+  {
+    "id": "q13",
+    "topic": "Aromatic",
+    "difficulty": "medium",
+    "type": "mcq",
+    "tags": [
+      "EAS",
+      "directing-effects",
+      "activating",
+      "aromatic"
+    ],
+    "flagged": false,
+    "question": "Which substituent directs electrophilic aromatic substitution ortho/para and activates the ring?",
+    "smiles": "Cc1ccccc1",
+    "options": [
+      "–CH₃ (alkyl)",
+      "–NO₂",
+      "–CF₃",
+      "–COOH"
+    ],
+    "answer": "–CH₃ (alkyl)",
+    "explanation": "Alkyl groups are ortho/para directors and activators via hyperconjugation and induction. –NO₂, –CF₃, –COOH are meta directors and deactivators."
+  },
+  {
+    "id": "q14",
+    "topic": "Oxidation",
+    "difficulty": "medium",
+    "type": "mcq",
+    "tags": [
+      "ozonolysis",
+      "oxidation",
+      "alkene",
+      "advanced"
+    ],
+    "flagged": false,
+    "question": "What are the carbonyl products of ozonolysis (O₃, then Me₂S workup) of (Z)-but-2-ene?",
+    "reaction_smiles": "C/C=C\\C>>CC=O.CC=O",
+    "reagent_label": "1. O₃  2. Me₂S",
+    "options": [
+      "Two equivalents of acetaldehyde",
+      "Butanedial",
+      "Acetic acid + acetaldehyde",
+      "Butanone"
+    ],
+    "answer": "Two equivalents of acetaldehyde",
+    "explanation": "Ozonolysis cleaves the C=C. Reductive workup (Me₂S) gives aldehydes from internal alkenes. Each carbon of the double bond becomes a carbonyl."
+  },
+  {
+    "id": "q15",
+    "topic": "Named Reactions",
+    "difficulty": "hard",
+    "type": "mcq",
+    "tags": [
+      "Diels-Alder",
+      "cycloaddition",
+      "stereoselective",
+      "advanced",
+      "diene"
+    ],
+    "flagged": false,
+    "question": "What diene conformation is required for a Diels-Alder reaction to proceed?",
+    "smiles": "C=CC=C",
+    "options": [
+      "s-cis",
+      "s-trans",
+      "E-configuration",
+      "Any — conformation is irrelevant"
+    ],
+    "answer": "s-cis",
+    "explanation": "The diene must adopt the s-cis conformation so both terminal carbons can simultaneously overlap with the dienophile π system in the [4+2] transition state."
+  },
+  {
+    "id": "q16",
+    "topic": "Carbonyl",
+    "difficulty": "hard",
+    "type": "mcq",
+    "tags": [
+      "Grignard",
+      "nucleophilic-addition",
+      "carboxylation",
+      "advanced"
+    ],
+    "flagged": false,
+    "question": "Ethylmagnesium bromide is treated with CO₂, then aqueous workup. The product is …",
+    "smiles": "CC[Mg]Br",
+    "options": [
+      "Propanoic acid",
+      "Ethanol",
+      "Propanal",
+      "Diethyl carbonate"
+    ],
+    "answer": "Propanoic acid",
+    "explanation": "Grignard + CO₂ → magnesium carboxylate salt; aqueous workup protonates to give propanoic acid (RMgX + CO₂ → RCOOH, one extra carbon)."
+  },
+  {
+    "id": "q17",
+    "topic": "Named Reactions",
+    "difficulty": "hard",
+    "type": "mcq",
+    "tags": [
+      "Beckmann",
+      "rearrangement",
+      "oxime",
+      "advanced"
+    ],
+    "flagged": false,
+    "question": "The Beckmann rearrangement of cyclohexanone oxime with H₂SO₄ gives …",
+    "smiles": "O=C1CCCCC1",
+    "options": [
+      "ε-Caprolactam (a cyclic amide)",
+      "Cyclohexanone",
+      "Cyclohexylamine",
+      "Adipic acid"
+    ],
+    "answer": "ε-Caprolactam (a cyclic amide)",
+    "explanation": "Beckmann: the group anti to –OH migrates to nitrogen as the oxime loses water; the N–O bond breaks to give a nitrilium ion that is trapped by water, ultimately giving the amide (lactam for cyclic ketones)."
+  },
+  {
+    "id": "q18",
+    "topic": "Functional Groups",
+    "difficulty": "medium",
+    "type": "mcq",
+    "tags": [
+      "protection",
+      "alcohol",
+      "THP",
+      "advanced"
+    ],
+    "flagged": false,
+    "question": "Which conditions protect a primary alcohol as a THP (tetrahydropyranyl) ether?",
+    "smiles": "OCCO",
+    "options": [
+      "DHP, PPTS (cat.)",
+      "TBSCl, imidazole",
+      "Ac₂O, pyridine",
+      "BnBr, NaH"
+    ],
+    "answer": "DHP, PPTS (cat.)",
+    "explanation": "3,4-Dihydro-2H-pyran (DHP) with an acid catalyst (PPTS or p-TsOH) forms THP ethers under mild conditions. TBSCl gives silyl ethers; Ac₂O gives acetates; BnBr/NaH gives benzyl ethers."
+  },
+  {
+    "id": "q19",
+    "topic": "Carbonyl",
+    "difficulty": "easy",
+    "type": "mcq",
+    "tags": [
+      "esterification",
+      "Fischer",
+      "condensation",
+      "named-reaction"
+    ],
+    "flagged": false,
+    "question": "What are the products of this acid-catalysed esterification?",
+    "reaction_smiles": "CC(=O)O.CO>>CC(=O)OC.O",
+    "reagent_label": "H₂SO₄ / Δ",
+    "options": [
+      "Methyl acetate + water",
+      "Acetic anhydride + water",
+      "Ethyl acetate + water",
+      "Methanol + CO₂"
+    ],
+    "answer": "Methyl acetate + water",
+    "explanation": "Fischer esterification: acetic acid + methanol → methyl acetate + water (equilibrium driven right by excess alcohol or removal of water)."
+  },
+  {
+    "id": "q20",
+    "topic": "Oxidation",
+    "difficulty": "easy",
+    "type": "true_false",
+    "tags": [
+      "oxidation",
+      "fundamentals",
+      "alcohol"
+    ],
+    "flagged": false,
+    "question": "The conversion of a primary alcohol to an aldehyde is an oxidation reaction.",
+    "smiles": "CCO",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answer": "True",
+    "explanation": "Oxidation increases the number of C–O bonds (or C–heteroatom bonds) and/or removes C–H bonds. Going from RCH₂OH to RCHO removes two H atoms from carbon — this is oxidation by the organic chemistry definition."
   }
 ]

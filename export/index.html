@@ -7,102 +7,121 @@
 <script src="https://unpkg.com/smiles-drawer@2/dist/smiles-drawer.min.js"></script>
 <script src="/reaction-drawer.js"></script>
 <style>
-  :root { --accent: #6c8ef7; }
-  * { box-sizing: border-box; }
-  body { font-family: 'Segoe UI', Georgia, serif; margin: 0; background: #f7f7f7; color: #1a1a1a; }
-  .controls { background: #1a1d27; color: #e8eaf0; padding: 1rem 2rem; display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
-  .controls label { font-size: 0.85rem; color: #7a7f9a; }
-  .controls select, .controls input[type=checkbox] { background: #0f1117; color: #e8eaf0; border: 1px solid #2a2d3a; border-radius: 6px; padding: 0.3rem 0.6rem; }
-  .controls button { background: var(--accent); color: #fff; border: none; padding: 0.4rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; }
-  @media print { .controls { display: none !important; } body { background: #fff; } .page { box-shadow: none; margin: 0; padding: 1.5cm; } }
-  .page { max-width: 900px; margin: 2rem auto; background: #fff; padding: 2.5rem; box-shadow: 0 2px 12px rgba(0,0,0,0.1); }
-  h1 { font-size: 1.8rem; border-bottom: 2px solid var(--accent); padding-bottom: 0.5rem; margin-bottom: 1rem; }
-  .section-title { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin: 2rem 0 0.5rem; }
-  .question-block { border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; page-break-inside: avoid; }
-  .question-block .meta { font-size: 0.72rem; color: #888; margin-bottom: 0.4rem; }
-  .question-block p { font-size: 0.95rem; margin-bottom: 0.7rem; }
-  .options-list { list-style: none; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0.3rem; }
-  .options-list li { font-size: 0.88rem; padding: 0.25rem 0.5rem; border: 1px solid #e8e8e8; border-radius: 4px; }
-  .options-list li.correct-opt { background: #f0fdf4; border-color: #86efac; font-weight: 600; color: #166534; }
-  .explanation { font-size: 0.82rem; color: #555; margin-top: 0.6rem; border-left: 3px solid var(--accent); padding-left: 0.7rem; }
-  canvas.smiles-canvas { display: block; margin: 0.5rem 0; }
-  .reaction-wrap { display: flex; justify-content: flex-start; align-items: center; margin: 0.5rem 0; background: #fafafa; border-radius: 6px; padding: 0.5rem; overflow-x: auto; }
-  .reaction-wrap svg { display: block; max-width: 100%; height: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 1rem; }
-  th { background: var(--accent); color: #fff; padding: 0.4rem 0.6rem; text-align: left; }
-  td { padding: 0.35rem 0.6rem; border-bottom: 1px solid #e8e8e8; }
-  tr:nth-child(even) td { background: #f9f9f9; }
+  :root{--accent:#6c8ef7;}
+  *{box-sizing:border-box;}
+  body{font-family:'Segoe UI',Georgia,serif;margin:0;background:#f7f7f7;color:#1a1a1a;}
+  .controls{background:#1a1d27;color:#e8eaf0;padding:1rem 2rem;display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;}
+  .controls label{font-size:0.85rem;color:#7a7f9a;}
+  .controls select,.controls input[type=checkbox]{background:#0f1117;color:#e8eaf0;border:1px solid #2a2d3a;border-radius:6px;padding:0.3rem 0.6rem;}
+  .controls button{background:var(--accent);color:#fff;border:none;padding:0.4rem 1rem;border-radius:6px;cursor:pointer;font-weight:600;}
+  @media print{.controls{display:none!important;}body{background:#fff;}.page{box-shadow:none;margin:0;padding:1.5cm;}}
+  .page{max-width:900px;margin:2rem auto;background:#fff;padding:2.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.1);}
+  h1{font-size:1.8rem;border-bottom:2px solid var(--accent);padding-bottom:0.5rem;margin-bottom:1rem;}
+  .section-title{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin:2rem 0 0.5rem;}
+  .question-block{border:1px solid #e0e0e0;border-radius:8px;padding:1rem;margin-bottom:1rem;page-break-inside:avoid;}
+  .q-meta{display:flex;align-items:center;gap:0.4rem;margin-bottom:0.5rem;flex-wrap:wrap;}
+  .q-meta .mid{font-size:0.72rem;color:#888;}
+  .tag-pill{font-size:0.65rem;padding:0.12rem 0.45rem;border-radius:20px;background:#eef0ff;color:#4a5aaa;border:1px solid #c5caee;}
+  .flag-pill{font-size:0.65rem;padding:0.12rem 0.45rem;border-radius:20px;background:#fff8e7;color:#9a6500;border:1px solid #f0d590;}
+  .question-block p{font-size:0.95rem;margin-bottom:0.7rem;}
+  .options-list{list-style:none;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:0.3rem;}
+  .options-list li{font-size:0.88rem;padding:0.25rem 0.5rem;border:1px solid #e8e8e8;border-radius:4px;}
+  .options-list li.correct-opt{background:#f0fdf4;border-color:#86efac;font-weight:600;color:#166534;}
+  .explanation{font-size:0.82rem;color:#555;margin-top:0.6rem;border-left:3px solid var(--accent);padding-left:0.7rem;}
+  canvas.smiles-canvas{display:block;margin:0.5rem 0;}
+  .reaction-wrap{display:flex;align-items:center;margin:0.5rem 0;background:#fafafa;border-radius:6px;padding:0.5rem;overflow-x:auto;}
+  .reaction-wrap svg{display:block;max-width:100%;height:auto;}
+  table{width:100%;border-collapse:collapse;font-size:0.85rem;margin-bottom:1rem;}
+  th{background:var(--accent);color:#fff;padding:0.4rem 0.6rem;text-align:left;}
+  td{padding:0.35rem 0.6rem;border-bottom:1px solid #e8e8e8;}
+  tr:nth-child(even) td{background:#f9f9f9;}
 </style>
 </head>
 <body>
 <div class="controls">
   <label>Topic: <select id="exp-topic"><option value="">All</option></select></label>
   <label>Difficulty: <select id="exp-diff"><option value="">All</option><option>easy</option><option>medium</option><option>hard</option></select></label>
+  <label>Tag: <select id="exp-tag"><option value="">All tags</option></select></label>
+  <label><input type="checkbox" id="exp-flagged"> Flagged only</label>
   <label><input type="checkbox" id="show-answers" checked> Show answers</label>
-  <label><input type="checkbox" id="show-tables" checked> Include reference tables</label>
+  <label><input type="checkbox" id="show-tables" checked> Include tables</label>
   <button onclick="renderExport()">Update</button>
   <button onclick="window.print()" style="background:#22c55e">Print / PDF</button>
   <a href="/" style="color:#7a7f9a;font-size:0.85rem;margin-left:auto;text-decoration:none">← Back</a>
 </div>
 <div class="page" id="export-page"><p style="color:#888">Loading…</p></div>
 <script>
-let questions = [], tables = [];
-async function load() {
-  [questions, tables] = await Promise.all([
-    fetch('/api/questions').then(r => r.json()),
-    fetch('/api/tables').then(r => r.json())
+let questions=[],tables=[];
+async function load(){
+  [questions,tables]=await Promise.all([
+    fetch('/api/questions').then(r=>r.json()),
+    fetch('/api/tables').then(r=>r.json())
   ]);
-  const topics = [...new Set(questions.map(q => q.topic))];
-  const sel = document.getElementById('exp-topic');
-  topics.forEach(t => { const o = document.createElement('option'); o.textContent = t; sel.appendChild(o); });
+  const topics=[...new Set(questions.map(q=>q.topic))];
+  const tSel=document.getElementById('exp-topic');
+  topics.forEach(t=>{const o=document.createElement('option');o.textContent=t;tSel.appendChild(o);});
+  const allTags=[...new Set(questions.flatMap(q=>q.tags||[]))].sort();
+  const tagSel=document.getElementById('exp-tag');
+  allTags.forEach(t=>{const o=document.createElement('option');o.textContent=t;o.value=t;tagSel.appendChild(o);});
   renderExport();
 }
-function renderExport() {
-  const topic   = document.getElementById('exp-topic').value;
-  const diff    = document.getElementById('exp-diff').value;
-  const showAns = document.getElementById('show-answers').checked;
-  const showTbl = document.getElementById('show-tables').checked;
-  const qs      = questions.filter(q => (!topic||q.topic===topic) && (!diff||q.difficulty===diff));
-  const topics  = [...new Set(qs.map(q => q.topic))];
-  let html = `<h1>OC-Quiz — ${topic||'All Topics'}${diff?' · '+diff:''}</h1>`;
-  html += `<p style="color:#888;font-size:0.85rem">${qs.length} question${qs.length!==1?'s':''}${showAns?' — answers shown':' — answers hidden'} · ${new Date().toLocaleDateString('en-AT')}</p>`;
-  let molCanvases = [], rxnSvgs = [];
-  topics.forEach(t => {
-    const tqs = qs.filter(q => q.topic===t);
-    html += `<div class="section-title">${t}</div>`;
-    tqs.forEach((q, qi) => {
-      const cid = `mol-${t.replace(/\W/g,'_')}-${qi}`;
-      const rid = `rxn-${t.replace(/\W/g,'_')}-${qi}`;
-      html += `<div class="question-block">
-        <div class="meta">${q.id} · ${q.difficulty} · ${q.type}</div>
+function renderExport(){
+  const topic  =document.getElementById('exp-topic').value;
+  const diff   =document.getElementById('exp-diff').value;
+  const tag    =document.getElementById('exp-tag').value;
+  const flagged=document.getElementById('exp-flagged').checked;
+  const showAns=document.getElementById('show-answers').checked;
+  const showTbl=document.getElementById('show-tables').checked;
+  const qs=questions.filter(q=>{
+    if(topic&&q.topic!==topic)return false;
+    if(diff&&q.difficulty!==diff)return false;
+    if(tag&&!(q.tags||[]).includes(tag))return false;
+    if(flagged&&!q.flagged)return false;
+    return true;
+  });
+  const topics=[...new Set(qs.map(q=>q.topic))];
+  let html=`<h1>OC-Quiz — ${topic||'All Topics'}${diff?' · '+diff:''}${tag?' · #'+tag:''}${flagged?' · 🚩 flagged':''}</h1>`;
+  html+=`<p style="color:#888;font-size:0.85rem">${qs.length} question${qs.length!==1?'s':''}${showAns?' — answers shown':' — answers hidden'} · ${new Date().toLocaleDateString('en-AT')}</p>`;
+  let molCanvases=[],rxnSvgs=[];
+  topics.forEach(t=>{
+    const tqs=qs.filter(q=>q.topic===t);
+    html+=`<div class="section-title">${t}</div>`;
+    tqs.forEach((q,qi)=>{
+      const cid=`mol-${t.replace(/\W/g,'_')}-${qi}`;
+      const rid=`rxn-${t.replace(/\W/g,'_')}-${qi}`;
+      const tags=(q.tags||[]).map(tg=>`<span class="tag-pill">${tg}</span>`).join('');
+      const flagPill=q.flagged?'<span class="flag-pill">🚩 flagged</span>':'';
+      html+=`<div class="question-block">
+        <div class="q-meta">
+          <span class="mid">${q.id} · ${q.difficulty} · ${q.type}</span>
+          ${tags}${flagPill}
+        </div>
         <p><strong>Q${qi+1}.</strong> ${q.question}</p>
-        ${q.smiles ? `<canvas id="${cid}" class="smiles-canvas" width="220" height="130"></canvas>` : ''}
-        ${q.reaction_smiles ? `<div class="reaction-wrap"><svg id="${rid}" xmlns="http://www.w3.org/2000/svg"></svg></div>` : ''}
+        ${q.smiles?`<canvas id="${cid}" class="smiles-canvas" width="220" height="130"></canvas>`:''}
+        ${q.reaction_smiles?`<div class="reaction-wrap"><svg id="${rid}" xmlns="http://www.w3.org/2000/svg"></svg></div>`:''}
         <ul class="options-list">${q.options.map(o=>`<li class="${showAns&&o===q.answer?'correct-opt':''}">${o}</li>`).join('')}</ul>
         ${showAns&&q.explanation?`<div class="explanation">${q.explanation}</div>`:''}
       </div>`;
-      if (q.smiles)          molCanvases.push({ id: cid, smiles: q.smiles });
-      if (q.reaction_smiles) rxnSvgs.push({ id: rid, smiles: q.reaction_smiles, label: q.reagent_label || '{reagents}' });
+      if(q.smiles)molCanvases.push({id:cid,smiles:q.smiles});
+      if(q.reaction_smiles)rxnSvgs.push({id:rid,smiles:q.reaction_smiles,label:q.reagent_label||'{reagents}'});
     });
   });
-  if (showTbl && tables.length) {
-    html += `<h2 style="margin-top:3rem">Reference Tables</h2>`;
-    tables.forEach(t => {
-      html += `<p class="section-title">${t.title}</p><table><thead><tr>${t.headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>`;
-      t.rows.forEach(row => { html += `<tr>${row.map(c=>`<td>${c}</td>`).join('')}</tr>`; });
-      html += `</tbody></table>`;
+  if(showTbl&&tables.length){
+    html+=`<h2 style="margin-top:3rem">Reference Tables</h2>`;
+    tables.forEach(t=>{
+      html+=`<p class="section-title">${t.title}</p><table><thead><tr>${t.headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>`;
+      t.rows.forEach(row=>{html+=`<tr>${row.map(c=>`<td>${c}</td>`).join('')}</tr>`;});
+      html+=`</tbody></table>`;
     });
   }
-  document.getElementById('export-page').innerHTML = html;
-  requestAnimationFrame(() => {
-    const SD = window.SmilesDrawer;
-    molCanvases.forEach(({ id, smiles }) => {
-      const drawer = new SD.Drawer({ width: 220, height: 130 });
-      SD.parse(smiles, tree => drawer.draw(tree, id, 'light'), err => console.warn(err));
+  document.getElementById('export-page').innerHTML=html;
+  requestAnimationFrame(()=>{
+    const SD=window.SmilesDrawer;
+    molCanvases.forEach(({id,smiles})=>{
+      const d=new SD.Drawer({width:220,height:130});
+      SD.parse(smiles,tree=>d.draw(tree,id,'light'),err=>console.warn(err));
     });
-    rxnSvgs.forEach(({ id, smiles, label }) => {
-      ReactionRenderer.draw(smiles, id, 'light', label);
-    });
+    rxnSvgs.forEach(({id,smiles,label})=>{ReactionRenderer.draw(smiles,id,'light',label);});
   });
 }
 load();

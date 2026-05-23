@@ -5,52 +5,54 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OC-Quiz — Admin</title>
 <style>
-  :root {
-    --bg: #0f1117; --surface: #1a1d27; --border: #2a2d3a;
-    --accent: #6c8ef7; --accent2: #a78bfa;
-    --text: #e8eaf0; --muted: #7a7f9a;
-    --green: #4ade80; --red: #f87171; --yellow: #fbbf24;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; }
-  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; align-items: center; gap: 1rem; }
-  header h1 { font-size: 1.4rem; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  header nav { margin-left: auto; display: flex; gap: 0.75rem; }
-  header nav a { color: var(--muted); text-decoration: none; font-size: 0.9rem; padding: 0.3rem 0.7rem; border-radius: 6px; }
-  header nav a:hover { background: var(--border); color: var(--text); }
-  .container { max-width: 1100px; margin: 0 auto; padding: 2rem; }
-  .tabs { display: flex; margin-bottom: 2rem; border-bottom: 1px solid var(--border); }
-  .tab { padding: 0.6rem 1.2rem; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; font-size: 0.9rem; }
-  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-  .two-col { display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; }
-  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
-  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem; }
-  .panel h3 { font-size: 0.9rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; }
-  .q-list { display: flex; flex-direction: column; gap: 0.4rem; max-height: 70vh; overflow-y: auto; }
-  .q-item { padding: 0.6rem 0.8rem; border-radius: 8px; cursor: pointer; font-size: 0.85rem; border: 1px solid transparent; transition: background 0.15s; display: flex; align-items: center; gap: 0.5rem; }
-  .q-item:hover { background: var(--border); }
-  .q-item.selected { background: #1e2540; border-color: var(--accent); }
-  .q-item .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .dot.easy { background: var(--green); } .dot.medium { background: var(--yellow); } .dot.hard { background: var(--red); }
-  .q-item .label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  label { display: block; font-size: 0.82rem; color: var(--muted); margin-bottom: 0.3rem; margin-top: 0.9rem; }
-  input, select, textarea { width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 0.75rem; font-size: 0.9rem; font-family: inherit; }
-  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
-  textarea { resize: vertical; min-height: 70px; }
-  .options-editor { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem; }
-  .option-wrap { display: flex; gap: 0.4rem; align-items: center; }
-  .option-wrap input { flex: 1; }
-  .option-wrap .del { background: none; border: 1px solid var(--border); color: var(--red); padding: 0.3rem 0.5rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem; }
-  .btn-row { display: flex; gap: 0.6rem; margin-top: 1rem; flex-wrap: wrap; }
-  button { background: var(--accent); color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.85rem; cursor: pointer; font-weight: 600; }
-  button:hover { opacity: 0.85; }
-  button.danger { background: #7f1d1d; color: var(--red); }
-  button.secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
-  .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: #1e2d1e; color: var(--green); border: 1px solid var(--green); padding: 0.7rem 1.2rem; border-radius: 8px; font-size: 0.85rem; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 100; }
-  .toast.show { opacity: 1; }
-  #json-editor { width: 100%; height: 60vh; font-family: monospace; font-size: 0.82rem; }
+  :root{--bg:#0f1117;--surface:#1a1d27;--border:#2a2d3a;--accent:#6c8ef7;--accent2:#a78bfa;--text:#e8eaf0;--muted:#7a7f9a;--green:#4ade80;--red:#f87171;--yellow:#fbbf24;--flag:#f59e0b;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;}
+  header{background:var(--surface);border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;align-items:center;gap:1rem;}
+  header h1{font-size:1.4rem;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  header nav{margin-left:auto;display:flex;gap:0.75rem;}
+  header nav a{color:var(--muted);text-decoration:none;font-size:0.9rem;padding:0.3rem 0.7rem;border-radius:6px;}
+  header nav a:hover{background:var(--border);color:var(--text);}
+  .container{max-width:1100px;margin:0 auto;padding:2rem;}
+  .tabs{display:flex;margin-bottom:2rem;border-bottom:1px solid var(--border);}
+  .tab{padding:0.6rem 1.2rem;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;font-size:0.9rem;}
+  .tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+  .tab-content{display:none;}
+  .tab-content.active{display:block;}
+  .two-col{display:grid;grid-template-columns:1fr 2fr;gap:1.5rem;}
+  @media(max-width:700px){.two-col{grid-template-columns:1fr;}}
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.2rem;}
+  .panel h3{font-size:0.9rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:1rem;}
+  .q-list{display:flex;flex-direction:column;gap:0.35rem;max-height:70vh;overflow-y:auto;}
+  .q-item{padding:0.55rem 0.8rem;border-radius:8px;cursor:pointer;font-size:0.83rem;border:1px solid transparent;transition:background 0.15s;display:flex;align-items:center;gap:0.5rem;}
+  .q-item:hover{background:var(--border);}
+  .q-item.selected{background:#1e2540;border-color:var(--accent);}
+  .q-item .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .dot.easy{background:var(--green);}.dot.medium{background:var(--yellow);}.dot.hard{background:var(--red);}
+  .q-item .flag-icon{font-size:0.75rem;opacity:0.5;}
+  .q-item .flag-icon.on{opacity:1;color:var(--flag);}
+  .q-item .label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  label{display:block;font-size:0.82rem;color:var(--muted);margin-bottom:0.3rem;margin-top:0.85rem;}
+  input,select,textarea{width:100%;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:0.48rem 0.72rem;font-size:0.88rem;font-family:inherit;}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);}
+  textarea{resize:vertical;min-height:70px;}
+  .options-editor{display:grid;grid-template-columns:1fr 1fr;gap:0.45rem;margin-top:0.45rem;}
+  .option-wrap{display:flex;gap:0.4rem;align-items:center;}
+  .option-wrap input{flex:1;}
+  .option-wrap .del{background:none;border:1px solid var(--border);color:var(--red);padding:0.3rem 0.5rem;border-radius:6px;cursor:pointer;font-size:0.75rem;}
+  .btn-row{display:flex;gap:0.55rem;margin-top:1rem;flex-wrap:wrap;align-items:center;}
+  button{background:var(--accent);color:#fff;border:none;padding:0.48rem 1rem;border-radius:8px;font-size:0.85rem;cursor:pointer;font-weight:600;}
+  button:hover{opacity:0.85;}
+  button.danger{background:#7f1d1d;color:var(--red);}
+  button.secondary{background:var(--surface);color:var(--text);border:1px solid var(--border);}
+  button.flag-toggle{background:none;border:1px solid var(--border);color:var(--muted);font-size:0.88rem;padding:0.4rem 0.8rem;}
+  button.flag-toggle.on{border-color:var(--flag);color:var(--flag);background:#2a1a00;}
+  .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:#1e2d1e;color:var(--green);border:1px solid var(--green);padding:0.7rem 1.2rem;border-radius:8px;font-size:0.85rem;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:100;}
+  .toast.show{opacity:1;}
+  #json-editor{width:100%;height:60vh;font-family:monospace;font-size:0.8rem;}
+  /* tag chips in admin */
+  .tag-preview{display:flex;gap:0.3rem;flex-wrap:wrap;margin-top:0.4rem;}
+  .tag-chip{font-size:0.7rem;padding:0.15rem 0.5rem;border-radius:20px;background:#1e2030;color:var(--muted);border:1px solid var(--border);}
 </style>
 </head>
 <body>
@@ -64,13 +66,15 @@
     <div class="tab" onclick="switchTab('tables')">Reference Tables</div>
     <div class="tab" onclick="switchTab('raw')">Raw JSON</div>
   </div>
+
+  <!-- Questions tab -->
   <div id="tab-questions" class="tab-content active">
     <div class="two-col">
       <div class="panel">
         <h3>Questions <button class="secondary" style="float:right;padding:0.2rem 0.5rem" onclick="newQuestion()">+ New</button></h3>
         <div class="q-list" id="q-list"></div>
       </div>
-      <div class="panel" id="q-form-panel">
+      <div class="panel">
         <h3 id="form-title">Select a question</h3>
         <div id="q-form" style="display:none">
           <label>ID</label><input id="f-id" readonly style="opacity:0.5">
@@ -82,10 +86,13 @@
           <label>Question text</label><textarea id="f-question"></textarea>
           <label>SMILES — single molecule (optional)</label>
           <input id="f-smiles" placeholder="e.g. CC(=O)O">
-          <label>Reaction SMILES (optional — use instead of SMILES for reactions)</label>
-          <input id="f-reaction-smiles" placeholder="e.g. CC(C)(C)Br>H2O>CC(C)(C)O">
+          <label>Reaction SMILES (optional — format: reactants>reagents>products)</label>
+          <input id="f-reaction-smiles" placeholder="e.g. CC(C)(C)Br>O>CC(C)(C)O">
           <label>Reagent label above arrow (default: {reagents})</label>
           <input id="f-reagent-label" placeholder="e.g. KOtBu / E2">
+          <label>Tags (comma-separated)</label>
+          <input id="f-tags" placeholder="e.g. reduction, carbonyl, advanced" oninput="updateTagPreview()">
+          <div class="tag-preview" id="tag-preview"></div>
           <label>Answer options</label>
           <div class="options-editor" id="opts-editor"></div>
           <button class="secondary" style="margin-top:0.5rem;font-size:0.78rem" onclick="addOption()">+ Add option</button>
@@ -95,11 +102,14 @@
           <div class="btn-row">
             <button onclick="saveQuestion()">Save</button>
             <button class="danger" onclick="deleteQuestion()">Delete</button>
+            <button class="flag-toggle" id="flag-toggle-btn" onclick="toggleFlagField()">🚩 Flag</button>
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Tables tab -->
   <div id="tab-tables" class="tab-content">
     <div class="two-col">
       <div class="panel">
@@ -111,7 +121,7 @@
         <div id="t-form" style="display:none">
           <label>ID</label><input id="tf-id" readonly style="opacity:0.5">
           <label>Title</label><input id="tf-title">
-          <label>Raw JSON (edit headers + rows directly)</label>
+          <label>Raw JSON (headers + rows)</label>
           <textarea id="tf-raw" style="height:40vh;font-family:monospace;font-size:0.8rem"></textarea>
           <div class="btn-row">
             <button onclick="saveTable()">Save</button>
@@ -121,126 +131,169 @@
       </div>
     </div>
   </div>
+
+  <!-- Raw JSON tab -->
   <div id="tab-raw" class="tab-content">
     <div class="panel">
       <h3>Raw questions.json</h3>
       <textarea id="json-editor"></textarea>
       <div class="btn-row">
         <button onclick="saveRaw()">Save JSON</button>
-        <button class="secondary" onclick="loadRaw()">Reload from server</button>
+        <button class="secondary" onclick="loadRaw()">Reload</button>
       </div>
     </div>
   </div>
 </div>
 <div class="toast" id="toast">Saved!</div>
+
 <script>
-let questions = [], tables = [], selQ = null, selT = null;
+let questions=[], tables=[], selQ=null, selT=null;
+let formFlagged=false;
+
 async function init() {
   [questions, tables] = await Promise.all([
-    fetch('/api/questions').then(r => r.json()),
-    fetch('/api/tables').then(r => r.json())
+    fetch('/api/questions').then(r=>r.json()),
+    fetch('/api/tables').then(r=>r.json())
   ]);
   renderQList(); renderTList();
 }
+
 function renderQList() {
-  document.getElementById('q-list').innerHTML = questions.map((q,i) => `
-    <div class="q-item ${selQ===i?'selected':''}" onclick="selectQ(${i})">
+  document.getElementById('q-list').innerHTML = questions.map((q,i)=>`
+    <div class="q-item${selQ===i?' selected':''}" onclick="selectQ(${i})">
       <div class="dot ${q.difficulty}"></div>
-      <span class="label">${q.topic} — ${q.question.substring(0,50)}…</span>
+      <span class="label">${q.topic} — ${q.question.substring(0,45)}…</span>
+      <span class="flag-icon${q.flagged?' on':''}">🚩</span>
     </div>`).join('');
 }
+
 function selectQ(i) {
-  selQ = i; renderQList();
-  const q = questions[i];
-  document.getElementById('form-title').textContent = 'Edit Question';
-  document.getElementById('q-form').style.display = 'block';
-  document.getElementById('f-id').value = q.id;
-  document.getElementById('f-topic').value = q.topic;
-  document.getElementById('f-diff').value = q.difficulty;
-  document.getElementById('f-type').value = q.type;
-  document.getElementById('f-question').value = q.question;
-  document.getElementById('f-smiles').value = q.smiles || '';
-  document.getElementById('f-reaction-smiles').value = q.reaction_smiles || '';
-  document.getElementById('f-reagent-label').value = q.reagent_label || '';
-  document.getElementById('f-answer').value = q.answer;
-  document.getElementById('f-explanation').value = q.explanation || '';
+  selQ=i; renderQList();
+  const q=questions[i];
+  formFlagged=!!q.flagged;
+  document.getElementById('form-title').textContent='Edit Question';
+  document.getElementById('q-form').style.display='block';
+  document.getElementById('f-id').value=q.id;
+  document.getElementById('f-topic').value=q.topic;
+  document.getElementById('f-diff').value=q.difficulty;
+  document.getElementById('f-type').value=q.type;
+  document.getElementById('f-question').value=q.question;
+  document.getElementById('f-smiles').value=q.smiles||'';
+  document.getElementById('f-reaction-smiles').value=q.reaction_smiles||'';
+  document.getElementById('f-reagent-label').value=q.reagent_label||'';
+  document.getElementById('f-tags').value=(q.tags||[]).join(', ');
+  document.getElementById('f-answer').value=q.answer;
+  document.getElementById('f-explanation').value=q.explanation||'';
+  updateTagPreview();
+  updateFlagBtn();
   renderOptsEditor(q.options);
 }
+
+function updateTagPreview() {
+  const raw=document.getElementById('f-tags').value;
+  const tags=raw.split(',').map(t=>t.trim()).filter(Boolean);
+  document.getElementById('tag-preview').innerHTML=tags.map(t=>`<span class="tag-chip">${t}</span>`).join('');
+}
+
+function toggleFlagField() {
+  formFlagged=!formFlagged;
+  updateFlagBtn();
+}
+function updateFlagBtn() {
+  const btn=document.getElementById('flag-toggle-btn');
+  btn.classList.toggle('on', formFlagged);
+  btn.textContent=formFlagged?'🚩 Flagged':'🚩 Flag';
+}
+
 function renderOptsEditor(opts) {
-  document.getElementById('opts-editor').innerHTML = opts.map((o,i) => `
+  document.getElementById('opts-editor').innerHTML=opts.map((o,i)=>`
     <div class="option-wrap">
       <input value="${o.replace(/"/g,'&quot;')}" onchange="updateOpt(${i},this.value)">
       <button class="del" onclick="removeOpt(${i})">✕</button>
     </div>`).join('');
 }
-function updateOpt(i,val) { if(selQ!==null) questions[selQ].options[i]=val; }
-function removeOpt(i) { if(selQ===null) return; questions[selQ].options.splice(i,1); renderOptsEditor(questions[selQ].options); }
-function addOption() { if(selQ===null) return; questions[selQ].options.push('New option'); renderOptsEditor(questions[selQ].options); }
-function newQuestion() {
-  const q = { id:'q'+Date.now(), topic:'', difficulty:'medium', type:'mcq', question:'', smiles:'', options:['A','B','C','D'], answer:'A', explanation:'' };
-  questions.push(q); selQ = questions.length-1; renderQList(); selectQ(selQ);
+function updateOpt(i,v){if(selQ!==null)questions[selQ].options[i]=v;}
+function removeOpt(i){if(selQ===null)return;questions[selQ].options.splice(i,1);renderOptsEditor(questions[selQ].options);}
+function addOption(){if(selQ===null)return;questions[selQ].options.push('New option');renderOptsEditor(questions[selQ].options);}
+
+function newQuestion(){
+  const q={id:'q'+Date.now(),topic:'',difficulty:'medium',type:'mcq',tags:[],flagged:false,question:'',smiles:'',options:['A','B','C','D'],answer:'A',explanation:''};
+  questions.push(q);selQ=questions.length-1;renderQList();selectQ(selQ);
 }
-function saveQuestion() {
-  if(selQ===null) return;
-  const q = questions[selQ];
-  q.topic       = document.getElementById('f-topic').value;
-  q.difficulty  = document.getElementById('f-diff').value;
-  q.type        = document.getElementById('f-type').value;
-  q.question    = document.getElementById('f-question').value;
-  q.smiles      = document.getElementById('f-smiles').value;
-  q.reaction_smiles = document.getElementById('f-reaction-smiles').value || undefined;
-  q.reagent_label   = document.getElementById('f-reagent-label').value || undefined;
-  q.answer      = document.getElementById('f-answer').value;
-  q.explanation = document.getElementById('f-explanation').value;
+
+function saveQuestion(){
+  if(selQ===null)return;
+  const q=questions[selQ];
+  q.topic=document.getElementById('f-topic').value;
+  q.difficulty=document.getElementById('f-diff').value;
+  q.type=document.getElementById('f-type').value;
+  q.question=document.getElementById('f-question').value;
+  q.smiles=document.getElementById('f-smiles').value;
+  q.reaction_smiles=document.getElementById('f-reaction-smiles').value||undefined;
+  q.reagent_label=document.getElementById('f-reagent-label').value||undefined;
+  q.tags=document.getElementById('f-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  q.flagged=formFlagged;
+  q.answer=document.getElementById('f-answer').value;
+  q.explanation=document.getElementById('f-explanation').value;
   persist();
 }
-function deleteQuestion() {
-  if(selQ===null||!confirm('Delete?')) return;
-  questions.splice(selQ,1); selQ=null;
+
+function deleteQuestion(){
+  if(selQ===null||!confirm('Delete this question?'))return;
+  questions.splice(selQ,1);selQ=null;
   document.getElementById('q-form').style.display='none';
-  renderQList(); persist();
+  renderQList();persist();
 }
-function renderTList() {
-  document.getElementById('t-list').innerHTML = tables.map((t,i) => `
-    <div class="q-item ${selT===i?'selected':''}" onclick="selectT(${i})">
+
+function renderTList(){
+  document.getElementById('t-list').innerHTML=tables.map((t,i)=>`
+    <div class="q-item${selT===i?' selected':''}" onclick="selectT(${i})">
       <span class="label">${t.title}</span>
     </div>`).join('');
 }
-function selectT(i) {
-  selT=i; renderTList();
-  const t=tables[i];
+function selectT(i){
+  selT=i;renderTList();const t=tables[i];
   document.getElementById('t-form').style.display='block';
-  document.getElementById('tf-id').value=t.id; document.getElementById('tf-title').value=t.title;
+  document.getElementById('tf-id').value=t.id;
+  document.getElementById('tf-title').value=t.title;
   document.getElementById('tf-raw').value=JSON.stringify({headers:t.headers,rows:t.rows},null,2);
 }
-function newTable() {
+function newTable(){
   tables.push({id:'t'+Date.now(),title:'New Table',headers:['Col1','Col2'],rows:[['a','b']]});
-  selT=tables.length-1; renderTList(); selectT(selT);
+  selT=tables.length-1;renderTList();selectT(selT);
 }
-function saveTable() {
-  if(selT===null) return;
-  try { const raw=JSON.parse(document.getElementById('tf-raw').value); tables[selT].title=document.getElementById('tf-title').value; tables[selT].headers=raw.headers; tables[selT].rows=raw.rows; persistTables(); }
-  catch(e) { alert('JSON error: '+e.message); }
+function saveTable(){
+  if(selT===null)return;
+  try{const r=JSON.parse(document.getElementById('tf-raw').value);tables[selT].title=document.getElementById('tf-title').value;tables[selT].headers=r.headers;tables[selT].rows=r.rows;persistTables();}
+  catch(e){alert('JSON error: '+e.message);}
 }
-function deleteTable() {
-  if(selT===null||!confirm('Delete?')) return;
-  tables.splice(selT,1); selT=null;
+function deleteTable(){
+  if(selT===null||!confirm('Delete?'))return;
+  tables.splice(selT,1);selT=null;
   document.getElementById('t-form').style.display='none';
-  renderTList(); persistTables();
+  renderTList();persistTables();
 }
-function loadRaw() { document.getElementById('json-editor').value=JSON.stringify(questions,null,2); }
-function saveRaw() {
-  try { questions=JSON.parse(document.getElementById('json-editor').value); persist(); renderQList(); }
-  catch(e) { alert('JSON error: '+e.message); }
+
+function loadRaw(){document.getElementById('json-editor').value=JSON.stringify(questions,null,2);}
+function saveRaw(){
+  try{questions=JSON.parse(document.getElementById('json-editor').value);persist();renderQList();}
+  catch(e){alert('JSON error: '+e.message);}
 }
-async function persist() { await fetch('/api/questions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(questions)}); toast(); renderQList(); }
-async function persistTables() { await fetch('/api/tables',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(tables)}); toast(); renderTList(); }
-function toast() { const t=document.getElementById('toast'); t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000); }
-function switchTab(name) {
+
+async function persist(){
+  await fetch('/api/questions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(questions)});
+  toast();renderQList();
+}
+async function persistTables(){
+  await fetch('/api/tables',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(tables)});
+  toast();renderTList();
+}
+function toast(){const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
+function switchTab(name){
   document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',['questions','tables','raw'][i]===name));
   document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
-  if(name==='raw') loadRaw();
+  if(name==='raw')loadRaw();
 }
 init();
 </script>
