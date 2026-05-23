@@ -687,5 +687,15 @@
       "Eliminierung",
       "Hofmann"
     ]
+  },
+  {
+    "id": "neu-1779548111718",
+    "category": "Kohlenwasserstoffe (C=C-Doppelbindungen)",
+    "name": "TEST: Piperin Ozonolyse",
+    "reaktionstyp": "Alken-Spaltung",
+    "tags": [],
+    "reaction_smiles": "C12OCOC1=CC=C(/C=C/C=C/C(N1CCCCC1)=O)C=2>>C12OCOC1=CC=C(C=O)C=2",
+    "reagent_label": "O3",
+    "solvent": "DCM"
   }
 ]
