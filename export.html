@@ -374,7 +374,7 @@ function reactionBlock(r, withImage) {
 
   let drawing = '';
   if (withImage && r.reaction_smiles) {
-    drawing = `\\begin{center}\n\\includegraphics[max width=\\linewidth,height=4cm,keepaspectratio]{img/${r.id}.png}\n\\end{center}`;
+    drawing = `\\begin{center}\n\\includegraphics[width=0.9\\linewidth,height=3cm,keepaspectratio]{img/${r.id}.png}\n\\end{center}`;
   } else {
     drawing = smilesScheme(r);
   }
