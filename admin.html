@@ -224,7 +224,7 @@ select.fi option{background:var(--surface);}
 
       <div class="card">
         <div class="card-hdr"><span>Letzte Commits — data/</span><button class="bxs sec" onclick="loadHistory()">Laden</button></div>
-        <div class="clog" id="clog"><div style="color:var(--muted);font-size:0.82rem">„Laden“ klicken, um Commit-Verlauf abzurufen.</div></div>
+        <div class="clog" id="clog"><div style="color:var(--muted);font-size:0.82rem">„Laden" klicken, um Commit-Verlauf abzurufen.</div></div>
       </div>
 
     </div>
@@ -238,12 +238,32 @@ let reactions = [], selRxn = null, unsaved = false;
 let shas = { r: null };
 let serverMode = false; // true when node server.js is running
 
-async function init() {
+/* Probe the local API. Sets serverMode and returns the boolean.
+   Called at init() and also re-tried before save/delete in case the
+   user started node server.js after the admin page was loaded. */
+async function detectServer() {
   try {
-    // Try local API first (requires node server.js)
-    reactions = await fetch('/api/reactions').then(r => { if(!r.ok) throw 0; return r.json(); });
+    const r = await fetch('/api/reactions', { method: 'GET', cache: 'no-store' });
+    if (!r.ok) { serverMode = false; return false; }
+    const ct = (r.headers.get('content-type') || '').toLowerCase();
+    if (!ct.includes('application/json')) { serverMode = false; return false; }
     serverMode = true;
+    return true;
   } catch {
+    serverMode = false;
+    return false;
+  }
+}
+
+async function init() {
+  if (await detectServer()) {
+    // Server is running: load reactions through the API
+    try {
+      reactions = await fetch('/api/reactions').then(r => r.json());
+    } catch (e) {
+      toast('Fehler beim Laden vom Server: ' + e.message, 'err');
+    }
+  } else {
     // Fall back to static file — read-only mode (GitHub commit still works)
     try {
       reactions = await fetch('./data/reactions.json').then(r => { if(!r.ok) throw 0; return r.json(); });
@@ -414,13 +434,23 @@ function collect() {
 }
 async function saveRxn() {
   if(selRxn===null)return;
+  // Re-probe in case the user started node server.js after page load
+  if(!serverMode) await detectServer();
   if(!serverMode){toast('Lokal speichern erfordert node server.js — Commit über GitHub-Tab möglich','err');return;}
   const r=collect();
   if(!r.id||!r.name||!r.category){toast('ID, Name und Kategorie erforderlich','err');return;}
   if(reactions.some((y,i)=>y.id===r.id&&i!==selRxn)){toast('ID bereits vorhanden','err');return;}
+  const prev = reactions[selRxn];
   reactions[selRxn]=r;
-  await persist(); renderList(document.getElementById('rxn-search').value);
-  unsaved=true; setBadge(); toast('Lokal gespeichert ✓');
+  try {
+    await persist();
+    renderList(document.getElementById('rxn-search').value);
+    unsaved=true; setBadge(); toast('Lokal gespeichert ✓');
+  } catch(e) {
+    reactions[selRxn] = prev; // roll back in-memory change since save failed
+    toast('Speichern fehlgeschlagen: ' + e.message, 'err');
+    console.error('saveRxn failed:', e);
+  }
 }
 function newRxn(){
   const cats=[...new Set(reactions.map(r=>r.category))];
@@ -435,11 +465,22 @@ function dupRxn(){
 }
 async function delRxn(){
   if(selRxn===null||!confirm(`"${reactions[selRxn].name}" löschen?`))return;
+  if(!serverMode) await detectServer();
   if(!serverMode){toast('Löschen erfordert node server.js','err');return;}
-  reactions.splice(selRxn,1); selRxn=null;
-  await persist(); renderList();
-  document.getElementById('edit-panel').innerHTML='<div class="empty-hint"><div class="ico">⚗</div><div>Reaktion zum Bearbeiten auswählen</div></div>';
-  unsaved=true; setBadge();
+  const removedIdx = selRxn;
+  const removed = reactions.splice(selRxn,1)[0];
+  selRxn=null;
+  try {
+    await persist();
+    renderList();
+    document.getElementById('edit-panel').innerHTML='<div class="empty-hint"><div class="ico">⚗</div><div>Reaktion zum Bearbeiten auswählen</div></div>';
+    unsaved=true; setBadge();
+  } catch(e) {
+    reactions.splice(removedIdx, 0, removed); // roll back
+    selRxn = removedIdx;
+    toast('Löschen fehlgeschlagen: ' + e.message, 'err');
+    console.error('delRxn failed:', e);
+  }
 }
 function importRxn(){
   const raw=prompt('Reaktions-JSON (Objekt oder Array) einfügen:'); if(!raw)return;
@@ -448,8 +489,23 @@ function importRxn(){
 }
 async function persist(){
   if(!serverMode) return; // no-op in read-only mode; GitHub commit is the save path
-  const res=await fetch('/api/reactions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(reactions)});
-  if(!res.ok)throw new Error('Speichern fehlgeschlagen');
+  let res;
+  try {
+    res = await fetch('/api/reactions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(reactions)
+    });
+  } catch(e) {
+    // Network error — server likely killed between page load and now
+    serverMode = false;
+    throw new Error('Server nicht erreichbar (' + e.message + ')');
+  }
+  if (!res.ok) {
+    let detail = '';
+    try { detail = ' — ' + (await res.text()).slice(0, 200); } catch {}
+    throw new Error('HTTP ' + res.status + detail);
+  }
 }
 function mu(){unsaved=true;setBadge();}
 
