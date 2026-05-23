@@ -637,17 +637,17 @@
     "name": "Grignard-Reaktion",
     "reaktionstyp": "AN",
     "transformation": "Aldehyd/Keton → Alkohol",
-    "reaction_smiles": "CC=O.CMgBr>>CCC(O)",
+    "tags": [
+      "Carbonyl",
+      "Grignard",
+      "C-C-Knüpfung"
+    ],
+    "reaction_smiles": "CC=O.C[Mg]Br>>CC(O)C",
     "reagent_label": "1. RMgBr / 2. H⁺, H₂O",
     "conditions": "Wasserfreie Bedingungen zwingend erforderlich (Ether als Lösungsmittel)",
     "key_points": [
       "C-C-Kupplung",
       "Nucleophile Addition eines Carbanions"
-    ],
-    "tags": [
-      "Carbonyl",
-      "Grignard",
-      "C-C-Knüpfung"
     ]
   },
   {
