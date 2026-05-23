@@ -90,8 +90,11 @@ const ReactionRenderer = (() => {
       const rd = new SD.ReactionDrawer(REACTION_OPTS, Object.assign({}, MOLECULE_OPTS));
       rd.draw(reaction, svgEl, theme, null, textAbove, textBelow);
 
-      /* Auto-size: read viewBox that ReactionDrawer sets and apply as width/height */
-      _applyDimensions(svgEl);
+      /* smiles-drawer v2 leaves a viewBox that often clips arrow labels at
+         the top and text annotations on the sides. Recompute a tighter
+         bbox that includes the text overflow, and disable per-child
+         clipping by setting overflow="visible" on nested SVGs. */
+      _fitReactionViewBox(svgEl, REACTION_OPTS.fontSize, 4);
 
       return svgEl;
     } catch (err) {
@@ -103,13 +106,6 @@ const ReactionRenderer = (() => {
 
   /**
    * Convenience: append a new <svg> into a container element and draw the reaction.
-   *
-   * @param {string} reactionSmiles
-   * @param {string|HTMLElement} container  id or element to append the SVG into
-   * @param {'light'|'dark'} theme
-   * @param {string} textAbove
-   * @param {string} textBelow
-   * @returns {SVGElement|null}
    */
   function drawInto(reactionSmiles, container, theme = 'dark', textAbove = '{reagents}', textBelow = '') {
     const el = (typeof container === 'string' || container instanceof String)
@@ -132,14 +128,102 @@ const ReactionRenderer = (() => {
 
   /* ── Helpers ────────────────────────────────────────────────────── */
 
-  function _applyDimensions(svgEl) {
-    const vb = svgEl.getAttribute('viewBox');
-    if (!vb) return;
-    const parts = vb.trim().split(/\s+/).map(Number);
-    if (parts.length >= 4 && parts[2] > 0 && parts[3] > 0) {
-      svgEl.setAttribute('width',  parts[2]);
-      svgEl.setAttribute('height', parts[3]);
+  /**
+   * Recompute the SVG viewBox to encompass the *actual* rendered content,
+   * including <text> elements that overflow the declared dimensions of
+   * smiles-drawer's nested <svg> sub-elements.
+   *
+   * Why this exists: ReactionDrawer assembles a horizontal sequence of
+   * nested <svg> containers (one per molecule, plus arrow + labels). It
+   * sets the outer viewBox to the union of declared child box widths/
+   * heights — but arrow labels are positioned at negative y (above the
+   * arrow) and may also extend left/right of their declared container
+   * width because text width is hard to predict. This results in:
+   *   - top of arrow label clipped (negative y outside viewBox)
+   *   - sides of long labels clipped by per-child SVG bounds
+   *
+   * Fix: walk the children, estimate text overflow conservatively, and
+   * widen viewBox + remove per-child clipping.
+   */
+  function _fitReactionViewBox(svgEl, fontSize, padding) {
+    fontSize = fontSize || 12;
+    padding  = padding  != null ? padding : 4;
+
+    // 1) Disable clipping on every nested <svg> so labels extending past
+    //    their declared width/height are visible rather than cut off.
+    const nested = svgEl.querySelectorAll('svg');
+    for (let i = 0; i < nested.length; i++) {
+      nested[i].setAttribute('overflow', 'visible');
     }
+    svgEl.setAttribute('overflow', 'visible');
+
+    // 2) Approximate text width: Arial-ish average glyph ≈ 0.6 * fontSize.
+    //    Use 0.62 with extra padding to be safe across font fallbacks.
+    const TEXT_W = (s) => (s || '').length * fontSize * 0.62;
+
+    let minX =  Infinity, minY =  Infinity;
+    let maxX = -Infinity, maxY = -Infinity;
+
+    const children = svgEl.children;
+    for (let i = 0; i < children.length; i++) {
+      const c = children[i];
+      const cx = parseFloat(c.getAttribute('x')) || 0;
+      const cy = parseFloat(c.getAttribute('y')) || 0;
+      let   cw = parseFloat(c.getAttribute('width'));
+      let   ch = parseFloat(c.getAttribute('height'));
+      if (!isFinite(cw)) cw = 0;
+      if (!isFinite(ch)) ch = 0;
+
+      // Compute text overflow inside this child
+      let extraL = 0, extraR = 0, extraT = 0, extraB = 0;
+      const texts = c.querySelectorAll ? c.querySelectorAll('text') : [];
+      for (let j = 0; j < texts.length; j++) {
+        const t = texts[j];
+        const w = TEXT_W(t.textContent || '');
+        let tx = 0, ty = 0;
+        const tr = t.getAttribute('transform');
+        const m  = tr && tr.match(/translate\(\s*(-?[\d.]+)(?:[,\s]+(-?[\d.]+))?/);
+        if (m) {
+          tx = parseFloat(m[1]) || 0;
+          if (m[2] != null) ty = parseFloat(m[2]) || 0;
+        }
+        const anchor = t.getAttribute('text-anchor');
+        let left, right;
+        if (anchor === 'middle')   { left = tx - w/2; right = tx + w/2; }
+        else if (anchor === 'end') { left = tx - w;   right = tx; }
+        else                       { left = tx;       right = tx + w; }
+        // Baseline-aware vertical extent: most of the glyph is above the baseline.
+        const top = ty - fontSize * 0.85;
+        const bot = ty + fontSize * 0.35;
+        if (left  < extraL)        extraL = left;
+        if (right - cw > extraR)   extraR = right - cw;
+        if (top   < extraT)        extraT = top;
+        if (bot - ch > extraB)     extraB = bot - ch;
+      }
+
+      const cl = cx + Math.min(0,  extraL);
+      const cr = cx + Math.max(cw, cw + extraR);
+      const ct = cy + Math.min(0,  extraT);
+      const cb = cy + Math.max(ch, ch + extraB);
+
+      if (cl < minX) minX = cl;
+      if (ct < minY) minY = ct;
+      if (cr > maxX) maxX = cr;
+      if (cb > maxY) maxY = cb;
+    }
+
+    if (!isFinite(minX) || !isFinite(minY)) return; // no children
+
+    minX -= padding; minY -= padding;
+    maxX += padding; maxY += padding;
+    const W = maxX - minX, H = maxY - minY;
+
+    svgEl.setAttribute('viewBox', minX + ' ' + minY + ' ' + W + ' ' + H);
+    svgEl.setAttribute('width',  W);
+    svgEl.setAttribute('height', H);
+    // Keep CSS style in sync so in-DOM rendering matches.
+    svgEl.style.width  = W + 'px';
+    svgEl.style.height = H + 'px';
   }
 
   function _renderError(svgEl, msg) {
