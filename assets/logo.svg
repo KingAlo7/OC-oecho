@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="square" stroke-linejoin="miter">
+  <!-- Hexagon ring: flat top/bottom, pointy left/right -->
+  <polygon points="30,16 70,16 90,50 70,84 30,84 10,50"/>
+  <!-- Three substituent stubs (top-right, bottom-right, left) -->
+  <line x1="70" y1="16" x2="82" y2="0"/>
+  <line x1="70" y1="84" x2="82" y2="100"/>
+  <line x1="10" y1="50" x2="2" y2="50"/>
+  <!-- Double-bond mark inside the bottom-right edge, parallel and inset -->
+  <line x1="70" y1="70" x2="78" y2="56"/>
+</svg>
