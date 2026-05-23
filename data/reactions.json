@@ -696,6 +696,7 @@
     "tags": [],
     "reaction_smiles": "C12OCOC1=CC=C(/C=C/C=C/C(N1CCCCC1)=O)C=2>>C12OCOC1=CC=C(C=O)C=2",
     "reagent_label": "O3",
+    "conditions": "Garage",
     "solvent": "DCM"
   }
 ]
