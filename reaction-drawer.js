@@ -1,7 +1,10 @@
 /**
- * ReactionRenderer — thin wrapper around smiles-drawer v2 ReactionDrawer.
+ * ReactionRenderer — thin wrapper around the OC-oecho patched smiles-drawer build.
  *
- * Requires smiles-drawer >= 2.x loaded on the page (exposes window.SmilesDrawer).
+ * Requires the patched smiles-drawer bundle loaded from
+ * ./vendor/smiles-drawer.min.js (exposes window.SmilesDrawer). The patch makes
+ * the arrow auto-grow to fit single-line reagent text — i.e. the library will
+ * NEVER wrap reagent labels to multiple rows above the arrow.
  *
  * Usage:
  *   ReactionRenderer.draw('CCO.Cl>>ClCC.O', 'my-svg-id', 'dark');
@@ -9,16 +12,11 @@
  *
  *   // Compact mode (for LaTeX/PDF export — tighter spacing, smaller font):
  *   ReactionRenderer.draw(smiles, svgEl, 'light', label, '', { compact: true });
- *
- * Reaction SMILES format:
- *   reactants > reagents > products
- *   e.g.  'CC(C)(C)Br>H2O>CC(C)(C)OH'
- *         'C=C.Br2>>BrCCBr'           (empty reagent field)
  */
 
 const ReactionRenderer = (() => {
 
-  /* ── Default smiles-drawer options for the web UI ─────────────── */
+  /* Default smiles-drawer options for the web UI. */
   const REACTION_OPTS_DEFAULT = {
     scale:      1,
     spacing:    14,
@@ -28,19 +26,25 @@ const ReactionRenderer = (() => {
     arrow: { length: 70, headSize: 7, thickness: 1.5, margin: 4 }
   };
 
-  /* ── Compact options used for the LaTeX PNG export.
-        Goal: thinner arrow, smaller label font, shorter horizontal
-        spread so the rendered structure fits a 2-cm-tall row in a
-        50% column. ──────────────────────────────────────────────── */
+  /* Compact options for the LaTeX PNG export.
+     Arrow.length here is the *minimum* — the patched ReactionDrawer auto-grows
+     it to fit the actual reagent label width, so this stays as a sensible
+     lower bound for short labels like "H2O". */
   const REACTION_OPTS_COMPACT = {
     scale:      0.85,
     spacing:    8,
-    fontSize:   9,
+    fontSize:   8,
     fontFamily: 'Arial, Helvetica, sans-serif',
     plus:  { size: 6,  thickness: 1.2 },
-    arrow: { length: 42, headSize: 5, thickness: 1.2, margin: 2 }
+    arrow: { length: 50, headSize: 5, thickness: 1.2, margin: 2 }
   };
 
+  /* Molecule rendering options.
+     For compact (export) mode we PIN bondLength to a fixed value so every
+     reaction draws atoms at the same physical scale — this is what #1
+     ("consistent scale, not size") requires. The LaTeX side then uses
+     \includegraphics[scale=...] with no width/height clamping, so a small
+     molecule produces a small image and a large molecule a large image. */
   const MOLECULE_OPTS_DEFAULT = {
     width:  200,
     height: 200,
@@ -53,11 +57,15 @@ const ReactionRenderer = (() => {
     width:  140,
     height: 140,
     scale:  0.85,
+    bondLength: 15,           // fixed across all export images
+    bondThickness: 0.7,
     compactDrawing: true,
-    explicitHydrogens: false
+    explicitHydrogens: false,
+    fontSizeLarge: 5.5,
+    fontSizeSmall: 3.5
   };
 
-  /* ── Public API ─────────────────────────────────────────────────── */
+  /* Public API ─────────────────────────────────────────────────────── */
 
   /**
    * Draw a reaction SMILES into an SVG element.
@@ -80,21 +88,18 @@ const ReactionRenderer = (() => {
       return null;
     }
     if (!SD.ReactionDrawer || !SD.ReactionParser) {
-      console.error('ReactionRenderer: smiles-drawer >= 2.x required (ReactionDrawer/ReactionParser not present)');
+      console.error('ReactionRenderer: smiles-drawer 2.x ReactionDrawer/ReactionParser not present');
       return null;
     }
 
-    /* Resolve target to an SVG element */
     let svgEl = (typeof target === 'string' || target instanceof String)
       ? document.getElementById(String(target))
       : target;
-
     if (!svgEl) {
       console.error('ReactionRenderer: target element not found:', target);
       return null;
     }
 
-    /* Parse the reaction SMILES */
     let reaction;
     try {
       reaction = SD.ReactionParser.parse(reactionSmiles);
@@ -104,15 +109,15 @@ const ReactionRenderer = (() => {
       return null;
     }
 
-    /* Pick option profile + suppress textBelow in compact mode (no stacked
-       two-line label above the arrow — this is the key visual win for the
-       PDF export over the web rendering). */
     const reactionOpts  = compact ? REACTION_OPTS_COMPACT  : REACTION_OPTS_DEFAULT;
     const moleculeOpts  = compact ? MOLECULE_OPTS_COMPACT  : MOLECULE_OPTS_DEFAULT;
-    const labelAbove    = textAbove;
-    const labelBelow    = compact ? '' : textBelow;
+    /* Flatten any embedded newlines in the label — the patched
+       writeText never wraps, but \n in source would still produce
+       multiple tspans. */
+    const flatten = (s) => (s || '').replace(/\s*\n\s*/g, ', ').replace(/\s+/g, ' ').trim();
+    const labelAbove = flatten(textAbove);
+    const labelBelow = compact ? '' : flatten(textBelow);
 
-    /* Draw into the SVG element */
     try {
       const rd = new SD.ReactionDrawer(reactionOpts, Object.assign({}, moleculeOpts));
       rd.draw(reaction, svgEl, theme, null, labelAbove, labelBelow);
@@ -138,54 +143,36 @@ const ReactionRenderer = (() => {
     const el = (typeof container === 'string' || container instanceof String)
       ? document.getElementById(String(container))
       : container;
-
     if (!el) {
       console.error('ReactionRenderer.drawInto: container not found:', container);
       return null;
     }
-
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
     svg.style.display = 'block';
     svg.style.margin  = '0 auto';
     el.appendChild(svg);
-
     return draw(reactionSmiles, svg, theme, textAbove, textBelow, opts);
   }
 
-  /* ── Helpers ────────────────────────────────────────────────────── */
+  /* Helpers ─────────────────────────────────────────────────────────── */
 
   /**
-   * Recompute the SVG viewBox to encompass the *actual* rendered content,
+   * Recompute the SVG viewBox to encompass the actual rendered content,
    * including <text> elements that overflow the declared dimensions of
-   * smiles-drawer's nested <svg> sub-elements.
-   *
-   * Why this exists: ReactionDrawer assembles a horizontal sequence of
-   * nested <svg> containers (one per molecule, plus arrow + labels). It
-   * sets the outer viewBox to the union of declared child box widths/
-   * heights — but arrow labels are positioned at negative y (above the
-   * arrow) and may also extend left/right of their declared container
-   * width because text width is hard to predict. This results in:
-   *   - top of arrow label clipped (negative y outside viewBox)
-   *   - sides of long labels clipped by per-child SVG bounds
-   *
-   * Fix: walk the children, estimate text overflow conservatively, and
-   * widen viewBox + remove per-child clipping.
+   * smiles-drawer's nested <svg> sub-elements. See git history for the
+   * original rationale (arrow labels were getting clipped at top).
    */
   function _fitReactionViewBox(svgEl, fontSize, padding) {
     fontSize = fontSize || 12;
     padding  = padding  != null ? padding : 4;
 
-    // 1) Disable clipping on every nested <svg> so labels extending past
-    //    their declared width/height are visible rather than cut off.
     const nested = svgEl.querySelectorAll('svg');
     for (let i = 0; i < nested.length; i++) {
       nested[i].setAttribute('overflow', 'visible');
     }
     svgEl.setAttribute('overflow', 'visible');
 
-    // 2) Approximate text width: Arial-ish average glyph ≈ 0.6 * fontSize.
-    //    Use 0.62 with extra padding to be safe across font fallbacks.
     const TEXT_W = (s) => (s || '').length * fontSize * 0.62;
 
     let minX =  Infinity, minY =  Infinity;
@@ -201,7 +188,6 @@ const ReactionRenderer = (() => {
       if (!isFinite(cw)) cw = 0;
       if (!isFinite(ch)) ch = 0;
 
-      // Compute text overflow inside this child
       let extraL = 0, extraR = 0, extraT = 0, extraB = 0;
       const texts = c.querySelectorAll ? c.querySelectorAll('text') : [];
       for (let j = 0; j < texts.length; j++) {
@@ -219,7 +205,6 @@ const ReactionRenderer = (() => {
         if (anchor === 'middle')   { left = tx - w/2; right = tx + w/2; }
         else if (anchor === 'end') { left = tx - w;   right = tx; }
         else                       { left = tx;       right = tx + w; }
-        // Baseline-aware vertical extent: most of the glyph is above the baseline.
         const top = ty - fontSize * 0.85;
         const bot = ty + fontSize * 0.35;
         if (left  < extraL)        extraL = left;
@@ -239,7 +224,7 @@ const ReactionRenderer = (() => {
       if (cb > maxY) maxY = cb;
     }
 
-    if (!isFinite(minX) || !isFinite(minY)) return; // no children
+    if (!isFinite(minX) || !isFinite(minY)) return;
 
     minX -= padding; minY -= padding;
     maxX += padding; maxY += padding;
@@ -248,7 +233,6 @@ const ReactionRenderer = (() => {
     svgEl.setAttribute('viewBox', minX + ' ' + minY + ' ' + W + ' ' + H);
     svgEl.setAttribute('width',  W);
     svgEl.setAttribute('height', H);
-    // Keep CSS style in sync so in-DOM rendering matches.
     svgEl.style.width  = W + 'px';
     svgEl.style.height = H + 'px';
   }
