@@ -10,6 +10,14 @@
  *   // Compact mode (for LaTeX/PDF export — tighter spacing, smaller font):
  *   ReactionRenderer.draw(smiles, svgEl, 'light', label, '', { compact: true });
  *
+ *   // Compact mode with custom overrides (used by the export page sliders
+ *   // for live-tunable bondLength, bondThickness, arrow length, etc.):
+ *   ReactionRenderer.draw(smiles, svgEl, 'light', label, '', {
+ *     compact: true,
+ *     reactionOpts: { arrow: { length: 60 } },     // shallow-merged into base
+ *     moleculeOpts: { bondLength: 28, bondThickness: 1.3 }
+ *   });
+ *
  * Reaction SMILES format:
  *   reactants > reagents > products
  *   e.g.  'CC(C)(C)Br>H2O>CC(C)(C)OH'
@@ -70,6 +78,24 @@ const ReactionRenderer = (() => {
     explicitHydrogens: false
   };
 
+  /* Shallow-merge override into base, one level deep. Nested objects like
+     `arrow: { length, headSize, ... }` are merged property-by-property so
+     overriding just `arrow.length` doesn't clobber `arrow.headSize` etc. */
+  function _mergeOpts(base, override) {
+    if (!override) return Object.assign({}, base);
+    const out = Object.assign({}, base);
+    for (const key of Object.keys(override)) {
+      const ov = override[key];
+      if (ov && typeof ov === 'object' && !Array.isArray(ov) &&
+          base[key] && typeof base[key] === 'object' && !Array.isArray(base[key])) {
+        out[key] = Object.assign({}, base[key], ov);
+      } else {
+        out[key] = ov;
+      }
+    }
+    return out;
+  }
+
   /* ── Public API ─────────────────────────────────────────────────── */
 
   /**
@@ -80,7 +106,12 @@ const ReactionRenderer = (() => {
    * @param {'light'|'dark'} theme  default 'dark'
    * @param {string} textAbove  label above the arrow (default: reagents from SMILES)
    * @param {string} textBelow  label below the arrow
-   * @param {object} [opts]  optional rendering tweaks: { compact: boolean }
+   * @param {object} [opts]  optional rendering tweaks:
+   *   - compact:        boolean — use compact (export) base profile
+   *   - reactionOpts:   partial reaction options to override the base profile
+   *                     (e.g. { arrow: { length: 60 }, fontSize: 11 })
+   *   - moleculeOpts:   partial molecule options to override the base profile
+   *                     (e.g. { bondLength: 28, bondThickness: 1.3 })
    * @returns {SVGElement|null}
    */
   function draw(reactionSmiles, target, theme = 'dark', textAbove = '{reagents}', textBelow = '', opts) {
@@ -119,11 +150,14 @@ const ReactionRenderer = (() => {
 
     /* Pick option profile + suppress textBelow in compact mode (no stacked
        two-line label above the arrow — this is the key visual win for the
-       PDF export over the web rendering). */
-    const reactionOpts  = compact ? REACTION_OPTS_COMPACT  : REACTION_OPTS_DEFAULT;
-    const moleculeOpts  = compact ? MOLECULE_OPTS_COMPACT  : MOLECULE_OPTS_DEFAULT;
-    const labelAbove    = textAbove;
-    const labelBelow    = compact ? '' : textBelow;
+       PDF export over the web rendering). Apply caller overrides on top
+       of the chosen base profile. */
+    const baseReactionOpts  = compact ? REACTION_OPTS_COMPACT  : REACTION_OPTS_DEFAULT;
+    const baseMoleculeOpts  = compact ? MOLECULE_OPTS_COMPACT  : MOLECULE_OPTS_DEFAULT;
+    const reactionOpts      = _mergeOpts(baseReactionOpts, opts.reactionOpts);
+    const moleculeOpts      = _mergeOpts(baseMoleculeOpts, opts.moleculeOpts);
+    const labelAbove        = textAbove;
+    const labelBelow        = compact ? '' : textBelow;
 
     /* Draw into the SVG element */
     try {
