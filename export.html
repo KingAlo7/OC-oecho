@@ -233,14 +233,21 @@ const opts = {
   inclTOC: false
 };
 
-/* Consistent SCALE, not size. The density slider sets a fixed
-   \includegraphics scale that applies to every reaction image.
-   Values scaled DOWN by 30% from the previous round.
-   compact: 0.45 -> 0.32, normal: 0.60 -> 0.42, spacious: 0.78 -> 0.55 */
+/* Image scale (\includegraphics scale value).
+ *
+ * Sizing note: the PNGs are rasterized at sc=5 supersampling in
+ * reactionToPng() so their pixel dimensions are 5x the source SVG's
+ * viewBox. pdflatex computes the natural display size from those
+ * pixel dimensions at the default 72 DPI, so the previous 0.32 value
+ * — which would have been fine at the old sc=2 — ended up much too
+ * large after the supersampling bump.
+ *
+ * These values are tuned for the current sc=5 PNGs. If sc is changed,
+ * multiply or divide here proportionally to keep on-page size stable. */
 const DENSITY_SCALE = {
-  compact:  '0.32',
-  normal:   '0.42',
-  spacious: '0.55'
+  compact:  '0.12',
+  normal:   '0.16',
+  spacious: '0.21'
 };
 
 /* Aspect-ratio threshold: if a reaction's drawing is wider than this
@@ -633,7 +640,7 @@ ${twocol ? '\\end{multicols}' : ''}
 /* Render one reaction to a PNG (base64) using the compact profile.
  *
  * Sharpness: rasterizes at sc=5 (5x supersampling). Combined with the
- * LaTeX \includegraphics scale of ~0.32-0.55, the final pixel density on
+ * LaTeX \includegraphics scale of ~0.12-0.21, the final pixel density on
  * the rendered PDF page sits comfortably above 200 DPI even at the most
  * shrunk-down setting — sharp on screen and in print.
  *
@@ -685,7 +692,7 @@ function reactionToPng(r) {
     img.onload = () => {
       // sc=5 supersampling. Was sc=2; the bump makes the PNG resolve
       // at 5x the SVG's natural viewBox dimensions, which is plenty
-      // to stay crisp through \includegraphics[scale=0.32].
+      // to stay crisp through \includegraphics[scale].
       const sc = 5;
       const canvas = document.createElement('canvas');
       canvas.width = w*sc; canvas.height = h*sc;
