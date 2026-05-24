@@ -173,12 +173,8 @@ select.fi option{background:var(--surface);color:var(--text);}
 <header>
   <div class="brand">
     <div class="brand-logo">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="square" stroke-linejoin="miter">
-        <polygon points="30,16 70,16 90,50 70,84 30,84 10,50"/>
-        <line x1="70" y1="16" x2="82" y2="0"/>
-        <line x1="70" y1="84" x2="82" y2="100"/>
-        <line x1="10" y1="50" x2="2" y2="50"/>
-        <line x1="70" y1="70" x2="78" y2="56"/>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="14 52 174 187">
+        <path fill="#ff0000" d="M 153.27953,54.242684 141.3862,76.472852 73.360897,76.250643 39.904024,139.16308 16.228467,139.27419 v 13.11599 l 23.452832,0.22273 34.124015,62.80081 68.025306,0.11111 11.33781,21.56406 10.67067,-6.55826 -11.67113,-22.11958 33.79071,-62.80082 -34.12402,-62.801331 12.11554,-21.897371 z m -12.0804,35.318258 30.29893,56.472008 -30.37747,56.07874 -60.322938,0.1571 -30.220377,-56.35367 30.220377,-56.27563 z m 13.04727,56.216728 -22.51801,41.95092 3.81166,2.31872 22.518,-41.87289 c 0,0 2.9e-4,-0.0192 -3.81165,-2.39675 z"/>
       </svg>
     </div>
     <span class="brand-name">OC Referenz</span>
@@ -396,11 +392,13 @@ function buildForm(r) {
     </div>
     <div class="smi-prev" id="smi-prev"><div class="smi-ph">SMILES oben eingeben zur Vorschau</div></div>
     <div class="row2" style="margin-top:0.75rem">
-      <div class="field"><label>Reagenzbeschriftung <small style="color:var(--muted2)">(über Pfeil)</small></label>
-        <input class="fi" id="f-rl" value="${x(r.reagent_label||'')}" placeholder="KOtBu / THF" oninput="mu();schedP()"></div>
-      <div class="field"><label>Allgemeines Schema <small style="color:var(--muted2)">(Textfallback)</small></label>
-        <input class="fi" id="f-gs" value="${x(r.general_scheme||'')}" placeholder="R-X → R-OH" oninput="mu()"></div>
+      <div class="field"><label>Reagenzbeschriftung <small style="color:var(--muted2)">(über Pfeil — LaTeX: <code>H_2SO_4</code>, <code>[Ag(NH_3)_2]^{1+}</code>)</small></label>
+        <input class="fi" id="f-rl" value="${x(r.reagent_label||'')}" placeholder="H_2SO_4 / Δ" oninput="mu();schedP()"></div>
+      <div class="field"><label>Beschriftung unter Pfeil <small style="color:var(--muted2)">(optional)</small></label>
+        <input class="fi" id="f-rlb" value="${x(r.reagent_label_below||'')}" placeholder="Δ / 80 °C" oninput="mu();schedP()"></div>
     </div>
+    <div class="field" style="margin-top:0.75rem"><label>Allgemeines Schema <small style="color:var(--muted2)">(Textfallback)</small></label>
+      <input class="fi" id="f-gs" value="${x(r.general_scheme||'')}" placeholder="R-X → R-OH" oninput="mu()"></div>
   </div>
 
   <div class="fsec">
@@ -431,7 +429,7 @@ function buildForm(r) {
   </div>
   <div class="helper-text">„Übernehmen" speichert lokal im Browser. Im Server-Modus wird zusätzlich data/reactions.json geschrieben. Zur dauerhaften Veröffentlichung auf GitHub Pages: <strong>Commit &amp; Push</strong> Tab.</div>`;
 
-  if (r.reaction_smiles) drawP(r.reaction_smiles, r.reagent_label);
+  if (r.reaction_smiles) drawP(r.reaction_smiles, r.reagent_label, r.reagent_label_below);
 }
 
 function catToggle(sel) {
@@ -463,15 +461,15 @@ function addKP() { const l=document.getElementById('kp-list'); const i=l.childre
 function rmKP(i) { document.getElementById('kp-list').children[i]?.remove(); mu(); }
 function getKPs() { return [...document.querySelectorAll('#kp-list input')].map(i=>i.value.trim()).filter(Boolean); }
 
-let pt; function schedP(){clearTimeout(pt);pt=setTimeout(()=>{const s=document.getElementById('f-smi')?.value?.trim();const l=document.getElementById('f-rl')?.value?.trim();if(s)drawP(s,l);else{const b=document.getElementById('smi-prev');if(b)b.innerHTML='<div class="smi-ph">SMILES oben eingeben zur Vorschau</div>';}},500);}
-function drawP(smiles,label){const b=document.getElementById('smi-prev');if(!b)return;b.innerHTML='<svg id="psv" xmlns="http://www.w3.org/2000/svg"></svg>';requestAnimationFrame(()=>{const svg=document.getElementById('psv');if(svg)ReactionRenderer.draw(smiles,svg,'light',label||'{reagents}');});}
+let pt; function schedP(){clearTimeout(pt);pt=setTimeout(()=>{const s=document.getElementById('f-smi')?.value?.trim();const l=document.getElementById('f-rl')?.value?.trim();const lb=document.getElementById('f-rlb')?.value?.trim();if(s)drawP(s,l,lb);else{const b=document.getElementById('smi-prev');if(b)b.innerHTML='<div class="smi-ph">SMILES oben eingeben zur Vorschau</div>';}},500);}
+function drawP(smiles,label,labelBelow){const b=document.getElementById('smi-prev');if(!b)return;b.innerHTML='<svg id="psv" xmlns="http://www.w3.org/2000/svg"></svg>';requestAnimationFrame(()=>{const svg=document.getElementById('psv');if(svg)ReactionRenderer.draw(smiles,svg,'light',label||'{reagents}',labelBelow||'');});}
 
 function collect() {
   const r={}, g=id=>document.getElementById(id)?.value?.trim(), s=(k,v)=>{if(v)r[k]=v;};
   r.id=g('f-id'); r.category=getCat(); r.name=g('f-name');
   s('subtitle',g('f-sub')); s('reaktionstyp',g('f-rtyp')); s('transformation',g('f-trans'));
   r.tags=getTags();
-  s('reaction_smiles',g('f-smi')); s('reagent_label',g('f-rl')); s('general_scheme',g('f-gs'));
+  s('reaction_smiles',g('f-smi')); s('reagent_label',g('f-rl')); s('reagent_label_below',g('f-rlb')); s('general_scheme',g('f-gs'));
   s('conditions',g('f-cond')); s('substrate_scope',g('f-scope')); s('stereochemistry',g('f-stereo'));
   s('kinetics',g('f-kin')); s('solvent',g('f-solv'));
   const kps=getKPs(); if(kps.length) r.key_points=kps;

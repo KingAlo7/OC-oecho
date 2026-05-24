@@ -47,6 +47,10 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 @media(max-width:800px){.layout{grid-template-columns:1fr;}}
 
 .options-panel{background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:1.5rem;}
+/* Keep flex children at natural size — without this, when total content
+   exceeds the panel viewport, flex shrinks the tallest item (the advanced
+   panel) to 0 instead of letting the panel scroll. */
+.options-panel > *{flex-shrink:0;}
 .options-panel::-webkit-scrollbar{width:6px;}
 .options-panel::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
 
@@ -167,12 +171,8 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 <header>
   <div class="brand">
     <div class="brand-logo">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="square" stroke-linejoin="miter">
-        <polygon points="30,16 70,16 90,50 70,84 30,84 10,50"/>
-        <line x1="70" y1="16" x2="82" y2="0"/>
-        <line x1="70" y1="84" x2="82" y2="100"/>
-        <line x1="10" y1="50" x2="2" y2="50"/>
-        <line x1="70" y1="70" x2="78" y2="56"/>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="14 52 174 187">
+        <path fill="#ff0000" d="M 153.27953,54.242684 141.3862,76.472852 73.360897,76.250643 39.904024,139.16308 16.228467,139.27419 v 13.11599 l 23.452832,0.22273 34.124015,62.80081 68.025306,0.11111 11.33781,21.56406 10.67067,-6.55826 -11.67113,-22.11958 33.79071,-62.80082 -34.12402,-62.801331 12.11554,-21.897371 z m -12.0804,35.318258 30.29893,56.472008 -30.37747,56.07874 -60.322938,0.1571 -30.220377,-56.35367 30.220377,-56.27563 z m 13.04727,56.216728 -22.51801,41.95092 3.81166,2.31872 22.518,-41.87289 c 0,0 2.9e-4,-0.0192 -3.81165,-2.39675 z"/>
       </svg>
     </div>
     <span class="brand-name">OC Referenz</span>
@@ -206,24 +206,6 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 <div class="layout">
 
   <div class="options-panel">
-
-    <div class="opt-section">
-      <div class="opt-title">Schriftgröße</div>
-      <div class="radio-group" id="font-group">
-        <div class="radio-btn" data-val="10">10 pt</div>
-        <div class="radio-btn on" data-val="11">11 pt</div>
-        <div class="radio-btn" data-val="12">12 pt</div>
-      </div>
-    </div>
-
-    <div class="opt-section">
-      <div class="opt-title">Strukturgröße</div>
-      <div class="radio-group" id="density-group">
-        <div class="radio-btn on" data-val="compact">Kompakt</div>
-        <div class="radio-btn" data-val="normal">Standard</div>
-        <div class="radio-btn" data-val="spacious">Großzügig</div>
-      </div>
-    </div>
 
     <div class="opt-section">
       <div class="opt-title">Abschnitte</div>
@@ -285,9 +267,9 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
           <div class="slider-row">
             <div class="slider-label-row">
               <span class="slider-label">Bildmaßstab</span>
-              <span class="slider-value" id="v-imgScale">0.080</span>
+              <span class="slider-value" id="v-imgScale">0.130</span>
             </div>
-            <input type="range" class="slider" id="s-imgScale" min="0.03" max="0.25" step="0.005" value="0.08">
+            <input type="range" class="slider" id="s-imgScale" min="0.03" max="0.25" step="0.005" value="0.13">
           </div>
           <div class="slider-row" style="margin-top:0.7rem">
             <div class="slider-label-row">
@@ -298,10 +280,10 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
           </div>
           <div class="slider-row" style="margin-top:0.7rem">
             <div class="slider-label-row">
-              <span class="slider-label">Bindungslänge</span>
-              <span class="slider-value" id="v-bondLength">24 px</span>
+              <span class="slider-label">Heteroatom-Schriftgröße</span>
+              <span class="slider-value" id="v-atomFontSize">9.0</span>
             </div>
-            <input type="range" class="slider" id="s-bondLength" min="14" max="32" step="1" value="24">
+            <input type="range" class="slider" id="s-atomFontSize" min="2" max="16" step="0.5" value="9">
           </div>
           <div class="slider-row" style="margin-top:0.7rem">
             <div class="slider-label-row">
@@ -309,13 +291,6 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
               <span class="slider-value" id="v-bondThickness">1.0</span>
             </div>
             <input type="range" class="slider" id="s-bondThickness" min="0.5" max="2.0" step="0.1" value="1.0">
-          </div>
-          <div class="slider-row" style="margin-top:0.7rem">
-            <div class="slider-label-row">
-              <span class="slider-label">Pfeillänge</span>
-              <span class="slider-value" id="v-arrowLength">42 px</span>
-            </div>
-            <input type="range" class="slider" id="s-arrowLength" min="30" max="80" step="2" value="42">
           </div>
         </div>
 
@@ -411,17 +386,15 @@ const DEFAULTS = {
   fontPt:            11,
   lineSpacing:       1.0,
   pageMargin:        1.8,
-  imgScale:          0.08,
+  imgScale:          0.13,
   supersample:       5,
-  bondLength:        24,
+  atomFontSize:      9,
   bondThickness:     1.0,
-  arrowLength:       42,
   sideBySideAspect:  2.6,
   imgColPct:         50
 };
 const opts = Object.assign({}, DEFAULTS);
 
-const DENSITY_PRESETS = { compact: 0.08, normal: 0.11, spacious: 0.14 };
 const pngGeometry = new Map();
 
 const SLIDERS = [
@@ -430,9 +403,8 @@ const SLIDERS = [
   { key: 'pageMargin',       sId: 's-pageMargin',       vId: 'v-pageMargin',       fmt: v => v.toFixed(1)+' cm',prec: 1 },
   { key: 'imgScale',         sId: 's-imgScale',         vId: 'v-imgScale',         fmt: v => v.toFixed(3),      prec: 3 },
   { key: 'supersample',      sId: 's-supersample',      vId: 'v-supersample',      fmt: v => v + '×',           prec: 0 },
-  { key: 'bondLength',       sId: 's-bondLength',       vId: 'v-bondLength',       fmt: v => v + ' px',         prec: 0 },
+  { key: 'atomFontSize',     sId: 's-atomFontSize',     vId: 'v-atomFontSize',     fmt: v => v.toFixed(1),      prec: 1 },
   { key: 'bondThickness',    sId: 's-bondThickness',    vId: 'v-bondThickness',    fmt: v => v.toFixed(1),      prec: 1 },
-  { key: 'arrowLength',      sId: 's-arrowLength',      vId: 'v-arrowLength',      fmt: v => v + ' px',         prec: 0 },
   { key: 'sideBySideAspect', sId: 's-sideBySideAspect', vId: 'v-sideBySideAspect', fmt: v => v.toFixed(1),      prec: 1 },
   { key: 'imgColPct',        sId: 's-imgColPct',        vId: 'v-imgColPct',        fmt: v => v + ' %',          prec: 0 }
 ];
@@ -482,18 +454,8 @@ function safeRun(name, fn) {
 
 /* ─── Wire the basic radio groups and checkboxes ─── */
 function wireBasicButtons() {
-  bindRadioGroup('font-group', v => {
-    opts.fontPt = parseFloat(v);
-    syncSliderFromOpts('fontPt');
-    schedulePreview();
-  });
   bindRadioGroup('layout-group', v => {
     opts.layout = v;
-    schedulePreview();
-  });
-  bindRadioGroup('density-group', v => {
-    opts.imgScale = DENSITY_PRESETS[v] || DENSITY_PRESETS.compact;
-    syncSliderFromOpts('imgScale');
     schedulePreview();
   });
   document.querySelectorAll('.check-btn').forEach(btn => {
@@ -578,12 +540,6 @@ function resetAdvanced() {
     const slider = document.getElementById(s.sId);
     if (slider) slider.value = DEFAULTS[s.key];
     updateSliderDisplay(s);
-  });
-  document.querySelectorAll('#font-group .radio-btn').forEach(b => {
-    b.classList.toggle('on', parseFloat(b.dataset.val) === DEFAULTS.fontPt);
-  });
-  document.querySelectorAll('#density-group .radio-btn').forEach(b => {
-    b.classList.toggle('on', b.dataset.val === 'compact');
   });
   schedulePreview();
 }
@@ -679,8 +635,8 @@ function redrawPreview() {
     }
     ReactionRenderer.draw(
       r.reaction_smiles, svg, 'light',
-      r.reagent_label || '', '',
-      buildRendererOverrides()
+      r.reagent_label || '', r.reagent_label_below || '',
+      buildRendererOverrides(r)
     );
   } catch (e) {
     if (myToken === previewToken) {
@@ -709,15 +665,16 @@ function redrawPreview() {
   }
 }
 
+/* Arrow length is now handled by reaction-drawer's _autoArrowLength
+   helper — every caller that doesn't explicitly override gets dynamic
+   sizing based on label text. We just pass compact + atom-font opts. */
 function buildRendererOverrides() {
   return {
     compact: true,
-    reactionOpts: {
-      arrow: { length: opts.arrowLength }
-    },
     moleculeOpts: {
-      bondLength:    opts.bondLength,
-      bondThickness: opts.bondThickness
+      bondThickness: opts.bondThickness,
+      fontSizeLarge: opts.atomFontSize,
+      fontSizeSmall: opts.atomFontSize * 0.7
     }
   };
 }
@@ -865,8 +822,38 @@ function reactionBlock(r, withImage) {
   const imgColFrac = (opts.imgColPct / 100).toFixed(2);
   const kpColFrac  = ((98 - opts.imgColPct) / 100).toFixed(2);
 
+  /* Tight side-by-side fit check.
+     When the rendered image is narrower than half the text column, use a
+     tight asymmetric minipage (image column = actual image width + small
+     padding; key-point column = the rest). Reliable alternative to
+     wrapfigure, which bleeds its left-float into subsequent paragraphs
+     (table, notes, next reaction's header) when the wrapped text is
+     shorter than the image — visually identical save-space outcome
+     when kp text reaches image height, without the bleed.
+     PNG px maps to bp at 72 DPI in \includegraphics; each viewBox unit
+     becomes `supersample` actual pixels in the PNG file. */
+  let useTightSplit = false;
+  let imgFracTight = imgColFrac;
+  let kpFracTight  = ((98 - opts.imgColPct) / 100).toFixed(2);
+  if (withImage && geo && kpItems) {
+    const imgWidthCm  = geo.w * opts.supersample * opts.imgScale * 2.54 / 72;
+    const textwidthCm = 21 - 2 * opts.pageMargin;
+    if (imgWidthCm < 0.5 * textwidthCm) {
+      useTightSplit = true;
+      imgFracTight = Math.min(0.60, (imgWidthCm / textwidthCm) + 0.03).toFixed(3);
+      kpFracTight  = (1 - parseFloat(imgFracTight) - 0.02).toFixed(3);
+    }
+  }
+
   let bodyTex;
-  if (drawingTex && kpTex && !tooWideForSideBySide) {
+  if (useTightSplit) {
+    bodyTex =
+      '\\noindent\\begin{minipage}[t]{' + imgFracTight + '\\linewidth}\\vspace{0pt}\\centering\n' +
+      '\\adjustbox{max width=\\linewidth}{\\includegraphics[scale=\\rxnimgscale]{img/' + r.id + '.png}}\n' +
+      '\\end{minipage}\\hfill\\begin{minipage}[t]{' + kpFracTight + '\\linewidth}\\vspace{0pt}\n' +
+      '\\small ' + kpTex + '\n' +
+      '\\end{minipage}\\par';
+  } else if (drawingTex && kpTex && !tooWideForSideBySide) {
     bodyTex =
       '\\noindent\\begin{minipage}[t]{' + imgColFrac + '\\linewidth}\\vspace{0pt}\\centering\n' +
       drawingTex + '\n' +
@@ -968,22 +955,32 @@ linespreadCmd + '\n\n' +
 '%%-- Bildmaßstab (Slider) --------------------------------------\n' +
 '\\newcommand{\\rxnimgscale}{' + opts.imgScale.toFixed(3) + '}\n\n' +
 '%%-- Kategorie-Überschrift -------------------------------------\n' +
+'%% begingroup + force-zero left/right skip and parindent so a stray\n' +
+'%% leftover from preceding content (list, tabular p-column, etc.) can\n' +
+'%% never shrink or shift the colored band. \\linewidth stays correct\n' +
+'%% under multicols.\n' +
 '\\newcommand{\\rxnsection}[1]{%\n' +
-'  \\par\\smallskip\\noindent\\colorbox{ocaccent}{%\n' +
+'  \\par\\smallskip%\n' +
+'  \\begingroup\\leftskip=0pt\\rightskip=0pt\\parindent=0pt%\n' +
+'  \\noindent\\colorbox{ocaccent}{%\n' +
 '    \\begin{minipage}{\\dimexpr\\linewidth-2\\fboxsep\\relax}%\n' +
 '      {\\color{white}\\bfseries #1}%\n' +
-'    \\end{minipage}}\\par\\smallskip%\n' +
+'    \\end{minipage}}\\par%\n' +
+'  \\endgroup\\smallskip%\n' +
 '  \\phantomsection\\addcontentsline{toc}{section}{#1}%\n' +
 '}\n\n' +
 '%%-- Reaktions-Header ------------------------------------------\n' +
 '\\newcommand{\\rxnheader}[3]{%\n' +
-'  \\par\\smallskip\\noindent\\colorbox{ocaccent!10}{%\n' +
+'  \\par\\smallskip%\n' +
+'  \\begingroup\\leftskip=0pt\\rightskip=0pt\\parindent=0pt%\n' +
+'  \\noindent\\colorbox{ocaccent!10}{%\n' +
 '    \\parbox{\\dimexpr\\linewidth-2\\fboxsep\\relax}{%\n' +
 '      \\bfseries #1\\hfill\n' +
 '      {\\itshape\\color{ocmuted}\\small #2}\\hspace{1.4em}%\n' +
 '      {\\itshape\\color{ocmuted}\\small #3}%\n' +
 '    }%\n' +
-'  }\\par\\nopagebreak\\smallskip%\n' +
+'  }\\par%\n' +
+'  \\endgroup\\nopagebreak\\smallskip%\n' +
 '  \\phantomsection\\addcontentsline{toc}{subsection}{#1}%\n' +
 '}\n\n' +
 '%%-- Notizen-Box -----------------------------------------------\n' +
@@ -1035,8 +1032,8 @@ function reactionToPng(r) {
     try {
       ReactionRenderer.draw(
         r.reaction_smiles, svg, 'light',
-        r.reagent_label || '', '',
-        buildRendererOverrides()
+        r.reagent_label || '', r.reagent_label_below || '',
+        buildRendererOverrides(r)
       );
     } catch(e) {
       document.body.removeChild(wrap);

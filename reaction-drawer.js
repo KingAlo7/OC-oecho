@@ -53,6 +53,11 @@ const ReactionRenderer = (() => {
     width:  200,
     height: 200,
     scale:  1,
+    /* Heteroatom label sizing. smiles-drawer's stock fontSizeLarge is
+       6 (SVG units); 9 lands at a chemistry-textbook size against the
+       default bondLength. fontSizeSmall (sub/super) ~0.7×. */
+    fontSizeLarge: 9,
+    fontSizeSmall: 6,
     compactDrawing: false,
     explicitHydrogens: false
   };
@@ -74,9 +79,113 @@ const ReactionRenderer = (() => {
     scale:  0.85,
     bondLength:     24,
     bondThickness:  1.0,
+    /* See MOLECULE_OPTS_DEFAULT — same heteroatom size to keep web
+       and export visually consistent; the export slider overrides
+       per-render. */
+    fontSizeLarge:  9,
+    fontSizeSmall:  6,
     compactDrawing: true,
     explicitHydrogens: false
   };
+
+  /* ── LaTeX-style label parsing ────────────────────────────────────
+     Reagent labels can contain LaTeX-style sub/superscripts, e.g.
+     "[Ag(NH_3)_2]^{1+}" or "H_2SO_4". We parse them into segments and
+     render with SVG <tspan baseline-shift>, which looks much better
+     than Unicode subscript glyphs (₂ etc.) that don't exist for every
+     character and clash with the surrounding atom font.
+
+     Syntax: `_{xxx}` / `^{xxx}` for multi-char, `_x` / `^x` for single. */
+
+  function _hasLatexMarkup(s) {
+    return !!s && /[_^](\{|[A-Za-z0-9+\-])/.test(s);
+  }
+
+  function _parseLatex(s) {
+    const out = [];
+    let i = 0;
+    while (i < s.length) {
+      const c = s[i];
+      if ((c === '_' || c === '^') && s[i+1] === '{') {
+        let depth = 1, j = i + 2;
+        while (j < s.length && depth > 0) {
+          if (s[j] === '{') depth++;
+          else if (s[j] === '}') depth--;
+          if (depth > 0) j++;
+        }
+        out.push({ text: s.substring(i+2, j), mode: c === '_' ? 'sub' : 'sup' });
+        i = j + 1;
+      } else if ((c === '_' || c === '^') && i + 1 < s.length) {
+        out.push({ text: s[i+1], mode: c === '_' ? 'sub' : 'sup' });
+        i += 2;
+      } else {
+        let j = i;
+        while (j < s.length && s[j] !== '_' && s[j] !== '^') j++;
+        out.push({ text: s.substring(i, j), mode: 'normal' });
+        i = j;
+      }
+    }
+    return out;
+  }
+
+  /* Visible character length of a label after LaTeX markers are stripped —
+     used to size the reaction arrow so the label fits in one line. */
+  function _strippedLength(s) {
+    if (!s) return 0;
+    return _parseLatex(s).reduce((n, seg) => n + seg.text.length, 0);
+  }
+
+  /* Replace a <text>'s string children with <tspan>s carrying baseline-shift
+     for sub/super segments. Sub/super get 70% font-size as is standard. */
+  function _applyLatexToText(textEl, segments) {
+    while (textEl.firstChild) textEl.removeChild(textEl.firstChild);
+    for (let i = 0; i < segments.length; i++) {
+      const seg = segments[i];
+      const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+      if (seg.mode === 'sub') {
+        tspan.setAttribute('baseline-shift', 'sub');
+        tspan.setAttribute('font-size', '70%');
+      } else if (seg.mode === 'sup') {
+        tspan.setAttribute('baseline-shift', 'super');
+        tspan.setAttribute('font-size', '70%');
+      }
+      tspan.textContent = seg.text;
+      textEl.appendChild(tspan);
+    }
+  }
+
+  /* Walk the rendered SVG looking for <text> nodes whose textContent
+     matches the original (un-parsed) label string, and rewrite them
+     with tspans. Matching by exact text is reliable because the labels
+     are passed through smiles-drawer verbatim. */
+  function _postProcessLabels(svgEl, labelAbove, labelBelow) {
+    const targets = [];
+    if (_hasLatexMarkup(labelAbove)) targets.push(labelAbove);
+    if (_hasLatexMarkup(labelBelow)) targets.push(labelBelow);
+    if (!targets.length) return;
+    const texts = svgEl.querySelectorAll('text');
+    for (let i = 0; i < texts.length; i++) {
+      const t = texts[i];
+      const idx = targets.indexOf(t.textContent);
+      if (idx !== -1) {
+        _applyLatexToText(t, _parseLatex(targets[idx]));
+      }
+    }
+  }
+
+  /* Auto-size the reaction arrow so the longest label fits on one line.
+     Estimate visible width via stripped length × char width (~0.55 ×
+     fontSize for Helvetica/Arial). Two lines only when the upper clamp
+     can't fit the text — at that point smiles-drawer's own line break
+     takes over. MIN keeps short labels from looking cramped. */
+  function _autoArrowLength(textAbove, textBelow, fontSize, compact) {
+    const longest = Math.max(_strippedLength(textAbove), _strippedLength(textBelow));
+    const charW = fontSize * 0.55;
+    const padding = 16;
+    const MIN = compact ? 42 : 60;
+    const MAX = compact ? 180 : 220;
+    return Math.max(MIN, Math.min(MAX, longest * charW + padding));
+  }
 
   /* Shallow-merge override into base, one level deep. Nested objects like
      `arrow: { length, headSize, ... }` are merged property-by-property so
@@ -148,21 +257,38 @@ const ReactionRenderer = (() => {
       return null;
     }
 
-    /* Pick option profile + suppress textBelow in compact mode (no stacked
-       two-line label above the arrow — this is the key visual win for the
-       PDF export over the web rendering). Apply caller overrides on top
-       of the chosen base profile. */
+    /* Pick option profile + apply caller overrides. textBelow is passed
+       through in both default and compact modes — callers signal intent
+       by sending an empty string when no second-line label is wanted. */
     const baseReactionOpts  = compact ? REACTION_OPTS_COMPACT  : REACTION_OPTS_DEFAULT;
     const baseMoleculeOpts  = compact ? MOLECULE_OPTS_COMPACT  : MOLECULE_OPTS_DEFAULT;
     const reactionOpts      = _mergeOpts(baseReactionOpts, opts.reactionOpts);
     const moleculeOpts      = _mergeOpts(baseMoleculeOpts, opts.moleculeOpts);
     const labelAbove        = textAbove;
-    const labelBelow        = compact ? '' : textBelow;
+    const labelBelow        = textBelow;
+
+    /* Auto-size the arrow to fit the label unless the caller explicitly
+       set arrow.length in their override. Centralizes the dynamic-arrow
+       behaviour so admin / web index / export all benefit. */
+    const callerOverrodeArrow =
+      opts.reactionOpts && opts.reactionOpts.arrow &&
+      typeof opts.reactionOpts.arrow.length === 'number';
+    if (!callerOverrodeArrow) {
+      reactionOpts.arrow = Object.assign({}, reactionOpts.arrow, {
+        length: _autoArrowLength(labelAbove, labelBelow, reactionOpts.fontSize, compact)
+      });
+    }
 
     /* Draw into the SVG element */
     try {
       const rd = new SD.ReactionDrawer(reactionOpts, Object.assign({}, moleculeOpts));
       rd.draw(reaction, svgEl, theme, null, labelAbove, labelBelow);
+
+      /* Replace any label text containing LaTeX-style markers (_{x}, ^{x},
+         _x, ^x) with tspans carrying baseline-shift — gives proper
+         sub/superscripts instead of mojibake like ₂. Runs before the
+         viewBox fit so overflow is computed against the rewritten labels. */
+      _postProcessLabels(svgEl, labelAbove, labelBelow);
 
       /* smiles-drawer v2 leaves a viewBox that often clips arrow labels at
          the top and text annotations on the sides. Recompute a tighter

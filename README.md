@@ -111,7 +111,8 @@ Vollständige Feldreferenz:
 | `reaktionstyp` | `string` | | Mechanismustyp-Kürzel (`SN1`, `E2`, `AN`, …) |
 | `transformation` | `string` | | Kurzdarstellung Substrat → Produkt |
 | `reaction_smiles` | `string` | | Reaktions-SMILES (`Reaktanten>Reagenz>Produkte`) |
-| `reagent_label` | `string` | | Text über dem Reaktionspfeil |
+| `reagent_label` | `string` | | Text über dem Reaktionspfeil. LaTeX-Stil für Sub/Superskript: `H_2SO_4`, `[Ag(NH_3)_2]^{1+}` |
+| `reagent_label_below` | `string` | | Text unter dem Reaktionspfeil (z. B. Temperatur, Zeit). Selbe LaTeX-Syntax wie oben |
 | `general_scheme` | `string` | | Textfallback wenn kein SMILES vorhanden |
 | `tags` | `string[]` | | Suchbare Tags |
 | `conditions` | `string` | | Reaktionsbedingungen |
