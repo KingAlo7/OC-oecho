@@ -49,10 +49,23 @@ const ReactionRenderer = (() => {
     explicitHydrogens: false
   };
 
+  /* Compact molecule options for PDF export.
+   *
+   * bondLength is the key knob for the atom-label-to-bond-length ratio
+   * (chemistry-textbook appearance). smiles-drawer's default atom-label
+   * font is ~13px; setting bondLength=24 gives a 24:13 ≈ 1.85 ratio,
+   * which sits in the standard ACS/IUPAC chemistry-drawing range
+   * (typically 1.5-2.0). Smaller bondLength would make letters look
+   * oversized; larger would make them look cramped between long bonds.
+   *
+   * bondThickness=1.0 keeps bond lines crisp at the final PDF size
+   * without overpowering the atom labels. */
   const MOLECULE_OPTS_COMPACT = {
     width:  140,
     height: 140,
     scale:  0.85,
+    bondLength:     24,
+    bondThickness:  1.0,
     compactDrawing: true,
     explicitHydrogens: false
   };
