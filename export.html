@@ -235,26 +235,25 @@ const opts = {
 
 /* Image scale (\includegraphics scale value).
  *
- * Tuning history:
- *   round 1: 0.45 / 0.60 / 0.78  -> user reported "way too large"
- *   round 2: 0.32 / 0.42 / 0.55  -> still way too large (sc=5 PNGs
- *                                  inflated natural-size 2.5x vs sc=2)
+ * Tuning history (size feedback at each step):
+ *   round 1: 0.45 / 0.60 / 0.78  -> way too large
+ *   round 2: 0.32 / 0.42 / 0.55  -> still way too large
  *   round 3: 0.12 / 0.16 / 0.21  -> still way too large
- *   round 4: 0.05 / 0.07 / 0.09  <- current
+ *   round 4: 0.05 / 0.07 / 0.09  -> way too small
+ *   round 5: 0.08 / 0.11 / 0.14  <- current — midpoint of 3 and 4
  *
- * If still too large: divide by 2.
- * If now too small: bump to 0.08 / 0.11 / 0.14.
+ * Paired with reaction-drawer.js commit cd82d295 which pins bondLength=24
+ * in MOLECULE_OPTS_COMPACT for proper atom-label-to-bond-length ratio
+ * (~1.85, ACS/IUPAC standard range). The source SVGs are slightly larger
+ * than before that change, so this scale is a touch higher than a strict
+ * round-3-to-round-4 geometric mean would suggest.
  *
- * The PNGs render at sc=5 supersampling (see reactionToPng); pdflatex
- * interprets their natural size as pixel-dims / 72 DPI, so a typical
- * 600x220 SVG becomes a 3000x1100 PNG with a natural display size of
- * ~41cm x 15cm. To get a reasonable ~6-8cm width on the page at 50%
- * column width (~8cm available), scale needs to be ~0.15-0.20 of that
- * natural size — i.e. ~0.05 of the linear factor. */
+ * If still too small: jump to 0.11 / 0.15 / 0.19.
+ * If now too large: drop to 0.06 / 0.08 / 0.11. */
 const DENSITY_SCALE = {
-  compact:  '0.05',
-  normal:   '0.07',
-  spacious: '0.09'
+  compact:  '0.08',
+  normal:   '0.11',
+  spacious: '0.14'
 };
 
 /* Aspect-ratio threshold: if a reaction's drawing is wider than this
