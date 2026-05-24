@@ -6,9 +6,9 @@
 <meta name="theme-color" content="#c2c5a6">
 <title>OC Referenz — Export</title>
 <link rel="icon" type="image/svg+xml" href="./assets/logo.svg">
-<script src="./reaction-drawer.js"></script>
+<script src="https://unpkg.com/smiles-drawer@2/dist/smiles-drawer.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="./renderer.js"></script>
+<script src="./reaction-drawer.js"></script>
 <style>
 :root{
   --bg:#faf9f5;
@@ -233,12 +233,12 @@ const opts = {
   inclTOC: false
 };
 
-/* #1: Consistent SCALE, not size. The density slider now sets a fixed
-   \includegraphics scale that applies to every reaction image. Combined
-   with the fixed bondLength in MOLECULE_OPTS_COMPACT (renderer.js),
-   this gives every structure the same atomic visual size — a simple
-   substrate produces a smaller image, a complex one a larger image, but
-   bond lengths and atom-label sizes are identical across all reactions. */
+/* Consistent SCALE, not size. The density slider sets a fixed
+   \includegraphics scale that applies to every reaction image.
+   The library's default bondLength gives every structure the same
+   atomic visual size: a simple substrate produces a smaller image,
+   a complex one a larger image, but bond lengths and atom-label
+   sizes are identical across all reactions. */
 const DENSITY_SCALE = {
   compact:  '0.45',
   normal:   '0.60',
@@ -416,7 +416,7 @@ function reactionBlock(r, withImage) {
     ? `{\\small\\color{ocmuted}\\itshape ${esc(r.subtitle)}}\\par\\nopagebreak\\smallskip\n`
     : '';
 
-  // #1: scale, not size. \rxnimgscale is a fixed scale applied to every
+  // Consistent scale: \rxnimgscale is a fixed scale applied to every
   // image, so chemistry inside renders at a consistent atomic size.
   let drawingTex = '';
   if (withImage && r.reaction_smiles) {
@@ -450,8 +450,8 @@ ${drawingTex}
     bodyTex = '';
   }
 
-  // #4b: detail table — label column is `l` (sizes to content), not p{0.22\linewidth}.
-  // Wide labels still fit; short labels don't waste horizontal space.
+  // Detail table: label column is `l` (sizes to content), padding only
+  // between columns. Description fills the rest of the line width.
   const activeFields = DETAIL_FIELDS.filter(f => r[f.key]);
   let table = '';
   if (opts.inclDetails && activeFields.length) {
@@ -519,7 +519,7 @@ ${graphicxPkg}
 \\definecolor{ocnotebg}{HTML}{FFFBE8}
 
 %%-- Bildmaßstab (Strukturgröße-Option steuert diesen Wert) ------
-%%   #1: Skalierung statt Größe — jedes Reaktionsbild verwendet
+%%   Skalierung statt Größe — jedes Reaktionsbild verwendet
 %%   denselben \\includegraphics-Maßstab. Die Atom-Bindungslänge
 %%   ist beim Rendern als Konstante festgelegt, sodass alle
 %%   Strukturen denselben visuellen Maßstab haben.
@@ -535,10 +535,8 @@ ${graphicxPkg}
 }
 
 %%-- Reaktions-Header: einzeilig wenn möglich -------------------
-%%   #4a: Statt fixer Spaltenbreiten benutzen wir parbox + \\hfill,
-%%   damit Name | Transformation | Typ in EINER Zeile sitzen wenn
-%%   sie zusammen passen. Lange Inhalte werden vom \\parbox sauber
-%%   umgebrochen, was selten passiert.
+%%   parbox + \\hfill lässt Name | Transformation | Typ in EINER
+%%   Zeile sitzen wenn sie zusammen passen.
 \\newcommand{\\rxnheader}[3]{%
   \\par\\smallskip\\noindent\\colorbox{ocaccent!10}{%
     \\parbox{\\dimexpr\\linewidth-2\\fboxsep\\relax}{%
@@ -591,7 +589,7 @@ ${twocol ? '\\end{multicols}' : ''}
 `;
 }
 
-/* Render one reaction to a PNG (base64) using the patched compact profile. */
+/* Render one reaction to a PNG (base64) using the compact profile. */
 function reactionToPng(r) {
   return new Promise(resolve => {
     if (!r.reaction_smiles) { resolve(null); return; }
@@ -603,8 +601,6 @@ function reactionToPng(r) {
     document.body.appendChild(wrap);
 
     try {
-      // The patched library auto-grows the arrow to fit the full label
-      // on a single line — no more multi-row stacks above the arrow.
       ReactionRenderer.draw(r.reaction_smiles, svg, 'light', r.reagent_label||'', '', { compact: true });
     } catch(e) {
       document.body.removeChild(wrap);
