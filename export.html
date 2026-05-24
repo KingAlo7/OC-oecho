@@ -208,6 +208,15 @@ header{
     </div>
 
     <div class="opt-section">
+      <div class="opt-title">Strukturgröße</div>
+      <div class="radio-group" id="density-group">
+        <div class="radio-btn" data-val="compact">Kompakt</div>
+        <div class="radio-btn on" data-val="normal">Standard</div>
+        <div class="radio-btn" data-val="spacious">Großzügig</div>
+      </div>
+    </div>
+
+    <div class="opt-section">
       <div class="opt-title">Abschnitte</div>
       <div class="check-group">
         <div class="check-btn on" data-key="inclDrawings">Strukturen</div>
@@ -263,9 +272,11 @@ header{
 <script>
 let reactions = [];
 const opts = {
-  paper: 'a4paper', font: '11pt', layout: 'single',
+  paper: 'a4paper', font: '11pt', layout: 'single', density: 'normal',
   inclDrawings: true, inclDetails: true, inclKeyPoints: true, inclNotes: true, inclTOC: true
 };
+
+const DENSITY_HEIGHT = { compact: '2cm', normal: '3cm', spacious: '4.2cm' };
 
 async function init() {
   try {
@@ -279,22 +290,20 @@ async function init() {
   initOptionButtons();
 }
 
+function bindRadioGroup(groupId, optKey) {
+  document.getElementById(groupId).addEventListener('click', e => {
+    const btn = e.target.closest('.radio-btn'); if (!btn) return;
+    document.querySelectorAll(`#${groupId} .radio-btn`).forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    opts[optKey] = btn.dataset.val;
+  });
+}
+
 function initOptionButtons() {
-  document.getElementById('paper-group').addEventListener('click', e => {
-    const btn = e.target.closest('.radio-btn'); if (!btn) return;
-    document.querySelectorAll('#paper-group .radio-btn').forEach(b => b.classList.remove('on'));
-    btn.classList.add('on'); opts.paper = btn.dataset.val;
-  });
-  document.getElementById('font-group').addEventListener('click', e => {
-    const btn = e.target.closest('.radio-btn'); if (!btn) return;
-    document.querySelectorAll('#font-group .radio-btn').forEach(b => b.classList.remove('on'));
-    btn.classList.add('on'); opts.font = btn.dataset.val;
-  });
-  document.getElementById('layout-group').addEventListener('click', e => {
-    const btn = e.target.closest('.radio-btn'); if (!btn) return;
-    document.querySelectorAll('#layout-group .radio-btn').forEach(b => b.classList.remove('on'));
-    btn.classList.add('on'); opts.layout = btn.dataset.val;
-  });
+  bindRadioGroup('paper-group',   'paper');
+  bindRadioGroup('font-group',    'font');
+  bindRadioGroup('layout-group',  'layout');
+  bindRadioGroup('density-group', 'density');
   document.querySelectorAll('.check-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       btn.classList.toggle('on');
@@ -383,6 +392,27 @@ function esc(str) {
     .replace(/\n/g, ' ').replace(/\r/g, '');
 }
 
+// Convert a reaction-type code (e.g. "SN1", "AE", "AN+E1cB") into LaTeX math
+// with proper subscripts, matching the PDF style ($S_{N1}$, $A_E$, $A_N+E_{1cB}$).
+function formatRxnType(t) {
+  if (!t) return '';
+  const parts = String(t).trim().split(/\s*\+\s*/);
+  const formatted = parts.map(piece => {
+    const m = piece.match(/^([A-Z])([0-9a-zA-Z]+)$/);
+    if (m) return `${m[1]}_{${m[2]}}`;
+    return piece;
+  }).join('+');
+  return `$${formatted}$`;
+}
+
+// "Alken → Halogenalkan"-style transformation arrow for the middle column of
+// the reaction header. Returns LaTeX-ready string (already escaped). Empty
+// if the reaction has no transformation field.
+function transformationFor(r) {
+  if (r.transformation) return esc(r.transformation);
+  return '';
+}
+
 function smilesScheme(r) {
   if (!r.reaction_smiles) return r.general_scheme || '';
   const parts = r.reaction_smiles.split('>');
@@ -404,12 +434,18 @@ const DETAIL_FIELDS = [
 ];
 
 function reactionBlock(r, withImage) {
-  const subtitle = r.subtitle ? `{\\small\\color{ocmuted}\\textit{${esc(r.subtitle)}}}\\\\\n` : '';
-  const tags = (r.tags||[]).map(t => `\\texttt{${esc(t)}}`).join(', ');
+  // PDF-style 3-column header: bold name | italic transformation | italic type code
+  const transform = transformationFor(r);
+  const typeCode = formatRxnType(r.reaktionstyp);
+  const header = `\\rxnheader{${esc(r.name)}}{${transform}}{${typeCode}}`;
+
+  const subtitle = r.subtitle
+    ? `{\\small\\color{ocmuted}\\itshape ${esc(r.subtitle)}}\\par\\smallskip\n`
+    : '';
 
   let drawing = '';
   if (withImage && r.reaction_smiles) {
-    drawing = `\\begin{center}\n\\includegraphics[width=0.9\\linewidth,height=3cm,keepaspectratio]{img/${r.id}.png}\n\\end{center}`;
+    drawing = `\\begin{center}\n\\includegraphics[width=0.9\\linewidth,height=\\rxndrawheight,keepaspectratio]{img/${r.id}.png}\n\\end{center}`;
   } else {
     drawing = smilesScheme(r);
   }
@@ -417,16 +453,16 @@ function reactionBlock(r, withImage) {
   const activeFields = DETAIL_FIELDS.filter(f => r[f.key]);
   let table = '';
   if (opts.inclDetails && activeFields.length) {
-    table = `\\begin{center}\n\\begin{tabular}{>{\\small\\bfseries\\color{ocmuted}\\raggedright\\arraybackslash}p{0.24\\linewidth}>{\\raggedright\\arraybackslash}p{0.70\\linewidth}}\n\\toprule\n`
+    table = `\\begin{center}\n\\begin{tabular}{>{\\small\\bfseries\\color{ocmuted}\\raggedright\\arraybackslash}p{0.22\\linewidth}>{\\raggedright\\arraybackslash}p{0.72\\linewidth}}\n\\toprule\n`
       + activeFields.map(f => `${esc(f.label.toUpperCase())} & ${esc(r[f.key])} \\\\`).join('\n')
       + `\n\\bottomrule\n\\end{tabular}\n\\end{center}`;
   }
 
   let keypts = '';
   if (opts.inclKeyPoints && r.key_points?.length) {
-    keypts = `\\textbf{Schlüsselpunkte}\n\\begin{itemize}[leftmargin=1.5em,itemsep=2pt,topsep=4pt]\n`
+    keypts = `\\noindent\\small\\textbf{Schlüsselpunkte}\\par\\nopagebreak\n\\begin{itemize}[leftmargin=1.4em,itemsep=1pt,topsep=2pt,parsep=0pt]\n`
       + r.key_points.map(p => `  \\item ${esc(p)}`).join('\n')
-      + `\n\\end{itemize}`;
+      + `\n\\end{itemize}\\normalsize`;
   }
 
   let notes = '';
@@ -435,9 +471,8 @@ function reactionBlock(r, withImage) {
   }
 
   return `
-\\subsection{${esc(r.name)}}
-${subtitle}${tags ? `{\\footnotesize\\color{ocmuted}\\textit{Tags:} ${tags}}\\vspace{0.4em}\n\n` : ''}
-${drawing}
+${header}
+${subtitle}${drawing}
 
 ${table}
 
@@ -445,7 +480,7 @@ ${keypts}
 
 ${notes}
 
-\\medskip\\noindent\\textcolor{ocborder}{\\rule{\\linewidth}{0.3pt}}\\medskip
+\\smallskip\\noindent\\textcolor{ocborder}{\\rule{\\linewidth}{0.3pt}}\\smallskip
 `;
 }
 
@@ -454,10 +489,11 @@ function buildLatex(selectedReactions, withImages) {
   const twocol = opts.layout === 'twocol';
   const today = new Date().toLocaleDateString('de-AT',{year:'numeric',month:'long',day:'numeric'});
   const n = selectedReactions.length;
+  const drawHeight = DENSITY_HEIGHT[opts.density] || DENSITY_HEIGHT.normal;
 
   let body = cats.map(cat => {
     const items = selectedReactions.filter(r => r.category === cat);
-    return `\\section{${esc(cat)}}\n` + items.map(r => reactionBlock(r, withImages)).join('\n');
+    return `\\rxnsection{${esc(cat)}}\n` + items.map(r => reactionBlock(r, withImages)).join('\n');
   }).join('\n');
 
   const graphicxPkg = withImages ? '\\usepackage{graphicx}' : '% graphicx not needed (no images)';
@@ -471,7 +507,7 @@ function buildLatex(selectedReactions, withImages) {
 \\documentclass[${opts.paper},${opts.font}]{article}
 
 %%-- Pakete ----------------------------------------------------
-\\usepackage[${opts.paper},left=2.4cm,right=2.4cm,top=2.5cm,bottom=2.5cm]{geometry}
+\\usepackage[${opts.paper},left=2.0cm,right=2.0cm,top=2.2cm,bottom=2.2cm]{geometry}
 \\usepackage[T1]{fontenc}
 \\usepackage[utf8]{inputenc}
 \\usepackage[ngerman]{babel}
@@ -481,9 +517,9 @@ function buildLatex(selectedReactions, withImages) {
 \\usepackage{booktabs}
 \\usepackage{xcolor}
 \\usepackage{enumitem}
-\\usepackage{titlesec}
 \\usepackage[many]{tcolorbox}
 \\usepackage{array}
+\\usepackage{tabularx}
 \\usepackage{parskip}
 \\usepackage{fancyhdr}
 \\usepackage[hidelinks,bookmarksopen]{hyperref}
@@ -496,12 +532,30 @@ ${graphicxPkg}
 \\definecolor{ocborder}{HTML}{CFCEB8}
 \\definecolor{ocnotebg}{HTML}{FFFBE8}
 
-%%-- Überschriften ---------------------------------------------
-\\titleformat{\\section}{\\large\\bfseries\\color{ocaccent}}{}{0em}{}%
-  [{\\color{ocaccent!40}\\titlerule[0.6pt]}]
-\\titlespacing{\\section}{0pt}{1.5em}{0.65em}
-\\titleformat{\\subsection}{\\normalsize\\bfseries}{}{0em}{}
-\\titlespacing{\\subsection}{0pt}{1.1em}{0.3em}
+%%-- Strukturhöhe (steuerbar via Strukturgröße-Option) ----------
+\\newlength{\\rxndrawheight}
+\\setlength{\\rxndrawheight}{${drawHeight}}
+
+%%-- Kategorie-Überschrift: volle Breite, ÖChO-rot --------------
+\\newcommand{\\rxnsection}[1]{%
+  \\par\\medskip\\noindent\\colorbox{ocaccent}{%
+    \\begin{minipage}{\\dimexpr\\linewidth-2\\fboxsep\\relax}%
+      \\vspace{2pt}{\\color{white}\\large\\bfseries #1}\\vspace{2pt}%
+    \\end{minipage}}\\par\\smallskip%
+  \\phantomsection\\addcontentsline{toc}{section}{#1}%
+}
+
+%%-- Reaktions-Header: 3-spaltig (Name | Transformation | Typ) --
+\\newcommand{\\rxnheader}[3]{%
+  \\par\\medskip\\noindent\\colorbox{ocaccent!10}{%
+    \\begin{minipage}{\\dimexpr\\linewidth-2\\fboxsep\\relax}%
+      \\vspace{1.5pt}%
+      \\begin{tabular*}{\\linewidth}{@{}p{0.50\\linewidth}@{\\extracolsep{\\fill}}p{0.32\\linewidth}@{}>{\\raggedleft\\arraybackslash}p{0.13\\linewidth}@{}}%
+        \\bfseries #1 & {\\itshape\\color{ocmuted}\\small #2} & {\\itshape\\color{ocmuted}\\small #3} \\\\
+      \\end{tabular*}\\vspace{1.5pt}%
+    \\end{minipage}}\\par\\smallskip%
+  \\phantomsection\\addcontentsline{toc}{subsection}{#1}%
+}
 
 %%-- Notizen-Box -----------------------------------------------
 \\tcbset{notebox/.style={
@@ -518,7 +572,7 @@ ${graphicxPkg}
 \\renewcommand{\\headrulewidth}{0.3pt}
 \\renewcommand{\\headrule}{\\color{ocborder}\\hrule width\\headwidth height\\headrulewidth}
 \\fancyhead[L]{\\small\\color{ocmuted}OC Referenz}
-\\fancyhead[R]{\\small\\color{ocmuted}\\nouppercase{\\leftmark}}
+\\fancyhead[R]{\\small\\color{ocmuted}ÖChO}
 \\fancyfoot[C]{\\small\\color{ocmuted}\\thepage}
 
 ${twocol ? '\\usepackage{multicol}' : ''}
@@ -528,12 +582,12 @@ ${twocol ? '\\usepackage{multicol}' : ''}
 %%=============================================================
 
 \\begin{center}
-  {\\huge\\bfseries Organische Chemie Referenz}\\\\[8pt]
-  {\\large\\color{ocmuted}Reaktionskompendium}\\\\[4pt]
+  {\\huge\\bfseries\\color{ocaccent}Organische Reaktionen}\\\\[6pt]
+  {\\large\\color{ocmuted}Überblick}\\\\[4pt]
   {\\small\\color{ocmuted}${today}\\enspace\\textperiodcentered\\enspace${n} Reaktion${n!==1?'en':''}}
 \\end{center}
 
-\\vspace{1.5em}
+\\vspace{1.2em}
 
 ${opts.inclTOC ? '\\tableofcontents\n\\clearpage' : ''}
 
