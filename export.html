@@ -6,9 +6,9 @@
 <meta name="theme-color" content="#c2c5a6">
 <title>OC Referenz — Export</title>
 <link rel="icon" type="image/svg+xml" href="./assets/logo.svg">
-<script src="./vendor/smiles-drawer.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="./reaction-drawer.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="./renderer.js"></script>
 <style>
 :root{
   --bg:#faf9f5;
@@ -235,7 +235,7 @@ const opts = {
 
 /* #1: Consistent SCALE, not size. The density slider now sets a fixed
    \includegraphics scale that applies to every reaction image. Combined
-   with the fixed bondLength in MOLECULE_OPTS_COMPACT (reaction-drawer.js),
+   with the fixed bondLength in MOLECULE_OPTS_COMPACT (renderer.js),
    this gives every structure the same atomic visual size — a simple
    substrate produces a smaller image, a complex one a larger image, but
    bond lengths and atom-label sizes are identical across all reactions. */
