@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#c2c5a6">
 <title>OC Referenz — Export</title>
 <link rel="icon" type="image/svg+xml" href="./assets/logo.svg">
-<script src="https://unpkg.com/smiles-drawer@2/dist/smiles-drawer.min.js"></script>
+<script src="./vendor/smiles-drawer.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="./reaction-drawer.js"></script>
 <style>
@@ -34,28 +34,19 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;}
 
-header{
-  background:var(--surface);border-bottom:1px solid var(--border);
-  padding:0 1.5rem;height:56px;display:flex;align-items:center;gap:1rem;
-  box-shadow:var(--shadow-sm);
-}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.5rem;height:56px;display:flex;align-items:center;gap:1rem;box-shadow:var(--shadow-sm);}
 .brand{display:flex;align-items:center;gap:0.6rem;flex-shrink:0;}
 .brand-logo{width:30px;height:30px;color:var(--accent);flex-shrink:0;}
 .brand-logo svg{width:100%;height:100%;display:block;}
 .brand-name{font-size:1.05rem;font-weight:700;color:var(--text);letter-spacing:-0.01em;}
 .brand-sub{font-size:0.72rem;font-weight:600;color:var(--accent);letter-spacing:0.04em;text-transform:uppercase;padding:0.15rem 0.45rem;background:var(--accent-soft);border:1px solid var(--accent);border-radius:6px;}
-.back-link{color:var(--muted);text-decoration:none;font-size:0.85rem;
-  border:1px solid var(--border);border-radius:7px;padding:0.32rem 0.7rem;
-  transition:all 0.15s;margin-left:auto;}
+.back-link{color:var(--muted);text-decoration:none;font-size:0.85rem;border:1px solid var(--border);border-radius:7px;padding:0.32rem 0.7rem;transition:all 0.15s;margin-left:auto;}
 .back-link:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
 
 .layout{display:grid;grid-template-columns:360px 1fr;height:calc(100vh - 56px);}
 @media(max-width:800px){.layout{grid-template-columns:1fr;}}
 
-.options-panel{
-  background:var(--surface);border-right:1px solid var(--border);
-  overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:1.5rem;
-}
+.options-panel{background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:1.5rem;}
 .options-panel::-webkit-scrollbar{width:6px;}
 .options-panel::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
 
@@ -63,23 +54,13 @@ header{
 .opt-title{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);}
 
 .radio-group,.check-group{display:flex;flex-wrap:wrap;gap:0.4rem;}
-.radio-btn,.check-btn{
-  font-size:0.81rem;padding:0.34rem 0.78rem;border-radius:7px;
-  border:1px solid var(--border);background:var(--surface);color:var(--text-soft);
-  cursor:pointer;transition:all 0.15s;user-select:none;font-weight:500;
-}
+.radio-btn,.check-btn{font-size:0.81rem;padding:0.34rem 0.78rem;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--text-soft);cursor:pointer;transition:all 0.15s;user-select:none;font-weight:500;}
 .radio-btn:hover,.check-btn:hover{border-color:var(--muted);background:var(--surface2);}
-.radio-btn.on,.check-btn.on{
-  background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600;
-}
+.radio-btn.on,.check-btn.on{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600;}
 .radio-btn.on:hover,.check-btn.on:hover{background:#c2001a;border-color:#c2001a;}
 
 .action-buttons{display:flex;flex-direction:column;gap:0.65rem;margin-top:auto;}
-.btn{
-  width:100%;padding:0.7rem 1rem;border-radius:9px;font-size:0.9rem;
-  font-weight:600;cursor:pointer;border:none;text-align:center;
-  transition:all 0.15s;font-family:inherit;
-}
+.btn{width:100%;padding:0.7rem 1rem;border-radius:9px;font-size:0.9rem;font-weight:600;cursor:pointer;border:none;text-align:center;transition:all 0.15s;font-family:inherit;}
 .btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);}
 .btn:active{transform:translateY(0);box-shadow:none;}
 .btn-primary{background:var(--accent);color:#fff;}
@@ -89,21 +70,12 @@ header{
 .btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border);}
 .btn-secondary:hover{background:var(--surface2);border-color:var(--muted);}
 
-.selected-count{
-  text-align:center;font-size:0.83rem;color:var(--text-soft);
-  padding:0.55rem;background:var(--surface2);border-radius:8px;border:1px solid var(--border);
-}
+.selected-count{text-align:center;font-size:0.83rem;color:var(--text-soft);padding:0.55rem;background:var(--surface2);border-radius:8px;border:1px solid var(--border);}
 .selected-count strong{color:var(--accent);font-weight:700;}
 
-#progress-overlay{
-  display:none;position:fixed;inset:0;background:rgba(60,55,40,0.45);z-index:100;
-  align-items:center;justify-content:center;flex-direction:column;gap:1rem;
-}
+#progress-overlay{display:none;position:fixed;inset:0;background:rgba(60,55,40,0.45);z-index:100;align-items:center;justify-content:center;flex-direction:column;gap:1rem;}
 #progress-overlay.show{display:flex;}
-.progress-box{
-  background:var(--surface);border:1px solid var(--border);border-radius:14px;
-  padding:2rem;text-align:center;min-width:300px;box-shadow:0 10px 40px rgba(60,55,40,0.2);
-}
+.progress-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:2rem;text-align:center;min-width:300px;box-shadow:0 10px 40px rgba(60,55,40,0.2);}
 .progress-box .pico{width:48px;height:48px;color:var(--accent);margin:0 auto 0.6rem;}
 .progress-box .pico svg{width:100%;height:100%;}
 .progress-bar-wrap{height:5px;background:var(--surface2);border-radius:3px;margin-top:1rem;overflow:hidden;}
@@ -113,35 +85,22 @@ header{
 .selector-panel{overflow-y:auto;padding:1.5rem 2rem;background:var(--bg);}
 .selector-panel::-webkit-scrollbar{width:8px;}
 .selector-panel::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
-.selector-header{
-  display:flex;align-items:center;gap:0.85rem;margin-bottom:1.25rem;flex-wrap:wrap;
-}
+.selector-header{display:flex;align-items:center;gap:0.85rem;margin-bottom:1.25rem;flex-wrap:wrap;}
 .selector-header h2{font-size:1.05rem;font-weight:700;color:var(--text);letter-spacing:-0.01em;}
-.sel-btn{
-  font-size:0.78rem;padding:0.3rem 0.8rem;border-radius:7px;
-  border:1px solid var(--border);background:var(--surface);color:var(--text-soft);cursor:pointer;
-  transition:all 0.15s;font-family:inherit;font-weight:500;
-}
+.sel-btn{font-size:0.78rem;padding:0.3rem 0.8rem;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--text-soft);cursor:pointer;transition:all 0.15s;font-family:inherit;font-weight:500;}
 .sel-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
 
 .cat-group{margin-bottom:1rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--shadow-sm);}
-.cat-row{
-  display:flex;align-items:center;gap:0.65rem;padding:0.65rem 0.85rem;
-  cursor:pointer;user-select:none;background:var(--surface2);border-bottom:1px solid var(--border);
-}
+.cat-row{display:flex;align-items:center;gap:0.65rem;padding:0.65rem 0.85rem;cursor:pointer;user-select:none;background:var(--surface2);border-bottom:1px solid var(--border);}
 .cat-row input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);cursor:pointer;}
 .cat-label{font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-soft);flex:1;}
 
 .rxn-items{padding-left:1rem;display:flex;flex-direction:column;gap:0.2rem;padding:0.4rem 0;}
-.rxn-row{
-  display:flex;align-items:center;gap:0.7rem;padding:0.45rem 0.85rem;
-  border-radius:7px;transition:background 0.12s;cursor:pointer;
-}
+.rxn-row{display:flex;align-items:center;gap:0.7rem;padding:0.45rem 0.85rem;border-radius:7px;transition:background 0.12s;cursor:pointer;}
 .rxn-row:hover{background:var(--surface2);}
 .rxn-row input[type=checkbox]{width:15px;height:15px;accent-color:var(--accent);cursor:pointer;}
 .rxn-name{font-size:0.86rem;flex:1;color:var(--text);}
-.rxn-cat-badge{font-size:0.66rem;padding:0.12rem 0.5rem;border-radius:10px;
-  background:var(--surface);color:var(--muted);border:1px solid var(--border2);font-weight:600;}
+.rxn-cat-badge{font-size:0.66rem;padding:0.12rem 0.5rem;border-radius:10px;background:var(--surface);color:var(--muted);border:1px solid var(--border2);font-weight:600;}
 </style>
 </head>
 <body>
@@ -263,24 +222,27 @@ header{
 <script>
 let reactions = [];
 const opts = {
-  paper: 'a4paper',                // A4 only — no longer user-selectable
+  paper: 'a4paper',
   font: '11pt',
   layout: 'single',
-  density: 'compact',              // default to compact — matches the PDF look
+  density: 'compact',
   inclDrawings: true,
   inclDetails: true,
   inclKeyPoints: true,
   inclNotes: true,
-  inclTOC: false                   // off by default — overview docs rarely need it
+  inclTOC: false
 };
 
-/* Drawing heights for the structure image, keyed by density slider value.
-   ~70 % of the previous values, since the new compact rendering inside the
-   SVG fits more chemistry into less vertical space. */
-const DENSITY_HEIGHT = {
-  compact:  '1.4cm',
-  normal:   '2.1cm',
-  spacious: '3.0cm'
+/* #1: Consistent SCALE, not size. The density slider now sets a fixed
+   \includegraphics scale that applies to every reaction image. Combined
+   with the fixed bondLength in MOLECULE_OPTS_COMPACT (reaction-drawer.js),
+   this gives every structure the same atomic visual size — a simple
+   substrate produces a smaller image, a complex one a larger image, but
+   bond lengths and atom-label sizes are identical across all reactions. */
+const DENSITY_SCALE = {
+  compact:  '0.45',
+  normal:   '0.60',
+  spacious: '0.78'
 };
 
 async function init() {
@@ -326,7 +288,7 @@ function buildSelector() {
   let html = '';
   cats.forEach(cat => {
     const items = reactions.filter(r => r.category === cat);
-    const catId = cat.replace(/\s+/g, '_');
+    const catId = cat.replace(/\s+/g, '_').replace(/[^\w]/g, '_');
     html += `<div class="cat-group">
       <div class="cat-row" onclick="toggleCat('${catId}')">
         <input type="checkbox" class="cat-cb" id="cat-${catId}" onclick="event.stopPropagation();catToggle('${catId}',this.checked)" checked>
@@ -398,8 +360,6 @@ function esc(str) {
     .replace(/\n/g, ' ').replace(/\r/g, '');
 }
 
-// Convert a reaction-type code (e.g. "SN1", "AE", "AN+E1cB") into LaTeX math
-// with proper subscripts, matching the PDF style ($S_{N1}$, $A_E$, $A_N+E_{1cB}$).
 function formatRxnType(t) {
   if (!t) return '';
   const parts = String(t).trim().split(/\s*\+\s*/);
@@ -411,7 +371,6 @@ function formatRxnType(t) {
   return `$${formatted}$`;
 }
 
-// "Alken → Halogenalkan"-style transformation arrow for the middle column.
 function transformationFor(r) {
   if (r.transformation) return esc(r.transformation);
   return '';
@@ -423,7 +382,7 @@ function smilesScheme(r) {
   const reactants = (parts[0]||'').split('.').join(' + ');
   const products  = (parts[2]||'').split('.').join(' + ');
   const reagent   = esc(r.reagent_label || parts[1] || '');
-  return `\\begin{center}\n{\\small\\texttt{${esc(reactants)}}}\\;$\\xrightarrow{\\text{${reagent}}}$\\;{\\small\\texttt{${esc(products)}}}\n\\end{center}`;
+  return `{\\small\\texttt{${esc(reactants)}}}\\;$\\xrightarrow{\\text{${reagent}}}$\\;{\\small\\texttt{${esc(products)}}}`;
 }
 
 const DETAIL_FIELDS = [
@@ -435,15 +394,16 @@ const DETAIL_FIELDS = [
   {key:'mechanism',       label:'Mechanismus'},
   {key:'stereochemistry', label:'Stereochemie'},
   {key:'kinetics',        label:'Kinetik'},
+  {key:'solvent',         label:'Lösungsmittel'},
 ];
 
 /* Build the body of a single reaction.
  *
- * Layout decision (side-by-side / single column):
- *   - if both an image *and* a non-empty key-points list are present
- *     AND key points are enabled in opts → render side-by-side
+ * Layout (side-by-side or single column):
+ *   - if image + key points both exist → side-by-side
  *     (image left ~50%, key points right ~48%)
- *   - otherwise fall back to centered single column
+ *   - if image only → centered single column
+ *   - if key points only → full-width list
  *
  * The detail table and notes box are always full-width below.
  */
@@ -456,17 +416,17 @@ function reactionBlock(r, withImage) {
     ? `{\\small\\color{ocmuted}\\itshape ${esc(r.subtitle)}}\\par\\nopagebreak\\smallskip\n`
     : '';
 
-  // Build the drawing snippet (just the LaTeX, not yet wrapped in column or center)
+  // #1: scale, not size. \rxnimgscale is a fixed scale applied to every
+  // image, so chemistry inside renders at a consistent atomic size.
   let drawingTex = '';
   if (withImage && r.reaction_smiles) {
-    drawingTex = `\\includegraphics[width=0.95\\linewidth,height=\\rxndrawheight,keepaspectratio]{img/${r.id}.png}`;
+    drawingTex = `\\includegraphics[scale=\\rxnimgscale]{img/${r.id}.png}`;
   } else if (r.reaction_smiles) {
-    drawingTex = smilesScheme(r).replace(/\\begin\{center\}\n?|\n?\\end\{center\}/g, '');
+    drawingTex = smilesScheme(r);
   } else if (r.general_scheme) {
     drawingTex = `{\\small\\texttt{${esc(r.general_scheme)}}}`;
   }
 
-  // Key points snippet
   const kpItems = (opts.inclKeyPoints && r.key_points?.length)
     ? r.key_points.map(p => `  \\item ${esc(p)}`).join('\n')
     : null;
@@ -474,10 +434,8 @@ function reactionBlock(r, withImage) {
     ? `\\textbf{\\small Schlüsselpunkte}\\par\\nopagebreak\n\\begin{itemize}[leftmargin=1.2em,itemsep=0pt,topsep=1pt,parsep=0pt,label=\\textcolor{ocmuted}{\\textbullet}]\n${kpItems}\n\\end{itemize}`
     : '';
 
-  // Decide layout: side-by-side only when both drawing and key points exist
   let bodyTex;
   if (drawingTex && kpTex) {
-    // Side-by-side
     bodyTex =
 `\\noindent\\begin{minipage}[t]{0.50\\linewidth}\\vspace{0pt}\\centering
 ${drawingTex}
@@ -492,16 +450,16 @@ ${drawingTex}
     bodyTex = '';
   }
 
-  // Detail table — always full width, below the side-by-side body
+  // #4b: detail table — label column is `l` (sizes to content), not p{0.22\linewidth}.
+  // Wide labels still fit; short labels don't waste horizontal space.
   const activeFields = DETAIL_FIELDS.filter(f => r[f.key]);
   let table = '';
   if (opts.inclDetails && activeFields.length) {
-    table = `\n\\par\\smallskip\n{\\renewcommand{\\arraystretch}{1.05}%\n\\begin{tabular}{>{\\small\\bfseries\\color{ocmuted}\\raggedright\\arraybackslash}p{0.22\\linewidth}>{\\small\\raggedright\\arraybackslash}p{0.72\\linewidth}}\n\\toprule\n`
+    table = `\n\\par\\smallskip\n{\\renewcommand{\\arraystretch}{1.05}%\n\\noindent\\begin{tabular}{@{}>{\\small\\bfseries\\color{ocmuted}}l@{\\hspace{1.4em}}>{\\small\\raggedright\\arraybackslash}p{0.75\\linewidth}@{}}\n\\toprule\n`
       + activeFields.map(f => `${esc(f.label.toUpperCase())} & ${esc(r[f.key])} \\\\`).join('\n')
       + `\n\\bottomrule\n\\end{tabular}}`;
   }
 
-  // Notes box
   let notes = '';
   if (opts.inclNotes && r.notes) {
     notes = `\n\\begin{tcolorbox}[notebox]\n\\small\\textbf{Notizen:}\\enspace ${esc(r.notes)}\n\\end{tcolorbox}`;
@@ -518,7 +476,7 @@ function buildLatex(selectedReactions, withImages) {
   const twocol = opts.layout === 'twocol';
   const today = new Date().toLocaleDateString('de-AT',{year:'numeric',month:'long',day:'numeric'});
   const n = selectedReactions.length;
-  const drawHeight = DENSITY_HEIGHT[opts.density] || DENSITY_HEIGHT.compact;
+  const imgScale = DENSITY_SCALE[opts.density] || DENSITY_SCALE.compact;
 
   let body = cats.map(cat => {
     const items = selectedReactions.filter(r => r.category === cat);
@@ -560,9 +518,12 @@ ${graphicxPkg}
 \\definecolor{ocborder}{HTML}{CFCEB8}
 \\definecolor{ocnotebg}{HTML}{FFFBE8}
 
-%%-- Strukturhöhe (steuerbar via Strukturgröße-Option) ----------
-\\newlength{\\rxndrawheight}
-\\setlength{\\rxndrawheight}{${drawHeight}}
+%%-- Bildmaßstab (Strukturgröße-Option steuert diesen Wert) ------
+%%   #1: Skalierung statt Größe — jedes Reaktionsbild verwendet
+%%   denselben \\includegraphics-Maßstab. Die Atom-Bindungslänge
+%%   ist beim Rendern als Konstante festgelegt, sodass alle
+%%   Strukturen denselben visuellen Maßstab haben.
+\\newcommand{\\rxnimgscale}{${imgScale}}
 
 %%-- Kategorie-Überschrift: volle Breite, ÖChO-rot --------------
 \\newcommand{\\rxnsection}[1]{%
@@ -573,18 +534,23 @@ ${graphicxPkg}
   \\phantomsection\\addcontentsline{toc}{section}{#1}%
 }
 
-%%-- Reaktions-Header: 3-spaltig, minimale vertikale Polsterung --
+%%-- Reaktions-Header: einzeilig wenn möglich -------------------
+%%   #4a: Statt fixer Spaltenbreiten benutzen wir parbox + \\hfill,
+%%   damit Name | Transformation | Typ in EINER Zeile sitzen wenn
+%%   sie zusammen passen. Lange Inhalte werden vom \\parbox sauber
+%%   umgebrochen, was selten passiert.
 \\newcommand{\\rxnheader}[3]{%
   \\par\\smallskip\\noindent\\colorbox{ocaccent!10}{%
-    \\begin{minipage}{\\dimexpr\\linewidth-2\\fboxsep\\relax}%
-      \\begin{tabular*}{\\linewidth}{@{}p{0.50\\linewidth}@{\\extracolsep{\\fill}}p{0.32\\linewidth}@{}>{\\raggedleft\\arraybackslash}p{0.14\\linewidth}@{}}%
-        \\bfseries #1 & {\\itshape\\color{ocmuted}\\small #2} & {\\itshape\\color{ocmuted}\\small #3}%
-      \\end{tabular*}%
-    \\end{minipage}}\\par\\nopagebreak\\smallskip%
+    \\parbox{\\dimexpr\\linewidth-2\\fboxsep\\relax}{%
+      \\bfseries #1\\hfill
+      {\\itshape\\color{ocmuted}\\small #2}\\hspace{1.4em}%
+      {\\itshape\\color{ocmuted}\\small #3}%
+    }%
+  }\\par\\nopagebreak\\smallskip%
   \\phantomsection\\addcontentsline{toc}{subsection}{#1}%
 }
 
-%%-- Notizen-Box: ÖChO-orange linker Rand, gelb-cremiger BG -----
+%%-- Notizen-Box -----------------------------------------------
 \\tcbset{notebox/.style={
   enhanced,frame hidden,sharp corners,
   borderline west={2pt}{0pt}{ocaccent2!75},
@@ -613,7 +579,7 @@ ${twocol ? '\\usepackage{multicol}' : ''}
 {\\small\\color{ocmuted}Überblick \\enspace\\textperiodcentered\\enspace ${today} \\enspace\\textperiodcentered\\enspace ${n} Reaktion${n!==1?'en':''}}
 \\end{center}
 
-\\vspace{0.6em}
+\\vspace{0.4em}
 
 ${opts.inclTOC ? '\\tableofcontents\n\\clearpage' : ''}
 
@@ -625,9 +591,7 @@ ${twocol ? '\\end{multicols}' : ''}
 `;
 }
 
-/* Render one reaction to a PNG (base64). Uses the compact rendering profile
- * from reaction-drawer.js so the export PNG looks tighter than what the
- * web UI shows. */
+/* Render one reaction to a PNG (base64) using the patched compact profile. */
 function reactionToPng(r) {
   return new Promise(resolve => {
     if (!r.reaction_smiles) { resolve(null); return; }
@@ -639,7 +603,8 @@ function reactionToPng(r) {
     document.body.appendChild(wrap);
 
     try {
-      // compact: true → smaller font, single-line label, shorter arrow
+      // The patched library auto-grows the arrow to fit the full label
+      // on a single line — no more multi-row stacks above the arrow.
       ReactionRenderer.draw(r.reaction_smiles, svg, 'light', r.reagent_label||'', '', { compact: true });
     } catch(e) {
       document.body.removeChild(wrap);
