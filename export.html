@@ -73,16 +73,34 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .selected-count{text-align:center;font-size:0.83rem;color:var(--text-soft);padding:0.55rem;background:var(--surface2);border-radius:8px;border:1px solid var(--border);}
 .selected-count strong{color:var(--accent);font-weight:700;}
 
-/* Advanced panel — collapsible */
-.adv-wrap{border:1px solid var(--border);border-radius:9px;background:var(--surface2);overflow:hidden;}
-.adv-header{padding:0.7rem 0.9rem;display:flex;align-items:center;gap:0.55rem;cursor:pointer;user-select:none;background:var(--surface2);transition:background 0.12s;}
-.adv-header:hover{background:var(--surface3,#ecebe0);}
-.adv-chevron{font-size:0.7rem;color:var(--muted2);transition:transform 0.2s;flex-shrink:0;}
-.adv-wrap.open .adv-chevron{transform:rotate(90deg);color:var(--accent);}
-.adv-title{font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-soft);flex:1;}
-.adv-wrap.open .adv-title{color:var(--accent);}
-.adv-body{display:none;padding:0.95rem 1rem 1.1rem;background:var(--surface);border-top:1px solid var(--border);}
-.adv-wrap.open .adv-body{display:flex;flex-direction:column;gap:1.1rem;}
+/* ─── Advanced panel — DEFENSIVE STYLING ───
+   Force visibility and intercept any inherited issues. */
+.adv-wrap{
+  display:block !important;
+  visibility:visible !important;
+  border:2px solid var(--accent) !important;
+  border-radius:9px;
+  background:var(--surface2);
+  overflow:hidden;
+}
+.adv-header{
+  padding:0.7rem 0.9rem;
+  display:flex !important;
+  align-items:center;
+  gap:0.55rem;
+  cursor:pointer;
+  user-select:none;
+  background:var(--accent-soft);
+  transition:background 0.12s;
+}
+.adv-header:hover{background:#fbd0d6;}
+.adv-chevron{font-size:0.85rem;color:var(--accent);transition:transform 0.2s;flex-shrink:0;font-weight:700;}
+.adv-wrap.open .adv-chevron{transform:rotate(90deg);}
+.adv-title{font-size:0.85rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent);flex:1;}
+
+/* Body collapses by default; expanded when .open class on wrap. */
+.adv-body{display:none;padding:0.95rem 1rem 1.1rem;background:var(--surface);border-top:1px solid var(--border);flex-direction:column;gap:1.1rem;}
+.adv-wrap.open .adv-body{display:flex;}
 
 .adv-group-title{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted2);margin-bottom:0.4rem;}
 
@@ -91,10 +109,10 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .slider-label{font-size:0.78rem;color:var(--text-soft);font-weight:500;}
 .slider-value{font-size:0.74rem;color:var(--accent);font-weight:600;font-family:ui-monospace,'Cascadia Code','Fira Code',monospace;background:var(--accent-soft);padding:0.05rem 0.4rem;border-radius:4px;min-width:2.6rem;text-align:right;}
 .slider-value.modified{color:var(--accent2);background:#ffe9d6;}
-.slider{width:100%;height:18px;appearance:none;background:transparent;cursor:pointer;}
+.slider{width:100%;height:18px;appearance:none;-webkit-appearance:none;background:transparent;cursor:pointer;}
 .slider::-webkit-slider-runnable-track{height:3px;background:var(--border2);border-radius:3px;}
 .slider::-moz-range-track{height:3px;background:var(--border2);border-radius:3px;}
-.slider::-webkit-slider-thumb{appearance:none;width:14px;height:14px;background:var(--accent);border-radius:50%;margin-top:-5.5px;border:2px solid #fff;box-shadow:0 1px 3px rgba(60,55,40,0.2);transition:transform 0.1s;}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;background:var(--accent);border-radius:50%;margin-top:-5.5px;border:2px solid #fff;box-shadow:0 1px 3px rgba(60,55,40,0.2);transition:transform 0.1s;}
 .slider::-moz-range-thumb{width:14px;height:14px;background:var(--accent);border-radius:50%;border:2px solid #fff;box-shadow:0 1px 3px rgba(60,55,40,0.2);}
 .slider:hover::-webkit-slider-thumb{transform:scale(1.15);}
 .slider:focus{outline:none;}
@@ -103,7 +121,6 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .adv-reset{font-size:0.74rem;padding:0.35rem 0.7rem;border-radius:6px;background:var(--surface);color:var(--muted);border:1px solid var(--border);cursor:pointer;font-family:inherit;align-self:flex-start;transition:all 0.15s;font-weight:500;}
 .adv-reset:hover{border-color:var(--accent);color:var(--accent);}
 
-/* Live preview pane */
 .preview-pane{background:#fff;border:1px solid var(--border);border-radius:8px;padding:0.7rem;display:flex;flex-direction:column;align-items:stretch;gap:0.4rem;box-shadow:var(--shadow-sm);}
 .preview-title{font-size:0.66rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted2);display:flex;align-items:baseline;justify-content:space-between;}
 .preview-dims{color:var(--muted);font-weight:500;font-family:ui-monospace,'Cascadia Code','Fira Code',monospace;text-transform:none;letter-spacing:0;}
@@ -227,15 +244,16 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
       </div>
     </div>
 
-    <!-- ============================================================
+    <!-- =====================================================
          ERWEITERTE OPTIONEN — sliders + live preview
-         ============================================================ -->
-    <div class="adv-wrap" id="adv-wrap">
-      <div class="adv-header" onclick="toggleAdvanced()">
-        <span class="adv-chevron">▶</span>
-        <span class="adv-title">Erweitert</span>
+         Starts EXPANDED (.open) so visibility is guaranteed.
+         ===================================================== -->
+    <div class="adv-wrap open" id="adv-wrap">
+      <div class="adv-header" id="adv-header">
+        <span class="adv-chevron" id="adv-chevron">▼</span>
+        <span class="adv-title">Erweiterte Optionen</span>
       </div>
-      <div class="adv-body">
+      <div class="adv-body" id="adv-body">
 
         <div>
           <div class="adv-group-title">Typografie</div>
@@ -319,7 +337,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
           </div>
         </div>
 
-        <button class="adv-reset" onclick="resetAdvanced()">↺ Auf Standard zurücksetzen</button>
+        <button class="adv-reset" id="adv-reset">↺ Auf Standard zurücksetzen</button>
 
         <div class="preview-pane">
           <div class="preview-title">
@@ -328,7 +346,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
           </div>
           <div class="preview-select-wrap">
             <span class="preview-select-label">Reaktion</span>
-            <select class="preview-select" id="preview-select" onchange="redrawPreview()"></select>
+            <select class="preview-select" id="preview-select"></select>
           </div>
           <div class="preview-frame" id="preview-frame">
             <span class="preview-loading">Wird geladen…</span>
@@ -343,13 +361,13 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
     </div>
 
     <div class="action-buttons">
-      <button class="btn btn-primary" onclick="doExport()">
+      <button class="btn btn-primary" id="btn-export">
         ↓ Download .zip — LaTeX + Bilder
       </button>
-      <button class="btn btn-overleaf" onclick="openInOverleaf()">
+      <button class="btn btn-overleaf" id="btn-overleaf">
         ↗ In Overleaf öffnen (nur Text)
       </button>
-      <button class="btn btn-secondary" onclick="downloadTexOnly()">
+      <button class="btn btn-secondary" id="btn-tex">
         ↓ Download .tex (ohne Bilder)
       </button>
     </div>
@@ -364,8 +382,8 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
   <div class="selector-panel">
     <div class="selector-header">
       <h2>Reaktionen auswählen</h2>
-      <button class="sel-btn" onclick="selectAll()">Alle</button>
-      <button class="sel-btn" onclick="selectNone()">Keine</button>
+      <button class="sel-btn" id="btn-sel-all">Alle</button>
+      <button class="sel-btn" id="btn-sel-none">Keine</button>
     </div>
     <div id="reaction-list">Lädt…</div>
   </div>
@@ -373,82 +391,97 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 </div>
 
 <script>
+'use strict';
+
+/* Top-level error trap — any thrown error during init becomes visible
+   to the user instead of silently aborting the script. */
+window.addEventListener('error', (e) => {
+  console.error('[export] uncaught error:', e.error || e.message, e.filename, e.lineno);
+});
+
 let reactions = [];
 
-/* All tunable export options live in one object. The basic UI controls
- * (font radio buttons, density radio buttons) and the advanced sliders
- * write into the SAME fields here — toggling a basic preset just writes
- * the corresponding slider value(s), so the two stay in sync.
- *
- * Defaults match the production-tested values from rounds prior to the
- * slider UI: fontPt 11, imgScale 0.08, supersample 5, bondLength 24, etc. */
 const DEFAULTS = {
-  // Section toggles
   inclDrawings:      true,
   inclDetails:       true,
   inclKeyPoints:     true,
   inclNotes:         true,
   inclTOC:           false,
-  // Layout
-  layout:            'single',      // 'single' | 'twocol'
-  // Typography
+  layout:            'single',
   fontPt:            11,
   lineSpacing:       1.0,
-  pageMargin:        1.8,           // cm, applied to all four sides
-  // Images
-  imgScale:          0.08,          // \includegraphics scale
-  supersample:       5,             // canvas sc factor
-  bondLength:        24,            // px in source SVG
+  pageMargin:        1.8,
+  imgScale:          0.08,
+  supersample:       5,
+  bondLength:        24,
   bondThickness:     1.0,
-  arrowLength:       42,            // px in source SVG, min arrow span
-  // Layout logic
+  arrowLength:       42,
   sideBySideAspect:  2.6,
-  imgColPct:         50              // %, image column width in side-by-side
+  imgColPct:         50
 };
 const opts = Object.assign({}, DEFAULTS);
 
-/* "Strukturgröße" preset → imgScale mapping. Selecting a preset writes
- * the slider; dragging the slider doesn't toggle a preset. */
-const DENSITY_PRESETS = {
-  compact:  0.08,
-  normal:   0.11,
-  spacious: 0.14
-};
-
-/* Per-reaction PNG geometry, populated during the export render pass
- * and consumed by reactionBlock() when building LaTeX. Keyed by r.id. */
+const DENSITY_PRESETS = { compact: 0.08, normal: 0.11, spacious: 0.14 };
 const pngGeometry = new Map();
 
-/* ─────────────────────────────────────────────────────────────────
- * Initialization
- * ───────────────────────────────────────────────────────────────── */
+const SLIDERS = [
+  { key: 'fontPt',           sId: 's-fontPt',           vId: 'v-fontPt',           fmt: v => v + ' pt',         prec: 1 },
+  { key: 'lineSpacing',      sId: 's-lineSpacing',      vId: 'v-lineSpacing',      fmt: v => v.toFixed(2),      prec: 2 },
+  { key: 'pageMargin',       sId: 's-pageMargin',       vId: 'v-pageMargin',       fmt: v => v.toFixed(1)+' cm',prec: 1 },
+  { key: 'imgScale',         sId: 's-imgScale',         vId: 'v-imgScale',         fmt: v => v.toFixed(3),      prec: 3 },
+  { key: 'supersample',      sId: 's-supersample',      vId: 'v-supersample',      fmt: v => v + '×',           prec: 0 },
+  { key: 'bondLength',       sId: 's-bondLength',       vId: 'v-bondLength',       fmt: v => v + ' px',         prec: 0 },
+  { key: 'bondThickness',    sId: 's-bondThickness',    vId: 'v-bondThickness',    fmt: v => v.toFixed(1),      prec: 1 },
+  { key: 'arrowLength',      sId: 's-arrowLength',      vId: 'v-arrowLength',      fmt: v => v + ' px',         prec: 0 },
+  { key: 'sideBySideAspect', sId: 's-sideBySideAspect', vId: 'v-sideBySideAspect', fmt: v => v.toFixed(1),      prec: 1 },
+  { key: 'imgColPct',        sId: 's-imgColPct',        vId: 'v-imgColPct',        fmt: v => v + ' %',          prec: 0 }
+];
+
+const DETAIL_FIELDS = [
+  {key:'conditions',      label:'Bedingungen'},
+  {key:'substrate_scope', label:'Substratumfang'},
+  {key:'nucleophile',     label:'Nukleophil'},
+  {key:'leaving_group',   label:'Abgangsgruppe'},
+  {key:'reagents',        label:'Reagenzien'},
+  {key:'mechanism',       label:'Mechanismus'},
+  {key:'stereochemistry', label:'Stereochemie'},
+  {key:'kinetics',        label:'Kinetik'},
+  {key:'solvent',         label:'Lösungsmittel'},
+];
+
+/* ════════════════════════════════════════════════════════════════
+ * Initialization — wire up everything via addEventListener so
+ * nothing relies on inline onclick attributes finding globals.
+ * ════════════════════════════════════════════════════════════════ */
 
 async function init() {
   try {
     reactions = await fetch('./data/reactions.json').then(r => r.json());
-  } catch(e) {
+  } catch (e) {
+    console.error('[export] failed to load reactions.json:', e);
     document.getElementById('reaction-list').innerHTML =
       '<p style="color:var(--red);padding:1rem">reactions.json konnte nicht geladen werden</p>';
-    return;
+    // Continue — the advanced panel is independent of reactions data
   }
-  buildSelector();
-  initOptionButtons();
-  initSliders();
-  initPreview();
+
+  // Wire each piece independently so one failing doesn't break the others
+  safeRun('buildSelector',    buildSelector);
+  safeRun('wireBasicButtons', wireBasicButtons);
+  safeRun('wireAdvanced',     wireAdvanced);
+  safeRun('wireSliders',      wireSliders);
+  safeRun('wireActions',      wireActions);
+  safeRun('initPreview',      initPreview);
 }
 
-function bindRadioGroup(groupId, applyFn) {
-  const el = document.getElementById(groupId);
-  if (!el) return;
-  el.addEventListener('click', e => {
-    const btn = e.target.closest('.radio-btn'); if (!btn) return;
-    document.querySelectorAll(`#${groupId} .radio-btn`).forEach(b => b.classList.remove('on'));
-    btn.classList.add('on');
-    applyFn(btn.dataset.val);
-  });
+function safeRun(name, fn) {
+  try { fn(); }
+  catch (e) {
+    console.error('[export] error in ' + name + ':', e);
+  }
 }
 
-function initOptionButtons() {
+/* ─── Wire the basic radio groups and checkboxes ─── */
+function wireBasicButtons() {
   bindRadioGroup('font-group', v => {
     opts.fontPt = parseFloat(v);
     syncSliderFromOpts('fontPt');
@@ -471,31 +504,45 @@ function initOptionButtons() {
   });
 }
 
-/* ─────────────────────────────────────────────────────────────────
- * Slider plumbing
- *
- * Each slider config maps an opts key to: range input id, value-display
- * id, formatter for the value display, and the precision for storing
- * the numeric value in opts. */
+function bindRadioGroup(groupId, applyFn) {
+  const el = document.getElementById(groupId);
+  if (!el) return;
+  el.addEventListener('click', e => {
+    const btn = e.target.closest('.radio-btn'); if (!btn) return;
+    document.querySelectorAll('#' + groupId + ' .radio-btn').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    applyFn(btn.dataset.val);
+  });
+}
 
-const SLIDERS = [
-  { key: 'fontPt',           sId: 's-fontPt',           vId: 'v-fontPt',           fmt: v => `${v} pt`,             prec: 1 },
-  { key: 'lineSpacing',      sId: 's-lineSpacing',      vId: 'v-lineSpacing',      fmt: v => v.toFixed(2),          prec: 2 },
-  { key: 'pageMargin',       sId: 's-pageMargin',       vId: 'v-pageMargin',       fmt: v => `${v.toFixed(1)} cm`,  prec: 1 },
-  { key: 'imgScale',         sId: 's-imgScale',         vId: 'v-imgScale',         fmt: v => v.toFixed(3),          prec: 3 },
-  { key: 'supersample',      sId: 's-supersample',      vId: 'v-supersample',      fmt: v => `${v}×`,               prec: 0 },
-  { key: 'bondLength',       sId: 's-bondLength',       vId: 'v-bondLength',       fmt: v => `${v} px`,             prec: 0 },
-  { key: 'bondThickness',    sId: 's-bondThickness',    vId: 'v-bondThickness',    fmt: v => v.toFixed(1),          prec: 1 },
-  { key: 'arrowLength',      sId: 's-arrowLength',      vId: 'v-arrowLength',      fmt: v => `${v} px`,             prec: 0 },
-  { key: 'sideBySideAspect', sId: 's-sideBySideAspect', vId: 'v-sideBySideAspect', fmt: v => v.toFixed(1),          prec: 1 },
-  { key: 'imgColPct',        sId: 's-imgColPct',        vId: 'v-imgColPct',        fmt: v => `${v} %`,              prec: 0 }
-];
+/* ─── Wire the advanced panel collapse + reset ─── */
+function wireAdvanced() {
+  const wrap   = document.getElementById('adv-wrap');
+  const header = document.getElementById('adv-header');
+  const chevron = document.getElementById('adv-chevron');
+  const resetBtn = document.getElementById('adv-reset');
 
-function initSliders() {
+  if (header && wrap) {
+    header.addEventListener('click', () => {
+      const isOpen = wrap.classList.toggle('open');
+      if (chevron) chevron.textContent = isOpen ? '▼' : '▶';
+      if (isOpen) schedulePreview();
+    });
+  }
+  // Sync chevron with initial open state
+  if (chevron && wrap) chevron.textContent = wrap.classList.contains('open') ? '▼' : '▶';
+
+  if (resetBtn) resetBtn.addEventListener('click', resetAdvanced);
+}
+
+/* ─── Wire all sliders ─── */
+function wireSliders() {
   SLIDERS.forEach(s => {
     const slider = document.getElementById(s.sId);
-    if (!slider) return;
-    // Set initial value from opts (allows defaults to drive the UI)
+    if (!slider) {
+      console.warn('[export] slider not found: ' + s.sId);
+      return;
+    }
     slider.value = opts[s.key];
     updateSliderDisplay(s);
     slider.addEventListener('input', () => {
@@ -512,15 +559,11 @@ function updateSliderDisplay(s) {
   const out = document.getElementById(s.vId);
   if (!out) return;
   out.textContent = s.fmt(v);
-  // Highlight if user has touched a value off-default
   const defaultV = DEFAULTS[s.key];
   const isModified = Math.abs(v - defaultV) > 1e-9;
   out.classList.toggle('modified', isModified);
 }
 
-/* Called when a basic-UI preset (font radio button, density radio
- * button) writes into opts — update the corresponding slider and its
- * displayed value to stay in sync. */
 function syncSliderFromOpts(key) {
   const s = SLIDERS.find(x => x.key === key);
   if (!s) return;
@@ -536,7 +579,6 @@ function resetAdvanced() {
     if (slider) slider.value = DEFAULTS[s.key];
     updateSliderDisplay(s);
   });
-  // Also reset font and density basic buttons to defaults
   document.querySelectorAll('#font-group .radio-btn').forEach(b => {
     b.classList.toggle('on', parseFloat(b.dataset.val) === DEFAULTS.fontPt);
   });
@@ -546,46 +588,62 @@ function resetAdvanced() {
   schedulePreview();
 }
 
-function toggleAdvanced() {
-  const w = document.getElementById('adv-wrap');
-  w.classList.toggle('open');
-  // If opening for the first time, kick the preview
-  if (w.classList.contains('open')) schedulePreview();
+/* ─── Wire export action buttons ─── */
+function wireActions() {
+  const btnExport   = document.getElementById('btn-export');
+  const btnOverleaf = document.getElementById('btn-overleaf');
+  const btnTex      = document.getElementById('btn-tex');
+  const btnSelAll   = document.getElementById('btn-sel-all');
+  const btnSelNone  = document.getElementById('btn-sel-none');
+  if (btnExport)   btnExport.addEventListener('click', doExport);
+  if (btnOverleaf) btnOverleaf.addEventListener('click', openInOverleaf);
+  if (btnTex)      btnTex.addEventListener('click', downloadTexOnly);
+  if (btnSelAll)   btnSelAll.addEventListener('click', selectAll);
+  if (btnSelNone)  btnSelNone.addEventListener('click', selectNone);
 }
 
-/* ─────────────────────────────────────────────────────────────────
+/* ════════════════════════════════════════════════════════════════
  * Live preview pane
- *
- * Renders one reaction at the current settings. Debounced 150ms so
- * fast slider dragging doesn't spam the renderer. */
+ * ════════════════════════════════════════════════════════════════ */
 
 let previewDebounce = null;
 let previewToken = 0;
 
 function initPreview() {
   const sel = document.getElementById('preview-select');
-  if (!reactions.length) return;
-  // Populate with all reactions that have a SMILES (sorted by category then name)
+  if (!sel) return;
+  if (!reactions.length) {
+    sel.innerHTML = '<option value="">Keine Reaktionen verfügbar</option>';
+    return;
+  }
   const withSmi = reactions.filter(r => r.reaction_smiles);
+  if (!withSmi.length) {
+    sel.innerHTML = '<option value="">Keine SMILES verfügbar</option>';
+    return;
+  }
   withSmi.sort((a, b) => (a.category + a.name).localeCompare(b.category + b.name));
   sel.innerHTML = withSmi.map(r =>
-    `<option value="${r.id}">${escapeAttr(r.category)} — ${escapeAttr(r.name)}</option>`
+    '<option value="' + escapeAttr(r.id) + '">' +
+      escapeAttr(r.category) + ' — ' + escapeAttr(r.name) +
+    '</option>'
   ).join('');
-  if (sel.options.length > 0) {
-    sel.selectedIndex = 0;
+  sel.selectedIndex = 0;
+  sel.addEventListener('change', redrawPreview);
+  // If panel is initially open, render now
+  if (document.getElementById('adv-wrap').classList.contains('open')) {
+    schedulePreview();
   }
-  // Don't draw eagerly — wait for advanced panel to be opened
 }
 
 function escapeAttr(s) {
-  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;')
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
     .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 function schedulePreview() {
-  // Only redraw if the advanced panel is open (else it's a hidden no-op)
-  const advOpen = document.getElementById('adv-wrap').classList.contains('open');
-  if (!advOpen) return;
+  const wrap = document.getElementById('adv-wrap');
+  if (!wrap || !wrap.classList.contains('open')) return;
   clearTimeout(previewDebounce);
   previewDebounce = setTimeout(redrawPreview, 150);
 }
@@ -594,8 +652,10 @@ function redrawPreview() {
   const sel = document.getElementById('preview-select');
   const frame = document.getElementById('preview-frame');
   const dimsEl = document.getElementById('preview-dims');
-  if (!sel || !frame || !sel.value) {
-    if (frame) frame.innerHTML = '<span class="preview-loading">Keine Reaktion ausgewählt</span>';
+  if (!sel || !frame) return;
+  if (!sel.value) {
+    frame.innerHTML = '<span class="preview-loading">Keine Reaktion ausgewählt</span>';
+    if (dimsEl) dimsEl.textContent = '—';
     return;
   }
   const r = reactions.find(x => x.id === sel.value);
@@ -605,16 +665,18 @@ function redrawPreview() {
     return;
   }
 
-  // Token to ignore late-firing renders if a newer one started.
   const myToken = ++previewToken;
 
-  // Build a fresh SVG container
   frame.innerHTML = '';
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
   frame.appendChild(svg);
 
   try {
+    if (typeof ReactionRenderer === 'undefined') {
+      frame.innerHTML = '<span class="preview-loading" style="color:var(--red)">ReactionRenderer nicht geladen</span>';
+      return;
+    }
     ReactionRenderer.draw(
       r.reaction_smiles, svg, 'light',
       r.reagent_label || '', '',
@@ -627,13 +689,11 @@ function redrawPreview() {
     return;
   }
 
-  if (myToken !== previewToken) return; // stale render
+  if (myToken !== previewToken) return;
 
-  // Cap CSS width so very wide reactions fit the panel
   svg.style.maxWidth = '100%';
   svg.style.height = 'auto';
 
-  // Show natural pixel dimensions (post-_fitReactionViewBox) for the user
   if (dimsEl) {
     const vb = svg.getAttribute('viewBox');
     if (vb) {
@@ -641,15 +701,14 @@ function redrawPreview() {
       if (p.length >= 4) {
         const w = Math.round(p[2]), h = Math.round(p[3]);
         const aspect = (w / h).toFixed(2);
-        dimsEl.textContent = `${w}×${h} px · Aspekt ${aspect}`;
+        dimsEl.textContent = w + '×' + h + ' px · Aspekt ' + aspect;
       }
+    } else {
+      dimsEl.textContent = '—';
     }
   }
 }
 
-/* Build the override bundle passed to ReactionRenderer.draw, derived
- * from the current opts. Used by both the live preview and the actual
- * PDF export render pass — guaranteeing what you see = what you get. */
 function buildRendererOverrides() {
   return {
     compact: true,
@@ -663,32 +722,35 @@ function buildRendererOverrides() {
   };
 }
 
-/* ─────────────────────────────────────────────────────────────────
- * Reaction list and selection (unchanged) */
+/* ════════════════════════════════════════════════════════════════
+ * Reaction list and selection
+ * ════════════════════════════════════════════════════════════════ */
 
 function categories() { return [...new Set(reactions.map(r => r.category))]; }
 function getChecked() { return [...document.querySelectorAll('.rxn-cb:checked')].map(cb => cb.value); }
 
 function buildSelector() {
+  if (!reactions.length) return;
   const cats = categories();
   let html = '';
   cats.forEach(cat => {
     const items = reactions.filter(r => r.category === cat);
     const catId = cat.replace(/\s+/g, '_').replace(/[^\w]/g, '_');
-    html += `<div class="cat-group">
-      <div class="cat-row" onclick="toggleCat('${catId}')">
-        <input type="checkbox" class="cat-cb" id="cat-${catId}" onclick="event.stopPropagation();catToggle('${catId}',this.checked)" checked>
-        <span class="cat-label">${cat}</span>
-        <span class="rxn-cat-badge">${items.length}</span>
-      </div>
-      <div class="rxn-items" id="items-${catId}">
-        ${items.map(r => `
-          <label class="rxn-row">
-            <input type="checkbox" class="rxn-cb" value="${r.id}" onchange="updateCount()" checked>
-            <span class="rxn-name">${r.name}</span>
-          </label>`).join('')}
-      </div>
-    </div>`;
+    html += '<div class="cat-group">' +
+      '<div class="cat-row" onclick="toggleCat(\'' + catId + '\')">' +
+        '<input type="checkbox" class="cat-cb" id="cat-' + catId + '" onclick="event.stopPropagation();catToggle(\'' + catId + '\',this.checked)" checked>' +
+        '<span class="cat-label">' + escapeAttr(cat) + '</span>' +
+        '<span class="rxn-cat-badge">' + items.length + '</span>' +
+      '</div>' +
+      '<div class="rxn-items" id="items-' + catId + '">' +
+        items.map(r =>
+          '<label class="rxn-row">' +
+            '<input type="checkbox" class="rxn-cb" value="' + escapeAttr(r.id) + '" onchange="updateCount()" checked>' +
+            '<span class="rxn-name">' + escapeAttr(r.name) + '</span>' +
+          '</label>'
+        ).join('') +
+      '</div>' +
+    '</div>';
   });
   document.getElementById('reaction-list').innerHTML = html;
   updateCount();
@@ -696,21 +758,28 @@ function buildSelector() {
 
 function toggleCat(catId) {
   const items = document.getElementById('items-'+catId);
-  items.style.display = items.style.display === 'none' ? '' : 'none';
+  if (items) items.style.display = items.style.display === 'none' ? '' : 'none';
 }
 function catToggle(catId, checked) {
-  document.querySelectorAll(`#items-${catId} .rxn-cb`).forEach(cb => cb.checked = checked);
+  document.querySelectorAll('#items-'+catId+' .rxn-cb').forEach(cb => cb.checked = checked);
   updateCount();
 }
 function selectAll()  { document.querySelectorAll('.rxn-cb,.cat-cb').forEach(cb => cb.checked = true);  updateCount(); }
 function selectNone() { document.querySelectorAll('.rxn-cb,.cat-cb').forEach(cb => cb.checked = false); updateCount(); }
 function updateCount() {
   const n = getChecked().length;
-  document.getElementById('sel-count').innerHTML = `<strong>${n}</strong> Reaktion${n!==1?'en':''} ausgewählt`;
+  const el = document.getElementById('sel-count');
+  if (el) el.innerHTML = '<strong>' + n + '</strong> Reaktion' + (n!==1?'en':'') + ' ausgewählt';
 }
 
-/* ─────────────────────────────────────────────────────────────────
- * LaTeX escaping and helpers (unchanged) */
+// Expose inline-onclick targets to window (still used inside buildSelector output)
+window.toggleCat   = toggleCat;
+window.catToggle   = catToggle;
+window.updateCount = updateCount;
+
+/* ════════════════════════════════════════════════════════════════
+ * LaTeX escaping and helpers
+ * ════════════════════════════════════════════════════════════════ */
 
 function esc(str) {
   if (!str) return '';
@@ -745,10 +814,10 @@ function formatRxnType(t) {
   const parts = String(t).trim().split(/\s*\+\s*/);
   const formatted = parts.map(piece => {
     const m = piece.match(/^([A-Z])([0-9a-zA-Z]+)$/);
-    if (m) return `${m[1]}_{${m[2]}}`;
+    if (m) return m[1] + '_{' + m[2] + '}';
     return piece;
   }).join('+');
-  return `$${formatted}$`;
+  return '$' + formatted + '$';
 }
 
 function transformationFor(r) {
@@ -762,74 +831,56 @@ function smilesScheme(r) {
   const reactants = (parts[0]||'').split('.').join(' + ');
   const products  = (parts[2]||'').split('.').join(' + ');
   const reagent   = esc(r.reagent_label || parts[1] || '');
-  return `{\\small\\texttt{${esc(reactants)}}}\\;$\\xrightarrow{\\text{${reagent}}}$\\;{\\small\\texttt{${esc(products)}}}`;
+  return '{\\small\\texttt{' + esc(reactants) + '}}\\;$\\xrightarrow{\\text{' + reagent + '}}$\\;{\\small\\texttt{' + esc(products) + '}}';
 }
 
-const DETAIL_FIELDS = [
-  {key:'conditions',      label:'Bedingungen'},
-  {key:'substrate_scope', label:'Substratumfang'},
-  {key:'nucleophile',     label:'Nukleophil'},
-  {key:'leaving_group',   label:'Abgangsgruppe'},
-  {key:'reagents',        label:'Reagenzien'},
-  {key:'mechanism',       label:'Mechanismus'},
-  {key:'stereochemistry', label:'Stereochemie'},
-  {key:'kinetics',        label:'Kinetik'},
-  {key:'solvent',         label:'Lösungsmittel'},
-];
-
-/* Build the body of a single reaction (unchanged structure;
- * just reads the slider-tuned values for column width and aspect). */
 function reactionBlock(r, withImage) {
   const transform = transformationFor(r);
   const typeCode = formatRxnType(r.reaktionstyp);
-  const header = `\\rxnheader{${esc(r.name)}}{${transform}}{${typeCode}}`;
+  const header = '\\rxnheader{' + esc(r.name) + '}{' + transform + '}{' + typeCode + '}';
 
   const subtitle = r.subtitle
-    ? `{\\small\\color{ocmuted}\\itshape ${esc(r.subtitle)}}\\par\\nopagebreak\\smallskip\n`
+    ? '{\\small\\color{ocmuted}\\itshape ' + esc(r.subtitle) + '}\\par\\nopagebreak\\smallskip\n'
     : '';
 
   let drawingTex = '';
   if (withImage && r.reaction_smiles) {
-    drawingTex = `\\adjustbox{max width=\\linewidth}{\\includegraphics[scale=\\rxnimgscale]{img/${r.id}.png}}`;
+    drawingTex = '\\adjustbox{max width=\\linewidth}{\\includegraphics[scale=\\rxnimgscale]{img/' + r.id + '.png}}';
   } else if (r.reaction_smiles) {
     drawingTex = smilesScheme(r);
   } else if (r.general_scheme) {
-    drawingTex = `{\\small\\texttt{${esc(r.general_scheme)}}}`;
+    drawingTex = '{\\small\\texttt{' + esc(r.general_scheme) + '}}';
   }
 
-  const kpItems = (opts.inclKeyPoints && r.key_points?.length)
-    ? r.key_points.map(p => `  \\item ${esc(p)}`).join('\n')
+  const kpItems = (opts.inclKeyPoints && r.key_points && r.key_points.length)
+    ? r.key_points.map(p => '  \\item ' + esc(p)).join('\n')
     : null;
   const kpTex = kpItems
-    ? `\\textbf{\\small Schlüsselpunkte}\\par\\nopagebreak\n\\begin{itemize}[leftmargin=1.2em,itemsep=0pt,topsep=1pt,parsep=0pt,label=\\textcolor{ocmuted}{\\textbullet}]\n${kpItems}\n\\end{itemize}`
+    ? '\\textbf{\\small Schlüsselpunkte}\\par\\nopagebreak\n\\begin{itemize}[leftmargin=1.2em,itemsep=0pt,topsep=1pt,parsep=0pt,label=\\textcolor{ocmuted}{\\textbullet}]\n' + kpItems + '\n\\end{itemize}'
     : '';
 
   const geo = pngGeometry.get(r.id);
   const tooWideForSideBySide = geo && geo.aspect > opts.sideBySideAspect;
 
-  // Column widths from slider: image gets opts.imgColPct%, key-points
-  // gets (98 - imgColPct)% to leave a 2% gutter via \hfill.
   const imgColFrac = (opts.imgColPct / 100).toFixed(2);
   const kpColFrac  = ((98 - opts.imgColPct) / 100).toFixed(2);
 
   let bodyTex;
   if (drawingTex && kpTex && !tooWideForSideBySide) {
     bodyTex =
-`\\noindent\\begin{minipage}[t]{${imgColFrac}\\linewidth}\\vspace{0pt}\\centering
-${drawingTex}
-\\end{minipage}\\hfill\\begin{minipage}[t]{${kpColFrac}\\linewidth}\\vspace{0pt}
-\\small ${kpTex}
-\\end{minipage}\\par`;
+      '\\noindent\\begin{minipage}[t]{' + imgColFrac + '\\linewidth}\\vspace{0pt}\\centering\n' +
+      drawingTex + '\n' +
+      '\\end{minipage}\\hfill\\begin{minipage}[t]{' + kpColFrac + '\\linewidth}\\vspace{0pt}\n' +
+      '\\small ' + kpTex + '\n' +
+      '\\end{minipage}\\par';
   } else if (drawingTex && kpTex && tooWideForSideBySide) {
     bodyTex =
-`\\begin{center}
-${drawingTex}
-\\end{center}
-\\small ${kpTex}\\par\\smallskip`;
+      '\\begin{center}\n' + drawingTex + '\n\\end{center}\n' +
+      '\\small ' + kpTex + '\\par\\smallskip';
   } else if (drawingTex) {
-    bodyTex = `\\begin{center}\n${drawingTex}\n\\end{center}`;
+    bodyTex = '\\begin{center}\n' + drawingTex + '\n\\end{center}';
   } else if (kpTex) {
-    bodyTex = `\\small ${kpTex}\\par\\smallskip`;
+    bodyTex = '\\small ' + kpTex + '\\par\\smallskip';
   } else {
     bodyTex = '';
   }
@@ -837,172 +888,140 @@ ${drawingTex}
   const activeFields = DETAIL_FIELDS.filter(f => r[f.key]);
   let table = '';
   if (opts.inclDetails && activeFields.length) {
-    table = `\n\\par\\smallskip\n{\\renewcommand{\\arraystretch}{1.05}%\n\\noindent\\begin{tabular}{@{}>{\\small\\bfseries\\color{ocmuted}}l@{\\hspace{1.4em}}>{\\small\\raggedright\\arraybackslash}p{0.75\\linewidth}@{}}\n\\toprule\n`
-      + activeFields.map(f => `${esc(f.label.toUpperCase())} & ${esc(r[f.key])} \\\\`).join('\n')
-      + `\n\\bottomrule\n\\end{tabular}}`;
+    table = '\n\\par\\smallskip\n{\\renewcommand{\\arraystretch}{1.05}%\n' +
+      '\\noindent\\begin{tabular}{@{}>{\\small\\bfseries\\color{ocmuted}}l@{\\hspace{1.4em}}>{\\small\\raggedright\\arraybackslash}p{0.75\\linewidth}@{}}\n' +
+      '\\toprule\n' +
+      activeFields.map(f => esc(f.label.toUpperCase()) + ' & ' + esc(r[f.key]) + ' \\\\').join('\n') +
+      '\n\\bottomrule\n\\end{tabular}}';
   }
 
   let notes = '';
   if (opts.inclNotes && r.notes) {
-    notes = `\n\\begin{tcolorbox}[notebox]\n\\small\\textbf{Notizen:}\\enspace ${esc(r.notes)}\n\\end{tcolorbox}`;
+    notes = '\n\\begin{tcolorbox}[notebox]\n\\small\\textbf{Notizen:}\\enspace ' + esc(r.notes) + '\n\\end{tcolorbox}';
   }
 
-  return `
-${header}
-${subtitle}${bodyTex}${table}${notes}
-`;
+  return '\n' + header + '\n' + subtitle + bodyTex + table + notes + '\n';
 }
 
-/* Build the .tex document. All previously-hardcoded values now come
- * from opts (which is driven by the sliders). */
 function buildLatex(selectedReactions, withImages) {
   const cats = [...new Set(selectedReactions.map(r => r.category))];
   const twocol = opts.layout === 'twocol';
   const today = new Date().toLocaleDateString('de-AT',{year:'numeric',month:'long',day:'numeric'});
   const n = selectedReactions.length;
 
-  // Class option for fontsize. LaTeX needs the canonical 10pt/11pt/12pt;
-  // non-canonical values are achieved via \fontsize{N}{N*1.2}\selectfont
-  // emitted into the preamble.
   let classOpt;
   let extraFontCmd = '';
   if (Math.abs(opts.fontPt - 10) < 1e-9 || Math.abs(opts.fontPt - 11) < 1e-9 || Math.abs(opts.fontPt - 12) < 1e-9) {
-    classOpt = `${Math.round(opts.fontPt)}pt`;
+    classOpt = Math.round(opts.fontPt) + 'pt';
   } else {
-    // Closest canonical baseline; \fontsize overrides at start of doc
     classOpt = '11pt';
     const baselineSkip = (opts.fontPt * (opts.lineSpacing > 1 ? opts.lineSpacing : 1.2)).toFixed(2);
-    extraFontCmd = `\\AtBeginDocument{\\fontsize{${opts.fontPt}}{${baselineSkip}}\\selectfont}`;
+    extraFontCmd = '\\AtBeginDocument{\\fontsize{' + opts.fontPt + '}{' + baselineSkip + '}\\selectfont}';
   }
 
-  // Line spacing — only emit if non-default. \linespread is multiplicative.
   let linespreadCmd = '';
   if (Math.abs(opts.lineSpacing - 1.0) > 1e-9) {
-    linespreadCmd = `\\linespread{${opts.lineSpacing.toFixed(3)}}`;
+    linespreadCmd = '\\linespread{' + opts.lineSpacing.toFixed(3) + '}';
   }
 
-  // Page margins — single slider, applied to all sides (the 0.2cm extra
-  // on bottom that was hardcoded is preserved as +0.2 over the slider value).
-  const m = opts.pageMargin.toFixed(2);
+  const m  = opts.pageMargin.toFixed(2);
   const mb = (opts.pageMargin + 0.2).toFixed(2);
 
   let body = cats.map(cat => {
     const items = selectedReactions.filter(r => r.category === cat);
-    return `\\rxnsection{${esc(cat)}}\n` + items.map(r => reactionBlock(r, withImages)).join('\n');
+    return '\\rxnsection{' + esc(cat) + '}\n' + items.map(r => reactionBlock(r, withImages)).join('\n');
   }).join('\n');
 
-  const adjustboxPkg = withImages
-    ? '\\usepackage[export]{adjustbox}'
-    : '% adjustbox not needed (no images)';
+  const adjustboxPkg = withImages ? '\\usepackage[export]{adjustbox}' : '% adjustbox not needed (no images)';
 
-  return `% =============================================================
-%   OC Referenz — Reaktionskompendium
-%   Generiert ${today}
-%   Kompilieren mit: pdflatex oc-reference.tex
-% =============================================================
-
-\\documentclass[a4paper,${classOpt}]{article}
-
-%%-- Pakete ----------------------------------------------------
-\\usepackage[a4paper,left=${m}cm,right=${m}cm,top=${m}cm,bottom=${mb}cm]{geometry}
-\\usepackage[T1]{fontenc}
-\\usepackage[utf8]{inputenc}
-\\usepackage[ngerman]{babel}
-\\usepackage{lmodern}
-\\usepackage{microtype}
-\\usepackage[version=4]{mhchem}
-\\usepackage{booktabs}
-\\usepackage{xcolor}
-\\usepackage{enumitem}
-\\usepackage[many]{tcolorbox}
-\\usepackage{array}
-\\usepackage{parskip}
-\\usepackage{fancyhdr}
-\\usepackage[hidelinks,bookmarksopen]{hyperref}
-${adjustboxPkg}
-
-${extraFontCmd}
-${linespreadCmd}
-
-%%-- Farben (ÖChO-Palette) -------------------------------------
-\\definecolor{ocaccent}{HTML}{E2001A}
-\\definecolor{ocaccent2}{HTML}{ED6B06}
-\\definecolor{ocmuted}{HTML}{6B6A5D}
-\\definecolor{ocborder}{HTML}{CFCEB8}
-\\definecolor{ocnotebg}{HTML}{FFFBE8}
-
-%%-- Bildmaßstab (Strukturgröße-Slider steuert diesen Wert) -----
-\\newcommand{\\rxnimgscale}{${opts.imgScale.toFixed(3)}}
-
-%%-- Kategorie-Überschrift: volle Breite, ÖChO-rot --------------
-\\newcommand{\\rxnsection}[1]{%
-  \\par\\smallskip\\noindent\\colorbox{ocaccent}{%
-    \\begin{minipage}{\\dimexpr\\linewidth-2\\fboxsep\\relax}%
-      {\\color{white}\\bfseries #1}%
-    \\end{minipage}}\\par\\smallskip%
-  \\phantomsection\\addcontentsline{toc}{section}{#1}%
+  return '% =============================================================\n' +
+'%   OC Referenz — Reaktionskompendium\n' +
+'%   Generiert ' + today + '\n' +
+'%   Kompilieren mit: pdflatex oc-reference.tex\n' +
+'% =============================================================\n\n' +
+'\\documentclass[a4paper,' + classOpt + ']{article}\n\n' +
+'%%-- Pakete ----------------------------------------------------\n' +
+'\\usepackage[a4paper,left=' + m + 'cm,right=' + m + 'cm,top=' + m + 'cm,bottom=' + mb + 'cm]{geometry}\n' +
+'\\usepackage[T1]{fontenc}\n' +
+'\\usepackage[utf8]{inputenc}\n' +
+'\\usepackage[ngerman]{babel}\n' +
+'\\usepackage{lmodern}\n' +
+'\\usepackage{microtype}\n' +
+'\\usepackage[version=4]{mhchem}\n' +
+'\\usepackage{booktabs}\n' +
+'\\usepackage{xcolor}\n' +
+'\\usepackage{enumitem}\n' +
+'\\usepackage[many]{tcolorbox}\n' +
+'\\usepackage{array}\n' +
+'\\usepackage{parskip}\n' +
+'\\usepackage{fancyhdr}\n' +
+'\\usepackage[hidelinks,bookmarksopen]{hyperref}\n' +
+adjustboxPkg + '\n\n' +
+extraFontCmd + '\n' +
+linespreadCmd + '\n\n' +
+'%%-- Farben (ÖChO-Palette) -------------------------------------\n' +
+'\\definecolor{ocaccent}{HTML}{E2001A}\n' +
+'\\definecolor{ocaccent2}{HTML}{ED6B06}\n' +
+'\\definecolor{ocmuted}{HTML}{6B6A5D}\n' +
+'\\definecolor{ocborder}{HTML}{CFCEB8}\n' +
+'\\definecolor{ocnotebg}{HTML}{FFFBE8}\n\n' +
+'%%-- Bildmaßstab (Slider) --------------------------------------\n' +
+'\\newcommand{\\rxnimgscale}{' + opts.imgScale.toFixed(3) + '}\n\n' +
+'%%-- Kategorie-Überschrift -------------------------------------\n' +
+'\\newcommand{\\rxnsection}[1]{%\n' +
+'  \\par\\smallskip\\noindent\\colorbox{ocaccent}{%\n' +
+'    \\begin{minipage}{\\dimexpr\\linewidth-2\\fboxsep\\relax}%\n' +
+'      {\\color{white}\\bfseries #1}%\n' +
+'    \\end{minipage}}\\par\\smallskip%\n' +
+'  \\phantomsection\\addcontentsline{toc}{section}{#1}%\n' +
+'}\n\n' +
+'%%-- Reaktions-Header ------------------------------------------\n' +
+'\\newcommand{\\rxnheader}[3]{%\n' +
+'  \\par\\smallskip\\noindent\\colorbox{ocaccent!10}{%\n' +
+'    \\parbox{\\dimexpr\\linewidth-2\\fboxsep\\relax}{%\n' +
+'      \\bfseries #1\\hfill\n' +
+'      {\\itshape\\color{ocmuted}\\small #2}\\hspace{1.4em}%\n' +
+'      {\\itshape\\color{ocmuted}\\small #3}%\n' +
+'    }%\n' +
+'  }\\par\\nopagebreak\\smallskip%\n' +
+'  \\phantomsection\\addcontentsline{toc}{subsection}{#1}%\n' +
+'}\n\n' +
+'%%-- Notizen-Box -----------------------------------------------\n' +
+'\\tcbset{notebox/.style={\n' +
+'  enhanced,frame hidden,sharp corners,\n' +
+'  borderline west={2pt}{0pt}{ocaccent2!75},\n' +
+'  colback=ocnotebg,boxrule=0pt,\n' +
+'  left=6pt,right=6pt,top=3pt,bottom=3pt,\n' +
+'  before skip=4pt,after skip=4pt,\n' +
+'}}\n\n' +
+'%%-- Kopf-/Fußzeile --------------------------------------------\n' +
+'\\pagestyle{fancy}\n' +
+'\\fancyhf{}\n' +
+'\\renewcommand{\\headrulewidth}{0.3pt}\n' +
+'\\renewcommand{\\headrule}{\\color{ocborder}\\hrule width\\headwidth height\\headrulewidth}\n' +
+'\\fancyhead[L]{\\small\\color{ocmuted}OC Referenz}\n' +
+'\\fancyhead[R]{\\small\\color{ocmuted}ÖChO}\n' +
+'\\fancyfoot[C]{\\small\\color{ocmuted}\\thepage}\n\n' +
+(twocol ? '\\usepackage{multicol}\n' : '') +
+'\n%%=============================================================\n' +
+'\\begin{document}\n' +
+'%%=============================================================\n\n' +
+'\\begin{center}\n' +
+'{\\huge\\bfseries\\color{ocaccent}Organische Reaktionen}\\\\[4pt]\n' +
+'{\\small\\color{ocmuted}Überblick \\enspace\\textperiodcentered\\enspace ' + today + ' \\enspace\\textperiodcentered\\enspace ' + n + ' Reaktion' + (n!==1?'en':'') + '}\n' +
+'\\end{center}\n\n' +
+'\\vspace{0.4em}\n\n' +
+(opts.inclTOC ? '\\tableofcontents\n\\clearpage\n' : '') +
+(twocol ? '\\begin{multicols}{2}\n' : '') +
+body + '\n' +
+(twocol ? '\\end{multicols}\n' : '') +
+'\n\\end{document}\n';
 }
 
-%%-- Reaktions-Header: einzeilig wenn möglich -------------------
-\\newcommand{\\rxnheader}[3]{%
-  \\par\\smallskip\\noindent\\colorbox{ocaccent!10}{%
-    \\parbox{\\dimexpr\\linewidth-2\\fboxsep\\relax}{%
-      \\bfseries #1\\hfill
-      {\\itshape\\color{ocmuted}\\small #2}\\hspace{1.4em}%
-      {\\itshape\\color{ocmuted}\\small #3}%
-    }%
-  }\\par\\nopagebreak\\smallskip%
-  \\phantomsection\\addcontentsline{toc}{subsection}{#1}%
-}
+/* ════════════════════════════════════════════════════════════════
+ * PNG rendering and export flow
+ * ════════════════════════════════════════════════════════════════ */
 
-%%-- Notizen-Box -----------------------------------------------
-\\tcbset{notebox/.style={
-  enhanced,frame hidden,sharp corners,
-  borderline west={2pt}{0pt}{ocaccent2!75},
-  colback=ocnotebg,boxrule=0pt,
-  left=6pt,right=6pt,top=3pt,bottom=3pt,
-  before skip=4pt,after skip=4pt,
-}}
-
-%%-- Kopf-/Fußzeile --------------------------------------------
-\\pagestyle{fancy}
-\\fancyhf{}
-\\renewcommand{\\headrulewidth}{0.3pt}
-\\renewcommand{\\headrule}{\\color{ocborder}\\hrule width\\headwidth height\\headrulewidth}
-\\fancyhead[L]{\\small\\color{ocmuted}OC Referenz}
-\\fancyhead[R]{\\small\\color{ocmuted}ÖChO}
-\\fancyfoot[C]{\\small\\color{ocmuted}\\thepage}
-
-${twocol ? '\\usepackage{multicol}' : ''}
-
-%%=============================================================
-\\begin{document}
-%%=============================================================
-
-\\begin{center}
-{\\huge\\bfseries\\color{ocaccent}Organische Reaktionen}\\\\[4pt]
-{\\small\\color{ocmuted}Überblick \\enspace\\textperiodcentered\\enspace ${today} \\enspace\\textperiodcentered\\enspace ${n} Reaktion${n!==1?'en':''}}
-\\end{center}
-
-\\vspace{0.4em}
-
-${opts.inclTOC ? '\\tableofcontents\n\\clearpage' : ''}
-
-${twocol ? '\\begin{multicols}{2}' : ''}
-${body}
-${twocol ? '\\end{multicols}' : ''}
-
-\\end{document}
-`;
-}
-
-/* ─────────────────────────────────────────────────────────────────
- * PNG rendering
- *
- * Uses opts.supersample for the canvas factor and passes all the
- * smiles-drawer slider values through buildRendererOverrides().
- * This is the same override bundle used by the preview, so the
- * preview is WYSIWYG against the export. */
 function reactionToPng(r) {
   return new Promise(resolve => {
     if (!r.reaction_smiles) { resolve(null); return; }
@@ -1034,7 +1053,7 @@ function reactionToPng(r) {
 
     svg.setAttribute('width',  w);
     svg.setAttribute('height', h);
-    if (!vb) svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+    if (!vb) svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
 
     let svgData = new XMLSerializer().serializeToString(svg);
     document.body.removeChild(wrap);
@@ -1062,16 +1081,13 @@ function reactionToPng(r) {
       URL.revokeObjectURL(url);
       try {
         const data = canvas.toDataURL('image/png').split(',')[1];
-        resolve({ data, w, h, aspect: w / h });
+        resolve({ data: data, w: w, h: h, aspect: w / h });
       } catch(e) { resolve(null); }
     };
     img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
     img.src = url;
   });
 }
-
-/* ─────────────────────────────────────────────────────────────────
- * Export flow (unchanged) */
 
 function showProgress(title) {
   document.getElementById('progress-title').textContent = title;
@@ -1107,7 +1123,7 @@ async function doExport() {
   pngGeometry.clear();
 
   for (const r of selected) {
-    setProgress((done/selected.length)*80, `Rendert: ${r.name}`);
+    setProgress((done/selected.length)*80, 'Rendert: ' + r.name);
     if (r.reaction_smiles && opts.inclDrawings) {
       const result = await reactionToPng(r);
       if (result) {
@@ -1147,7 +1163,12 @@ function openInOverleaf() {
   document.getElementById('overleaf-form').submit();
 }
 
-init();
+// Kick off
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
 </script>
 </body>
 </html>
