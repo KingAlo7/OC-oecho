@@ -235,15 +235,26 @@ const opts = {
 
 /* Consistent SCALE, not size. The density slider sets a fixed
    \includegraphics scale that applies to every reaction image.
-   The library's default bondLength gives every structure the same
-   atomic visual size: a simple substrate produces a smaller image,
-   a complex one a larger image, but bond lengths and atom-label
-   sizes are identical across all reactions. */
+   Values scaled DOWN by 30% from the previous round.
+   compact: 0.45 -> 0.32, normal: 0.60 -> 0.42, spacious: 0.78 -> 0.55 */
 const DENSITY_SCALE = {
-  compact:  '0.45',
-  normal:   '0.60',
-  spacious: '0.78'
+  compact:  '0.32',
+  normal:   '0.42',
+  spacious: '0.55'
 };
+
+/* Aspect-ratio threshold: if a reaction's drawing is wider than this
+   ratio (width / height), forcing it into the 50% column of the
+   side-by-side layout would either (a) overflow into the key-points
+   minipage, or (b) require so much shrinking that the chemistry
+   becomes illegible. In that case fall back to stacked layout
+   (image full width, key points below). */
+const SIDE_BY_SIDE_MAX_ASPECT = 2.6;
+
+/* Per-reaction PNG geometry, populated during the export render pass
+   and consumed by reactionBlock() when building LaTeX. Keyed by r.id.
+   Each value: { aspect: number, w: number, h: number }. */
+const pngGeometry = new Map();
 
 async function init() {
   try {
@@ -399,11 +410,19 @@ const DETAIL_FIELDS = [
 
 /* Build the body of a single reaction.
  *
- * Layout (side-by-side or single column):
- *   - if image + key points both exist → side-by-side
- *     (image left ~50%, key points right ~48%)
- *   - if image only → centered single column
- *   - if key points only → full-width list
+ * Layout decision matrix:
+ *   - no image, no key-points → empty body
+ *   - image only → centered, full available width
+ *   - key-points only → full-width list
+ *   - image + key-points + image is reasonably narrow (aspect <= SIDE_BY_SIDE_MAX_ASPECT)
+ *     → side-by-side: image in left 50%, key-points in right 48%
+ *   - image + key-points + image is too wide (aspect > SIDE_BY_SIDE_MAX_ASPECT)
+ *     → stacked: image full width centered, key-points list below
+ *
+ * The aspect ratio comes from pngGeometry (populated during the export
+ * render pass). For the Overleaf / .tex-only download paths the map is
+ * empty, in which case we default to side-by-side — there's no PNG to
+ * overflow anyway since those use the inline SMILES fallback or no image.
  *
  * The detail table and notes box are always full-width below.
  */
@@ -418,9 +437,11 @@ function reactionBlock(r, withImage) {
 
   // Consistent scale: \rxnimgscale is a fixed scale applied to every
   // image, so chemistry inside renders at a consistent atomic size.
+  // adjustbox max-width clamp guarantees the image never overflows
+  // its column, even in side-by-side layout for wide reactions.
   let drawingTex = '';
   if (withImage && r.reaction_smiles) {
-    drawingTex = `\\includegraphics[scale=\\rxnimgscale]{img/${r.id}.png}`;
+    drawingTex = `\\adjustbox{max width=\\linewidth}{\\includegraphics[scale=\\rxnimgscale]{img/${r.id}.png}}`;
   } else if (r.reaction_smiles) {
     drawingTex = smilesScheme(r);
   } else if (r.general_scheme) {
@@ -434,14 +455,28 @@ function reactionBlock(r, withImage) {
     ? `\\textbf{\\small Schlüsselpunkte}\\par\\nopagebreak\n\\begin{itemize}[leftmargin=1.2em,itemsep=0pt,topsep=1pt,parsep=0pt,label=\\textcolor{ocmuted}{\\textbullet}]\n${kpItems}\n\\end{itemize}`
     : '';
 
+  // Decide whether the image is narrow enough for side-by-side, OR
+  // fall back to stacked layout for wide reactions to avoid the
+  // overflow-into-key-points problem.
+  const geo = pngGeometry.get(r.id);
+  const tooWideForSideBySide = geo && geo.aspect > SIDE_BY_SIDE_MAX_ASPECT;
+
   let bodyTex;
-  if (drawingTex && kpTex) {
+  if (drawingTex && kpTex && !tooWideForSideBySide) {
+    // Narrow-enough image → side-by-side (image 50% / key-points 48%)
     bodyTex =
 `\\noindent\\begin{minipage}[t]{0.50\\linewidth}\\vspace{0pt}\\centering
 ${drawingTex}
 \\end{minipage}\\hfill\\begin{minipage}[t]{0.48\\linewidth}\\vspace{0pt}
 \\small ${kpTex}
 \\end{minipage}\\par`;
+  } else if (drawingTex && kpTex && tooWideForSideBySide) {
+    // Wide image → stacked: image full width, key-points below
+    bodyTex =
+`\\begin{center}
+${drawingTex}
+\\end{center}
+\\small ${kpTex}\\par\\smallskip`;
   } else if (drawingTex) {
     bodyTex = `\\begin{center}\n${drawingTex}\n\\end{center}`;
   } else if (kpTex) {
@@ -483,7 +518,13 @@ function buildLatex(selectedReactions, withImages) {
     return `\\rxnsection{${esc(cat)}}\n` + items.map(r => reactionBlock(r, withImages)).join('\n');
   }).join('\n');
 
-  const graphicxPkg = withImages ? '\\usepackage{graphicx}' : '% graphicx not needed (no images)';
+  // \usepackage{adjustbox} is required for the max-width clamp on images
+  // (drops overflow problems when a wide reaction sits in the side-by-side
+  // 50% minipage). adjustbox pulls in graphicx as a dependency so we don't
+  // also need a separate \usepackage{graphicx} line when withImages is true.
+  const adjustboxPkg = withImages
+    ? '\\usepackage[export]{adjustbox}'
+    : '% adjustbox not needed (no images)';
 
   return `% =============================================================
 %   OC Referenz — Reaktionskompendium
@@ -509,7 +550,7 @@ function buildLatex(selectedReactions, withImages) {
 \\usepackage{parskip}
 \\usepackage{fancyhdr}
 \\usepackage[hidelinks,bookmarksopen]{hyperref}
-${graphicxPkg}
+${adjustboxPkg}
 
 %%-- Farben (ÖChO-Palette) -------------------------------------
 \\definecolor{ocaccent}{HTML}{E2001A}
@@ -589,7 +630,17 @@ ${twocol ? '\\end{multicols}' : ''}
 `;
 }
 
-/* Render one reaction to a PNG (base64) using the compact profile. */
+/* Render one reaction to a PNG (base64) using the compact profile.
+ *
+ * Sharpness: rasterizes at sc=5 (5x supersampling). Combined with the
+ * LaTeX \includegraphics scale of ~0.32-0.55, the final pixel density on
+ * the rendered PDF page sits comfortably above 200 DPI even at the most
+ * shrunk-down setting — sharp on screen and in print.
+ *
+ * Also returns the natural pixel dimensions (w, h) so the LaTeX builder
+ * can compute the aspect ratio and decide whether to use side-by-side
+ * or stacked layout next to the key-points block.
+ */
 function reactionToPng(r) {
   return new Promise(resolve => {
     if (!r.reaction_smiles) { resolve(null); return; }
@@ -632,17 +683,25 @@ function reactionToPng(r) {
     const url = URL.createObjectURL(blob);
     const img = new Image();
     img.onload = () => {
-      const sc = 2;
+      // sc=5 supersampling. Was sc=2; the bump makes the PNG resolve
+      // at 5x the SVG's natural viewBox dimensions, which is plenty
+      // to stay crisp through \includegraphics[scale=0.32].
+      const sc = 5;
       const canvas = document.createElement('canvas');
       canvas.width = w*sc; canvas.height = h*sc;
       const ctx = canvas.getContext('2d');
+      // High-quality smoothing on the upscale.
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
       ctx.scale(sc,sc);
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0,0,w,h);
       ctx.drawImage(img,0,0,w,h);
       URL.revokeObjectURL(url);
-      try { resolve(canvas.toDataURL('image/png').split(',')[1]); }
-      catch(e) { resolve(null); }
+      try {
+        const data = canvas.toDataURL('image/png').split(',')[1];
+        resolve({ data, w, h, aspect: w / h });
+      } catch(e) { resolve(null); }
     };
     img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
     img.src = url;
@@ -680,11 +739,18 @@ async function doExport() {
   const img = zip.folder('img');
   let done = 0;
 
+  // Reset per-export geometry cache. reactionBlock() consults this map
+  // to decide between side-by-side and stacked layouts.
+  pngGeometry.clear();
+
   for (const r of selected) {
     setProgress((done/selected.length)*80, `Rendert: ${r.name}`);
     if (r.reaction_smiles && opts.inclDrawings) {
-      const png = await reactionToPng(r);
-      if (png) img.file(r.id+'.png', png, {base64:true});
+      const result = await reactionToPng(r);
+      if (result) {
+        img.file(r.id+'.png', result.data, {base64:true});
+        pngGeometry.set(r.id, { w: result.w, h: result.h, aspect: result.aspect });
+      }
     }
     done++;
   }
@@ -703,6 +769,10 @@ async function downloadTexOnly() {
   const ids = getChecked();
   if (!ids.length) { alert('Mindestens eine Reaktion auswählen.'); return; }
   const selected = reactions.filter(r => ids.includes(r.id));
+  // No images rendered → no geometry available, reactionBlock() falls
+  // back to its default side-by-side path (safe because there's no PNG
+  // to overflow — only the inline SMILES fallback gets emitted).
+  pngGeometry.clear();
   const tex = buildLatex(selected, false);
   triggerDownload(new Blob([tex],{type:'text/plain'}), 'oc-reference.tex');
 }
@@ -711,6 +781,7 @@ function openInOverleaf() {
   const ids = getChecked();
   if (!ids.length) { alert('Mindestens eine Reaktion auswählen.'); return; }
   const selected = reactions.filter(r => ids.includes(r.id));
+  pngGeometry.clear();
   const tex = buildLatex(selected, false);
   document.getElementById('overleaf-snip').value = tex;
   document.getElementById('overleaf-form').submit();
