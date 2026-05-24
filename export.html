@@ -235,19 +235,26 @@ const opts = {
 
 /* Image scale (\includegraphics scale value).
  *
- * Sizing note: the PNGs are rasterized at sc=5 supersampling in
- * reactionToPng() so their pixel dimensions are 5x the source SVG's
- * viewBox. pdflatex computes the natural display size from those
- * pixel dimensions at the default 72 DPI, so the previous 0.32 value
- * — which would have been fine at the old sc=2 — ended up much too
- * large after the supersampling bump.
+ * Tuning history:
+ *   round 1: 0.45 / 0.60 / 0.78  -> user reported "way too large"
+ *   round 2: 0.32 / 0.42 / 0.55  -> still way too large (sc=5 PNGs
+ *                                  inflated natural-size 2.5x vs sc=2)
+ *   round 3: 0.12 / 0.16 / 0.21  -> still way too large
+ *   round 4: 0.05 / 0.07 / 0.09  <- current
  *
- * These values are tuned for the current sc=5 PNGs. If sc is changed,
- * multiply or divide here proportionally to keep on-page size stable. */
+ * If still too large: divide by 2.
+ * If now too small: bump to 0.08 / 0.11 / 0.14.
+ *
+ * The PNGs render at sc=5 supersampling (see reactionToPng); pdflatex
+ * interprets their natural size as pixel-dims / 72 DPI, so a typical
+ * 600x220 SVG becomes a 3000x1100 PNG with a natural display size of
+ * ~41cm x 15cm. To get a reasonable ~6-8cm width on the page at 50%
+ * column width (~8cm available), scale needs to be ~0.15-0.20 of that
+ * natural size — i.e. ~0.05 of the linear factor. */
 const DENSITY_SCALE = {
-  compact:  '0.12',
-  normal:   '0.16',
-  spacious: '0.21'
+  compact:  '0.05',
+  normal:   '0.07',
+  spacious: '0.09'
 };
 
 /* Aspect-ratio threshold: if a reaction's drawing is wider than this
@@ -640,9 +647,8 @@ ${twocol ? '\\end{multicols}' : ''}
 /* Render one reaction to a PNG (base64) using the compact profile.
  *
  * Sharpness: rasterizes at sc=5 (5x supersampling). Combined with the
- * LaTeX \includegraphics scale of ~0.12-0.21, the final pixel density on
- * the rendered PDF page sits comfortably above 200 DPI even at the most
- * shrunk-down setting — sharp on screen and in print.
+ * LaTeX \includegraphics scale, the final pixel density on the rendered
+ * PDF page sits comfortably above 200 DPI — sharp on screen and in print.
  *
  * Also returns the natural pixel dimensions (w, h) so the LaTeX builder
  * can compute the aspect ratio and decide whether to use side-by-side
