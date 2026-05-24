@@ -7,6 +7,9 @@
  *   ReactionRenderer.draw('CCO.Cl>>ClCC.O', 'my-svg-id', 'dark');
  *   ReactionRenderer.draw('CCO.Cl>>ClCC.O', svgEl, 'light', '[H⁺]');
  *
+ *   // Compact mode (for LaTeX/PDF export — tighter spacing, smaller font):
+ *   ReactionRenderer.draw(smiles, svgEl, 'light', label, '', { compact: true });
+ *
  * Reaction SMILES format:
  *   reactants > reagents > products
  *   e.g.  'CC(C)(C)Br>H2O>CC(C)(C)OH'
@@ -15,29 +18,42 @@
 
 const ReactionRenderer = (() => {
 
-  /* ── Options passed to the internal smiles-drawer ReactionDrawer ── */
-  const REACTION_OPTS = {
+  /* ── Default smiles-drawer options for the web UI ─────────────── */
+  const REACTION_OPTS_DEFAULT = {
     scale:      1,
     spacing:    14,
     fontSize:   12,
     fontFamily: 'Arial, Helvetica, sans-serif',
-    plus: {
-      size:      8,
-      thickness: 1.5
-    },
-    arrow: {
-      length:   70,
-      headSize: 7,
-      thickness: 1.5,
-      margin:   4
-    }
+    plus:  { size: 8,  thickness: 1.5 },
+    arrow: { length: 70, headSize: 7, thickness: 1.5, margin: 4 }
   };
 
-  const MOLECULE_OPTS = {
+  /* ── Compact options used for the LaTeX PNG export.
+        Goal: thinner arrow, smaller label font, shorter horizontal
+        spread so the rendered structure fits a 2-cm-tall row in a
+        50% column. ──────────────────────────────────────────────── */
+  const REACTION_OPTS_COMPACT = {
+    scale:      0.85,
+    spacing:    8,
+    fontSize:   9,
+    fontFamily: 'Arial, Helvetica, sans-serif',
+    plus:  { size: 6,  thickness: 1.2 },
+    arrow: { length: 42, headSize: 5, thickness: 1.2, margin: 2 }
+  };
+
+  const MOLECULE_OPTS_DEFAULT = {
     width:  200,
     height: 200,
     scale:  1,
     compactDrawing: false,
+    explicitHydrogens: false
+  };
+
+  const MOLECULE_OPTS_COMPACT = {
+    width:  140,
+    height: 140,
+    scale:  0.85,
+    compactDrawing: true,
     explicitHydrogens: false
   };
 
@@ -51,10 +67,13 @@ const ReactionRenderer = (() => {
    * @param {'light'|'dark'} theme  default 'dark'
    * @param {string} textAbove  label above the arrow (default: reagents from SMILES)
    * @param {string} textBelow  label below the arrow
+   * @param {object} [opts]  optional rendering tweaks: { compact: boolean }
    * @returns {SVGElement|null}
    */
-  function draw(reactionSmiles, target, theme = 'dark', textAbove = '{reagents}', textBelow = '') {
+  function draw(reactionSmiles, target, theme = 'dark', textAbove = '{reagents}', textBelow = '', opts) {
     const SD = window.SmilesDrawer;
+    opts = opts || {};
+    const compact = !!opts.compact;
 
     if (!SD) {
       console.error('ReactionRenderer: window.SmilesDrawer not found — is smiles-drawer loaded?');
@@ -85,16 +104,24 @@ const ReactionRenderer = (() => {
       return null;
     }
 
+    /* Pick option profile + suppress textBelow in compact mode (no stacked
+       two-line label above the arrow — this is the key visual win for the
+       PDF export over the web rendering). */
+    const reactionOpts  = compact ? REACTION_OPTS_COMPACT  : REACTION_OPTS_DEFAULT;
+    const moleculeOpts  = compact ? MOLECULE_OPTS_COMPACT  : MOLECULE_OPTS_DEFAULT;
+    const labelAbove    = textAbove;
+    const labelBelow    = compact ? '' : textBelow;
+
     /* Draw into the SVG element */
     try {
-      const rd = new SD.ReactionDrawer(REACTION_OPTS, Object.assign({}, MOLECULE_OPTS));
-      rd.draw(reaction, svgEl, theme, null, textAbove, textBelow);
+      const rd = new SD.ReactionDrawer(reactionOpts, Object.assign({}, moleculeOpts));
+      rd.draw(reaction, svgEl, theme, null, labelAbove, labelBelow);
 
       /* smiles-drawer v2 leaves a viewBox that often clips arrow labels at
          the top and text annotations on the sides. Recompute a tighter
          bbox that includes the text overflow, and disable per-child
          clipping by setting overflow="visible" on nested SVGs. */
-      _fitReactionViewBox(svgEl, REACTION_OPTS.fontSize, 4);
+      _fitReactionViewBox(svgEl, reactionOpts.fontSize, compact ? 2 : 4);
 
       return svgEl;
     } catch (err) {
@@ -107,7 +134,7 @@ const ReactionRenderer = (() => {
   /**
    * Convenience: append a new <svg> into a container element and draw the reaction.
    */
-  function drawInto(reactionSmiles, container, theme = 'dark', textAbove = '{reagents}', textBelow = '') {
+  function drawInto(reactionSmiles, container, theme = 'dark', textAbove = '{reagents}', textBelow = '', opts) {
     const el = (typeof container === 'string' || container instanceof String)
       ? document.getElementById(String(container))
       : container;
@@ -123,7 +150,7 @@ const ReactionRenderer = (() => {
     svg.style.margin  = '0 auto';
     el.appendChild(svg);
 
-    return draw(reactionSmiles, svg, theme, textAbove, textBelow);
+    return draw(reactionSmiles, svg, theme, textAbove, textBelow, opts);
   }
 
   /* ── Helpers ────────────────────────────────────────────────────── */

@@ -131,7 +131,6 @@ header{
 }
 .cat-row input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);cursor:pointer;}
 .cat-label{font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-soft);flex:1;}
-.cat-toggle{font-size:0.65rem;color:var(--muted2);background:none;border:none;cursor:pointer;padding:0 0.3rem;}
 
 .rxn-items{padding-left:1rem;display:flex;flex-direction:column;gap:0.2rem;padding:0.4rem 0;}
 .rxn-row{
@@ -191,14 +190,6 @@ header{
   <div class="options-panel">
 
     <div class="opt-section">
-      <div class="opt-title">Format</div>
-      <div class="radio-group" id="paper-group">
-        <div class="radio-btn on" data-val="a4paper">A4</div>
-        <div class="radio-btn" data-val="letterpaper">Letter</div>
-      </div>
-    </div>
-
-    <div class="opt-section">
       <div class="opt-title">Schriftgröße</div>
       <div class="radio-group" id="font-group">
         <div class="radio-btn" data-val="10pt">10 pt</div>
@@ -210,8 +201,8 @@ header{
     <div class="opt-section">
       <div class="opt-title">Strukturgröße</div>
       <div class="radio-group" id="density-group">
-        <div class="radio-btn" data-val="compact">Kompakt</div>
-        <div class="radio-btn on" data-val="normal">Standard</div>
+        <div class="radio-btn on" data-val="compact">Kompakt</div>
+        <div class="radio-btn" data-val="normal">Standard</div>
         <div class="radio-btn" data-val="spacious">Großzügig</div>
       </div>
     </div>
@@ -223,7 +214,7 @@ header{
         <div class="check-btn on" data-key="inclDetails">Detailtabelle</div>
         <div class="check-btn on" data-key="inclKeyPoints">Schlüsselpunkte</div>
         <div class="check-btn on" data-key="inclNotes">Notizen</div>
-        <div class="check-btn on" data-key="inclTOC">Inhaltsverzeichnis</div>
+        <div class="check-btn" data-key="inclTOC">Inhaltsverzeichnis</div>
       </div>
     </div>
 
@@ -272,11 +263,25 @@ header{
 <script>
 let reactions = [];
 const opts = {
-  paper: 'a4paper', font: '11pt', layout: 'single', density: 'normal',
-  inclDrawings: true, inclDetails: true, inclKeyPoints: true, inclNotes: true, inclTOC: true
+  paper: 'a4paper',                // A4 only — no longer user-selectable
+  font: '11pt',
+  layout: 'single',
+  density: 'compact',              // default to compact — matches the PDF look
+  inclDrawings: true,
+  inclDetails: true,
+  inclKeyPoints: true,
+  inclNotes: true,
+  inclTOC: false                   // off by default — overview docs rarely need it
 };
 
-const DENSITY_HEIGHT = { compact: '2cm', normal: '3cm', spacious: '4.2cm' };
+/* Drawing heights for the structure image, keyed by density slider value.
+   ~70 % of the previous values, since the new compact rendering inside the
+   SVG fits more chemistry into less vertical space. */
+const DENSITY_HEIGHT = {
+  compact:  '1.4cm',
+  normal:   '2.1cm',
+  spacious: '3.0cm'
+};
 
 async function init() {
   try {
@@ -291,7 +296,9 @@ async function init() {
 }
 
 function bindRadioGroup(groupId, optKey) {
-  document.getElementById(groupId).addEventListener('click', e => {
+  const el = document.getElementById(groupId);
+  if (!el) return;
+  el.addEventListener('click', e => {
     const btn = e.target.closest('.radio-btn'); if (!btn) return;
     document.querySelectorAll(`#${groupId} .radio-btn`).forEach(b => b.classList.remove('on'));
     btn.classList.add('on');
@@ -300,7 +307,6 @@ function bindRadioGroup(groupId, optKey) {
 }
 
 function initOptionButtons() {
-  bindRadioGroup('paper-group',   'paper');
   bindRadioGroup('font-group',    'font');
   bindRadioGroup('layout-group',  'layout');
   bindRadioGroup('density-group', 'density');
@@ -405,9 +411,7 @@ function formatRxnType(t) {
   return `$${formatted}$`;
 }
 
-// "Alken → Halogenalkan"-style transformation arrow for the middle column of
-// the reaction header. Returns LaTeX-ready string (already escaped). Empty
-// if the reaction has no transformation field.
+// "Alken → Halogenalkan"-style transformation arrow for the middle column.
 function transformationFor(r) {
   if (r.transformation) return esc(r.transformation);
   return '';
@@ -433,54 +437,79 @@ const DETAIL_FIELDS = [
   {key:'kinetics',        label:'Kinetik'},
 ];
 
+/* Build the body of a single reaction.
+ *
+ * Layout decision (side-by-side / single column):
+ *   - if both an image *and* a non-empty key-points list are present
+ *     AND key points are enabled in opts → render side-by-side
+ *     (image left ~50%, key points right ~48%)
+ *   - otherwise fall back to centered single column
+ *
+ * The detail table and notes box are always full-width below.
+ */
 function reactionBlock(r, withImage) {
-  // PDF-style 3-column header: bold name | italic transformation | italic type code
   const transform = transformationFor(r);
   const typeCode = formatRxnType(r.reaktionstyp);
   const header = `\\rxnheader{${esc(r.name)}}{${transform}}{${typeCode}}`;
 
   const subtitle = r.subtitle
-    ? `{\\small\\color{ocmuted}\\itshape ${esc(r.subtitle)}}\\par\\smallskip\n`
+    ? `{\\small\\color{ocmuted}\\itshape ${esc(r.subtitle)}}\\par\\nopagebreak\\smallskip\n`
     : '';
 
-  let drawing = '';
+  // Build the drawing snippet (just the LaTeX, not yet wrapped in column or center)
+  let drawingTex = '';
   if (withImage && r.reaction_smiles) {
-    drawing = `\\begin{center}\n\\includegraphics[width=0.9\\linewidth,height=\\rxndrawheight,keepaspectratio]{img/${r.id}.png}\n\\end{center}`;
-  } else {
-    drawing = smilesScheme(r);
+    drawingTex = `\\includegraphics[width=0.95\\linewidth,height=\\rxndrawheight,keepaspectratio]{img/${r.id}.png}`;
+  } else if (r.reaction_smiles) {
+    drawingTex = smilesScheme(r).replace(/\\begin\{center\}\n?|\n?\\end\{center\}/g, '');
+  } else if (r.general_scheme) {
+    drawingTex = `{\\small\\texttt{${esc(r.general_scheme)}}}`;
   }
 
+  // Key points snippet
+  const kpItems = (opts.inclKeyPoints && r.key_points?.length)
+    ? r.key_points.map(p => `  \\item ${esc(p)}`).join('\n')
+    : null;
+  const kpTex = kpItems
+    ? `\\textbf{\\small Schlüsselpunkte}\\par\\nopagebreak\n\\begin{itemize}[leftmargin=1.2em,itemsep=0pt,topsep=1pt,parsep=0pt,label=\\textcolor{ocmuted}{\\textbullet}]\n${kpItems}\n\\end{itemize}`
+    : '';
+
+  // Decide layout: side-by-side only when both drawing and key points exist
+  let bodyTex;
+  if (drawingTex && kpTex) {
+    // Side-by-side
+    bodyTex =
+`\\noindent\\begin{minipage}[t]{0.50\\linewidth}\\vspace{0pt}\\centering
+${drawingTex}
+\\end{minipage}\\hfill\\begin{minipage}[t]{0.48\\linewidth}\\vspace{0pt}
+\\small ${kpTex}
+\\end{minipage}\\par`;
+  } else if (drawingTex) {
+    bodyTex = `\\begin{center}\n${drawingTex}\n\\end{center}`;
+  } else if (kpTex) {
+    bodyTex = `\\small ${kpTex}\\par\\smallskip`;
+  } else {
+    bodyTex = '';
+  }
+
+  // Detail table — always full width, below the side-by-side body
   const activeFields = DETAIL_FIELDS.filter(f => r[f.key]);
   let table = '';
   if (opts.inclDetails && activeFields.length) {
-    table = `\\begin{center}\n\\begin{tabular}{>{\\small\\bfseries\\color{ocmuted}\\raggedright\\arraybackslash}p{0.22\\linewidth}>{\\raggedright\\arraybackslash}p{0.72\\linewidth}}\n\\toprule\n`
+    table = `\n\\par\\smallskip\n{\\renewcommand{\\arraystretch}{1.05}%\n\\begin{tabular}{>{\\small\\bfseries\\color{ocmuted}\\raggedright\\arraybackslash}p{0.22\\linewidth}>{\\small\\raggedright\\arraybackslash}p{0.72\\linewidth}}\n\\toprule\n`
       + activeFields.map(f => `${esc(f.label.toUpperCase())} & ${esc(r[f.key])} \\\\`).join('\n')
-      + `\n\\bottomrule\n\\end{tabular}\n\\end{center}`;
+      + `\n\\bottomrule\n\\end{tabular}}`;
   }
 
-  let keypts = '';
-  if (opts.inclKeyPoints && r.key_points?.length) {
-    keypts = `\\noindent\\small\\textbf{Schlüsselpunkte}\\par\\nopagebreak\n\\begin{itemize}[leftmargin=1.4em,itemsep=1pt,topsep=2pt,parsep=0pt]\n`
-      + r.key_points.map(p => `  \\item ${esc(p)}`).join('\n')
-      + `\n\\end{itemize}\\normalsize`;
-  }
-
+  // Notes box
   let notes = '';
   if (opts.inclNotes && r.notes) {
-    notes = `\\begin{tcolorbox}[notebox]\n\\textbf{Notizen:}\\enspace ${esc(r.notes)}\n\\end{tcolorbox}`;
+    notes = `\n\\begin{tcolorbox}[notebox]\n\\small\\textbf{Notizen:}\\enspace ${esc(r.notes)}\n\\end{tcolorbox}`;
   }
 
   return `
 ${header}
-${subtitle}${drawing}
-
-${table}
-
-${keypts}
-
-${notes}
-
-\\smallskip\\noindent\\textcolor{ocborder}{\\rule{\\linewidth}{0.3pt}}\\smallskip
+${subtitle}${bodyTex}${table}${notes}
 `;
 }
 
@@ -489,7 +518,7 @@ function buildLatex(selectedReactions, withImages) {
   const twocol = opts.layout === 'twocol';
   const today = new Date().toLocaleDateString('de-AT',{year:'numeric',month:'long',day:'numeric'});
   const n = selectedReactions.length;
-  const drawHeight = DENSITY_HEIGHT[opts.density] || DENSITY_HEIGHT.normal;
+  const drawHeight = DENSITY_HEIGHT[opts.density] || DENSITY_HEIGHT.compact;
 
   let body = cats.map(cat => {
     const items = selectedReactions.filter(r => r.category === cat);
@@ -504,10 +533,10 @@ function buildLatex(selectedReactions, withImages) {
 %   Kompilieren mit: pdflatex oc-reference.tex
 % =============================================================
 
-\\documentclass[${opts.paper},${opts.font}]{article}
+\\documentclass[a4paper,${opts.font}]{article}
 
 %%-- Pakete ----------------------------------------------------
-\\usepackage[${opts.paper},left=2.0cm,right=2.0cm,top=2.2cm,bottom=2.2cm]{geometry}
+\\usepackage[a4paper,left=1.8cm,right=1.8cm,top=1.8cm,bottom=2.0cm]{geometry}
 \\usepackage[T1]{fontenc}
 \\usepackage[utf8]{inputenc}
 \\usepackage[ngerman]{babel}
@@ -519,7 +548,6 @@ function buildLatex(selectedReactions, withImages) {
 \\usepackage{enumitem}
 \\usepackage[many]{tcolorbox}
 \\usepackage{array}
-\\usepackage{tabularx}
 \\usepackage{parskip}
 \\usepackage{fancyhdr}
 \\usepackage[hidelinks,bookmarksopen]{hyperref}
@@ -538,32 +566,31 @@ ${graphicxPkg}
 
 %%-- Kategorie-Überschrift: volle Breite, ÖChO-rot --------------
 \\newcommand{\\rxnsection}[1]{%
-  \\par\\medskip\\noindent\\colorbox{ocaccent}{%
+  \\par\\smallskip\\noindent\\colorbox{ocaccent}{%
     \\begin{minipage}{\\dimexpr\\linewidth-2\\fboxsep\\relax}%
-      \\vspace{2pt}{\\color{white}\\large\\bfseries #1}\\vspace{2pt}%
+      {\\color{white}\\bfseries #1}%
     \\end{minipage}}\\par\\smallskip%
   \\phantomsection\\addcontentsline{toc}{section}{#1}%
 }
 
-%%-- Reaktions-Header: 3-spaltig (Name | Transformation | Typ) --
+%%-- Reaktions-Header: 3-spaltig, minimale vertikale Polsterung --
 \\newcommand{\\rxnheader}[3]{%
-  \\par\\medskip\\noindent\\colorbox{ocaccent!10}{%
+  \\par\\smallskip\\noindent\\colorbox{ocaccent!10}{%
     \\begin{minipage}{\\dimexpr\\linewidth-2\\fboxsep\\relax}%
-      \\vspace{1.5pt}%
-      \\begin{tabular*}{\\linewidth}{@{}p{0.50\\linewidth}@{\\extracolsep{\\fill}}p{0.32\\linewidth}@{}>{\\raggedleft\\arraybackslash}p{0.13\\linewidth}@{}}%
-        \\bfseries #1 & {\\itshape\\color{ocmuted}\\small #2} & {\\itshape\\color{ocmuted}\\small #3} \\\\
-      \\end{tabular*}\\vspace{1.5pt}%
-    \\end{minipage}}\\par\\smallskip%
+      \\begin{tabular*}{\\linewidth}{@{}p{0.50\\linewidth}@{\\extracolsep{\\fill}}p{0.32\\linewidth}@{}>{\\raggedleft\\arraybackslash}p{0.14\\linewidth}@{}}%
+        \\bfseries #1 & {\\itshape\\color{ocmuted}\\small #2} & {\\itshape\\color{ocmuted}\\small #3}%
+      \\end{tabular*}%
+    \\end{minipage}}\\par\\nopagebreak\\smallskip%
   \\phantomsection\\addcontentsline{toc}{subsection}{#1}%
 }
 
-%%-- Notizen-Box -----------------------------------------------
+%%-- Notizen-Box: ÖChO-orange linker Rand, gelb-cremiger BG -----
 \\tcbset{notebox/.style={
   enhanced,frame hidden,sharp corners,
-  borderline west={2.5pt}{0pt}{ocaccent2!75},
+  borderline west={2pt}{0pt}{ocaccent2!75},
   colback=ocnotebg,boxrule=0pt,
-  left=7pt,right=7pt,top=5pt,bottom=5pt,
-  before skip=6pt,after skip=6pt,
+  left=6pt,right=6pt,top=3pt,bottom=3pt,
+  before skip=4pt,after skip=4pt,
 }}
 
 %%-- Kopf-/Fußzeile --------------------------------------------
@@ -582,12 +609,11 @@ ${twocol ? '\\usepackage{multicol}' : ''}
 %%=============================================================
 
 \\begin{center}
-  {\\huge\\bfseries\\color{ocaccent}Organische Reaktionen}\\\\[6pt]
-  {\\large\\color{ocmuted}Überblick}\\\\[4pt]
-  {\\small\\color{ocmuted}${today}\\enspace\\textperiodcentered\\enspace${n} Reaktion${n!==1?'en':''}}
+{\\huge\\bfseries\\color{ocaccent}Organische Reaktionen}\\\\[4pt]
+{\\small\\color{ocmuted}Überblick \\enspace\\textperiodcentered\\enspace ${today} \\enspace\\textperiodcentered\\enspace ${n} Reaktion${n!==1?'en':''}}
 \\end{center}
 
-\\vspace{1.2em}
+\\vspace{0.6em}
 
 ${opts.inclTOC ? '\\tableofcontents\n\\clearpage' : ''}
 
@@ -599,6 +625,9 @@ ${twocol ? '\\end{multicols}' : ''}
 `;
 }
 
+/* Render one reaction to a PNG (base64). Uses the compact rendering profile
+ * from reaction-drawer.js so the export PNG looks tighter than what the
+ * web UI shows. */
 function reactionToPng(r) {
   return new Promise(resolve => {
     if (!r.reaction_smiles) { resolve(null); return; }
@@ -610,7 +639,8 @@ function reactionToPng(r) {
     document.body.appendChild(wrap);
 
     try {
-      ReactionRenderer.draw(r.reaction_smiles, svg, 'light', r.reagent_label||'');
+      // compact: true → smaller font, single-line label, shorter arrow
+      ReactionRenderer.draw(r.reaction_smiles, svg, 'light', r.reagent_label||'', '', { compact: true });
     } catch(e) {
       document.body.removeChild(wrap);
       resolve(null);
