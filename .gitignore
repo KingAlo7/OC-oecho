@@ -1,7 +1,10 @@
 node_modules/
 .env
 *.log
-vendor/
+vendor/*
+# Ketcher must be committed so the GitHub Pages site can load the iframe.
+# Other vendor/* artifacts (Ketcher zip downloads, scratch files) stay ignored.
+!vendor/ketcher/
 .claude/
 # Lokale Arbeitsdateien (PDF-Quellen, Python-Extraktionsskripte etc.)
 rxn_*.txt
