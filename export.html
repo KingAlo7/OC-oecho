@@ -156,6 +156,36 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .rxn-name{font-size:0.86rem;flex:1;color:var(--text);}
 .rxn-cat-badge{font-size:0.66rem;padding:0.12rem 0.5rem;border-radius:10px;background:var(--surface);color:var(--muted);border:1px solid var(--border2);font-weight:600;}
 
+/* Difficulty system — desaturated, minimal. */
+:root{
+  --diff-A:#6fa385; --diff-A-soft:rgba(111,163,133,0.10);
+  --diff-B:#7491b8; --diff-B-soft:rgba(116,145,184,0.10);
+  --diff-C:#b8884d; --diff-C-soft:rgba(184,136,77,0.10);
+  --diff-D:#9a7fad; --diff-D-soft:rgba(154,127,173,0.10);
+}
+.diff-badge{display:inline-flex;align-items:center;justify-content:center;
+  min-width:16px;height:16px;padding:0 4px;border-radius:3px;
+  font-size:0.62rem;font-weight:700;line-height:1;
+  border:1px solid currentColor;background:transparent;flex-shrink:0;}
+.diff-badge.diff-A{color:var(--diff-A);}
+.diff-badge.diff-B{color:var(--diff-B);}
+.diff-badge.diff-C{color:var(--diff-C);}
+.diff-badge.diff-D{color:var(--diff-D);}
+
+.diff-filter{display:flex;gap:0.35rem;margin-left:auto;}
+.diff-pill{padding:0.32rem 0.7rem;border:1px solid var(--border);
+  background:var(--surface);color:var(--muted);
+  font-size:0.74rem;font-weight:700;border-radius:6px;
+  cursor:pointer;transition:all 0.12s;user-select:none;}
+.diff-pill:hover{color:var(--text);border-color:var(--border2);}
+.diff-pill.active{color:var(--text);}
+.diff-pill.diff-A.active{border-color:var(--diff-A);background:var(--diff-A-soft);}
+.diff-pill.diff-B.active{border-color:var(--diff-B);background:var(--diff-B-soft);}
+.diff-pill.diff-C.active{border-color:var(--diff-C);background:var(--diff-C-soft);}
+.diff-pill.diff-D.active{border-color:var(--diff-D);background:var(--diff-D-soft);}
+.rxn-row.diff-hidden{display:none;}
+.cat-group.cat-empty{display:none;}
+
 #progress-overlay{display:none;position:fixed;inset:0;background:rgba(60,55,40,0.45);z-index:100;align-items:center;justify-content:center;flex-direction:column;gap:1rem;}
 #progress-overlay.show{display:flex;}
 .progress-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:2rem;text-align:center;min-width:300px;box-shadow:0 10px 40px rgba(60,55,40,0.2);}
@@ -359,6 +389,12 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
       <h2>Reaktionen auswählen</h2>
       <button class="sel-btn" id="btn-sel-all">Alle</button>
       <button class="sel-btn" id="btn-sel-none">Keine</button>
+      <div class="diff-filter" id="diff-filter">
+        <div class="diff-pill diff-A active" data-diff="A" onclick="toggleDiff('A')" title="Einsteiger/innen">A</div>
+        <div class="diff-pill diff-B active" data-diff="B" onclick="toggleDiff('B')" title="LW / JÖChO">B</div>
+        <div class="diff-pill diff-C active" data-diff="C" onclick="toggleDiff('C')" title="BW">C</div>
+        <div class="diff-pill diff-D active" data-diff="D" onclick="toggleDiff('D')" title="Spezial">D</div>
+      </div>
     </div>
     <div id="reaction-list">Lädt…</div>
   </div>
@@ -684,7 +720,17 @@ function buildRendererOverrides() {
  * ════════════════════════════════════════════════════════════════ */
 
 function categories() { return [...new Set(reactions.map(r => r.category))]; }
-function getChecked() { return [...document.querySelectorAll('.rxn-cb:checked')].map(cb => cb.value); }
+function getChecked() {
+  // Only count currently visible (filter-passing) rows — hidden checkboxes
+  // stay checked but are excluded from export.
+  return [...document.querySelectorAll('.rxn-row:not(.diff-hidden) .rxn-cb:checked')].map(cb => cb.value);
+}
+
+let diffFilter = new Set(['A','B','C','D']);  // visible difficulties; empty difficulty always shown
+
+function rxnDiffVisible(r) {
+  return !r.difficulty || diffFilter.has(r.difficulty);
+}
 
 function buildSelector() {
   if (!reactions.length) return;
@@ -693,25 +739,56 @@ function buildSelector() {
   cats.forEach(cat => {
     const items = reactions.filter(r => r.category === cat);
     const catId = cat.replace(/\s+/g, '_').replace(/[^\w]/g, '_');
-    html += '<div class="cat-group">' +
+    html += '<div class="cat-group" data-cat-id="' + catId + '">' +
       '<div class="cat-row" onclick="toggleCat(\'' + catId + '\')">' +
         '<input type="checkbox" class="cat-cb" id="cat-' + catId + '" onclick="event.stopPropagation();catToggle(\'' + catId + '\',this.checked)" checked>' +
         '<span class="cat-label">' + escapeAttr(cat) + '</span>' +
-        '<span class="rxn-cat-badge">' + items.length + '</span>' +
+        '<span class="rxn-cat-badge" id="badge-' + catId + '">' + items.length + '</span>' +
       '</div>' +
       '<div class="rxn-items" id="items-' + catId + '">' +
-        items.map(r =>
-          '<label class="rxn-row">' +
+        items.map(r => {
+          const d = r.difficulty || '';
+          const badge = d ? '<span class="diff-badge diff-' + d + '" title="' + escapeAttr(diffLabelFor(d)) + '">' + d + '</span>' : '';
+          return '<label class="rxn-row" data-diff="' + d + '">' +
             '<input type="checkbox" class="rxn-cb" value="' + escapeAttr(r.id) + '" onchange="updateCount()" checked>' +
+            badge +
             '<span class="rxn-name">' + escapeAttr(r.name) + '</span>' +
-          '</label>'
-        ).join('') +
+          '</label>';
+        }).join('') +
       '</div>' +
     '</div>';
   });
   document.getElementById('reaction-list').innerHTML = html;
+  applyDiffFilter();
+}
+
+function diffLabelFor(d) {
+  return ({A:'Einsteiger/innen', B:'LW / JÖChO', C:'BW', D:'Spezial'})[d] || '';
+}
+
+function applyDiffFilter() {
+  document.querySelectorAll('.rxn-row[data-diff]').forEach(row => {
+    const d = row.getAttribute('data-diff');
+    const hide = d && !diffFilter.has(d);
+    row.classList.toggle('diff-hidden', hide);
+  });
+  // Hide categories that have no visible rows; refresh per-category counts.
+  document.querySelectorAll('.cat-group[data-cat-id]').forEach(grp => {
+    const visible = grp.querySelectorAll('.rxn-row:not(.diff-hidden)').length;
+    grp.classList.toggle('cat-empty', visible === 0);
+    const badge = grp.querySelector('.rxn-cat-badge');
+    if (badge) badge.textContent = visible;
+  });
   updateCount();
 }
+
+function toggleDiff(d) {
+  const pill = document.querySelector('.diff-pill[data-diff="' + d + '"]');
+  if (diffFilter.has(d)) { diffFilter.delete(d); pill.classList.remove('active'); }
+  else                   { diffFilter.add(d);    pill.classList.add('active');    }
+  applyDiffFilter();
+}
+window.toggleDiff = toggleDiff;
 
 function toggleCat(catId) {
   const items = document.getElementById('items-'+catId);
@@ -721,8 +798,16 @@ function catToggle(catId, checked) {
   document.querySelectorAll('#items-'+catId+' .rxn-cb').forEach(cb => cb.checked = checked);
   updateCount();
 }
-function selectAll()  { document.querySelectorAll('.rxn-cb,.cat-cb').forEach(cb => cb.checked = true);  updateCount(); }
-function selectNone() { document.querySelectorAll('.rxn-cb,.cat-cb').forEach(cb => cb.checked = false); updateCount(); }
+function selectAll()  {
+  document.querySelectorAll('.rxn-row:not(.diff-hidden) .rxn-cb').forEach(cb => cb.checked = true);
+  document.querySelectorAll('.cat-cb').forEach(cb => cb.checked = true);
+  updateCount();
+}
+function selectNone() {
+  document.querySelectorAll('.rxn-row:not(.diff-hidden) .rxn-cb').forEach(cb => cb.checked = false);
+  document.querySelectorAll('.cat-cb').forEach(cb => cb.checked = false);
+  updateCount();
+}
 function updateCount() {
   const n = getChecked().length;
   const el = document.getElementById('sel-count');

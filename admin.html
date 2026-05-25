@@ -86,6 +86,32 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .rxn-row:hover{background:var(--surface2);color:var(--text);}
 .rxn-row.active{color:var(--accent);border-left-color:var(--accent);background:var(--accent-soft);font-weight:600;}
 
+/* Difficulty colour system — same minimal palette across all pages.
+   Desaturated so four badges read as a calm family rather than competing
+   primaries. Badges are outlined (no fill); rows get a thin coloured left
+   strip only — the row background stays neutral. */
+:root{
+  --diff-A:#6fa385; --diff-A-soft:rgba(111,163,133,0.10);
+  --diff-B:#7491b8; --diff-B-soft:rgba(116,145,184,0.10);
+  --diff-C:#b8884d; --diff-C-soft:rgba(184,136,77,0.10);
+  --diff-D:#9a7fad; --diff-D-soft:rgba(154,127,173,0.10);
+}
+.diff-badge{display:inline-block;min-width:16px;height:16px;line-height:14px;padding:0 4px;
+  text-align:center;border-radius:3px;font-size:0.64rem;font-weight:600;
+  border:1px solid currentColor;background:transparent;margin-right:0.45rem;vertical-align:middle;}
+.diff-badge.diff-A{color:var(--diff-A);}
+.diff-badge.diff-B{color:var(--diff-B);}
+.diff-badge.diff-C{color:var(--diff-C);}
+.diff-badge.diff-D{color:var(--diff-D);}
+.rxn-row.diff-row-A{border-left-color:var(--diff-A);}
+.rxn-row.diff-row-B{border-left-color:var(--diff-B);}
+.rxn-row.diff-row-C{border-left-color:var(--diff-C);}
+.rxn-row.diff-row-D{border-left-color:var(--diff-D);}
+.rxn-row.diff-row-A.active{border-left-color:var(--diff-A);background:var(--diff-A-soft);color:var(--text);}
+.rxn-row.diff-row-B.active{border-left-color:var(--diff-B);background:var(--diff-B-soft);color:var(--text);}
+.rxn-row.diff-row-C.active{border-left-color:var(--diff-C);background:var(--diff-C-soft);color:var(--text);}
+.rxn-row.diff-row-D.active{border-left-color:var(--diff-D);background:var(--diff-D-soft);color:var(--text);}
+
 .empty-hint{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--muted);gap:0.8rem;}
 .empty-hint .ico{width:80px;height:80px;color:var(--border2);}
 .empty-hint .ico svg{width:100%;height:100%;}
@@ -339,9 +365,11 @@ function renderList(q='') {
         || (r.id||'').toLowerCase().includes(f)));
     if (!items.length) return '';
     return `<div class="cat-hdr">${x(cat)} <span>${items.length}</span></div>`
-      + items.map(({r,i}) =>
-        `<div class="rxn-row${selRxn===i?' active':''}" onclick="selFn(${i})">${x(r.name)}</div>`
-      ).join('');
+      + items.map(({r,i}) => {
+          const d = r.difficulty;
+          const badge = d ? `<span class="diff-badge diff-${d}">${d}</span>` : '';
+          return `<div class="rxn-row${selRxn===i?' active':''}${d?' diff-row-'+d:''}" onclick="selFn(${i})">${badge}${x(r.name)}</div>`;
+        }).join('');
   }).join('') || '<div style="padding:1rem;color:var(--muted);font-size:0.82rem">Keine Treffer</div>';
 }
 function setBadge() {
@@ -369,11 +397,19 @@ function buildForm(r) {
     <div class="field"><label>Name</label>
       <input class="fi" id="f-name" value="${x(r.name)}" oninput="mu()"></div>
     <div class="row2">
+      <div class="field"><label>Schwierigkeit</label>
+        <select class="fi" id="f-diff" onchange="mu()">
+          <option value="" ${!r.difficulty?'selected':''}>— Keine —</option>
+          <option value="A" ${r.difficulty==='A'?'selected':''}>A — Einsteiger/innen</option>
+          <option value="B" ${r.difficulty==='B'?'selected':''}>B — LW / JÖChO</option>
+          <option value="C" ${r.difficulty==='C'?'selected':''}>C — BW</option>
+          <option value="D" ${r.difficulty==='D'?'selected':''}>D — Spezial</option>
+        </select></div>
       <div class="field"><label>Untertitel</label>
         <input class="fi" id="f-sub" value="${x(r.subtitle||'')}" oninput="mu()"></div>
-      <div class="field"><label>Transformation</label>
-        <input class="fi" id="f-trans" value="${x(r.transformation||'')}" placeholder="R-X → R-OH" oninput="mu()"></div>
     </div>
+    <div class="field"><label>Transformation</label>
+      <input class="fi" id="f-trans" value="${x(r.transformation||'')}" placeholder="R-X → R-OH" oninput="mu()"></div>
     <div class="field"><label>Kategorie</label>
       <select class="fi" id="f-cat" onchange="catToggle(this)">${catOpts}</select>
       <input class="fi" id="f-cat-new" placeholder="Neue Kategorie eingeben…" style="display:none;margin-top:0.4rem" oninput="mu()">
@@ -467,6 +503,7 @@ function drawP(smiles,label,labelBelow){const b=document.getElementById('smi-pre
 function collect() {
   const r={}, g=id=>document.getElementById(id)?.value?.trim(), s=(k,v)=>{if(v)r[k]=v;};
   r.id=g('f-id'); r.category=getCat(); r.name=g('f-name');
+  s('difficulty',g('f-diff'));
   s('subtitle',g('f-sub')); s('reaktionstyp',g('f-rtyp')); s('transformation',g('f-trans'));
   r.tags=getTags();
   s('reaction_smiles',g('f-smi')); s('reagent_label',g('f-rl')); s('reagent_label_below',g('f-rlb')); s('general_scheme',g('f-gs'));

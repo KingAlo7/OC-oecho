@@ -107,7 +107,7 @@ header{
 .cat-header.open + .cat-items{display:block;}
 
 .rxn-link{
-  display:flex;align-items:center;
+  display:flex;align-items:center;gap:0.4rem;
   padding:0.45rem 0.95rem 0.45rem 1.7rem;
   font-size:0.84rem;color:var(--text-soft);cursor:pointer;
   border-left:3px solid transparent;
@@ -116,6 +116,40 @@ header{
 .rxn-link:hover{color:var(--text);background:var(--surface2);}
 .rxn-link.active{color:var(--accent);border-left-color:var(--accent);background:var(--accent-soft);font-weight:600;}
 .rxn-link.hidden{display:none;}
+.rxn-link .rxn-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+/* Difficulty system — desaturated, minimal. Badges are outlined letters;
+   row left-borders are tinted by difficulty when no other state is active. */
+:root{
+  --diff-A:#6fa385; --diff-A-soft:rgba(111,163,133,0.10);
+  --diff-B:#7491b8; --diff-B-soft:rgba(116,145,184,0.10);
+  --diff-C:#b8884d; --diff-C-soft:rgba(184,136,77,0.10);
+  --diff-D:#9a7fad; --diff-D-soft:rgba(154,127,173,0.10);
+}
+.diff-badge{display:inline-flex;align-items:center;justify-content:center;
+  min-width:16px;height:16px;padding:0 4px;border-radius:3px;
+  font-size:0.62rem;font-weight:700;line-height:1;
+  border:1px solid currentColor;background:transparent;flex-shrink:0;}
+.diff-badge.diff-A{color:var(--diff-A);}
+.diff-badge.diff-B{color:var(--diff-B);}
+.diff-badge.diff-C{color:var(--diff-C);}
+.diff-badge.diff-D{color:var(--diff-D);}
+.rxn-link.diff-A:not(.active){border-left-color:var(--diff-A-soft);}
+.rxn-link.diff-B:not(.active){border-left-color:var(--diff-B-soft);}
+.rxn-link.diff-C:not(.active){border-left-color:var(--diff-C-soft);}
+.rxn-link.diff-D:not(.active){border-left-color:var(--diff-D-soft);}
+
+.diff-filter{display:flex;gap:0.3rem;margin-top:0.5rem;}
+.diff-pill{flex:1;padding:0.32rem 0;border:1px solid var(--border);
+  background:var(--surface);color:var(--muted);
+  font-size:0.72rem;font-weight:700;text-align:center;border-radius:5px;
+  cursor:pointer;transition:all 0.12s;user-select:none;}
+.diff-pill:hover{color:var(--text);border-color:var(--border2);}
+.diff-pill.active{color:var(--text);}
+.diff-pill.diff-A.active{border-color:var(--diff-A);background:var(--diff-A-soft);}
+.diff-pill.diff-B.active{border-color:var(--diff-B);background:var(--diff-B-soft);}
+.diff-pill.diff-C.active{border-color:var(--diff-C);background:var(--diff-C-soft);}
+.diff-pill.diff-D.active{border-color:var(--diff-D);background:var(--diff-D-soft);}
 
 .main{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
 .main::-webkit-scrollbar{width:8px;}
@@ -285,7 +319,14 @@ header{
 <div class="layout">
   <nav class="sidebar" id="sidebar">
     <div class="sidebar-top">
-      <div class="sidebar-label">Kategorien</div>
+      <div class="sidebar-label">Schwierigkeit</div>
+      <div class="diff-filter" id="diff-filter">
+        <div class="diff-pill diff-A active" data-diff="A" onclick="toggleDiff('A')" title="Einsteiger/innen">A</div>
+        <div class="diff-pill diff-B active" data-diff="B" onclick="toggleDiff('B')" title="LW / JÖChO">B</div>
+        <div class="diff-pill diff-C active" data-diff="C" onclick="toggleDiff('C')" title="BW">C</div>
+        <div class="diff-pill diff-D active" data-diff="D" onclick="toggleDiff('D')" title="Spezial">D</div>
+      </div>
+      <div class="sidebar-label" style="margin-top:0.85rem">Kategorien</div>
     </div>
     <div id="cat-list"></div>
   </nav>
@@ -297,6 +338,7 @@ header{
 <script>
 let reactions = [];
 let activeId  = null;
+let diffFilter = new Set(['A','B','C','D']);  // visible difficulties; empty difficulty always shown
 
 const CAT_ICONS = {
   'Nukleophile Substitution': '⇌',
@@ -336,22 +378,47 @@ async function init() {
 
 function categories() { return [...new Set(reactions.map(r => r.category))]; }
 
+function rxnVisible(r) {
+  return !r.difficulty || diffFilter.has(r.difficulty);
+}
+
 function buildSidebar() {
   const cats = categories();
   document.getElementById('cat-list').innerHTML = cats.map(cat => {
     const items = reactions.filter(r => r.category === cat);
-    return `<div class="cat-group" data-cat="${cat}">
+    const visibleN = items.filter(rxnVisible).length;
+    return `<div class="cat-group" data-cat="${cat}"${visibleN===0?' style="display:none"':''}>
       <div class="cat-header" onclick="toggleCat(this)">
         <span class="cat-arrow">▶</span>
         <span>${cat}</span>
-        <span class="cat-count">${items.length}</span>
+        <span class="cat-count">${visibleN}</span>
       </div>
       <div class="cat-items">
-        ${items.map(r => `<div class="rxn-link" id="link-${r.id}" onclick="showReaction('${r.id}')">${r.name}</div>`).join('')}
+        ${items.map(r => {
+          const d = r.difficulty || '';
+          const badge = d ? `<span class="diff-badge diff-${d}" title="${diffLabel(d)}">${d}</span>` : '';
+          const hidden = !rxnVisible(r) ? ' hidden' : '';
+          const diffCls = d ? ' diff-'+d : '';
+          return `<div class="rxn-link${diffCls}${hidden}" id="link-${r.id}" onclick="showReaction('${r.id}')">${badge}<span class="rxn-name">${r.name}</span></div>`;
+        }).join('')}
       </div>
     </div>`;
   }).join('');
 }
+
+function diffLabel(d) {
+  return ({A:'Einsteiger/innen', B:'LW / JÖChO', C:'BW', D:'Spezial'})[d] || '';
+}
+
+function toggleDiff(d) {
+  const pill = document.querySelector(`.diff-pill[data-diff="${d}"]`);
+  if (diffFilter.has(d)) { diffFilter.delete(d); pill.classList.remove('active'); }
+  else                   { diffFilter.add(d);    pill.classList.add('active');    }
+  buildSidebar();
+  // keep current detail page open even if its row gets hidden — the
+  // header navigation still works, and re-enabling the filter restores it.
+}
+window.toggleDiff = toggleDiff;
 
 function toggleCat(header) { header.classList.toggle('open'); }
 

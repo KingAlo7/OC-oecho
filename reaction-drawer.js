@@ -135,22 +135,31 @@ const ReactionRenderer = (() => {
     return _parseLatex(s).reduce((n, seg) => n + seg.text.length, 0);
   }
 
-  /* Replace a <text>'s string children with <tspan>s carrying baseline-shift
-     for sub/super segments. Sub/super get 70% font-size as is standard. */
+  /* Replace a <text>'s string children with <tspan>s positioned via `dy`
+     offsets — `baseline-shift` is unreliable in Chrome's SVG renderer and
+     doesn't survive canvas rasterisation (PNG export). Targets are in
+     PARENT ems and we convert to tspan-local ems (dy uses the tspan's own
+     font-size as its em). Sub/super tspans get 70% font-size. */
   function _applyLatexToText(textEl, segments) {
     while (textEl.firstChild) textEl.removeChild(textEl.firstChild);
+    const yFor    = { normal: 0,   sub: 0.32, sup: -0.50 };
+    const sizeFor = { normal: 1.0, sub: 0.70, sup: 0.70  };
+    let curY = 0;
     for (let i = 0; i < segments.length; i++) {
       const seg = segments[i];
       const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-      if (seg.mode === 'sub') {
-        tspan.setAttribute('baseline-shift', 'sub');
-        tspan.setAttribute('font-size', '70%');
-      } else if (seg.mode === 'sup') {
-        tspan.setAttribute('baseline-shift', 'super');
-        tspan.setAttribute('font-size', '70%');
+      const target = (seg.mode in yFor)    ? yFor[seg.mode]    : 0;
+      const sz     = (seg.mode in sizeFor) ? sizeFor[seg.mode] : 1.0;
+      const dyTspanEm = (target - curY) / sz;
+      if (Math.abs(dyTspanEm) > 1e-6) {
+        tspan.setAttribute('dy', dyTspanEm.toFixed(3) + 'em');
+      }
+      if (sz !== 1.0) {
+        tspan.setAttribute('font-size', Math.round(sz * 100) + '%');
       }
       tspan.textContent = seg.text;
       textEl.appendChild(tspan);
+      curY = target;
     }
   }
 
