@@ -1187,7 +1187,13 @@
     "difficulty": "B",
     "reaktionstyp": "AN+E",
     "transformation": "Aldehyd/Keton + sek. Amin → Enamin",
-    "reaction_smiles": "CC(=O)C>>CC(=CC)N1CCCCC1",
+    "tags": [
+      "Carbonyl",
+      "Enamin",
+      "Stork",
+      "Alkylierung"
+    ],
+    "reaction_smiles": "CC(=O)C>>CC(=C)N1CCCCC1",
     "reagent_label": "R_2NH",
     "reagent_label_below": "-H_2O",
     "conditions": "Säurekat., Wasserentzug; oft Piperidin/Pyrrolidin/Morpholin",
@@ -1195,12 +1201,6 @@
       "Stork-Enamin-Synthese – Enamine als C-Nucleophile",
       "Alkylierung mit RX an α-C, dann Hydrolyse zurück zum Carbonyl",
       "Umweg über sek. Amine vermeidet Mehrfachalkylierung"
-    ],
-    "tags": [
-      "Carbonyl",
-      "Enamin",
-      "Stork",
-      "Alkylierung"
     ]
   },
   {
