@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#c2c5a6">
+<title>Seite nicht gefunden — OC Referenz</title>
+<link rel="icon" type="image/svg+xml" href="./assets/logo.svg">
+<style>
+:root {
+  --bg:#faf9f5; --surface:#ffffff; --surface2:#f3f3ec;
+  --border:#e4e3d8; --border2:#cfceb8;
+  --text:#1a1a18; --text-soft:#3a3a35;
+  --muted:#6b6a5d; --muted2:#9a9889;
+  --accent:#e2001a; --accent-soft:#fde4e7;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:2rem;text-align:center;-webkit-font-smoothing:antialiased;
+}
+.logo{width:96px;height:96px;color:var(--accent);margin-bottom:1.5rem;opacity:0.92;}
+.logo svg{width:100%;height:100%;display:block;}
+h1{font-size:3.5rem;font-weight:700;color:var(--accent);letter-spacing:-0.04em;line-height:1;margin-bottom:0.5rem;}
+h2{font-size:1.3rem;font-weight:600;margin-bottom:1rem;letter-spacing:-0.01em;}
+p{color:var(--muted);line-height:1.7;max-width:520px;margin:0 auto 2rem;font-size:0.95rem;}
+.links{display:flex;flex-wrap:wrap;gap:0.6rem;justify-content:center;max-width:560px;}
+.link-card{
+  display:flex;flex-direction:column;align-items:flex-start;
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:0.9rem 1.1rem;text-decoration:none;color:var(--text);
+  min-width:180px;text-align:left;transition:all 0.15s;
+}
+.link-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 4px 16px rgba(60,55,40,0.08);}
+.link-card .arrow{color:var(--accent);font-weight:700;margin-bottom:0.3rem;font-size:0.92rem;}
+.link-card .label{font-size:0.95rem;font-weight:600;margin-bottom:0.15rem;}
+.link-card .desc{font-size:0.78rem;color:var(--muted);}
+.url-hint{margin-top:2rem;font-family:ui-monospace,'Cascadia Code','Fira Code',monospace;font-size:0.78rem;color:var(--muted2);background:var(--surface2);padding:0.4rem 0.8rem;border-radius:6px;border:1px solid var(--border);}
+.url-hint code{color:var(--accent);}
+</style>
+</head>
+<body>
+
+<div class="logo">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="14 52 174 187">
+    <path fill="#e2001a" d="M 153.27953,54.242684 141.3862,76.472852 73.360897,76.250643 39.904024,139.16308 16.228467,139.27419 v 13.11599 l 23.452832,0.22273 34.124015,62.80081 68.025306,0.11111 11.33781,21.56406 10.67067,-6.55826 -11.67113,-22.11958 33.79071,-62.80082 -34.12402,-62.801331 12.11554,-21.897371 z m -12.0804,35.318258 30.29893,56.472008 -30.37747,56.07874 -60.322938,0.1571 -30.220377,-56.35367 30.220377,-56.27563 z m 13.04727,56.216728 -22.51801,41.95092 3.81166,2.31872 22.518,-41.87289 c 0,0 2.9e-4,-0.0192 -3.81165,-2.39675 z"/>
+  </svg>
+</div>
+
+<h1>404</h1>
+<h2>Diese Seite konnte nicht gefunden werden.</h2>
+<p>Der eingegebene Pfad gehört zu keiner Seite dieser Website. URLs sind <strong>groß-/kleinschreibungsabhängig</strong> — also <code>OC-oecho</code>, nicht <code>oc-oecho</code>.</p>
+
+<div class="links">
+  <a class="link-card" href="./">
+    <span class="arrow">→</span>
+    <span class="label">Reaktionsreferenz</span>
+    <span class="desc">Über 80 organische Reaktionen</span>
+  </a>
+  <a class="link-card" href="./quiz.html">
+    <span class="arrow">→</span>
+    <span class="label">Quiz</span>
+    <span class="desc">Synthesen, Mechanismen, Theorie</span>
+  </a>
+  <a class="link-card" href="./export.html">
+    <span class="arrow">→</span>
+    <span class="label">Druckansicht</span>
+    <span class="desc">PDF-Export</span>
+  </a>
+</div>
+
+<div class="url-hint">Startseite: <code>kingalo7.github.io/OC-oecho/</code></div>
+
+</body>
+</html>
