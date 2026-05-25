@@ -1,3 +1,12 @@
 node_modules/
 .env
 *.log
+vendor/
+.claude/
+# Lokale Arbeitsdateien (PDF-Quellen, Python-Extraktionsskripte etc.)
+rxn_*.txt
+rxn_*.pdf
+build_reactions.py
+rework_reactions.py
+# Versehentlich erstellte Dateien aus Pfad-Eingabefehlern
+C\357\200\272Users*

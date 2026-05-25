@@ -7,7 +7,10 @@
 <title>OC Referenz — Admin</title>
 <link rel="icon" type="image/svg+xml" href="./assets/logo.svg">
 <script src="https://unpkg.com/smiles-drawer@2/dist/smiles-drawer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/openchemlib/dist/openchemlib-full.js"></script>
 <script src="./reaction-drawer.js"></script>
+<script src="./mol-renderer.js"></script>
+<script src="./rdkit-helper.js"></script>
 <style>
 :root{
   --bg:#faf9f5;
@@ -192,6 +195,75 @@ select.fi option{background:var(--surface);color:var(--text);}
 
 .helper-text{margin-top:0.6rem;font-size:0.74rem;color:var(--muted);line-height:1.6;}
 .helper-text strong{color:var(--text-soft);font-weight:600;}
+
+/* Quiz editor specifics */
+.q-type-tag{font-size:0.6rem;padding:0.05rem 0.35rem;border-radius:3px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);font-weight:600;text-transform:uppercase;letter-spacing:0.04em;margin-left:0.4rem;vertical-align:middle;}
+.step-block{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.1rem;margin-bottom:0.7rem;}
+.step-block-head{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.8rem;}
+.step-block-num{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:0.74rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-block-title{flex:1;font-size:0.85rem;font-weight:600;color:var(--text);}
+.step-controls{display:flex;gap:0.3rem;}
+.step-controls button{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:0.22rem 0.5rem;border-radius:5px;cursor:pointer;font-size:0.74rem;font-family:inherit;transition:all 0.15s;}
+.step-controls button:hover{color:var(--text);border-color:var(--muted);background:var(--surface2);}
+.step-controls .del{color:var(--red);}
+.step-controls .del:hover{background:var(--red-soft);border-color:var(--red);}
+.imgdrop{display:flex;align-items:center;gap:0.5rem;}
+.imgdrop input[type=file]{font-size:0.78rem;flex:1;}
+.imgdrop .img-prev{width:60px;height:60px;border:1px solid var(--border);border-radius:5px;background:#fff center/contain no-repeat;flex-shrink:0;}
+.imgdrop button{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:0.28rem 0.55rem;border-radius:5px;cursor:pointer;font-size:0.74rem;font-family:inherit;}
+.imgdrop button:hover{color:var(--red);border-color:var(--red);background:var(--red-soft);}
+.type-switch{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.6rem;}
+.type-switch label{flex:1;min-width:120px;display:flex;align-items:center;gap:0.4rem;padding:0.55rem 0.7rem;border:1px solid var(--border);border-radius:7px;cursor:pointer;font-size:0.82rem;background:var(--surface);transition:all 0.12s;font-weight:500;}
+.type-switch label:hover{border-color:var(--muted2);}
+.type-switch input{accent-color:var(--accent);}
+.type-switch input:checked + span{color:var(--accent);font-weight:600;}
+.type-switch label:has(input:checked){border-color:var(--accent);background:var(--accent-soft);}
+.choice-block{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.7rem 0.85rem;margin-bottom:0.5rem;}
+.choice-head{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;font-size:0.78rem;color:var(--muted);font-weight:600;}
+.choice-head input[type=checkbox]{accent-color:var(--green);}
+.mini-prev{background:#fff;border:1px solid var(--border);border-radius:6px;padding:0.5rem;min-height:60px;display:flex;justify-content:center;align-items:center;overflow-x:auto;margin-top:0.4rem;}
+.mini-prev svg, .mini-prev img{display:block;max-width:100%;max-height:100px;}
+
+/* ── Composed-scheme editor (admin) ──────────────────────────────── */
+.node-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:0.85rem 1rem;margin-bottom:0.6rem;}
+.node-card.given-card{background:var(--surface2);}
+.node-card-head{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.6rem;}
+.node-card-num{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:0.74rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.node-card-title{flex:1;font-size:0.85rem;font-weight:600;color:var(--text);}
+.node-grid{display:grid;grid-template-columns:120px 1fr;gap:0.7rem;align-items:start;}
+.node-preview{background:#fff;border:1px solid var(--border);border-radius:6px;min-height:100px;display:flex;justify-content:center;align-items:center;padding:0.3rem;overflow:hidden;}
+.node-preview svg, .node-preview img{display:block;max-width:100%;max-height:120px;}
+.node-preview .ph{font-size:0.74rem;color:var(--muted2);font-style:italic;}
+.node-preview-actions{display:flex;flex-direction:column;gap:0.3rem;margin-top:0.4rem;}
+.node-preview-actions button{font-size:0.74rem;padding:0.3rem 0.5rem;border:1px solid var(--border);background:var(--surface);color:var(--text-soft);border-radius:5px;cursor:pointer;font-family:inherit;transition:all 0.15s;}
+.node-preview-actions button:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
+
+.edge-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.7rem 0.9rem;margin-bottom:0.45rem;display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;}
+.edge-card .edge-num{width:22px;height:22px;border-radius:50%;background:var(--diff-B);color:#fff;font-size:0.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.edge-from{display:flex;gap:0.25rem;flex-wrap:wrap;align-items:center;}
+.edge-fromchip{font-size:0.74rem;padding:0.18rem 0.5rem;border-radius:5px;background:var(--surface2);border:1px solid var(--border2);color:var(--text-soft);font-weight:600;}
+.edge-arrow-symbol{font-size:0.85rem;color:var(--muted);}
+.edge-to-select, .edge-from-select{flex:0 0 auto;}
+.edge-reagent-row{display:flex;flex-direction:column;gap:0.2rem;flex:1;min-width:180px;}
+.edge-reagent-row input{font-size:0.78rem;padding:0.3rem 0.55rem;border:1px solid var(--border);border-radius:5px;font-family:inherit;}
+.edge-reagent-row input:focus{outline:none;border-color:var(--accent);}
+
+/* OCL editor modal */
+.ocl-modal{position:fixed;inset:0;background:rgba(20,18,12,0.55);z-index:200;display:none;align-items:center;justify-content:center;padding:1.5rem;}
+.ocl-modal.open{display:flex;}
+.ocl-modal-inner{background:#fff;border-radius:12px;width:min(900px, 95vw);max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 12px 40px rgba(0,0,0,0.3);}
+.ocl-modal-head{padding:0.85rem 1.1rem;border-bottom:1px solid var(--border);font-size:0.95rem;font-weight:600;display:flex;align-items:center;gap:0.6rem;background:var(--surface);}
+.ocl-modal-head .close{margin-left:auto;background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;line-height:1;}
+.ocl-modal-head .close:hover{color:var(--red);}
+.ocl-editor-host{flex:1;overflow:auto;background:#fafaf6;padding:0.6rem;display:flex;justify-content:center;align-items:flex-start;}
+.ocl-editor-host > div{background:#fff;}
+.ocl-modal-foot{padding:0.75rem 1.1rem;border-top:1px solid var(--border);display:flex;gap:0.5rem;align-items:center;background:var(--surface);}
+.ocl-modal-foot .mol-meta{font-size:0.74rem;color:var(--muted);font-family:ui-monospace,monospace;flex:1;}
+.ocl-modal-foot button{font-size:0.85rem;padding:0.45rem 0.9rem;border-radius:7px;border:none;cursor:pointer;font-family:inherit;font-weight:600;transition:all 0.15s;}
+.ocl-modal-foot .pri{background:var(--accent);color:#fff;}
+.ocl-modal-foot .pri:hover{background:#c2001a;}
+.ocl-modal-foot .sec{background:var(--surface);color:var(--text);border:1px solid var(--border);}
+.ocl-modal-foot .sec:hover{background:var(--surface2);}
 </style>
 </head>
 <body>
@@ -209,6 +281,7 @@ select.fi option{background:var(--surface);color:var(--text);}
   <span class="mode-badge" id="mode-badge">…</span>
   <div class="hnav">
     <a href="./index.html">Referenz</a>
+    <a href="./quiz.html">Quiz</a>
     <a href="./export.html">Export</a>
   </div>
 </header>
@@ -216,6 +289,9 @@ select.fi option{background:var(--surface);color:var(--text);}
 <div class="tab-bar">
   <button class="tab-btn active" id="tbtn-reactions" onclick="switchTab('reactions')">
     Reaktionen <span class="tbadge" id="badge-count">—</span>
+  </button>
+  <button class="tab-btn" id="tbtn-quiz" onclick="switchTab('quiz')">
+    Quiz <span class="tbadge" id="badge-qcount">—</span>
   </button>
   <button class="tab-btn" id="tbtn-commit" onclick="switchTab('commit')">
     Commit <span class="tbadge warn" id="badge-unsaved" style="display:none">ungespeichert</span>
@@ -241,6 +317,29 @@ select.fi option{background:var(--surface);color:var(--text);}
         <div class="empty-hint">
           <div class="ico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="square" stroke-linejoin="miter"><polygon points="30,16 70,16 90,50 70,84 30,84 10,50"/><line x1="70" y1="16" x2="82" y2="0"/><line x1="70" y1="84" x2="82" y2="100"/><line x1="10" y1="50" x2="2" y2="50"/><line x1="70" y1="70" x2="78" y2="56"/></svg></div>
           <div>Reaktion zum Bearbeiten auswählen</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-pane" id="tab-quiz">
+    <div class="split">
+      <div class="list-panel">
+        <div class="list-top">
+          <input class="search-box" type="text" id="q-search" placeholder="Suchen…" oninput="renderQList(this.value)">
+          <div class="list-actions">
+            <button class="bxs" onclick="newQ()">＋ Neu</button>
+            <button class="bxs sec" onclick="dupQ()">Kop.</button>
+            <button class="bxs sec" onclick="importQ()">Import</button>
+            <button class="bxs sec" onclick="diagnoseOCR()" title="Prüft, welche OCR-Backends installiert sind">OCR?</button>
+          </div>
+        </div>
+        <div class="list-scroll" id="q-list"></div>
+      </div>
+      <div class="edit-scroll" id="q-edit-panel">
+        <div class="empty-hint">
+          <div class="ico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round"><circle cx="50" cy="50" r="40"/><path d="M40 40 q10 -15 20 0 t-10 15" /><circle cx="50" cy="72" r="4" fill="currentColor"/></svg></div>
+          <div>Frage zum Bearbeiten auswählen</div>
         </div>
       </div>
     </div>
@@ -276,13 +375,23 @@ select.fi option{background:var(--surface);color:var(--text);}
           <span class="fstat-info" id="info-r">—</span>
           <span class="slabel slabel-unk" id="lbl-r">unbekannt</span>
         </div>
+        <div class="fstat-row">
+          <span class="sdot sdot-grey" id="dot-q"></span>
+          <span class="fstat-name">data/questions.json</span>
+          <span class="fstat-info" id="info-q">—</span>
+          <span class="slabel slabel-unk" id="lbl-q">unbekannt</span>
+        </div>
       </div>
 
       <div class="card">
         <div class="card-hdr">Commit &amp; Push nach main</div>
-        <label class="cf-row" style="margin-bottom:0.8rem">
+        <label class="cf-row" style="margin-bottom:0.4rem">
           <input type="checkbox" id="ci-r" checked>
           <span>data/reactions.json</span>
+        </label>
+        <label class="cf-row" style="margin-bottom:0.8rem">
+          <input type="checkbox" id="ci-q" checked>
+          <span>data/questions.json</span>
         </label>
         <div class="field"><label>Commit-Nachricht</label>
           <input class="fi" id="commit-msg" placeholder="data: Reaktionen aktualisiert">
@@ -304,9 +413,30 @@ select.fi option{background:var(--surface);color:var(--text);}
 </div>
 <div class="toast" id="toast"></div>
 
+<!-- Ketcher StructureEditor modal: shared by all node-edit buttons -->
+<div class="ocl-modal" id="ocl-modal">
+  <div class="ocl-modal-inner" style="width:min(1100px,98vw);max-height:96vh">
+    <div class="ocl-modal-head">
+      <span id="ocl-modal-title">Struktur bearbeiten</span>
+      <span style="margin-left:auto;font-size:0.74rem;color:var(--muted);font-weight:500" id="ocl-editor-status">Ketcher wird geladen…</span>
+      <button class="close" onclick="closeStructEditor()" aria-label="Schließen">×</button>
+    </div>
+    <div class="ocl-editor-host" id="ocl-editor-host" style="padding:0;background:#fff">
+      <iframe id="ketcher-iframe" style="width:100%;height:70vh;min-height:480px;border:0;display:block"
+              title="Ketcher Strukturzeichner"></iframe>
+    </div>
+    <div class="ocl-modal-foot">
+      <span class="mol-meta" id="ocl-meta">—</span>
+      <button class="sec" onclick="closeStructEditor()">Abbrechen</button>
+      <button class="pri" onclick="commitStructEditor()">Übernehmen</button>
+    </div>
+  </div>
+</div>
+
 <script>
 let reactions = [], selRxn = null, unsaved = false;
-let shas = { r: null };
+let questions = [], selQ   = null;
+let shas = { r: null, q: null };
 let serverMode = false;
 
 async function detectServer() {
@@ -337,19 +467,27 @@ async function init() {
     } catch (e) {
       toast('Fehler beim Laden vom Server: ' + e.message, 'err');
     }
+    try {
+      questions = await fetch('/api/questions').then(r => r.json());
+    } catch (e) {
+      // non-fatal — questions.json may not exist yet
+    }
   } else {
     try {
       reactions = await fetch('./data/reactions.json').then(r => { if(!r.ok) throw 0; return r.json(); });
     } catch {
       toast('reactions.json konnte nicht geladen werden', 'err');
     }
+    try {
+      questions = await fetch('./data/questions.json').then(r => { if(!r.ok) throw 0; return r.json(); });
+    } catch {}
   }
   updateModeBadge();
-  renderList(); setBadge(); loadGhCfg();
+  renderList(); renderQList(); setBadge(); loadGhCfg();
 }
 
 function switchTab(n) {
-  ['reactions','commit'].forEach(t => {
+  ['reactions','quiz','commit'].forEach(t => {
     document.getElementById('tab-'+t).classList.toggle('active', t===n);
     document.getElementById('tbtn-'+t).classList.toggle('active', t===n);
   });
@@ -374,6 +512,8 @@ function renderList(q='') {
 }
 function setBadge() {
   document.getElementById('badge-count').textContent = reactions.length;
+  const qb = document.getElementById('badge-qcount');
+  if (qb) qb.textContent = questions.length;
   document.getElementById('badge-unsaved').style.display = unsaved ? '' : 'none';
 }
 
@@ -598,6 +738,1070 @@ async function persist(){
 
 function mu(){unsaved=true;setBadge();}
 
+/* ════════════════════════════════════════════════════════════════════
+   Quiz editor
+   ════════════════════════════════════════════════════════════════════ */
+
+const Q_TYPES = [
+  { id: 'synthesis',       label: 'Mehrstufige Synthese' },
+  { id: 'multiple_choice', label: 'Multiple Choice' },
+  { id: 'short_answer',    label: 'Theorie (Kurzantwort)' },
+  { id: 'mechanism',       label: 'Mechanismus' }
+];
+const Q_TYPE_LABEL = Object.fromEntries(Q_TYPES.map(t => [t.id, t.label]));
+
+function renderQList(qstr='') {
+  const f = (qstr || '').toLowerCase();
+  const cats = [...new Set(questions.map(q => q.category||'Unkategorisiert'))].sort();
+  const html = cats.map(cat => {
+    const items = questions.map((q,i)=>({q,i})).filter(({q}) =>
+      (q.category||'Unkategorisiert')===cat && (!f
+        || (q.name||'').toLowerCase().includes(f)
+        || (q.id||'').toLowerCase().includes(f)
+        || (q.type||'').toLowerCase().includes(f)));
+    if (!items.length) return '';
+    return `<div class="cat-hdr">${x(cat)} <span>${items.length}</span></div>`
+      + items.map(({q,i}) => {
+          const d = q.difficulty;
+          const badge = d ? `<span class="diff-badge diff-${d}">${d}</span>` : '';
+          const typeTag = q.type ? `<span class="q-type-tag">${Q_TYPE_LABEL[q.type]||q.type}</span>` : '';
+          return `<div class="rxn-row${selQ===i?' active':''}${d?' diff-row-'+d:''}" onclick="selQFn(${i})">${badge}${x(q.name||'(unbenannt)')}${typeTag}</div>`;
+        }).join('');
+  }).join('') || '<div style="padding:1rem;color:var(--muted);font-size:0.82rem">Keine Treffer</div>';
+  const list = document.getElementById('q-list');
+  if (list) list.innerHTML = html;
+}
+
+function selQFn(i) {
+  selQ = i;
+  renderQList(document.getElementById('q-search').value);
+  buildQForm(questions[i]);
+}
+window.selQFn = selQFn;
+
+function getReactionOptions(selectedId) {
+  const grouped = {};
+  reactions.forEach(r => {
+    (grouped[r.category||'?'] = grouped[r.category||'?'] || []).push(r);
+  });
+  const opts = ['<option value="">— keine —</option>'];
+  Object.keys(grouped).sort().forEach(cat => {
+    opts.push(`<optgroup label="${x(cat)}">`);
+    grouped[cat].forEach(r => {
+      opts.push(`<option value="${x(r.id)}"${selectedId===r.id?' selected':''}>${x(r.name)}</option>`);
+    });
+    opts.push('</optgroup>');
+  });
+  return opts.join('');
+}
+
+function buildQForm(q) {
+  const cats = [...new Set(questions.map(r => r.category||'Unkategorisiert'))].sort();
+  const catOpts = cats.map(c => `<option value="${x(c)}"${q.category===c?' selected':''}>${x(c)}</option>`).join('')
+                + `<option value="__new__">— Neue Kategorie —</option>`;
+
+  const typeSwitch = Q_TYPES.map(t => `
+    <label><input type="radio" name="q-type" value="${t.id}" ${q.type===t.id?'checked':''} onchange="qTypeChange(this.value)"><span>${t.label}</span></label>
+  `).join('');
+
+  document.getElementById('q-edit-panel').innerHTML = `
+    <div class="fsec">
+      <div class="fsec-title">Identität</div>
+      <div class="row2">
+        <div class="field"><label>ID</label><input class="fi" id="q-id" value="${x(q.id||'')}" oninput="mu()"></div>
+        <div class="field"><label>Schwierigkeit</label>
+          <select class="fi" id="q-diff" onchange="mu()">
+            <option value="" ${!q.difficulty?'selected':''}>— Keine —</option>
+            <option value="A" ${q.difficulty==='A'?'selected':''}>A — Einsteiger/innen</option>
+            <option value="B" ${q.difficulty==='B'?'selected':''}>B — LW / JÖChO</option>
+            <option value="C" ${q.difficulty==='C'?'selected':''}>C — BW</option>
+            <option value="D" ${q.difficulty==='D'?'selected':''}>D — Spezial</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Name</label><input class="fi" id="q-name" value="${x(q.name||'')}" oninput="mu()"></div>
+      <div class="field"><label>Kategorie</label>
+        <select class="fi" id="q-cat" onchange="qCatToggle(this)">${catOpts}</select>
+        <input class="fi" id="q-cat-new" placeholder="Neue Kategorie eingeben…" style="display:none;margin-top:0.4rem" oninput="mu()">
+      </div>
+      <div class="field"><label>Typ</label>
+        <div class="type-switch">${typeSwitch}</div>
+      </div>
+      <div class="field"><label>Quelle / Literatur (optional)</label>
+        <input class="fi" id="q-source" value="${x(q.source||'')}" placeholder="Stork, G. … J. Am. Chem. Soc. 1951, 73, 4501." oninput="mu()">
+      </div>
+      <div class="field"><label>Einleitung (optional)</label>
+        <textarea class="fi" id="q-intro" style="min-height:90px" oninput="mu()">${x(q.intro||'')}</textarea>
+      </div>
+    </div>
+
+    <div id="q-type-body"></div>
+
+    <div class="fsec">
+      <div class="fsec-title">Hinweise (optional)</div>
+      <div class="kp-list" id="q-hints-list">${(q.hints||[]).map((h,i)=>`
+        <div class="kp-row"><input value="${x(h)}" oninput="mu()"><button class="kp-del" onclick="rmHint(${i})">×</button></div>`).join('')}
+      </div>
+      <button class="bxs sec" onclick="addHint()">＋ Hinweis</button>
+    </div>
+
+    <div class="act-bar">
+      <button class="btn btn-pri" onclick="saveQ()">Übernehmen</button>
+      <button class="btn btn-sec" onclick="dupQ()">Duplizieren</button>
+      <button class="btn btn-del" onclick="delQ()">Löschen</button>
+    </div>
+    <div class="helper-text">„Übernehmen" speichert lokal im Browser. Im Server-Modus wird zusätzlich data/questions.json geschrieben.</div>
+  `;
+
+  qTypeChange(q.type || 'synthesis', q);
+}
+
+function qCatToggle(sel) {
+  const inp = document.getElementById('q-cat-new');
+  if (sel.value === '__new__') { inp.style.display=''; inp.focus(); } else inp.style.display='none';
+  mu();
+}
+function getQCat() {
+  const sel = document.getElementById('q-cat');
+  return sel.value === '__new__'
+    ? (document.getElementById('q-cat-new').value.trim() || 'Unkategorisiert')
+    : sel.value;
+}
+
+function addHint() {
+  const list = document.getElementById('q-hints-list');
+  const i = list.children.length;
+  const d = document.createElement('div');
+  d.className = 'kp-row';
+  d.innerHTML = `<input value="" oninput="mu()"><button class="kp-del" onclick="rmHint(${i})">×</button>`;
+  list.appendChild(d);
+  d.querySelector('input').focus();
+  mu();
+}
+function rmHint(i) { document.getElementById('q-hints-list').children[i]?.remove(); mu(); }
+function getHints() { return [...document.querySelectorAll('#q-hints-list input')].map(i=>i.value.trim()).filter(Boolean); }
+
+function qTypeChange(type, q) {
+  q = q || (selQ!==null ? questions[selQ] : {});
+  const body = document.getElementById('q-type-body');
+  if (!body) return;
+  if (type === 'synthesis')           body.innerHTML = renderSynthEditor(q);
+  else if (type === 'multiple_choice') body.innerHTML = renderMCQEditor(q);
+  else if (type === 'short_answer')    body.innerHTML = renderSAEditor(q);
+  else if (type === 'mechanism')       body.innerHTML = renderMechEditor(q);
+  // Re-render previews for any pre-existing SMILES fields after a tiny delay
+  setTimeout(refreshAllMiniPreviews, 10);
+  mu();
+}
+
+/* ── Sub-editors per type ────────────────────────────────────────── */
+
+function structFields(prefix, struct, opts) {
+  // opts: { showLabel, showFormula, showNote, allowImage, structOnly }
+  opts = opts || {};
+  struct = struct || {};
+  const imgHtml = opts.allowImage===false ? '' : `
+    <div class="field"><label>Bild (optional, überschreibt SMILES)</label>
+      <div class="imgdrop">
+        <input type="file" accept="image/*" onchange="onImgPick(this, '${prefix}-img')">
+        <div class="img-prev" id="${prefix}-img-prev" style="background-image:url('${struct.image||''}')"></div>
+        <button onclick="clearImg('${prefix}-img')">×</button>
+      </div>
+      <input type="hidden" id="${prefix}-img" value="${x(struct.image||'')}">
+    </div>`;
+  const labelHtml = opts.showLabel ? `
+    <div class="field"><label>Label (z. B. „C")</label>
+      <input class="fi" id="${prefix}-label" value="${x(struct.label||'')}" oninput="mu()"></div>` : '';
+  const formulaHtml = opts.showFormula ? `
+    <div class="field"><label>Summenformel (optional)</label>
+      <input class="fi" id="${prefix}-formula" value="${x(struct.formula||'')}" placeholder="C10H10O5" oninput="mu()"></div>` : '';
+  const noteHtml = opts.showNote ? `
+    <div class="field"><label>Notiz zur Lösung (optional)</label>
+      <input class="fi" id="${prefix}-note" value="${x(struct.note||'')}" oninput="mu()"></div>` : '';
+
+  const reagentHtml = opts.structOnly ? '' : `
+    <div class="row2">
+      <div class="field"><label>Reagenz (über Pfeil, LaTeX)</label>
+        <input class="fi" id="${prefix}-rl" value="${x(struct.reagent_label||'')}" placeholder="H_2SO_4" oninput="mu();miniPrev('${prefix}')"></div>
+      <div class="field"><label>Reagenz (unter Pfeil)</label>
+        <input class="fi" id="${prefix}-rlb" value="${x(struct.reagent_label_below||'')}" placeholder="Δ" oninput="mu();miniPrev('${prefix}')"></div>
+    </div>`;
+
+  return `
+    <div class="field"><label>SMILES</label>
+      <input class="fi" id="${prefix}-smi" value="${x(struct.smiles||'')}" placeholder="c1ccoc1.COC(=O)C#CC(=O)OC" oninput="mu();miniPrev('${prefix}')">
+    </div>
+    ${reagentHtml}
+    ${imgHtml}
+    ${labelHtml}
+    ${formulaHtml}
+    ${noteHtml}
+    <div class="mini-prev" id="${prefix}-prev"><span style="color:var(--muted2);font-size:0.78rem;font-style:italic">Vorschau</span></div>
+  `;
+}
+
+function miniPrev(prefix) {
+  const smi = document.getElementById(prefix+'-smi')?.value?.trim();
+  const img = document.getElementById(prefix+'-img')?.value;
+  const rl  = document.getElementById(prefix+'-rl')?.value?.trim() || '';
+  const rlb = document.getElementById(prefix+'-rlb')?.value?.trim() || '';
+  const box = document.getElementById(prefix+'-prev');
+  if (!box) return;
+  if (img) {
+    box.innerHTML = `<img src="${img}" alt="">`;
+    return;
+  }
+  if (!smi) {
+    box.innerHTML = '<span style="color:var(--muted2);font-size:0.78rem;font-style:italic">Vorschau</span>';
+    return;
+  }
+  box.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" id="${prefix}-svg"></svg>`;
+  requestAnimationFrame(() => {
+    const svg = document.getElementById(prefix+'-svg');
+    if (!svg) return;
+    let s = smi;
+    const hasArrow = s.includes('>');
+    const wantsArrow = !!(rl || rlb);
+    if (!hasArrow && wantsArrow) s = s + '>>';
+    try {
+      if (s.includes('>')) ReactionRenderer.draw(s, svg, 'light', rl || '{reagents}', rlb);
+      else                 ReactionRenderer.drawMolecule(s, svg, 'light');
+    } catch (e) {
+      box.innerHTML = '<span style="color:var(--red);font-size:0.78rem">⚠ SMILES-Fehler</span>';
+    }
+  });
+}
+function refreshAllMiniPreviews() {
+  document.querySelectorAll('.mini-prev').forEach(el => {
+    const prefix = el.id.replace(/-prev$/, '');
+    miniPrev(prefix);
+  });
+  // Image previews from initial render
+  document.querySelectorAll('.img-prev').forEach(el => {
+    const id = el.id.replace(/-prev$/, '');
+    const hid = document.getElementById(id);
+    if (hid && hid.value) el.style.backgroundImage = `url('${hid.value}')`;
+  });
+}
+
+function onImgPick(input, hiddenId) {
+  const f = input.files && input.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    const dataUrl = r.result;
+    document.getElementById(hiddenId).value = dataUrl;
+    const prev = document.getElementById(hiddenId+'-prev');
+    if (prev) prev.style.backgroundImage = `url('${dataUrl}')`;
+    // Refresh associated mini-prev (strip trailing '-img' to get base prefix)
+    const base = hiddenId.replace(/-img$/, '');
+    miniPrev(base);
+    mu();
+  };
+  r.readAsDataURL(f);
+}
+function clearImg(hiddenId) {
+  const h = document.getElementById(hiddenId);
+  if (h) h.value = '';
+  const p = document.getElementById(hiddenId+'-prev');
+  if (p) p.style.backgroundImage = '';
+  const base = hiddenId.replace(/-img$/, '');
+  miniPrev(base);
+  mu();
+}
+
+/* — Synthesis editor (mode-aware) — */
+let _editScheme = null;   // current scheme being edited (mutated live)
+let _selRegion  = -1;
+let _drawingFrom = null;
+let _activeNodeIdx = -1;  // index of node being edited in OCL modal
+
+function renderSynthEditor(q) {
+  // Initialize edit state from question (composed mode only)
+  const fallback = { nodes:[], edges:[] };
+  _editScheme = Object.assign(fallback, JSON.parse(JSON.stringify(q.scheme || {})));
+  if (!_editScheme.nodes) _editScheme.nodes = [];
+  if (!_editScheme.edges) _editScheme.edges = [];
+  // Strip legacy overlay fields if present
+  delete _editScheme.mode;
+  delete _editScheme.image; delete _editScheme.image_width; delete _editScheme.image_height;
+  delete _editScheme.regions;
+  return renderComposedEditor();
+}
+
+/* ── Composed-mode editor ─────────────────────────────────────── */
+
+function renderComposedEditor() {
+  setTimeout(refreshNodePreviewsAfter, 0);
+  return `
+    <div class="fsec">
+      <div class="fsec-title">Strukturen (Knoten)</div>
+      <div id="nodes-wrap">${(_editScheme.nodes||[]).map((n,i)=>nodeCardEditor(n,i)).join('')}</div>
+      <div style="display:flex;gap:0.5rem;margin-top:0.5rem;flex-wrap:wrap">
+        <button class="bxs sec" onclick="addNode()">＋ Struktur</button>
+        <button class="bxs sec" onclick="bakeAllLayouts()" title="RDKit-CoordGen über alle Knoten — empfohlen nach Import oder bei verbrückten Polycyclen">Alle Layouts neu berechnen</button>
+      </div>
+    </div>
+    <div class="fsec">
+      <div class="fsec-title">Pfeile (Kanten)</div>
+      <div id="edges-wrap">${(_editScheme.edges||[]).map((e,i)=>edgeCardEditor(e,i)).join('')}</div>
+      <button class="bxs sec" onclick="addEdge()" style="margin-top:0.5rem">＋ Pfeil</button>
+      <div class="helper-text" style="margin-top:0.5rem">
+        <strong>from</strong>: Quell-Knoten (mehrere möglich für Kombinationsreaktionen wie A + B → C). <strong>to</strong>: Ziel-Knoten. <strong>Reagenz oben/unten</strong>: LaTeX-Syntax erlaubt (<code>H_2SO_4</code>, <code>\\Delta</code>, <code>NH_3</code>).
+      </div>
+    </div>`;
+}
+
+function nodeCardEditor(n, i) {
+  n = n || {};
+  const previewId = 'node-prev-'+i;
+  const hasStruct = n.mol || n.smiles;
+  return `
+    <div class="node-card${n.given?' given-card':''}" data-i="${i}">
+      <div class="node-card-head">
+        <div class="node-card-num">${i+1}</div>
+        <div class="node-card-title">${x(n.label||'?')}${n.name?' — '+x(n.name):''}</div>
+        <div class="step-controls">
+          <button onclick="moveNode(${i},-1)">↑</button>
+          <button onclick="moveNode(${i},+1)">↓</button>
+          <button class="del" onclick="delNode(${i})">×</button>
+        </div>
+      </div>
+      <div class="node-grid">
+        <div>
+          <div class="node-preview" id="${previewId}">${hasStruct ? '' : '<span class="ph">Keine Struktur</span>'}</div>
+          <div class="node-preview-actions">
+            <button onclick="openStructEditor(${i})">${hasStruct?'Bearbeiten':'Zeichnen'}</button>
+            <button onclick="bakeNodeLayout(${i})" title="Mit RDKit-CoordGen Koordinaten neu berechnen — beste Qualität für verbrückte Polycyclen">Layout neu</button>
+            <button onclick="openOCRForNode(${i})" title="Strukturbild hochladen — OCR mit DECIMER (Server-seitig)">OCR…</button>
+          </div>
+        </div>
+        <div>
+          <div class="row2">
+            <div class="field"><label>ID / Label (z. B. „C")</label>
+              <input class="fi" value="${x(n.id||'')}" oninput="updateNodeProp(${i}, 'id', this.value); updateNodeProp(${i}, 'label', this.value)"></div>
+            <div class="field"><label>Vollständiger Name</label>
+              <input class="fi" value="${x(n.name||'')}" placeholder="z. B. Furan" oninput="updateNodeProp(${i}, 'name', this.value)"></div>
+          </div>
+          <div class="cf-row" style="padding:0.1rem 0">
+            <label style="display:flex;gap:0.4rem;align-items:center;font-size:0.82rem;color:var(--text-soft);font-weight:600;cursor:pointer">
+              <input type="checkbox" ${n.given?'checked':''} onchange="updateNodeProp(${i}, 'given', this.checked); rerenderNode(${i})"> Vorgegeben (sofort sichtbar, kein Reveal)
+            </label>
+          </div>
+          <div class="field"><label>Erläuterung (zeigt sich beim Aufdecken)</label>
+            <textarea class="fi" oninput="updateNodeProp(${i}, 'explanation', this.value)">${x(n.explanation||'')}</textarea></div>
+          <div class="field"><label>Notiz / Hinweis (optional, kursiv)</label>
+            <input class="fi" value="${x(n.note||'')}" oninput="updateNodeProp(${i}, 'note', this.value)"></div>
+          <div class="field"><label>Verwandte Reaktion (Link)</label>
+            <select class="fi" onchange="updateNodeProp(${i}, 'related_reaction_id', this.value)">${getReactionOptions(n.related_reaction_id||'')}</select>
+          </div>
+          <details style="margin-top:0.5rem">
+            <summary style="cursor:pointer;font-size:0.75rem;color:var(--muted);font-weight:600">SMILES / MOL direkt bearbeiten</summary>
+            <div class="field" style="margin-top:0.4rem"><label>SMILES (Fallback wenn kein MOL)</label>
+              <input class="fi" value="${x(n.smiles||'')}" oninput="updateNodeProp(${i}, 'smiles', this.value); rerenderNode(${i})"></div>
+            <div class="field"><label>MOL (V2000/V3000, bevorzugt)</label>
+              <textarea class="fi" style="font-family:ui-monospace,monospace;font-size:0.72rem;min-height:80px" oninput="updateNodeProp(${i}, 'mol', this.value); rerenderNode(${i})">${x(n.mol||'')}</textarea></div>
+          </details>
+        </div>
+      </div>
+    </div>`;
+}
+
+function edgeCardEditor(e, i) {
+  e = e || { from:[], to:'' };
+  const nodeOpts = (_editScheme.nodes||[]).map(n =>
+    `<option value="${x(n.id||'')}">${x((n.label||n.id||'?'))}${n.name?' — '+x(n.name):''}</option>`
+  ).join('');
+  const fromChips = (e.from||[]).map((fid, j) =>
+    `<span class="edge-fromchip">${x(fid)} <button onclick="removeEdgeFrom(${i}, ${j})" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:0.78rem;padding:0">×</button></span>`
+  ).join('');
+  return `
+    <div class="edge-card" data-i="${i}">
+      <div class="edge-num">${i+1}</div>
+      <div class="edge-from">
+        <strong style="font-size:0.74rem;color:var(--muted)">FROM:</strong>
+        ${fromChips}
+        <select class="fi edge-from-select" style="padding:0.25rem 0.5rem;font-size:0.78rem;width:auto" onchange="addEdgeFrom(${i}, this.value); this.value=''">
+          <option value="">+ Knoten</option>${nodeOpts}
+        </select>
+      </div>
+      <span class="edge-arrow-symbol">→</span>
+      <div><strong style="font-size:0.74rem;color:var(--muted);margin-right:0.3rem">TO:</strong>
+        <select class="fi edge-to-select" style="padding:0.25rem 0.5rem;font-size:0.78rem;width:auto" onchange="updateEdgeProp(${i}, 'to', this.value)">
+          <option value="">—</option>
+          ${(_editScheme.nodes||[]).map(n => `<option value="${x(n.id||'')}" ${e.to===n.id?'selected':''}>${x((n.label||n.id||'?'))}</option>`).join('')}
+        </select>
+      </div>
+      <div class="edge-reagent-row">
+        <input value="${x(e.reagent_above||'')}" placeholder="Reagenz oben (z. B. H_2SO_4)" oninput="updateEdgeProp(${i}, 'reagent_above', this.value)">
+        <input value="${x(e.reagent_below||'')}" placeholder="Reagenz unten (z. B. Δ)" oninput="updateEdgeProp(${i}, 'reagent_below', this.value)">
+      </div>
+      <div class="step-controls">
+        <button onclick="moveEdge(${i},-1)">↑</button>
+        <button onclick="moveEdge(${i},+1)">↓</button>
+        <button class="del" onclick="delEdge(${i})">×</button>
+      </div>
+    </div>`;
+}
+
+window.addNode = function() {
+  // Auto-assign next letter ID
+  const used = new Set((_editScheme.nodes||[]).map(n => n.id));
+  let next = 'A';
+  for (let c = 65; c <= 90; c++) { const ch = String.fromCharCode(c); if (!used.has(ch)) { next = ch; break; } }
+  _editScheme.nodes.push({ id: next, label: next, given: false });
+  rerenderNodes();
+  mu();
+};
+window.delNode = function(i) {
+  if (!confirm('Knoten löschen? (Pfeile mit Bezug auf diesen Knoten werden manuell zu prüfen sein.)')) return;
+  _editScheme.nodes.splice(i, 1);
+  rerenderNodes();
+  rerenderEdges();
+  mu();
+};
+window.moveNode = function(i, dir) {
+  const j = i + dir; if (j<0 || j>=_editScheme.nodes.length) return;
+  [_editScheme.nodes[i], _editScheme.nodes[j]] = [_editScheme.nodes[j], _editScheme.nodes[i]];
+  rerenderNodes();
+  mu();
+};
+window.updateNodeProp = function(i, k, v) {
+  if (!_editScheme.nodes[i]) return;
+  _editScheme.nodes[i][k] = v;
+  // If ID changed, propagate to any edges referencing the old ID
+  if (k === 'id') {
+    // We don't have the old ID here, but the user can fix edges manually.
+    // The header label will refresh on next rerender.
+  }
+};
+window.rerenderNode = function(i) {
+  const card = document.querySelector(`.node-card[data-i="${i}"]`);
+  if (card) card.outerHTML = nodeCardEditor(_editScheme.nodes[i], i);
+  refreshNodePreviewsAfter();
+};
+function rerenderNodes() {
+  const wrap = document.getElementById('nodes-wrap');
+  if (wrap) wrap.innerHTML = (_editScheme.nodes||[]).map((n,i)=>nodeCardEditor(n,i)).join('');
+  refreshNodePreviewsAfter();
+  // Edges depend on node ids → rerender to refresh dropdowns
+  rerenderEdges();
+}
+function rerenderEdges() {
+  const wrap = document.getElementById('edges-wrap');
+  if (wrap) wrap.innerHTML = (_editScheme.edges||[]).map((e,i)=>edgeCardEditor(e,i)).join('');
+}
+
+async function refreshNodePreviewsAfter() {
+  await MolRenderer.ready();
+  (_editScheme.nodes||[]).forEach((n, i) => {
+    const el = document.getElementById('node-prev-'+i);
+    if (!el) return;
+    if (!(n.mol || n.smiles)) { el.innerHTML = '<span class="ph">Keine Struktur</span>'; return; }
+    el.innerHTML = '';
+    if (n.mol)         MolRenderer.drawMol(n.mol, el, { width: 110, height: 100 });
+    else if (n.smiles) MolRenderer.drawSmiles(n.smiles, el, { width: 110, height: 100 });
+  });
+}
+
+window.addEdge = function() {
+  _editScheme.edges.push({ from:[], to:'', reagent_above:'', reagent_below:'' });
+  rerenderEdges();
+  mu();
+};
+window.delEdge = function(i) {
+  _editScheme.edges.splice(i, 1);
+  rerenderEdges();
+  mu();
+};
+window.moveEdge = function(i, dir) {
+  const j = i + dir; if (j<0 || j>=_editScheme.edges.length) return;
+  [_editScheme.edges[i], _editScheme.edges[j]] = [_editScheme.edges[j], _editScheme.edges[i]];
+  rerenderEdges();
+  mu();
+};
+window.updateEdgeProp = function(i, k, v) {
+  if (!_editScheme.edges[i]) return;
+  _editScheme.edges[i][k] = v;
+  mu();
+};
+window.addEdgeFrom = function(i, nodeId) {
+  if (!nodeId || !_editScheme.edges[i]) return;
+  if (!_editScheme.edges[i].from) _editScheme.edges[i].from = [];
+  if (_editScheme.edges[i].from.includes(nodeId)) return;
+  _editScheme.edges[i].from.push(nodeId);
+  rerenderEdges();
+  mu();
+};
+window.removeEdgeFrom = function(i, j) {
+  if (!_editScheme.edges[i]?.from) return;
+  _editScheme.edges[i].from.splice(j, 1);
+  rerenderEdges();
+  mu();
+};
+
+/* ── Ketcher iframe editor ─────────────────────────────────────── */
+const KETCHER_URL = './vendor/ketcher/standalone/index.html';
+
+window.openStructEditor = async function(nodeIdx) {
+  _activeNodeIdx = nodeIdx;
+  const n = _editScheme.nodes[nodeIdx];
+  if (!n) return;
+  document.getElementById('ocl-modal-title').textContent =
+    'Struktur bearbeiten — ' + (n.label || n.id || ('Knoten ' + (nodeIdx+1)));
+  document.getElementById('ocl-modal').classList.add('open');
+  const status = document.getElementById('ocl-editor-status');
+  status.textContent = 'Ketcher wird geladen…';
+  const iframe = document.getElementById('ketcher-iframe');
+  // Always re-set src so we get a fresh state per open
+  iframe.src = KETCHER_URL;
+  await _waitForKetcher(iframe);
+  try {
+    const k = iframe.contentWindow.ketcher;
+    // Apply our default render preferences: hide explicit "CH3" labels at
+    // chain termini (skeletal style), hide implicit H counts, and don't
+    // overlay stereo flags ("abs"/"and"/"or") on the structure. Ketcher's
+    // editor.setOptions takes a JSON string, not an object.
+    try {
+      k.editor.setOptions(JSON.stringify({
+        hideTerminalLabels:  true,
+        hideImplicitHydrogen: true,
+        showStereoFlags:     false,
+        showValenceWarnings: false,
+        atomColoring:        true
+      }));
+    } catch (e) { console.warn('Ketcher setOptions:', e); }
+    if (n.mol)         await k.setMolecule(n.mol);
+    else if (n.smiles) await k.setMolecule(n.smiles);
+    status.textContent = 'Ketcher bereit · ' + (n.label || n.id);
+  } catch (e) {
+    status.textContent = 'Strukturladen fehlgeschlagen: ' + e.message;
+    console.error('openStructEditor:', e);
+  }
+  updateMetaFromKetcher();
+};
+
+/* Poll until iframe.contentWindow.ketcher is defined (Ketcher attaches it
+   after its React app boots). Times out at 30 s. */
+async function _waitForKetcher(iframe) {
+  const deadline = Date.now() + 30000;
+  while (Date.now() < deadline) {
+    try {
+      if (iframe.contentWindow && iframe.contentWindow.ketcher) {
+        // Ketcher exposes ketcher object but may still be initializing internally —
+        // wait an extra tick for safety.
+        await new Promise(r => setTimeout(r, 150));
+        return iframe.contentWindow.ketcher;
+      }
+    } catch {}
+    await new Promise(r => setTimeout(r, 100));
+  }
+  throw new Error('Ketcher hat sich nicht initialisiert (30s timeout)');
+}
+
+async function updateMetaFromKetcher() {
+  const iframe = document.getElementById('ketcher-iframe');
+  if (!iframe || !iframe.contentWindow || !iframe.contentWindow.ketcher) return;
+  try {
+    const k = iframe.contentWindow.ketcher;
+    const smi = await k.getSmiles();
+    document.getElementById('ocl-meta').textContent = 'SMILES: ' + (smi || '—');
+  } catch {}
+}
+
+window.closeStructEditor = function() {
+  document.getElementById('ocl-modal').classList.remove('open');
+  // Blank the iframe to free the React app and indigo-ketcher WASM
+  const iframe = document.getElementById('ketcher-iframe');
+  if (iframe) iframe.src = 'about:blank';
+  _activeNodeIdx = -1;
+};
+
+window.commitStructEditor = async function() {
+  const idx = _activeNodeIdx;
+  if (idx < 0) { closeStructEditor(); return; }
+  const iframe = document.getElementById('ketcher-iframe');
+  const k = iframe && iframe.contentWindow && iframe.contentWindow.ketcher;
+  if (!k) { closeStructEditor(); return; }
+  let mol = '', smiles = '';
+  try { mol    = await k.getMolfile('v2000'); } catch (e) { console.warn('getMolfile:', e); }
+  try { smiles = await k.getSmiles(); }         catch (e) { console.warn('getSmiles:', e); }
+  const n = _editScheme.nodes[idx];
+  if (n) {
+    n.mol = mol;
+    n.smiles = smiles;
+    rerenderNode(idx);
+  }
+  closeStructEditor();
+  mu();
+  // Ketcher's exported MOL contains the exact coordinates the user laid out
+  // in the editor. We do NOT re-run RDKit here — that would discard the
+  // hand-drawn layout. For automatic CoordGen layout, the user clicks the
+  // explicit "Layout neu" button per node.
+};
+
+/* Decide whether to auto-bake on commit. Small structures (≤6 heavy atoms)
+   look fine in OCL's invented coords; bigger fused/bridged ones don't. */
+function _shouldAutoBake(molText) {
+  if (!molText) return false;
+  // Pull the V2000 counts line (line 4: "  N  M ..." where N=atoms, M=bonds)
+  const lines = molText.split('\n');
+  if (lines.length < 4) return false;
+  const counts = lines[3].trim().split(/\s+/);
+  const n = parseInt(counts[0], 10);
+  return isFinite(n) && n > 6;
+}
+
+window.bakeNodeLayout = async function(i, silent) {
+  const n = _editScheme.nodes[i];
+  if (!n) return;
+  const input = n.mol || n.smiles;
+  if (!input) { if (!silent) toast('Keine Struktur zum Layouten', 'err'); return; }
+  if (!silent) toast('Lade RDKit (einmalig ~4 MB)…', 'ok');
+  try {
+    const baked = await RDKitHelper.bakeLayout(input);
+    n.mol = baked;
+    rerenderNode(i);
+    mu();
+    if (!silent) toast('Layout neu berechnet ✓ (' + (n.label || n.id) + ')', 'ok');
+  } catch (e) {
+    if (!silent) toast('Layout-Berechnung fehlgeschlagen: ' + e.message, 'err');
+    console.error('bakeNodeLayout:', e);
+  }
+};
+
+window.bakeAllLayouts = async function() {
+  if (!_editScheme.nodes || !_editScheme.nodes.length) return;
+  toast('Lade RDKit und berechne alle Layouts neu…', 'ok');
+  try {
+    await RDKitHelper.ready();
+  } catch (e) {
+    toast('RDKit konnte nicht geladen werden: ' + e.message, 'err');
+    return;
+  }
+  let ok = 0, fail = 0;
+  for (let i = 0; i < _editScheme.nodes.length; i++) {
+    const n = _editScheme.nodes[i];
+    const input = n.mol || n.smiles;
+    if (!input) continue;
+    try {
+      n.mol = await RDKitHelper.bakeLayout(input);
+      ok++;
+    } catch (e) {
+      console.warn('bake', n.id, e.message);
+      fail++;
+    }
+  }
+  refreshNodePreviewsAfter();
+  mu();
+  toast(`Layouts neu berechnet: ${ok} ✓${fail?', '+fail+' ✗':''}`, fail?'err':'ok');
+};
+
+window.diagnoseOCR = async function() {
+  try {
+    const res = await fetch('/api/ocr/diagnose');
+    const j = await res.json();
+    if (j.error) {
+      alert('OCR-Diagnose fehlgeschlagen:\n\n' + j.error + (j.hint ? '\n\n' + j.hint : ''));
+      return;
+    }
+    const mods = j.modules || {};
+    const lines = [
+      'Python: ' + (j.python_version || '?') + '  ('+(j.python_path||'?')+')',
+      'Platform: ' + (j.platform || '?'),
+      '',
+      'Backends:'
+    ];
+    Object.keys(mods).forEach(k => {
+      const m = mods[k];
+      lines.push('  ' + (m.ok?'✓':'✗') + ' ' + k + (m.version?' v'+m.version:'') + (m.error?'  — '+m.error:''));
+    });
+    lines.push('  ' + (j.osra_binary?'✓':'✗') + ' osra-Binary');
+    lines.push('');
+    lines.push(j.primary_backend_ready
+      ? '→ OCR einsatzbereit (DECIMER + RDKit installiert).'
+      : '→ Primärer Pfad fehlt. Installation: py -3.10 -m pip install decimer rdkit');
+    alert(lines.join('\n'));
+  } catch (e) {
+    alert('OCR-Diagnose nicht erreichbar: ' + e.message + '\n(Läuft der Node-Server?)');
+  }
+};
+
+window.openOCRForNode = function(nodeIdx) {
+  // Lazily create a hidden file input and trigger it
+  let inp = document.getElementById('_ocr-file');
+  if (!inp) {
+    inp = document.createElement('input');
+    inp.type = 'file'; inp.accept = 'image/*'; inp.id = '_ocr-file';
+    inp.style.display = 'none';
+    document.body.appendChild(inp);
+  }
+  inp.onchange = async () => {
+    const f = inp.files && inp.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = async () => {
+      toast('OCR läuft… (kann beim ersten Mal lange dauern)', 'ok');
+      try {
+        const res = await fetch('/api/ocr', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data_base64: reader.result })
+        });
+        const j = await res.json();
+        if (!res.ok || j.error) {
+          toast('OCR fehlgeschlagen: ' + (j.error || res.statusText) + (j.hint ? ' — ' + j.hint : ''), 'err');
+          return;
+        }
+        if (j.mol) {
+          _editScheme.nodes[nodeIdx].mol = j.mol;
+          rerenderNode(nodeIdx);
+          toast('OCR erfolgreich ✓', 'ok');
+          mu();
+        } else if (j.smiles) {
+          _editScheme.nodes[nodeIdx].smiles = j.smiles;
+          _editScheme.nodes[nodeIdx].mol = '';
+          rerenderNode(nodeIdx);
+          toast('OCR erfolgreich — SMILES (RDKit fehlt, kein MOL): '+j.smiles, 'ok');
+          mu();
+        } else {
+          toast('OCR lieferte weder MOL noch SMILES zurück', 'err');
+        }
+      } catch (e) {
+        toast('OCR-Fehler: ' + e.message, 'err');
+      } finally {
+        inp.value = '';
+      }
+    };
+    reader.readAsDataURL(f);
+  };
+  inp.click();
+};
+
+
+/* — Multiple choice editor — */
+function renderMCQEditor(q) {
+  const choices = q.choices || [];
+  return `
+    <div class="fsec">
+      <div class="fsec-title">Aufgabe</div>
+      <div class="field"><label>Aufgabentext</label>
+        <textarea class="fi" id="mcq-prompt" oninput="mu()">${x(q.prompt||'')}</textarea></div>
+      <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.08em;color:var(--muted);text-transform:uppercase;margin:0.6rem 0 0.4rem">Edukt / Vorlage</div>
+      ${structFields('mcq-g', q.givens||{}, { allowImage:true })}
+    </div>
+    <div class="fsec">
+      <div class="fsec-title">Antwortmöglichkeiten</div>
+      <div id="mcq-choices">${choices.map((c,i)=>mcqChoiceEditor(c,i)).join('')}</div>
+      <button class="bxs sec" onclick="addMCQChoice()" style="margin-top:0.5rem">＋ Antwort</button>
+    </div>
+    <div class="fsec">
+      <div class="fsec-title">Erklärung &amp; Verknüpfung</div>
+      <div class="field"><label>Verwandte Reaktion</label>
+        <select class="fi" id="mcq-related" onchange="mu()">${getReactionOptions(q.related_reaction_id||'')}</select>
+      </div>
+      <div class="field"><label>Erläuterung</label>
+        <textarea class="fi" id="mcq-expl" style="min-height:90px" oninput="mu()">${x(q.explanation||'')}</textarea></div>
+    </div>`;
+}
+function mcqChoiceEditor(c, i) {
+  c = c || {};
+  return `
+    <div class="choice-block" data-i="${i}">
+      <div class="choice-head">
+        <span>Antwort ${String.fromCharCode(65+i)}</span>
+        <label style="margin-left:auto;display:flex;gap:0.4rem;align-items:center;font-size:0.78rem;color:var(--text-soft);font-weight:600">
+          <input type="checkbox" data-k="correct" ${c.correct?'checked':''} onchange="mu()"> Richtig
+        </label>
+        <button class="kp-del" onclick="delMCQChoice(${i})">×</button>
+      </div>
+      <div class="field"><label>Label</label>
+        <input class="fi" data-k="label" value="${x(c.label||'')}" oninput="mu()"></div>
+      ${structFields('mcq-c-'+i, c, { structOnly:true, allowImage:true })}
+    </div>`;
+}
+function addMCQChoice() {
+  const cur = collectMCQChoices();
+  cur.push({});
+  patchMCQ(cur);
+}
+function delMCQChoice(i) {
+  const cur = collectMCQChoices();
+  cur.splice(i,1);
+  patchMCQ(cur);
+}
+function patchMCQ(choices) {
+  const wrap = document.getElementById('mcq-choices');
+  if (!wrap) return;
+  wrap.innerHTML = choices.map((c,i)=>mcqChoiceEditor(c,i)).join('');
+  setTimeout(refreshAllMiniPreviews, 10);
+  mu();
+}
+function collectMCQChoices() {
+  const blocks = document.querySelectorAll('#mcq-choices .choice-block');
+  return [...blocks].map((b,i) => {
+    const lbl = b.querySelector('[data-k="label"]').value.trim();
+    const correct = b.querySelector('[data-k="correct"]').checked;
+    const v = id => document.getElementById('mcq-c-'+i+'-'+id)?.value || '';
+    const o = { id: String.fromCharCode(97+i) };
+    if (lbl) o.label = lbl;
+    const smi = v('smi'); if (smi) o.smiles = smi;
+    const img = v('img'); if (img) o.image  = img;
+    if (correct) o.correct = true;
+    return o;
+  });
+}
+
+/* — Short answer editor — */
+function renderSAEditor(q) {
+  return `
+    <div class="fsec">
+      <div class="fsec-title">Aufgabe &amp; Musterlösung</div>
+      <div class="field"><label>Aufgabentext</label>
+        <textarea class="fi" id="sa-prompt" style="min-height:100px" oninput="mu()">${x(q.prompt||'')}</textarea></div>
+      <div class="field"><label>Musterlösung</label>
+        <textarea class="fi" id="sa-expected" style="min-height:140px" oninput="mu()">${x(q.expected_answer||'')}</textarea></div>
+      <div class="field"><label>Verwandte Reaktion</label>
+        <select class="fi" id="sa-related" onchange="mu()">${getReactionOptions(q.related_reaction_id||'')}</select>
+      </div>
+    </div>`;
+}
+
+/* — Mechanism editor — */
+function renderMechEditor(q) {
+  const steps = q.mech_steps || [];
+  return `
+    <div class="fsec">
+      <div class="fsec-title">Aufgabe</div>
+      <div class="field"><label>Aufgabentext</label>
+        <textarea class="fi" id="mech-prompt" style="min-height:90px" oninput="mu()">${x(q.prompt||'')}</textarea></div>
+      <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.08em;color:var(--muted);text-transform:uppercase;margin:0.6rem 0 0.4rem">Edukte</div>
+      ${structFields('mech-g', q.givens||{}, { allowImage:true })}
+    </div>
+    <div class="fsec">
+      <div class="fsec-title">Zwischenstufen</div>
+      <div id="mech-steps">${steps.map((s,i)=>mechStepEditor(s,i)).join('')}</div>
+      <button class="bxs sec" onclick="addMechStep()" style="margin-top:0.5rem">＋ Zwischenstufe</button>
+    </div>
+    <div class="fsec">
+      <div class="fsec-title">Zusammenfassung &amp; Verknüpfung</div>
+      <div class="field"><label>Verwandte Reaktion</label>
+        <select class="fi" id="mech-related" onchange="mu()">${getReactionOptions(q.related_reaction_id||'')}</select>
+      </div>
+      <div class="field"><label>Zusammenfassung (optional)</label>
+        <textarea class="fi" id="mech-expl" style="min-height:80px" oninput="mu()">${x(q.explanation||'')}</textarea></div>
+    </div>`;
+}
+function mechStepEditor(s, i) {
+  s = s || {};
+  return `
+    <div class="step-block" data-i="${i}">
+      <div class="step-block-head">
+        <div class="step-block-num">${i+1}</div>
+        <div class="step-block-title">${x(s.name||'Zwischenstufe '+(i+1))}</div>
+        <div class="step-controls">
+          <button onclick="moveMechStep(${i},-1)">↑</button>
+          <button onclick="moveMechStep(${i},+1)">↓</button>
+          <button class="del" onclick="delMechStep(${i})">×</button>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Name</label>
+          <input class="fi" data-k="name" value="${x(s.name||'')}" placeholder="z. B. Enolat" oninput="mu()"></div>
+        <div class="field"><label>Frage / Prompt</label>
+          <input class="fi" data-k="prompt" value="${x(s.prompt||'')}" oninput="mu()"></div>
+      </div>
+      ${structFields('mech-s-'+i, s, { structOnly:true, allowImage:true })}
+      <div class="field" style="margin-top:0.5rem"><label>Erläuterung</label>
+        <textarea class="fi" data-k="explanation" oninput="mu()">${x(s.explanation||'')}</textarea></div>
+    </div>`;
+}
+function addMechStep()  { const c = collectMechSteps(); c.push({}); patchMech(c); }
+function delMechStep(i) { const c = collectMechSteps(); c.splice(i,1); patchMech(c); }
+function moveMechStep(i, dir) {
+  const c = collectMechSteps();
+  const j = i+dir; if (j<0||j>=c.length) return;
+  [c[i],c[j]] = [c[j],c[i]];
+  patchMech(c);
+}
+function patchMech(steps) {
+  const wrap = document.getElementById('mech-steps');
+  if (!wrap) return;
+  wrap.innerHTML = steps.map((s,i)=>mechStepEditor(s,i)).join('');
+  setTimeout(refreshAllMiniPreviews, 10);
+  mu();
+}
+function collectMechSteps() {
+  const blocks = document.querySelectorAll('#mech-steps .step-block');
+  return [...blocks].map((b, i) => {
+    const get = k => b.querySelector(`[data-k="${k}"]`)?.value.trim() || '';
+    const v   = id => document.getElementById('mech-s-'+i+'-'+id)?.value || '';
+    const s = {};
+    if (get('name'))   s.name   = get('name');
+    if (get('prompt')) s.prompt = get('prompt');
+    if (v('smi'))      s.smiles = v('smi');
+    if (v('img'))      s.image  = v('img');
+    if (get('explanation')) s.explanation = get('explanation');
+    return s;
+  });
+}
+
+/* ── Collect + save ──────────────────────────────────────────────── */
+
+function collectQ() {
+  const type = document.querySelector('input[name="q-type"]:checked')?.value || 'synthesis';
+  const q = {
+    id: document.getElementById('q-id').value.trim(),
+    category: getQCat(),
+    name: document.getElementById('q-name').value.trim(),
+    type
+  };
+  const diff = document.getElementById('q-diff').value;
+  if (diff) q.difficulty = diff;
+  const src = document.getElementById('q-source').value.trim();
+  if (src) q.source = src;
+  const intro = document.getElementById('q-intro').value.trim();
+  if (intro) q.intro = intro;
+  const hints = getHints();
+  if (hints.length) q.hints = hints;
+
+  if (type === 'synthesis') {
+    if (_editScheme) {
+      const scheme = {};
+      scheme.nodes = (_editScheme.nodes || []).map(n => {
+        const out = { id: n.id || '', label: n.label || n.id || '', given: !!n.given };
+        if (n.name)        out.name = n.name;
+        if (n.mol)         out.mol = n.mol;
+        if (n.smiles)      out.smiles = n.smiles;
+        if (n.explanation) out.explanation = n.explanation;
+        if (n.note)        out.note = n.note;
+        if (n.related_reaction_id) out.related_reaction_id = n.related_reaction_id;
+        return out;
+      });
+      scheme.edges = (_editScheme.edges || []).map(e => {
+        const out = { from: e.from || [], to: e.to || '' };
+        if (e.reagent_above) out.reagent_above = e.reagent_above;
+        if (e.reagent_below) out.reagent_below = e.reagent_below;
+        return out;
+      });
+      q.scheme = scheme;
+    }
+  } else if (type === 'multiple_choice') {
+    q.prompt = document.getElementById('mcq-prompt').value.trim();
+    const givens = (() => {
+      const v = id => document.getElementById('mcq-g-'+id)?.value || '';
+      const o = {};
+      const smi = v('smi'); if (smi) o.smiles = smi;
+      const img = v('img'); if (img) o.image  = img;
+      const rl = v('rl'); if (rl) o.reagent_label = rl;
+      const rlb = v('rlb'); if (rlb) o.reagent_label_below = rlb;
+      return o;
+    })();
+    if (Object.keys(givens).length) q.givens = givens;
+    q.choices = collectMCQChoices();
+    const rel = document.getElementById('mcq-related').value;
+    if (rel) q.related_reaction_id = rel;
+    const expl = document.getElementById('mcq-expl').value.trim();
+    if (expl) q.explanation = expl;
+  } else if (type === 'short_answer') {
+    q.prompt = document.getElementById('sa-prompt').value.trim();
+    q.expected_answer = document.getElementById('sa-expected').value.trim();
+    const rel = document.getElementById('sa-related').value;
+    if (rel) q.related_reaction_id = rel;
+  } else if (type === 'mechanism') {
+    q.prompt = document.getElementById('mech-prompt').value.trim();
+    const givens = (() => {
+      const v = id => document.getElementById('mech-g-'+id)?.value || '';
+      const o = {};
+      const smi = v('smi'); if (smi) o.smiles = smi;
+      const img = v('img'); if (img) o.image  = img;
+      const rl = v('rl'); if (rl) o.reagent_label = rl;
+      const rlb = v('rlb'); if (rlb) o.reagent_label_below = rlb;
+      return o;
+    })();
+    if (Object.keys(givens).length) q.givens = givens;
+    q.mech_steps = collectMechSteps();
+    const rel = document.getElementById('mech-related').value;
+    if (rel) q.related_reaction_id = rel;
+    const expl = document.getElementById('mech-expl').value.trim();
+    if (expl) q.explanation = expl;
+  }
+  return q;
+}
+
+async function saveQ() {
+  if (selQ === null) return;
+  const q = collectQ();
+  if (!q.id || !q.name || !q.category) { toast('ID, Name und Kategorie erforderlich', 'err'); return; }
+  if (questions.some((y,i)=>y.id===q.id && i!==selQ)) { toast('ID bereits vorhanden', 'err'); return; }
+  questions[selQ] = q;
+  renderQList(document.getElementById('q-search').value);
+  unsaved = true; setBadge();
+
+  if (!serverMode) await detectServer();
+  updateModeBadge();
+  if (serverMode) {
+    try { await persistQ(); toast('Übernommen ✓  (questions.json aktualisiert)'); }
+    catch (e) { toast('Server-Schreiben fehlgeschlagen: ' + e.message, 'err'); }
+  } else {
+    toast('Übernommen ✓  Zur Veröffentlichung: Commit & Push');
+  }
+}
+
+function newQ() {
+  const cats = [...new Set(questions.map(q => q.category||'Theoriefragen'))];
+  const q = { id: 'q-'+Date.now(), category: cats[0]||'Theoriefragen', name: 'Neue Frage', type: 'short_answer', expected_answer: '' };
+  questions.push(q); selQ = questions.length-1;
+  renderQList(); buildQForm(q); unsaved = true; setBadge();
+}
+function dupQ() {
+  if (selQ === null) return;
+  const q = JSON.parse(JSON.stringify(questions[selQ]));
+  q.id += '-kop'; q.name += ' (Kopie)';
+  questions.push(q); selQ = questions.length-1;
+  renderQList(); buildQForm(q); unsaved = true; setBadge();
+}
+async function delQ() {
+  if (selQ === null || !confirm(`"${questions[selQ].name}" löschen?`)) return;
+  const removed = questions.splice(selQ, 1)[0];
+  const removedIdx = selQ;
+  selQ = null;
+  renderQList();
+  document.getElementById('q-edit-panel').innerHTML = '<div class="empty-hint"><div>Frage zum Bearbeiten auswählen</div></div>';
+  unsaved = true; setBadge();
+  if (!serverMode) await detectServer();
+  if (serverMode) {
+    try { await persistQ(); toast('Gelöscht ✓'); }
+    catch (e) {
+      questions.splice(removedIdx, 0, removed); selQ = removedIdx;
+      renderQList(); toast('Löschen fehlgeschlagen: ' + e.message, 'err');
+    }
+  } else toast('Gelöscht ✓');
+}
+function importQ() {
+  const raw = prompt('Quiz-JSON (Objekt oder Array) einfügen:'); if (!raw) return;
+  try {
+    let d = JSON.parse(raw); if (!Array.isArray(d)) d = [d];
+    let n = 0;
+    d.forEach(q => { if (q.id && q.name) { questions.push(q); n++; } });
+    renderQList(); toast(`${n} Frage(n) importiert`); unsaved = true; setBadge();
+  } catch (e) { toast('JSON-Fehler: ' + e.message, 'err'); }
+}
+
+async function persistQ() {
+  if (!serverMode) return;
+  const res = await fetch('/api/questions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(questions)
+  });
+  if (!res.ok) {
+    let detail = '';
+    try { detail = ' — ' + (await res.text()).slice(0, 200); } catch {}
+    throw new Error('HTTP ' + res.status + detail);
+  }
+}
+
 function ghCfg(){return{owner:localStorage.getItem('gh_owner')||'',repo:localStorage.getItem('gh_repo')||'',pat:localStorage.getItem('gh_pat')||''};}
 function saveGhCfg(){
   localStorage.setItem('gh_owner',document.getElementById('gh-owner').value.trim());
@@ -631,31 +1835,58 @@ async function testConn(){
 }
 async function refreshStatus(){
   const {owner,repo,pat}=ghCfg();if(!pat){toast('GitHub zuerst konfigurieren','err');return;}
-  const dot=document.getElementById('dot-r'),info=document.getElementById('info-r'),lbl=document.getElementById('lbl-r');
-  try{
-    const remote=await ghFetch(`/repos/${owner}/${repo}/contents/data/reactions.json`);
-    shas.r=remote.sha;
-    const rc=JSON.parse(atob(remote.content.replace(/\n/g,'')));
-    const changed=JSON.stringify(reactions)!==JSON.stringify(rc);
-    info.textContent=`lokal:${reactions.length} remote:${rc.length}`;
-    if(changed){dot.className='sdot sdot-orange';lbl.className='slabel slabel-mod';lbl.textContent='geändert';}
-    else{dot.className='sdot sdot-green';lbl.className='slabel slabel-ok';lbl.textContent='aktuell';}
-  }catch(e){info.textContent=e.message;lbl.className='slabel slabel-unk';lbl.textContent='Fehler';}
+  await statusOne('reactions', 'r', reactions);
+  await statusOne('questions', 'q', questions);
+}
+async function statusOne(filename, key, local) {
+  const {owner,repo} = ghCfg();
+  const dot = document.getElementById('dot-'+key);
+  const info = document.getElementById('info-'+key);
+  const lbl = document.getElementById('lbl-'+key);
+  if (!dot) return;
+  try {
+    const remote = await ghFetch(`/repos/${owner}/${repo}/contents/data/${filename}.json`);
+    shas[key] = remote.sha;
+    const rc = JSON.parse(decodeURIComponent(escape(atob(remote.content.replace(/\n/g,'')))));
+    const changed = JSON.stringify(local) !== JSON.stringify(rc);
+    info.textContent = `lokal:${local.length} remote:${rc.length}`;
+    if (changed) { dot.className='sdot sdot-orange'; lbl.className='slabel slabel-mod'; lbl.textContent='geändert'; }
+    else         { dot.className='sdot sdot-green';  lbl.className='slabel slabel-ok';  lbl.textContent='aktuell';   }
+  } catch(e) {
+    info.textContent = e.message;
+    lbl.className = 'slabel slabel-unk';
+    lbl.textContent = e.message.includes('404') ? 'noch nicht remote' : 'Fehler';
+  }
 }
 async function doCommit(){
   const btn=document.getElementById('commit-btn'),res=document.getElementById('commit-res');
   const msg=document.getElementById('commit-msg').value.trim();
+  const pickR = document.getElementById('ci-r').checked;
+  const pickQ = document.getElementById('ci-q').checked;
   if(!msg){toast('Commit-Nachricht eingeben','err');return;}
-  if(!document.getElementById('ci-r').checked){toast('Mindestens eine Datei auswählen','err');return;}
+  if(!pickR && !pickQ){toast('Mindestens eine Datei auswählen','err');return;}
   btn.disabled=true;btn.innerHTML='<span class="spin"></span> Wird gepusht…';res.textContent='';
   const {owner,repo}=ghCfg();
+  const pushed = [];
   try{
-    if(!shas.r){const remote=await ghFetch(`/repos/${owner}/${repo}/contents/data/reactions.json`);shas.r=remote.sha;}
-    const content=btoa(unescape(encodeURIComponent(JSON.stringify(reactions,null,2))));
-    const r=await ghFetch(`/repos/${owner}/${repo}/contents/data/reactions.json`,{method:'PUT',body:JSON.stringify({message:msg,content,sha:shas.r,branch:'main'})});
-    shas.r=r.content.sha;
+    if (pickR) {
+      if(!shas.r){try{const remote=await ghFetch(`/repos/${owner}/${repo}/contents/data/reactions.json`);shas.r=remote.sha;}catch{}}
+      const content=btoa(unescape(encodeURIComponent(JSON.stringify(reactions,null,2))));
+      const body = { message: msg, content, branch: 'main' };
+      if (shas.r) body.sha = shas.r;
+      const r=await ghFetch(`/repos/${owner}/${repo}/contents/data/reactions.json`,{method:'PUT',body:JSON.stringify(body)});
+      shas.r=r.content.sha; pushed.push('reactions.json');
+    }
+    if (pickQ) {
+      if(!shas.q){try{const remote=await ghFetch(`/repos/${owner}/${repo}/contents/data/questions.json`);shas.q=remote.sha;}catch{}}
+      const content=btoa(unescape(encodeURIComponent(JSON.stringify(questions,null,2))));
+      const body = { message: msg, content, branch: 'main' };
+      if (shas.q) body.sha = shas.q;
+      const r=await ghFetch(`/repos/${owner}/${repo}/contents/data/questions.json`,{method:'PUT',body:JSON.stringify(body)});
+      shas.q=r.content.sha; pushed.push('questions.json');
+    }
     toast('Erfolgreich gepusht ✓');
-    res.textContent='✓ reactions.json committed — Pages wird automatisch neu deployt';
+    res.textContent='✓ '+pushed.join(' + ')+' committed — Pages wird automatisch neu deployt';
     res.style.color='var(--green)';
     unsaved=false;setBadge();document.getElementById('commit-msg').value='';
     setTimeout(loadHistory,1500);

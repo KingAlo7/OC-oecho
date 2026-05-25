@@ -455,5 +455,80 @@ const ReactionRenderer = (() => {
     svgEl.appendChild(text);
   }
 
-  return { draw, drawInto };
+  /**
+   * Draw a single molecule SMILES (no reaction arrow) into an SVG element.
+   * Uses smiles-drawer's SvgDrawer directly. Falls back to ReactionDrawer
+   * with a synthetic empty product when SvgDrawer is unavailable.
+   *
+   * @param {string} smiles  e.g. 'c1ccccc1'
+   * @param {string|SVGElement} target
+   * @param {'light'|'dark'} theme
+   * @param {object} [opts]  optional { moleculeOpts: {...}, compact: bool }
+   */
+  function drawMolecule(smiles, target, theme = 'light', opts) {
+    const SD = window.SmilesDrawer;
+    opts = opts || {};
+    const compact = !!opts.compact;
+    if (!SD) {
+      console.error('ReactionRenderer.drawMolecule: smiles-drawer not loaded');
+      return null;
+    }
+    let svgEl = (typeof target === 'string' || target instanceof String)
+      ? document.getElementById(String(target)) : target;
+    if (!svgEl) {
+      console.error('ReactionRenderer.drawMolecule: target not found:', target);
+      return null;
+    }
+
+    const baseMol = compact ? MOLECULE_OPTS_COMPACT : MOLECULE_OPTS_DEFAULT;
+    const moleculeOpts = _mergeOpts(baseMol, opts.moleculeOpts);
+
+    /* smiles-drawer v2 exposes SvgDrawer; older code paths used Drawer.
+       Try SvgDrawer first; fall back to the older Drawer if needed. */
+    const DrawerCtor = SD.SvgDrawer || SD.Drawer;
+    if (!DrawerCtor) {
+      _renderError(svgEl, 'SmilesDrawer.SvgDrawer not available');
+      return null;
+    }
+
+    SD.parse(smiles, (tree) => {
+      try {
+        const d = new DrawerCtor(moleculeOpts);
+        if (d.draw.length >= 3) {
+          // SvgDrawer.draw(tree, target, themeName, [infoOnly])
+          d.draw(tree, svgEl, theme);
+        } else {
+          d.draw(tree, svgEl, theme);
+        }
+        _postProcessLabels(svgEl);
+        _fitMoleculeViewBox(svgEl, moleculeOpts.fontSizeLarge || 9, compact ? 2 : 4);
+      } catch (err) {
+        console.error('drawMolecule: draw error:', err);
+        _renderError(svgEl, 'Draw error');
+      }
+    }, (err) => {
+      console.error('drawMolecule: parse error for', smiles, err);
+      _renderError(svgEl, 'Invalid SMILES');
+    });
+    return svgEl;
+  }
+
+  /* Tighten viewBox for a single-molecule SVG so text labels are not clipped.
+     SvgDrawer already sets a sensible viewBox; we add small padding and
+     widen for atom-label overflow using the same heuristic as reactions. */
+  function _fitMoleculeViewBox(svgEl, fontSize, padding) {
+    padding = padding != null ? padding : 4;
+    svgEl.setAttribute('overflow', 'visible');
+    const vb = (svgEl.getAttribute('viewBox') || '').split(/\s+/).map(parseFloat);
+    if (vb.length !== 4 || vb.some(v => !isFinite(v))) return;
+    let [x, y, w, h] = vb;
+    x -= padding; y -= padding; w += padding*2; h += padding*2;
+    svgEl.setAttribute('viewBox', `${x} ${y} ${w} ${h}`);
+    svgEl.setAttribute('width',  w);
+    svgEl.setAttribute('height', h);
+    svgEl.style.width  = w + 'px';
+    svgEl.style.height = h + 'px';
+  }
+
+  return { draw, drawInto, drawMolecule };
 })();

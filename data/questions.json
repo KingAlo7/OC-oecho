@@ -1,1 +1,346 @@
-[]
+[
+  {
+    "id": "stork-cantharidin-1951",
+    "category": "Mehrstufige Synthesen",
+    "name": "Cantharidin — Stork (1951)",
+    "type": "synthesis",
+    "difficulty": "D",
+    "source": "Stork, G.; van Tamelen, E. E.; Friedman, L. J.; Burgstahler, A. W. J. Am. Chem. Soc. 1951, 73, 4501.",
+    "intro": "Cantharidin ist ein Terpenoid, das Käfer je nach Spezies als Wehrsekret oder Sexuallockpheromon absondern. Heute weiß man, dass es ein starkes Gift ist, auch wenn ihm eine Wirkung als Aphrodisiakum nachgesagt wird. Dies soll Kriegsberichten zufolge schon Napoleons Truppen in Ägypten zum Verhängnis geworden sein. Die Soldaten ernährten sich von Fröschen, welche wiederum Käfer gefressen hatten, womit eine Bioakkumulation des Giftes in der Nahrungskette stattgefunden haben könnte. In diesem Beispiel wird die von dem Belgier J. Stork 1951 veröffentlichte Synthese von Cantharidin genauer betrachtet.",
+    "hints": [
+      "Abkürzungen: Me = Methyl, Ph = Phenyl",
+      "Reaktion 1 und Schritt 2 in Reaktion 2 sind Diels-Alder-Reaktionen (4+2 Cycloadditionen)",
+      "Die katalytische Hydrierung in Reaktion 2 findet nur an der „leichter zugänglichen\" Doppelbindung statt",
+      "I reagiert unter Niederschlagsbildung mit DNPH (2,4-Dinitrophenylhydrazin)",
+      "In Reaktion 8 findet eine Aldol-Addition statt, die zu einem Ringschluss führt, der in Struktur L sichtbar ist",
+      "Hinweis zur Darstellung: Die SMILES für die verbrückten Polycyclen sind Verbindungs-Approximationen. Für textbuch-genaue Stereochemie und Wedge/Dash-Darstellung im Admin auf 'Bearbeiten' klicken und im OCL-Editor nachjustieren."
+    ],
+    "scheme": {
+      "nodes": [
+        {
+          "id": "A",
+          "label": "A",
+          "given": true,
+          "name": "Furan",
+          "mol": "\n     RDKit          2D\n\n  5  5  0  0  0  0  0  0  0  0999 V2000\n   -0.0934    0.8455    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8330    0.1725    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.4214   -0.7389    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5726   -0.6291    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7752    0.3501    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  1  0\n  5  1  2  0\nM  END\n",
+          "smiles": "c1ccoc1"
+        },
+        {
+          "id": "B",
+          "label": "B",
+          "given": true,
+          "name": "Acetylendicarbonsäuredimethylester (DMAD)",
+          "mol": "\n     RDKit          2D\n\n 10  9  0  0  0  0  0  0  0  0999 V2000\n    0.6868    3.0014    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.6888    2.0014    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1762    1.4996    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0432    1.9978    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1742    0.4996    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1722   -0.5004    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1702   -1.5004    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0352   -2.0020    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.6968   -1.9986    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.6988   -2.9986    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  5  6  3  0\n  6  7  1  0\n  7  8  2  0\n  7  9  1  0\n  9 10  1  0\nM  END\n",
+          "smiles": "COC(=O)C#CC(=O)OC"
+        },
+        {
+          "id": "C",
+          "label": "C",
+          "given": false,
+          "name": "2,3-Bis(methoxycarbonyl)-7-oxa-bicyclo[2.2.1]hepta-2,5-dien",
+          "mol": "\n     RDKit          2D\n\n 15 16  0  0  0  0  0  0  0  0999 V2000\n   -1.3443    0.0001    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.1537   -0.6603    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.1533   -0.6601    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.1547    0.6579    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.1559    0.6597    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1633    0.5047    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1631   -0.5053    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.6429   -1.1233    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.5609   -0.7155    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5545   -2.1127    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.3905   -2.6765    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.6417    1.1233    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.5601    0.7171    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5515    2.1127    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.3861    2.6783    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  8 10  1  0\n 10 11  1  0\n  6 12  1  0\n 12 13  2  0\n 12 14  1  0\n 14 15  1  0\n  5  1  1  0\n  7  2  1  0\nM  END\n",
+          "smiles": "O1C2C=CC1C(=C2C(=O)OC)C(=O)OC",
+          "explanation": "Diels-Alder-Cycloaddition [4+2]: Furan dient als Dien, das aktivierte Alkin als Dienophil. Liefert das 7-Oxa-norbornadien mit zwei CO_2Me-Gruppen.",
+          "related_reaction_id": "diels-alder"
+        },
+        {
+          "id": "D",
+          "label": "D",
+          "given": false,
+          "name": "Tricyclisches Diester-Addukt (C_{14}H_{18}O_{5})",
+          "mol": "\n     RDKit          2D\n\n 19 21  0  0  0  0  0  0  0  0999 V2000\n   -0.6853   -0.0001    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8705   -0.6515    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8607   -0.5039    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8619    0.4995    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8705    0.6501    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.1275    0.6387    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0749    1.5845    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0227    1.9061    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.6801    2.2237    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5119    3.1945    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9869    1.0833    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8561    0.5303    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8571   -0.5263    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9887   -1.0811    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.1285   -0.6387    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0723   -1.5849    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0195   -1.9081    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.6837   -2.2229    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5173   -3.1939    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  2  0\n  7  9  1  0\n  9 10  1  0\n  6 11  1  0\n 11 12  1  0\n 12 13  2  0\n 13 14  1  0\n 14 15  1  0\n 15 16  1  0\n 16 17  2  0\n 16 18  1  0\n 18 19  1  0\n  5  1  1  0\n 15  2  1  0\n 15  6  1  0\nM  END\n",
+          "smiles": "O1C2C3(C(C1CC2)(C(OC)=O)CC=CC3)C(OC)=O",
+          "explanation": "Selektive Hydrierung der unsubstituierten C=C-Bindung (H_2/Pd,C — die nicht-aktivierte Doppelbindung ist leichter zugänglich), gefolgt von einer zweiten Diels-Alder-Reaktion mit Buta-1,3-dien an der esteraktivierten C=C. Liefert ein tricyclisches System mit Epoxidbrücke + Ethano-Brücke + cis-fusioniertem Cyclohexen + gem-Diester am Brückenkopf.",
+          "note": "SMILES-Layout für verbrückte Tricyclen ist nicht textbuchgenau — bei Bedarf im OCL-Editor zeichnen.",
+          "related_reaction_id": "diels-alder"
+        },
+        {
+          "id": "E",
+          "label": "E",
+          "given": false,
+          "name": "Diol (C_{12}H_{18}O_{3})",
+          "mol": "\n     RDKit          2D\n\n 15 17  0  0  0  0  0  0  0  0999 V2000\n   -0.7471   -0.0002    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9323   -0.6516    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.9225   -0.5040    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.9237    0.4994    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9323    0.6500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0657    0.6388    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1519    1.5966    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5903    2.2596    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9251    1.0832    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7943    0.5302    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7953   -0.5266    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9269   -1.0814    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0667   -0.6388    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1493   -1.5970    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5941   -2.2588    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  6  9  1  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  1  0\n 13 14  1  0\n 14 15  1  0\n  5  1  1  0\n 13  2  1  0\n 13  6  1  0\nM  END\n",
+          "smiles": "O1C2CCC1C3(CO)CC=CCC23CO",
+          "explanation": "LiAlH_4 reduziert beide Methylester zu primären Alkoholen; H^+-Aufarbeitung protoniert die Alkoxide.",
+          "related_reaction_id": "ester-reduktion-lialh4"
+        },
+        {
+          "id": "F",
+          "label": "F",
+          "given": false,
+          "name": "Bis-Mesylat (C_{14}H_{22}S_{2}O_{7})",
+          "mol": "\n     RDKit          2D\n\n 23 25  0  0  0  0  0  0  0  0999 V2000\n   -0.9111   -0.0003    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0961    0.6513    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0863    0.5039    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0879   -0.4993    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0967   -0.6509    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1043   -0.6381    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.3041   -1.5729    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4585   -2.1755    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3301   -3.1309    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n    1.3213   -3.2473    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.6633   -2.9985    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.2087   -4.1143    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7559   -1.0841    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6243   -0.5319    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6221    0.5271    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7555    1.0841    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1023    0.6365    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.3027    1.5731    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4617    2.1749    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3349    3.1311    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n    1.3263    3.2459    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.6587    3.0005    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.2153    4.1149    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  2  0\n  9 11  2  0\n  9 12  1  0\n  6 13  1  0\n 13 14  1  0\n 14 15  2  0\n 15 16  1  0\n 16 17  1  0\n 17 18  1  0\n 18 19  1  0\n 19 20  1  0\n 20 21  2  0\n 20 22  2  0\n 20 23  1  0\n  5  1  1  0\n 17  2  1  0\n 17  6  1  0\nM  END\n",
+          "smiles": "O1C2CCC1C3(COS(=O)(=O)C)CC=CCC23COS(=O)(=O)C",
+          "explanation": "Mesylierung beider Alkohole mit Methansulfonylchlorid in Pyridin. Mesylat = sehr gute Abgangsgruppe für SN2.",
+          "related_reaction_id": "alkohol-mesylierung"
+        },
+        {
+          "id": "G",
+          "label": "G",
+          "given": false,
+          "name": "Bis(thioether) (C_{16}H_{26}S_{2}O)",
+          "mol": "\n     RDKit          2D\n\n 19 21  0  0  0  0  0  0  0  0999 V2000\n   -0.9419   -0.0003    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.1267   -0.6517    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.1169   -0.5043    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.1183    0.4993    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.1267    0.6499    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1287    0.6385    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.3331    1.5799    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4293    2.1893    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3023    3.1545    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1039    3.7387    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7307    1.0833    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.5999    0.5303    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6009   -0.5265    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7327   -1.0811    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1277   -0.6385    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.3301   -1.5803    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4331   -2.1887    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3073   -3.1543    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1099   -3.7375    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n  6 11  1  0\n 11 12  1  0\n 12 13  2  0\n 13 14  1  0\n 14 15  1  0\n 15 16  1  0\n 16 17  1  0\n 17 18  1  0\n 18 19  1  0\n  5  1  1  0\n 15  2  1  0\n 15  6  1  0\nM  END\n",
+          "smiles": "O1C2CCC1C3(CSCC)CC=CCC23CSCC",
+          "explanation": "SN2: Ethanthiolat verdrängt beide Mesylat-Gruppen — geminaler Bis(thioether). Schwefel als weiches Nucleophil ist hier ideal.",
+          "related_reaction_id": "sn2-alkylhalogenid"
+        },
+        {
+          "id": "H",
+          "label": "H",
+          "given": false,
+          "name": "Tricyclisches Diol mit gem-Dimethyl",
+          "mol": "\n     RDKit          2D\n\n 15 17  0  0  0  0  0  0  0  0999 V2000\n    1.0170    0.0018    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2006    0.6528    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.1924    0.5046    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.1938   -0.4986    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2040   -0.6492    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.2102   -0.6374    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4434   -1.6100    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.6478   -1.0838    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5158   -0.5324    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.3880   -1.0122    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5150    0.5264    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.3900    1.0058    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.6502    1.0836    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.2068    0.6370    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4390    1.6112    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  6  8  1  0\n  8  9  1  0\n  9 10  1  0\n  9 11  1  0\n 11 12  1  0\n 11 13  1  0\n 13 14  1  0\n 14 15  1  0\n  5  1  1  0\n 14  2  1  0\n 14  6  1  0\nM  END\n",
+          "smiles": "O1C2CCC1C3(C)CC(O)C(O)CC23C",
+          "explanation": "Schritt 1 (X = OsO_4): cis-Dihydroxylierung der Cyclohexen-Doppelbindung. Schritt 2 (Raney-Ni): Desulfurierung von R-CH_2-S-Et → R-CH_3, beide CH_2-SEt-Gruppen werden zu Methylgruppen reduziert. Resultat: gem-Dimethyl an den ehemaligen Brückenkopf-C-Atomen + cis-Diol.",
+          "note": "X = OsO_4 (cis-Dihydroxylierung).",
+          "related_reaction_id": "osmylierung"
+        },
+        {
+          "id": "I",
+          "label": "I",
+          "given": false,
+          "name": "Dialdehyd (Periodatspaltung von H)",
+          "mol": "\n     RDKit          2D\n\n 15 16  0  0  0  0  0  0  0  0999 V2000\n    1.0837   -0.1977    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8931    0.4617    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8925    0.4615    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8937   -0.8561    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8941   -0.8581    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0969   -0.7051    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.2155   -1.6995    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.1073   -0.6215    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.7053   -1.4227    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.7041   -1.2961    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0983    0.3061    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0931    0.2179    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.2719    1.2971    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4453    1.9707    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.1905    2.9417    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  6  8  1  0\n  8  9  1  0\n  9 10  2  0\n  6 11  1  0\n 11 12  1  0\n 11 13  1  0\n 13 14  1  0\n 14 15  2  0\n  5  1  1  0\n 11  2  1  0\nM  END\n",
+          "smiles": "O1C2CCC1C(C)(CC=O)C2(C)CC=O",
+          "explanation": "Periodsäure HIO_4 spaltet das vicinale Diol oxidativ unter C-C-Bindungsbruch zu zwei Aldehyden. Das Sechs-Ring öffnet sich → zwei dangling CH_2-CHO-Arme am bicyclischen Gerüst. I gibt mit DNPH einen gelben Niederschlag (Aldehyd-Nachweis).",
+          "related_reaction_id": "diol-spaltung-hio4"
+        },
+        {
+          "id": "J",
+          "label": "J",
+          "given": false,
+          "name": "α,β-ungesättigter Aldehyd (intramolekulare Aldol-Kondensation)",
+          "mol": "\n     RDKit          2D\n\n 14 16  0  0  0  0  0  0  0  0999 V2000\n    0.8059   -0.2754    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9887   -0.9222    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9791   -0.7760    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9791    0.2244    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9881    0.3710    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0101    0.3544    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.1161    1.3464    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9481    0.6092    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2673    1.5478    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2311    1.7480    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5509   -0.2712    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9499   -1.1550    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0115   -0.9050    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.1117   -1.8970    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  6  8  1  0\n  8  9  1  0\n  9 10  2  0\n  8 11  2  0\n 11 12  1  0\n 12 13  1  0\n 13 14  1  0\n  5  1  1  0\n 13  2  1  0\n 13  6  1  0\nM  END\n",
+          "smiles": "O1C2CCC1C3(C)C(C=O)=CCC23C",
+          "explanation": "Base deprotoniert die α-Position eines Aldehyds; das Enolat greift den zweiten Aldehyd-Carbonyl-C intramolekular an, liefert einen β-Hydroxy-Aldehyd. Anschließende Dehydratisierung (-H_2O) liefert das α,β-ungesättigte Enal mit einem neuen Fünfring.",
+          "note": "SMILES-Approximation — der Cyclopentenring-Ringschluss ist mit OCL-Auto-Layout schwierig darzustellen; ggf. im Editor justieren.",
+          "related_reaction_id": "aldol-addition"
+        },
+        {
+          "id": "K",
+          "label": "K",
+          "given": false,
+          "name": "Sekundärer Allylalkohol (PhLi-Addition)",
+          "mol": "\n     RDKit          2D\n\n 20 23  0  0  0  0  0  0  0  0999 V2000\n    2.4052    0.8681    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8168    1.6767    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.7680    1.3685    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.7690    0.3685    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8182    0.0587    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8668    0.3667    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8678   -0.6333    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0838    0.0569    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.3920   -0.8943    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.2778   -1.6367    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3700   -1.1033    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.6780   -2.0547    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.6560   -2.2635    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.3258   -1.5211    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0176   -0.5699    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0396   -0.3609    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.6724    0.8655    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0854    1.6749    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.3667    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8652    2.3667    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  6  8  1  0\n  8  9  1  0\n  9 10  1  0\n  9 11  1  0\n 11 12  2  0\n 12 13  1  0\n 13 14  2  0\n 14 15  1  0\n 15 16  2  0\n  8 17  2  0\n 17 18  1  0\n 18 19  1  0\n 19 20  1  0\n  5  1  1  0\n 19  2  1  0\n 19  6  1  0\n 16 11  1  0\nM  END\n",
+          "smiles": "O1C2CCC1C3(C)C(C(O)c4ccccc4)=CCC23C",
+          "explanation": "Phenyllithium addiert 1,2 an die Carbonyl-Gruppe des α,β-ungesättigten Aldehyds (keine 1,4-Addition, da Organolithium hart/stark basisch ist). Liefert einen sekundären Allylalkohol mit Phenyl-Substituenten.",
+          "related_reaction_id": "organolithium-1-2-addition"
+        },
+        {
+          "id": "L",
+          "label": "L",
+          "given": false,
+          "name": "Styrol-Derivat (Ester-Pyrolyse)",
+          "mol": "\n     RDKit          2D\n\n 19 22  0  0  0  0  0  0  0  0999 V2000\n    1.6466    0.7842    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8282    1.4306    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8196    1.2844    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8200    0.2838    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8302    0.1374    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8320    0.1530    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9590   -0.8388    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1036   -0.1024    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.3630   -1.0032    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2254   -1.1908    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5384   -2.1408    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5162   -2.3496    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1820   -1.6036    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.8740   -0.6518    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8952   -0.4482    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7088    0.7774    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1098    1.6616    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8290    1.4124    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9514    2.4046    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  6  8  1  0\n  8  9  2  3\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  2  0\n 13 14  1  0\n 14 15  2  0\n  8 16  1  0\n 16 17  1  0\n 17 18  1  0\n 18 19  1  0\n  5  1  1  0\n 18  2  1  0\n 18  6  1  0\n 15 10  1  0\nM  END\n",
+          "smiles": "O1C2CCC1C3(C)C(=Cc4ccccc4)CCC23C",
+          "explanation": "Acylierung des sekundären Alkohols mit dem Säurechlorid liefert einen Ester. Anschließende thermische cis-Eliminierung (Ester-Pyrolyse, Tschugaeff-artig) eliminiert RCOOH unter Bildung des exocyclischen Styrols. Das Phenyl sitzt jetzt an einer C=C-Doppelbindung statt an einem sp^3-C.",
+          "note": "Ohne den Cyclopenten-Doppelbindung anzudeuten — im OCL-Editor justieren.",
+          "related_reaction_id": "ester-pyrolyse"
+        },
+        {
+          "id": "M",
+          "label": "M",
+          "given": false,
+          "name": "Dicarbonsäure mit α-Keto-Gruppe (oxidative Ozonolyse)",
+          "mol": "\n     RDKit          2D\n\n 18 20  0  0  0  0  0  0  0  0999 V2000\n    1.5752    0.4802    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.3836    1.1392    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.3830    1.1406    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.3840   -0.1770    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.3864   -0.1796    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3998   -0.0274    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4796   -1.0252    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5472   -0.3364    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8838   -1.2940    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.2378   -2.0544    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8866   -1.4816    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5436   -0.7228    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2220   -2.4276    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.1326    0.4748    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5484    1.2886    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8608    2.2382    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3974    0.9826    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4744    1.9810    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  6  8  1  0\n  8  9  1  0\n  9 10  2  0\n  9 11  1  0\n 11 12  2  0\n 11 13  1  0\n  8 14  1  0\n 14 15  1  0\n 15 16  2  0\n 15 17  1  0\n 17 18  1  0\n  5  1  1  0\n 17  2  1  0\n 17  6  1  0\nM  END\n",
+          "smiles": "O1C2CCC1C3(C)C(C(=O)C(=O)O)CC(=O)C23(C)",
+          "explanation": "Oxidative Ozonolyse (O_3, dann H_2O_2-Aufarbeitung) spaltet beide C=C-Bindungen und oxidiert die Carbonyl-Spaltstücke zu Carbonsäuren. Das exocyclische Styrol liefert Benzoesäure (Y) und eine α-Ketosäure-Funktion am Ring; das endocyclische Cyclopenten liefert eine weitere Carbonsäure.",
+          "note": "SMILES ist Approximation — exakte Konstitution hängt vom genauen Spaltungsmuster ab.",
+          "related_reaction_id": "ozonolyse-oxidativ"
+        },
+        {
+          "id": "Y",
+          "label": "Y",
+          "given": false,
+          "name": "Benzoesäure (Nebenprodukt)",
+          "mol": "\n     RDKit          2D\n\n  9  9  0  0  0  0  0  0  0  0999 V2000\n   -0.8694    1.7204    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0024    1.2222    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8626    1.7240    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0004    0.2222    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8666   -0.2760    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8686   -1.2760    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0036   -1.7776    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8634   -1.2794    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8654   -0.2794    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  9  4  1  0\nM  END\n",
+          "smiles": "OC(=O)c1ccccc1",
+          "explanation": "Benzoesäure entsteht aus dem Phenyl-Fragment der Styrol-Einheit bei der oxidativen Ozonolyse von L."
+        },
+        {
+          "id": "N",
+          "label": "N",
+          "given": false,
+          "name": "Cantharidin (Endprodukt)",
+          "mol": "\n     RDKit          2D\n\n 14 16  0  0  0  0  0  0  0  0999 V2000\n    1.4934   -1.8203    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1472   -0.8819    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7494    0.0027    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1466    0.8847    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.4900    1.8239    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.2090    0.6293    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.2100   -0.6309    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7882   -0.6417    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8516   -1.6421    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.7800   -0.5035    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.7802    0.5009    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7874    0.6395    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8514    1.6401    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.6072   -0.0007    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  4  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  8 10  1  0\n 10 11  1  0\n 11 12  1  0\n 12 13  1  0\n 12 14  1  0\n  7  2  1  0\n 14  8  1  0\n 12  6  1  0\nM  END\n",
+          "smiles": "O=C1OC(=O)C2C1C1(C)CCC2(C)O1",
+          "explanation": "Decarbonylierung der α-Ketosäure (Verlust von HCOOH) und intramolekulare Anhydridbildung der beiden Carbonsäuren liefert Cantharidin — ein tricyclisches Anhydrid mit Epoxid-Brücke, Ethano-Brücke und gem-Dimethyl-Brückenkopf.",
+          "related_reaction_id": "anhydridbildung"
+        }
+      ],
+      "edges": [
+        {
+          "from": [
+            "A",
+            "B"
+          ],
+          "to": "C",
+          "reagent_above": "Δ, in Benzol"
+        },
+        {
+          "from": [
+            "C"
+          ],
+          "to": "D",
+          "reagent_above": "1. H_2/Pd,C",
+          "reagent_below": "2. Buta-1,3-dien"
+        },
+        {
+          "from": [
+            "D"
+          ],
+          "to": "E",
+          "reagent_above": "1. LiAlH_4",
+          "reagent_below": "2. H^+"
+        },
+        {
+          "from": [
+            "E"
+          ],
+          "to": "F",
+          "reagent_above": "MeSO_2Cl in Py"
+        },
+        {
+          "from": [
+            "F"
+          ],
+          "to": "G",
+          "reagent_above": "NaSC_2H_5"
+        },
+        {
+          "from": [
+            "G"
+          ],
+          "to": "H",
+          "reagent_above": "1. X (OsO_4)",
+          "reagent_below": "2. RaNi"
+        },
+        {
+          "from": [
+            "H"
+          ],
+          "to": "I",
+          "reagent_above": "HIO_4"
+        },
+        {
+          "from": [
+            "I"
+          ],
+          "to": "J",
+          "reagent_above": "Base, -H_2O"
+        },
+        {
+          "from": [
+            "J"
+          ],
+          "to": "K",
+          "reagent_above": "Ph-Li in Et_2O"
+        },
+        {
+          "from": [
+            "K"
+          ],
+          "to": "L",
+          "reagent_above": "1. RCOCl",
+          "reagent_below": "2. Δ"
+        },
+        {
+          "from": [
+            "L"
+          ],
+          "to": "M",
+          "reagent_above": "1. O_3",
+          "reagent_below": "2. H_2O_2"
+        },
+        {
+          "from": [
+            "L"
+          ],
+          "to": "Y",
+          "reagent_above": "(als Nebenprodukt)"
+        },
+        {
+          "from": [
+            "M"
+          ],
+          "to": "N",
+          "reagent_above": "-HCOOH"
+        }
+      ]
+    }
+  },
+  {
+    "id": "regio-hbr-propen-markownikow",
+    "category": "Regioselektivität",
+    "name": "HBr-Addition an Propen",
+    "difficulty": "A",
+    "type": "multiple_choice",
+    "prompt": "Welches Produkt entsteht bei der Addition von HBr an Propen unter polaren, peroxidfreien Bedingungen?",
+    "givens": {
+      "smiles": "CC=C",
+      "reagent_label": "HBr",
+      "reagent_label_below": ""
+    },
+    "choices": [
+      {
+        "id": "a",
+        "smiles": "CCCBr",
+        "label": "1-Brompropan",
+        "correct": false
+      },
+      {
+        "id": "b",
+        "smiles": "CC(C)Br",
+        "label": "2-Brompropan",
+        "correct": true
+      }
+    ],
+    "explanation": "Markownikow-Addition: Protonierung führt zum stabileren sekundären Carbenium-Ion; Bromid greift dort an. Mit Peroxiden liefe die Reaktion radikalisch (Anti-Markownikow) zum 1-Brompropan.",
+    "related_reaction_id": "alken-hx-markownikow"
+  },
+  {
+    "id": "theorie-sn1-vs-sn2",
+    "category": "Theoriefragen",
+    "name": "Faktoren SN1 vs SN2",
+    "difficulty": "B",
+    "type": "short_answer",
+    "prompt": "Nennen Sie die drei wichtigsten Faktoren, die bestimmen, ob eine nukleophile Substitution nach SN1 oder SN2 verläuft. Geben Sie für jeden Faktor an, welche Ausprägung welchen Mechanismus begünstigt.",
+    "expected_answer": "1) Substratstruktur: primär → SN2, tertiär → SN1 (sekundär: kontextabhängig). 2) Nukleophil: stark/polarisierbar → SN2, schwach → SN1. 3) Lösungsmittel: polar aprotisch (DMSO, DMF, MeCN) → SN2, polar protisch (H2O, ROH) → SN1 (Stabilisierung des Carbenium-Ions).",
+    "related_reaction_id": "sn1-tertiaer"
+  },
+  {
+    "id": "mechanismus-aldol-base",
+    "category": "Mechanismen",
+    "name": "Aldol-Addition (basisch) — Acetaldehyd",
+    "difficulty": "B",
+    "type": "mechanism",
+    "prompt": "Skizzieren Sie die basenkatalysierte Aldol-Addition von zwei Molekülen Acetaldehyd. Welches Intermediat entsteht nach Deprotonierung, welches nach C-C-Bindungsbildung, und was ist das Endprodukt?",
+    "givens": {
+      "smiles": "CC=O.CC=O",
+      "reagent_label": "OH^-",
+      "reagent_label_below": ""
+    },
+    "mech_steps": [
+      {
+        "name": "Enolat",
+        "prompt": "Nach Deprotonierung in α-Position:",
+        "smiles": "[CH2-]C=O",
+        "explanation": "Hydroxid-Ion deprotoniert die α-Position. Das resultierende Enolat ist mesomeriestabilisiert."
+      },
+      {
+        "name": "Alkoxid-Intermediat",
+        "prompt": "Nach nucleophilem Angriff des Enolats auf das zweite Acetaldehyd-Molekül:",
+        "smiles": "CC([O-])CC=O",
+        "explanation": "Die nukleophile α-Position greift den Carbonyl-C des zweiten Aldehyds an."
+      },
+      {
+        "name": "Aldol",
+        "prompt": "Nach Protonenrückgabe vom Lösungsmittel:",
+        "smiles": "CC(O)CC=O",
+        "explanation": "Protonierung liefert das Aldol (3-Hydroxybutanal)."
+      }
+    ],
+    "explanation": "Drei-Schritt-Mechanismus: Enolatbildung → C-C-Bindungsknüpfung → Protonierung.",
+    "related_reaction_id": "aldol-addition"
+  }
+]
