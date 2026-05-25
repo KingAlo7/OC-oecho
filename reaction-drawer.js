@@ -88,97 +88,86 @@ const ReactionRenderer = (() => {
     explicitHydrogens: false
   };
 
-  /* ── LaTeX-style label parsing ────────────────────────────────────
+  /* ── LaTeX-style label rendering ──────────────────────────────────
      Reagent labels can contain LaTeX-style sub/superscripts, e.g.
-     "[Ag(NH_3)_2]^{1+}" or "H_2SO_4". We parse them into segments and
-     render with SVG <tspan baseline-shift>, which looks much better
-     than Unicode subscript glyphs (₂ etc.) that don't exist for every
-     character and clash with the surrounding atom font.
+     "[Ag(NH_3)_2]^{1+}" or "H_2SO_4". We pre-render the label string
+     into Unicode subscript/superscript glyphs BEFORE passing it to
+     smiles-drawer. This keeps the label on a single line of normal-
+     sized text — no tspan tricks, no bbox expansion that would push
+     the label above the arrow. Survives PNG rasterisation cleanly
+     because there's no SVG-level positioning to lose.
 
-     Syntax: `_{xxx}` / `^{xxx}` for multi-char, `_x` / `^x` for single. */
+     Syntax: `_{xxx}` / `^{xxx}` for multi-char, `_x` / `^x` for single.
+     Unsupported chars (letter subscripts beyond the Unicode set) fall
+     back to literal text — rare enough not to bother with tspans. */
 
-  function _hasLatexMarkup(s) {
-    return !!s && /[_^](\{|[A-Za-z0-9+\-])/.test(s);
-  }
+  const _SUB_MAP = {
+    '0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉',
+    '+':'₊','-':'₋','=':'₌','(':'₍',')':'₎',
+    'a':'ₐ','e':'ₑ','h':'ₕ','i':'ᵢ','j':'ⱼ','k':'ₖ','l':'ₗ','m':'ₘ','n':'ₙ',
+    'o':'ₒ','p':'ₚ','r':'ᵣ','s':'ₛ','t':'ₜ','u':'ᵤ','v':'ᵥ','x':'ₓ'
+  };
+  const _SUP_MAP = {
+    '0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹',
+    '+':'⁺','-':'⁻','=':'⁼','(':'⁽',')':'⁾','n':'ⁿ','i':'ⁱ'
+  };
 
-  function _parseLatex(s) {
-    const out = [];
-    let i = 0;
-    while (i < s.length) {
-      const c = s[i];
-      if ((c === '_' || c === '^') && s[i+1] === '{') {
-        let depth = 1, j = i + 2;
-        while (j < s.length && depth > 0) {
-          if (s[j] === '{') depth++;
-          else if (s[j] === '}') depth--;
-          if (depth > 0) j++;
-        }
-        out.push({ text: s.substring(i+2, j), mode: c === '_' ? 'sub' : 'sup' });
-        i = j + 1;
-      } else if ((c === '_' || c === '^') && i + 1 < s.length) {
-        out.push({ text: s[i+1], mode: c === '_' ? 'sub' : 'sup' });
-        i += 2;
-      } else {
-        let j = i;
-        while (j < s.length && s[j] !== '_' && s[j] !== '^') j++;
-        out.push({ text: s.substring(i, j), mode: 'normal' });
-        i = j;
-      }
-    }
+  function _toSubSup(text, map) {
+    let out = '';
+    for (const c of text) out += (map[c] || c);
     return out;
   }
 
-  /* Visible character length of a label after LaTeX markers are stripped —
-     used to size the reaction arrow so the label fits in one line. */
-  function _strippedLength(s) {
+  function _latexToUnicode(s) {
+    if (!s) return s;
+    return s.replace(
+      /_\{([^}]*)\}|\^\{([^}]*)\}|_([A-Za-z0-9+\-=()])|\^([A-Za-z0-9+\-=()])/g,
+      (_, subBrace, supBrace, subOne, supOne) => {
+        if (subBrace !== undefined) return _toSubSup(subBrace, _SUB_MAP);
+        if (subOne   !== undefined) return _toSubSup(subOne,   _SUB_MAP);
+        if (supBrace !== undefined) return _toSubSup(supBrace, _SUP_MAP);
+        if (supOne   !== undefined) return _toSubSup(supOne,   _SUP_MAP);
+        return '';
+      }
+    );
+  }
+
+  /* Visible character length of a (rendered) label — used to size the
+     reaction arrow so the label fits in one line. Operates on the
+     Unicode-converted string so subscripts count as one glyph each. */
+  function _visibleLength(s) {
     if (!s) return 0;
-    return _parseLatex(s).reduce((n, seg) => n + seg.text.length, 0);
+    return [..._latexToUnicode(s)].length;
   }
 
-  /* Replace a <text>'s string children with <tspan>s positioned via `dy`
-     offsets — `baseline-shift` is unreliable in Chrome's SVG renderer and
-     doesn't survive canvas rasterisation (PNG export). Targets are in
-     PARENT ems and we convert to tspan-local ems (dy uses the tspan's own
-     font-size as its em). Sub/super tspans get 70% font-size. */
-  function _applyLatexToText(textEl, segments) {
-    while (textEl.firstChild) textEl.removeChild(textEl.firstChild);
-    const yFor    = { normal: 0,   sub: 0.32, sup: -0.50 };
-    const sizeFor = { normal: 1.0, sub: 0.70, sup: 0.70  };
-    let curY = 0;
-    for (let i = 0; i < segments.length; i++) {
-      const seg = segments[i];
-      const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-      const target = (seg.mode in yFor)    ? yFor[seg.mode]    : 0;
-      const sz     = (seg.mode in sizeFor) ? sizeFor[seg.mode] : 1.0;
-      const dyTspanEm = (target - curY) / sz;
-      if (Math.abs(dyTspanEm) > 1e-6) {
-        tspan.setAttribute('dy', dyTspanEm.toFixed(3) + 'em');
-      }
-      if (sz !== 1.0) {
-        tspan.setAttribute('font-size', Math.round(sz * 100) + '%');
-      }
-      tspan.textContent = seg.text;
-      textEl.appendChild(tspan);
-      curY = target;
-    }
-  }
+  /* Swap small-molecule atom labels rendered with the heteroatom on the
+     wrong side. smiles-drawer always places H counts after the central
+     atom (e.g. `O` → "OH₂", `Br` → "BrH"), which clashes with the
+     conventional "H₂O", "HBr" written form for these reactants/reagents.
+     We patch the text nodes after drawing. Only the small molecules
+     where H-first is conventional are touched. */
+  const _LABEL_SWAPS = {
+    'OH₂':  'H₂O',
+    'OH2':  'H₂O',
+    'OH₃⁺': 'H₃O⁺',
+    'OH3+': 'H₃O⁺',
+    'BrH':  'HBr',
+    'ClH':  'HCl',
+    'FH':   'HF',
+    'IH':   'HI'
+  };
 
-  /* Walk the rendered SVG looking for <text> nodes whose textContent
-     matches the original (un-parsed) label string, and rewrite them
-     with tspans. Matching by exact text is reliable because the labels
-     are passed through smiles-drawer verbatim. */
-  function _postProcessLabels(svgEl, labelAbove, labelBelow) {
-    const targets = [];
-    if (_hasLatexMarkup(labelAbove)) targets.push(labelAbove);
-    if (_hasLatexMarkup(labelBelow)) targets.push(labelBelow);
-    if (!targets.length) return;
+  function _swapAtomLabels(svgEl) {
     const texts = svgEl.querySelectorAll('text');
     for (let i = 0; i < texts.length; i++) {
       const t = texts[i];
-      const idx = targets.indexOf(t.textContent);
-      if (idx !== -1) {
-        _applyLatexToText(t, _parseLatex(targets[idx]));
-      }
+      const v = t.textContent;
+      if (!_LABEL_SWAPS[v]) continue;
+      /* Clear any tspan segmentation smiles-drawer used (those tspans
+         carry no positioning attributes for these small molecules) and
+         set the swapped string as the text content. */
+      while (t.firstChild) t.removeChild(t.firstChild);
+      t.textContent = _LABEL_SWAPS[v];
     }
   }
 
@@ -188,7 +177,7 @@ const ReactionRenderer = (() => {
      can't fit the text — at that point smiles-drawer's own line break
      takes over. MIN keeps short labels from looking cramped. */
   function _autoArrowLength(textAbove, textBelow, fontSize, compact) {
-    const longest = Math.max(_strippedLength(textAbove), _strippedLength(textBelow));
+    const longest = Math.max(_visibleLength(textAbove), _visibleLength(textBelow));
     const charW = fontSize * 0.55;
     const padding = 16;
     const MIN = compact ? 42 : 60;
@@ -273,8 +262,11 @@ const ReactionRenderer = (() => {
     const baseMoleculeOpts  = compact ? MOLECULE_OPTS_COMPACT  : MOLECULE_OPTS_DEFAULT;
     const reactionOpts      = _mergeOpts(baseReactionOpts, opts.reactionOpts);
     const moleculeOpts      = _mergeOpts(baseMoleculeOpts, opts.moleculeOpts);
-    const labelAbove        = textAbove;
-    const labelBelow        = textBelow;
+    /* Pre-render LaTeX markup to Unicode subscript/superscript glyphs so
+       smiles-drawer sees a normal single-line label and lays it out
+       correctly above/below the arrow. */
+    const labelAbove        = _latexToUnicode(textAbove);
+    const labelBelow        = _latexToUnicode(textBelow);
 
     /* Auto-size the arrow to fit the label unless the caller explicitly
        set arrow.length in their override. Centralizes the dynamic-arrow
@@ -293,11 +285,10 @@ const ReactionRenderer = (() => {
       const rd = new SD.ReactionDrawer(reactionOpts, Object.assign({}, moleculeOpts));
       rd.draw(reaction, svgEl, theme, null, labelAbove, labelBelow);
 
-      /* Replace any label text containing LaTeX-style markers (_{x}, ^{x},
-         _x, ^x) with tspans carrying baseline-shift — gives proper
-         sub/superscripts instead of mojibake like ₂. Runs before the
-         viewBox fit so overflow is computed against the rewritten labels. */
-      _postProcessLabels(svgEl, labelAbove, labelBelow);
+      /* Swap small-molecule atom labels (OH₂ → H₂O, BrH → HBr, …) to
+         the conventional written form. Runs before viewBox fit so
+         overflow is computed against the final labels. */
+      _swapAtomLabels(svgEl);
 
       /* smiles-drawer v2 leaves a viewBox that often clips arrow labels at
          the top and text annotations on the sides. Recompute a tighter

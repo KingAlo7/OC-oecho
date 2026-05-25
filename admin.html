@@ -396,18 +396,14 @@ function buildForm(r) {
     </div>
     <div class="field"><label>Name</label>
       <input class="fi" id="f-name" value="${x(r.name)}" oninput="mu()"></div>
-    <div class="row2">
-      <div class="field"><label>Schwierigkeit</label>
-        <select class="fi" id="f-diff" onchange="mu()">
-          <option value="" ${!r.difficulty?'selected':''}>— Keine —</option>
-          <option value="A" ${r.difficulty==='A'?'selected':''}>A — Einsteiger/innen</option>
-          <option value="B" ${r.difficulty==='B'?'selected':''}>B — LW / JÖChO</option>
-          <option value="C" ${r.difficulty==='C'?'selected':''}>C — BW</option>
-          <option value="D" ${r.difficulty==='D'?'selected':''}>D — Spezial</option>
-        </select></div>
-      <div class="field"><label>Untertitel</label>
-        <input class="fi" id="f-sub" value="${x(r.subtitle||'')}" oninput="mu()"></div>
-    </div>
+    <div class="field"><label>Schwierigkeit</label>
+      <select class="fi" id="f-diff" onchange="mu()">
+        <option value="" ${!r.difficulty?'selected':''}>— Keine —</option>
+        <option value="A" ${r.difficulty==='A'?'selected':''}>A — Einsteiger/innen</option>
+        <option value="B" ${r.difficulty==='B'?'selected':''}>B — LW / JÖChO</option>
+        <option value="C" ${r.difficulty==='C'?'selected':''}>C — BW</option>
+        <option value="D" ${r.difficulty==='D'?'selected':''}>D — Spezial</option>
+      </select></div>
     <div class="field"><label>Transformation</label>
       <input class="fi" id="f-trans" value="${x(r.transformation||'')}" placeholder="R-X → R-OH" oninput="mu()"></div>
     <div class="field"><label>Kategorie</label>
@@ -440,12 +436,10 @@ function buildForm(r) {
   <div class="fsec">
     <div class="fsec-title">Bedingungen &amp; Umfang</div>
     <div class="field"><label>Bedingungen</label><textarea class="fi" id="f-cond" oninput="mu()">${x(r.conditions||'')}</textarea></div>
-    <div class="row3">
-      <div class="field"><label>Substratumfang</label><input class="fi" id="f-scope" value="${x(r.substrate_scope||'')}" oninput="mu()"></div>
+    <div class="row2">
       <div class="field"><label>Stereochemie</label><input class="fi" id="f-stereo" value="${x(r.stereochemistry||'')}" oninput="mu()"></div>
-      <div class="field"><label>Kinetik</label><input class="fi" id="f-kin" value="${x(r.kinetics||'')}" oninput="mu()"></div>
+      <div class="field"><label>Lösungsmittel</label><input class="fi" id="f-solv" value="${x(r.solvent||'')}" oninput="mu()"></div>
     </div>
-    <div class="field"><label>Lösungsmittel</label><input class="fi" id="f-solv" value="${x(r.solvent||'')}" oninput="mu()"></div>
   </div>
 
   <div class="fsec">
@@ -504,11 +498,10 @@ function collect() {
   const r={}, g=id=>document.getElementById(id)?.value?.trim(), s=(k,v)=>{if(v)r[k]=v;};
   r.id=g('f-id'); r.category=getCat(); r.name=g('f-name');
   s('difficulty',g('f-diff'));
-  s('subtitle',g('f-sub')); s('reaktionstyp',g('f-rtyp')); s('transformation',g('f-trans'));
+  s('reaktionstyp',g('f-rtyp')); s('transformation',g('f-trans'));
   r.tags=getTags();
   s('reaction_smiles',g('f-smi')); s('reagent_label',g('f-rl')); s('reagent_label_below',g('f-rlb')); s('general_scheme',g('f-gs'));
-  s('conditions',g('f-cond')); s('substrate_scope',g('f-scope')); s('stereochemistry',g('f-stereo'));
-  s('kinetics',g('f-kin')); s('solvent',g('f-solv'));
+  s('conditions',g('f-cond')); s('stereochemistry',g('f-stereo')); s('solvent',g('f-solv'));
   const kps=getKPs(); if(kps.length) r.key_points=kps;
   s('notes',g('f-notes'));
   return r;
