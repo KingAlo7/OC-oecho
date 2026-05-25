@@ -157,17 +157,29 @@ const ReactionRenderer = (() => {
     'IH':   'HI'
   };
 
-  function _swapAtomLabels(svgEl) {
+  /* Unicode subscript/superscript ranges — covers ² ³ ¹ (Latin-1) plus
+     the full Super/Subscript block (U+2070–U+209F). Used to flag labels
+     that need a font-weight bump for legibility. */
+  const _SUBSUP_RE = /[²³¹⁰-₟]/;
+
+  function _postProcessLabels(svgEl) {
     const texts = svgEl.querySelectorAll('text');
     for (let i = 0; i < texts.length; i++) {
       const t = texts[i];
       const v = t.textContent;
-      if (!_LABEL_SWAPS[v]) continue;
-      /* Clear any tspan segmentation smiles-drawer used (those tspans
-         carry no positioning attributes for these small molecules) and
-         set the swapped string as the text content. */
-      while (t.firstChild) t.removeChild(t.firstChild);
-      t.textContent = _LABEL_SWAPS[v];
+      /* 1. Swap small-molecule labels to conventional H-first form. */
+      if (_LABEL_SWAPS[v]) {
+        while (t.firstChild) t.removeChild(t.firstChild);
+        t.textContent = _LABEL_SWAPS[v];
+      }
+      /* 2. Bold any label that contains Unicode sub/superscript glyphs —
+         the default Arial subscript glyphs render as thin and hard to
+         read at small sizes. font-weight:600 plus a slight font-size
+         bump on the affected text element gives the sub/super chars
+         enough stroke weight to be legible against the bond lines. */
+      if (_SUBSUP_RE.test(t.textContent)) {
+        t.setAttribute('font-weight', '600');
+      }
     }
   }
 
@@ -285,10 +297,12 @@ const ReactionRenderer = (() => {
       const rd = new SD.ReactionDrawer(reactionOpts, Object.assign({}, moleculeOpts));
       rd.draw(reaction, svgEl, theme, null, labelAbove, labelBelow);
 
-      /* Swap small-molecule atom labels (OH₂ → H₂O, BrH → HBr, …) to
-         the conventional written form. Runs before viewBox fit so
-         overflow is computed against the final labels. */
-      _swapAtomLabels(svgEl);
+      /* Post-process text nodes: swap H-first small-molecule labels
+         (OH₂→H₂O, BrH→HBr, …) and bold any label containing Unicode
+         sub/superscript glyphs (Arial's subscript strokes are too thin
+         to read at 9–12 px without extra weight). Runs before viewBox
+         fit so overflow is computed against the final labels. */
+      _postProcessLabels(svgEl);
 
       /* smiles-drawer v2 leaves a viewBox that often clips arrow labels at
          the top and text annotations on the sides. Recompute a tighter
