@@ -47,7 +47,7 @@ Vier Fragentypen, alle mit Klick-zum-Aufdecken und Link zur passenden Referenzre
 | Reaktionsrenderer | smiles-drawer v2 (CDN) | Lightweight für die Referenz (SMILES → SVG) |
 | Quiz-Renderer | OpenChemLib v8 (CDN, ~500 KB) | MOL/SMILES → SVG, läuft auch auf Pages |
 | Layout-Optimierung | RDKit-JS (CDN, ~4 MB, lazy) | CoordGen-2D-Layout, nur Admin |
-| Struktur-Editor | Ketcher 3.12 (vendor/, ~26 MB) | EPAM, eingebettet via iframe, nur Admin |
+| Struktur-Editor | Ketcher 3.12 (vendor/, ~26 MB committed) | EPAM, eingebettet via iframe, lädt auf Lokal + Pages |
 | OCR (optional) | DECIMER + RDKit (Python) | Lokaler Sidecar, nur Admin |
 
 **Pages-Bundle** = OCL (500 KB) + Smiles-Drawer (150 KB) + HTML/CSS/JS — keine WASM, kein Ketcher.
@@ -76,8 +76,8 @@ OC-oecho/
 ├── tools/
 │   └── ocr.py              ← Python-Sidecar: Bild → MOL via DECIMER/OSRA/MolScribe
 │
-├── vendor/                 ← NICHT im Git — lokal von Releases beziehen
-│   └── ketcher/standalone/ ← Ketcher 3.12 Build (s. Setup unten)
+├── vendor/
+│   └── ketcher/standalone/ ← Ketcher 3.12 Build (committed, ~26 MB)
 │
 └── .github/workflows/
     └── pages.yml
@@ -99,22 +99,7 @@ cd OC-oecho
 npm install
 ```
 
-### Ketcher-Editor bereitstellen (für Admin)
-
-Ketcher ist nicht im Repo (~26 MB Build-Artefakte). Einmaliger Download:
-
-```bash
-mkdir -p vendor
-curl -L https://github.com/epam/ketcher/releases/download/v3.12.0/ketcher-standalone-3.12.0.zip -o vendor/ketcher.zip
-cd vendor && unzip -q ketcher.zip -d ketcher && rm ketcher.zip && cd ..
-# Optional: nur den main-Bundle behalten (spart ~70 MB):
-cd vendor/ketcher/standalone/static/js
-rm -f closable.* duo.* popup.*
-cd ../../../../..
-rm vendor/ketcher/standalone/closable.html vendor/ketcher/standalone/duo.html vendor/ketcher/standalone/popup.html vendor/ketcher/standalone/iframe.html
-```
-
-Ohne diesen Schritt funktionieren `index.html`, `quiz.html` und die Referenz im Admin trotzdem — nur der „Bearbeiten"-Button pro Quiz-Knoten meldet einen Fehler.
+Der Ketcher-Strukturzeichner (~26 MB, `vendor/ketcher/standalone/`) ist im Repository enthalten — kein zusätzlicher Download nötig. Funktioniert sowohl lokal als auch auf GitHub Pages.
 
 ### Starten
 
@@ -318,7 +303,7 @@ Drei Bibliotheken arbeiten zusammen, um sowohl gute Layouts als auch ein leichtg
 
 `.github/workflows/pages.yml` deployt automatisch bei Push nach `main`. Kein Build-Schritt — alle Frontend-Dateien sind statisch.
 
-Auf Pages **nicht verfügbar**: `/api/*` (kein Node-Server), Ketcher-Editor (vendor/ ist in `.gitignore`), DECIMER-OCR (kein Python). Pages zeigt also Reaktionen + Quiz als reines Browse-Erlebnis; Bearbeiten passiert lokal.
+Auf Pages **nicht verfügbar**: `/api/*` (kein Node-Server) und DECIMER-OCR (kein Python). Der **Ketcher-Editor funktioniert auf Pages** (das vendor-Bundle ist committet). Lokal speichern (`POST /api/questions`) geht nur mit laufendem `node server.js`; das Direct-Push aus dem Commit-Tab funktioniert auch auf Pages über die GitHub-API.
 
 ---
 
