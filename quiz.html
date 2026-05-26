@@ -572,10 +572,7 @@ function buildSidebar() {
           const badge = d ? `<span class="diff-badge diff-${d}">${d}</span>` : '';
           const hidden = !qVisible(q) ? ' hidden' : '';
           const diffCls = d ? ' diff-'+d : '';
-          // Show the original `q.category` (source/year) as a small secondary tag
-          // so users can still see which competition/category a question came from.
-          const srcTag = q.category ? `<span class="src-tag" title="${x(q.category)}">${x(q.category)}</span>` : '';
-          return `<div class="q-link${diffCls}${hidden}" id="link-${x(q.id)}" onclick="showQuestion('${x(q.id)}')">${badge}<span class="q-name">${x(q.name)}</span>${srcTag}</div>`;
+          return `<div class="q-link${diffCls}${hidden}" id="link-${x(q.id)}" onclick="showQuestion('${x(q.id)}')">${badge}<span class="q-name">${x(q.name)}</span></div>`;
         }).join('')}
       </div>
     </div>`;

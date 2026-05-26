@@ -101,9 +101,15 @@
       this.drag = null;            // node drag state
       this.pan = null;             // background pan state
       this.edgeDraft = null;       // active edge-creation state
+      this.tap = null;             // viewer-mode tap-or-pan state
+      this.pinch = null;           // 2-finger pinch state (mobile)
+      this._pointers = new Map();  // pointerId → {x, y} for multi-touch
       // Viewer-only reveal state. Given nodes (n.given === true) are
       // always visible; we only track non-given nodes here.
       this.revealedIds = new Set(opts.revealedNodeIds || []);
+      // Label bounding-box registry — reset each refresh, used for
+      // edge-label collision avoidance.
+      this._labelBoxes = [];
 
       this._build();
       this._ensurePositions();
@@ -226,10 +232,16 @@
       // Clear viewport
       while (this.viewport.firstChild) this.viewport.removeChild(this.viewport.firstChild);
       this._applyView();
+      // Reset label collision registry for this render pass
+      this._labelBoxes = [];
 
-      // Edges layer first (drawn behind nodes)
+      // Edges layer first (drawn behind nodes). Reserve the node
+      // bounding boxes in the registry so labels never overlap nodes.
       const edgesG = svg('g', { class: 'sg-edges' });
       this.viewport.appendChild(edgesG);
+      for (const n of this.scheme.nodes) {
+        this._labelBoxes.push({ x: n.x || 0, y: n.y || 0, w: NODE_W, h: NODE_H, kind: 'node' });
+      }
 
       this.scheme.edges.forEach((e, idx) => {
         const fromIds = e.from || [];
@@ -425,53 +437,184 @@
       return g;
     }
 
+    /* Compute the orthogonal-routing geometry for an edge:
+       - exit/entry points sit on the NEAREST edge of each bounding box
+         (not always on the right side)
+       - if the source and target are roughly aligned (same row or column)
+         we draw a straight line
+       - otherwise we draw a Manhattan L-bend (3 segments: out from
+         source, perpendicular cross, into target) — no curves
+       - returns the SVG path string and a "label segment" describing
+         the longest horizontal stretch where labels should land */
+    _edgeGeometry(fromN, toN) {
+      const s = {
+        left: fromN.x, right: fromN.x + NODE_W,
+        top:  fromN.y, bottom: fromN.y + NODE_H,
+        cx:   fromN.x + NODE_W / 2, cy: fromN.y + NODE_H / 2
+      };
+      const t = {
+        left: toN.x, right: toN.x + NODE_W,
+        top:  toN.y, bottom: toN.y + NODE_H,
+        cx:   toN.x + NODE_W / 2, cy: toN.y + NODE_H / 2
+      };
+      const dx = t.cx - s.cx;
+      const dy = t.cy - s.cy;
+      const adx = Math.abs(dx);
+      const ady = Math.abs(dy);
+
+      // Predominant axis: pick the side of the bounding box that is
+      // closest to the OTHER bounding box. Tie-break toward horizontal
+      // because synthesis schemes flow left→right.
+      const horizontalDominant = adx * NODE_H >= ady * NODE_W;
+
+      let sExit, tEntry, dpath, labelSeg;
+
+      if (horizontalDominant) {
+        // Exit on left/right side of source, enter on opposite side of target
+        sExit  = dx >= 0 ? { x: s.right, y: s.cy } : { x: s.left,  y: s.cy };
+        tEntry = dx >= 0 ? { x: t.left,  y: t.cy } : { x: t.right, y: t.cy };
+        if (Math.abs(sExit.y - tEntry.y) < 4) {
+          // Truly horizontal — straight line
+          dpath = `M ${sExit.x} ${sExit.y} L ${tEntry.x} ${tEntry.y}`;
+          labelSeg = { x1: sExit.x, y1: sExit.y, x2: tEntry.x, y2: tEntry.y, dir: 'h' };
+        } else {
+          // 90° bend: horizontal out, vertical cross, horizontal in
+          const midX = (sExit.x + tEntry.x) / 2;
+          dpath = `M ${sExit.x} ${sExit.y} L ${midX} ${sExit.y} L ${midX} ${tEntry.y} L ${tEntry.x} ${tEntry.y}`;
+          // Use the longer of the two horizontal segments for the label
+          const lenA = Math.abs(midX - sExit.x);
+          const lenB = Math.abs(tEntry.x - midX);
+          if (lenA >= lenB) {
+            labelSeg = { x1: sExit.x, y1: sExit.y, x2: midX, y2: sExit.y, dir: 'h' };
+          } else {
+            labelSeg = { x1: midX, y1: tEntry.y, x2: tEntry.x, y2: tEntry.y, dir: 'h' };
+          }
+        }
+      } else {
+        // Vertical dominant: exit top/bottom of source, enter opposite of target
+        sExit  = dy >= 0 ? { x: s.cx, y: s.bottom } : { x: s.cx, y: s.top    };
+        tEntry = dy >= 0 ? { x: t.cx, y: t.top    } : { x: t.cx, y: t.bottom };
+        if (Math.abs(sExit.x - tEntry.x) < 4) {
+          // Truly vertical — straight line
+          dpath = `M ${sExit.x} ${sExit.y} L ${tEntry.x} ${tEntry.y}`;
+          labelSeg = { x1: sExit.x, y1: sExit.y, x2: tEntry.x, y2: tEntry.y, dir: 'v' };
+        } else {
+          // 90° bend: vertical out, horizontal cross, vertical in
+          const midY = (sExit.y + tEntry.y) / 2;
+          dpath = `M ${sExit.x} ${sExit.y} L ${sExit.x} ${midY} L ${tEntry.x} ${midY} L ${tEntry.x} ${tEntry.y}`;
+          // The horizontal cross-segment is best for label placement
+          labelSeg = { x1: sExit.x, y1: midY, x2: tEntry.x, y2: midY, dir: 'h' };
+        }
+      }
+      return { sExit, tEntry, dpath, labelSeg };
+    }
+
     _edgeEl(fromN, toN, edge, idx, fromId) {
-      const fx = fromN.x + NODE_W;
-      const fy = fromN.y + NODE_H / 2;
-      const tx = toN.x;
-      const ty = toN.y + NODE_H / 2;
+      const geo = this._edgeGeometry(fromN, toN);
 
       const g = svg('g', {
         class: 'sg-edge' + (this._isSelected('edge', idx) ? ' selected' : ''),
         'data-edge-idx': idx, 'data-edge-from': fromId
       });
 
-      // Quadratic bezier for a gentle curve when nodes aren't aligned
-      const dx = tx - fx;
-      const cx1 = fx + Math.max(40, dx * 0.4);
-      const cx2 = tx - Math.max(40, dx * 0.4);
-      const dpath = `M ${fx} ${fy} C ${cx1} ${fy}, ${cx2} ${ty}, ${tx} ${ty}`;
-
       g.appendChild(svg('path', {
         class: 'sg-edge-line',
-        d: dpath,
+        d: geo.dpath,
         fill: 'none',
         'marker-end': this._isSelected('edge', idx) ? 'url(#sg-arrow-sel)' : 'url(#sg-arrow)'
       }));
 
-      // Wider invisible hit-area for easier clicking
+      // Wider invisible hit-area for easier clicking on the polyline
       g.appendChild(svg('path', {
         class: 'sg-edge-hit',
-        d: dpath,
+        d: geo.dpath,
         fill: 'none',
         stroke: 'transparent',
         'stroke-width': 14
       }));
 
-      const mx = (fx + tx) / 2;
-      const my = (fy + ty) / 2;
+      // Place above/below labels along the chosen segment, with
+      // collision avoidance against all previously placed labels and
+      // against node bounding boxes (registry seeded in refresh()).
+      const seg = geo.labelSeg;
+      const segLen = Math.hypot(seg.x2 - seg.x1, seg.y2 - seg.y1);
+      // Place labels relative to the midpoint of the chosen segment
+      const mx = (seg.x1 + seg.x2) / 2;
+      const my = (seg.y1 + seg.y2) / 2;
+
       if (edge.reagent_above) {
-        const t = svg('text', { class: 'sg-edge-label above', x: mx, y: my - 6, 'text-anchor': 'middle' });
+        const pos = this._placeEdgeLabel(edge.reagent_above, mx, my, seg.dir, 'above', segLen);
+        const t = svg('text', { class: 'sg-edge-label above', x: pos.x, y: pos.y, 'text-anchor': 'middle' });
         t.textContent = edge.reagent_above;
         g.appendChild(t);
       }
       if (edge.reagent_below) {
-        const t = svg('text', { class: 'sg-edge-label below', x: mx, y: my + 14, 'text-anchor': 'middle' });
+        const pos = this._placeEdgeLabel(edge.reagent_below, mx, my, seg.dir, 'below', segLen);
+        const t = svg('text', { class: 'sg-edge-label below', x: pos.x, y: pos.y, 'text-anchor': 'middle' });
         t.textContent = edge.reagent_below;
         g.appendChild(t);
       }
 
       return g;
+    }
+
+    /* Approximate label bounding box and shift away from collisions.
+       Above-labels sit ~10px over the line, below-labels ~16px under.
+       For horizontal segments we shift further along the y-axis on
+       overlap; for vertical segments we shift along the x-axis. */
+    _placeEdgeLabel(text, mx, my, dir, side, segLen) {
+      // Crude width approximation. SVG <text> measure-by-getBBox would
+      // be exact but requires a render pass — this is good enough to
+      // avoid most overlaps and keeps render deterministic.
+      const charW = 6.4;
+      const lineH = 14;
+      const w = Math.min(160, Math.max(28, text.length * charW + 4));
+      const h = lineH + 2;
+
+      // Initial offset perpendicular to segment
+      const offAbove = 9;
+      const offBelow = 15;
+      let x = mx, y = my;
+      if (dir === 'h') {
+        y = my + (side === 'above' ? -offAbove : offBelow);
+      } else {
+        // Vertical segment: place labels to the LEFT (above) and RIGHT (below)
+        x = mx + (side === 'above' ? -(w / 2 + 8) : (w / 2 + 8));
+        y = my + 4;
+      }
+
+      const bbox = () => ({ x: x - w / 2, y: y - lineH + 2, w, h });
+      const shiftStep = (side === 'above' ? -lineH : lineH);
+      const altShiftStep = (side === 'above' ? -w * 0.55 : w * 0.55);
+
+      // Up to 8 shift attempts: alternate perpendicular and along-segment
+      for (let attempt = 0; attempt < 8; attempt++) {
+        if (!this._collidesWithRegistry(bbox())) break;
+        if (attempt < 4) {
+          if (dir === 'h') y += shiftStep;
+          else             x += (side === 'above' ? -lineH : lineH);
+        } else {
+          // Switch to shifting along the segment direction
+          if (dir === 'h') x += altShiftStep;
+          else             y += altShiftStep;
+        }
+      }
+
+      this._labelBoxes.push(Object.assign(bbox(), { kind: 'label' }));
+      return { x, y };
+    }
+
+    _collidesWithRegistry(b) {
+      // AABB intersection check with a tiny tolerance
+      const pad = 2;
+      for (const r of this._labelBoxes) {
+        if (b.x + b.w + pad < r.x) continue;
+        if (r.x + r.w + pad < b.x) continue;
+        if (b.y + b.h + pad < r.y) continue;
+        if (r.y + r.h + pad < b.y) continue;
+        return true;
+      }
+      return false;
     }
 
     /* ─── Helpers ─────────────────────────────────────────────── */
@@ -673,6 +816,20 @@
       const edgeEl = e.target.closest('.sg-edge');
       this.svg.focus();
 
+      // Track every active pointer for multi-touch gestures
+      this._pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      // 2-finger pinch: cancel any single-pointer gesture and switch to pinch mode
+      if (this._pointers.size >= 2) {
+        this.drag = null;
+        this.edgeDraft = null;
+        this.tap = null;
+        this.pan = null;
+        this.pinch = this._initPinchState();
+        // Don't preventDefault on the 2nd pointer — let SVG capture both
+        try { this.svg.setPointerCapture(e.pointerId); } catch (_) {}
+        return;
+      }
+
       // Edit-only: handle-drag starts an edge
       if (handleEl && !this.readOnly) {
         e.preventDefault();
@@ -730,6 +887,15 @@
     }
 
     _onPointerMove(e) {
+      // Keep pointer registry up to date (used by pinch state)
+      if (this._pointers.has(e.pointerId)) {
+        this._pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      }
+      // Pinch: 2-finger pan + zoom
+      if (this.pinch && this._pointers.size >= 2) {
+        this._applyPinch();
+        return;
+      }
       // Viewer tap → upgrade to pan once finger/cursor moves
       if (this.tap && e.pointerId === this.tap.pointerId) {
         const dx = e.clientX - this.tap.startX;
@@ -773,6 +939,14 @@
     }
 
     _onPointerUp(e) {
+      // Remove from active pointer registry
+      this._pointers.delete(e.pointerId);
+      // End pinch when we drop below 2 fingers
+      if (this.pinch && this._pointers.size < 2) {
+        this.pinch = null;
+        try { this.svg.releasePointerCapture(e.pointerId); } catch (_) {}
+        return;
+      }
       // Viewer tap finalize: if it didn't morph into a pan, fire onNodeClick
       if (this.tap && e.pointerId === this.tap.pointerId) {
         const wasMoved = this.tap.moved;
@@ -838,12 +1012,52 @@
     }
 
     _onClick(e) {
-      if (this.drag || this.edgeDraft) return; // suppress click after drag
+      if (this.drag || this.edgeDraft || this.pinch) return; // suppress click after gesture
       const edgeEl = e.target.closest('.sg-edge');
       if (edgeEl) {
         e.stopPropagation();
         this.select('edge', parseInt(edgeEl.dataset.edgeIdx, 10));
       }
+    }
+
+    /* ─── Pinch (2-finger) zoom + pan for touch devices ─────── */
+
+    _initPinchState() {
+      const pts = [...this._pointers.values()];
+      if (pts.length < 2) return null;
+      const dx = pts[1].x - pts[0].x;
+      const dy = pts[1].y - pts[0].y;
+      return {
+        startDist: Math.max(1, Math.hypot(dx, dy)),
+        startMidX: (pts[0].x + pts[1].x) / 2,
+        startMidY: (pts[0].y + pts[1].y) / 2,
+        startScale: this.scale,
+        startViewX: this.viewX,
+        startViewY: this.viewY
+      };
+    }
+
+    _applyPinch() {
+      if (!this.pinch) return;
+      const pts = [...this._pointers.values()];
+      if (pts.length < 2) return;
+      const dx = pts[1].x - pts[0].x;
+      const dy = pts[1].y - pts[0].y;
+      const curDist = Math.max(1, Math.hypot(dx, dy));
+      const curMidX = (pts[0].x + pts[1].x) / 2;
+      const curMidY = (pts[0].y + pts[1].y) / 2;
+      const factor = curDist / this.pinch.startDist;
+      const newScale = Math.max(0.25, Math.min(2.5, this.pinch.startScale * factor));
+
+      const r = this.svg.getBoundingClientRect();
+      // World point under the initial midpoint should stay under the
+      // current midpoint while we change scale.
+      const wx0 = (this.pinch.startMidX - r.left - this.pinch.startViewX) / this.pinch.startScale;
+      const wy0 = (this.pinch.startMidY - r.top  - this.pinch.startViewY) / this.pinch.startScale;
+      this.scale = newScale;
+      this.viewX = (curMidX - r.left) - wx0 * newScale;
+      this.viewY = (curMidY - r.top)  - wy0 * newScale;
+      this._applyView();
     }
 
     _redrawEdgesTouching(nodeId) {

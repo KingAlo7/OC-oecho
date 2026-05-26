@@ -1220,12 +1220,8 @@ function renderNodeDetail(n, key, editor) {
     <div class="sg-detail-head">Knoten ${x(n.label || n.id)}
       <span style="font-weight:400;color:var(--muted);font-size:0.7rem">${editor._degreeOf(n.id).in} eingehend · ${editor._degreeOf(n.id).out} ausgehend</span>
     </div>
-    <div class="row2">
-      <div class="field"><label>ID / Label</label>
-        <input id="nd-id" value="${x(n.id||'')}" oninput="__patchSelectedNode('${x(key)}','id', this.value)"></div>
-      <div class="field"><label>Vollständiger Name</label>
-        <input id="nd-name" value="${x(n.name||'')}" placeholder="z. B. (R)-Tropasäure" oninput="__patchSelectedNode('${x(key)}','name', this.value)"></div>
-    </div>
+    <div class="field"><label>ID / Label</label>
+      <input id="nd-id" value="${x(n.id||'')}" oninput="__patchSelectedNode('${x(key)}','id', this.value)"></div>
     <div class="field"><label style="display:flex;align-items:center;gap:0.45rem;cursor:pointer"><input type="checkbox" id="nd-given" ${n.given?'checked':''} onchange="__patchSelectedNode('${x(key)}','given', this.checked)"> Vorgegeben (immer sichtbar — sonst Reveal-Karte)</label></div>
     <div class="field"><label>Erläuterung (sichtbar nach Reveal)</label>
       <textarea id="nd-expl" oninput="__patchSelectedNode('${x(key)}','explanation', this.value)">${x(n.explanation||'')}</textarea></div>
@@ -2394,7 +2390,6 @@ function _serializeScheme(scheme) {
   const out = { nodes: [], edges: [] };
   out.nodes = (scheme.nodes || []).map(n => {
     const o = { id: n.id || '', label: n.label || n.id || '', given: !!n.given };
-    if (n.name)        o.name = n.name;
     if (n.mol)         o.mol = n.mol;
     if (n.smiles)      o.smiles = n.smiles;
     if (n.explanation) o.explanation = n.explanation;
