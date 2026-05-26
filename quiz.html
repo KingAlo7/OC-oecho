@@ -10,6 +10,7 @@
 <script src="https://cdn.jsdelivr.net/npm/openchemlib/dist/openchemlib-full.js"></script>
 <script src="./reaction-drawer.js"></script>
 <script src="./mol-renderer.js"></script>
+<script src="./scheme-graph-editor.js"></script>
 <style>
 :root {
   --bg:#faf9f5;
@@ -34,6 +35,7 @@
   --sidebar:280px;
   --shadow-sm:0 1px 2px rgba(60,55,40,0.04);
   --shadow-md:0 2px 8px rgba(60,55,40,0.06);
+  --header-h:56px;
   --diff-A:#6fa385; --diff-A-soft:rgba(111,163,133,0.10);
   --diff-B:#7491b8; --diff-B-soft:rgba(116,145,184,0.10);
   --diff-C:#b8884d; --diff-C-soft:rgba(184,136,77,0.10);
@@ -45,6 +47,9 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-ap
 
 header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.25rem;height:56px;display:flex;align-items:center;gap:1rem;flex-shrink:0;z-index:20;box-shadow:var(--shadow-sm);}
 .brand{display:flex;align-items:center;gap:0.6rem;flex-shrink:0;}
+.brand-home{text-decoration:none;color:inherit;transition:opacity 0.12s;-webkit-tap-highlight-color:transparent;}
+.brand-home:hover{opacity:0.78;}
+.brand-home:active{opacity:0.6;}
 .brand-logo{width:30px;height:30px;color:var(--accent);}
 .brand-logo svg{width:100%;height:100%;display:block;}
 .brand-name{font-size:1.05rem;font-weight:700;letter-spacing:-0.01em;white-space:nowrap;}
@@ -60,7 +65,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .nav-link.muted:hover{background:var(--surface2);color:var(--text);border-color:var(--muted);}
 .count-badge{font-size:0.75rem;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:0.22rem 0.7rem;}
 
-.layout{display:flex;flex:1;overflow:hidden;height:calc(100vh - 56px);}
+.layout{display:flex;flex:1;overflow:hidden;height:calc(100vh - var(--header-h));}
 
 .sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0;display:flex;flex-direction:column;}
 .sidebar::-webkit-scrollbar{width:6px;}
@@ -97,6 +102,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .q-link.diff-C:not(.active){border-left-color:var(--diff-C-soft);}
 .q-link.diff-D:not(.active){border-left-color:var(--diff-D-soft);}
 .type-tag{font-size:0.6rem;padding:0.05rem 0.35rem;border-radius:3px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);font-weight:600;text-transform:uppercase;letter-spacing:0.04em;}
+.src-tag{font-size:0.58rem;padding:0.05rem 0.3rem;border-radius:3px;background:transparent;color:var(--muted2);border:1px solid var(--border);font-weight:500;flex-shrink:0;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
 .main{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
 .main::-webkit-scrollbar{width:8px;}
@@ -150,7 +156,8 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .reveal-btn.sec:hover{background:var(--surface2);border-color:var(--muted);}
 
 .answer-block{display:none;margin-top:0.8rem;background:var(--green-soft);border:1px solid var(--green);border-radius:8px;padding:0.9rem 1rem;}
-.step-card.revealed .answer-block{display:block;}
+.step-card.revealed .answer-block,
+.mech-step.revealed .answer-block{display:block;}
 .step-card.revealed .reveal-btn{display:none;}
 .answer-head{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--green);margin-bottom:0.55rem;display:flex;align-items:center;gap:0.5rem;}
 .answer-struct{background:#fff;border:1px solid var(--border);border-radius:6px;padding:0.9rem;display:flex;justify-content:center;align-items:center;min-height:110px;overflow-x:auto;}
@@ -215,6 +222,15 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .final-card.revealed .reveal-btn{display:none;}
 .final-name{font-size:0.95rem;font-weight:700;margin-top:0.6rem;text-align:center;}
 
+/* Modular sections — one per "section" inside a composite question */
+.q-section{margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid var(--border);}
+.q-section:first-child{margin-top:0;padding-top:0;border-top:none;}
+.q-section.q-section-intro{margin-top:0.5rem;padding-top:0.5rem;border-top:none;}
+.section-header{margin-bottom:0.9rem;}
+.section-title{font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;letter-spacing:-0.01em;display:flex;align-items:center;gap:0.5rem;}
+.section-title::before{content:'';width:3px;height:1.1rem;background:var(--accent);border-radius:2px;}
+.section-body{font-size:0.92rem;color:var(--text-soft);line-height:1.7;white-space:pre-wrap;}
+
 /* Scheme empty-state (no nodes yet) */
 .scheme-empty{padding:3rem 2rem;text-align:center;color:var(--muted);background:var(--surface2);border-radius:8px;border:1px dashed var(--border2);}
 .scheme-empty .upl-hint{margin-top:0.5rem;font-size:0.82rem;color:var(--muted2);}
@@ -228,7 +244,45 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .scheme-toolbar button{background:var(--surface);border:1px solid var(--border);color:var(--text-soft);padding:0.35rem 0.8rem;border-radius:7px;font-size:0.78rem;cursor:pointer;font-family:inherit;transition:all 0.15s;}
 .scheme-toolbar button:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
 
-/* ── Composed scheme (nodes + arrows flowchart) ──────────────────── */
+/* ── SchemeGraphEditor (viewer mode) — synthesis scheme as SVG graph,
+   visually identical to admin's editor (same node sizes, curved arrows,
+   layout). The reveal interaction replaces the editor's drag/edit. ─── */
+.sg-host{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow-sm);margin-bottom:1.2rem;}
+.sg-toolbar-viewer{display:flex;align-items:center;gap:0.4rem;padding:0.45rem 0.7rem;background:var(--surface2);border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.sg-toolbar-viewer .sg-btn{background:var(--surface);border:1px solid var(--border);color:var(--text-soft);padding:0.32rem 0.7rem;border-radius:6px;font-size:0.76rem;cursor:pointer;font-family:inherit;font-weight:600;}
+.sg-toolbar-viewer .sg-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
+.sg-toolbar-viewer .sg-zoom-label{font-size:0.7rem;color:var(--muted);font-family:ui-monospace,monospace;padding:0 0.3rem;}
+.sg-toolbar-viewer .sg-hint{font-size:0.7rem;color:var(--muted2);margin-left:auto;font-style:italic;max-width:60%;text-align:right;}
+
+.sg-host .sg-canvas{display:block;width:100%;height:480px;background:repeating-linear-gradient(0deg,#fdfcf6 0,#fdfcf6 19px,#f3f2e8 19px,#f3f2e8 20px),repeating-linear-gradient(90deg,#fdfcf6 0,#fdfcf6 19px,#f3f2e8 19px,#f3f2e8 20px);cursor:grab;outline:none;touch-action:none;user-select:none;}
+.sg-host .sg-canvas:active{cursor:grabbing;}
+.sg-readonly .sg-canvas{cursor:default;}
+
+/* Node styling shared with admin — duplicated here so quiz works
+   standalone (admin loads its own copy). */
+.sg-node{cursor:pointer;}
+.sg-node-bg{fill:#ffffff;stroke:#cfceb8;stroke-width:1.5;}
+.sg-node.given .sg-node-bg{fill:#f3f3ec;}
+.sg-node.hidden .sg-node-bg{fill:#fffbe8;stroke:#e2001a;stroke-width:2;stroke-dasharray:5 3;}
+.sg-readonly .sg-node.hidden:hover .sg-node-bg{fill:rgba(255,251,232,0.6);filter:drop-shadow(0 2px 6px rgba(226,0,26,0.25));}
+.sg-node.revealed .sg-node-bg{fill:#fff;stroke:#5a8a2a;stroke-width:1.8;}
+.sg-node-label{font:bold 12px 'Segoe UI',system-ui,sans-serif;fill:#e2001a;letter-spacing:0.02em;pointer-events:none;}
+.sg-node-name{font:11px 'Segoe UI',system-ui,sans-serif;fill:#6b6a5d;pointer-events:none;}
+.sg-q{font:bold 32px 'Segoe UI',system-ui,sans-serif;color:#e2001a;letter-spacing:0;line-height:1;}
+.sg-info-badge circle{fill:#5a8a2a;stroke:#fff;stroke-width:2;}
+.sg-info-badge text{font:bold 11px 'Segoe UI',system-ui,sans-serif;fill:#fff;pointer-events:none;}
+.sg-ph{font:italic 11px 'Segoe UI',system-ui,sans-serif;color:#9a9889;}
+
+.sg-edge-line{stroke:#3a3a35;stroke-width:1.8;fill:none;}
+.sg-edge-label{font:500 11px 'Segoe UI',system-ui,sans-serif;fill:#3a3a35;pointer-events:none;}
+.sg-edge-label.below{fill:#6b6a5d;font-size:10px;}
+.sg-edge-orphan{stroke:#b87a00;}
+
+@keyframes sg-reveal { 0% { transform: scale(0.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+.sg-node.revealed .sg-struct-host > svg, .sg-node.revealed .sg-struct-host > img { animation: sg-reveal 0.32s ease-out; }
+
+/* ── Composed scheme (legacy flex-flow) ─ kept for any non-composed
+   synthesis questions that haven't been migrated to the SVG viewer ── */
 .composed-scheme{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.2rem 1rem;box-shadow:var(--shadow-sm);margin-bottom:1.2rem;}
 .flow{display:flex;flex-wrap:wrap;gap:0.4rem 0.3rem;align-items:stretch;justify-content:flex-start;}
 .flow-node{flex:0 0 auto;min-width:160px;max-width:220px;display:flex;flex-direction:column;align-items:center;gap:0.3rem;padding:0.5rem;border:1px solid var(--border);border-radius:8px;background:#fff;cursor:default;transition:all 0.15s;position:relative;}
@@ -271,14 +325,111 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .composed-info-actions{display:flex;gap:0.4rem;flex-wrap:wrap;align-items:center;}
 @keyframes slide-in { from { transform: translateY(20px); opacity:0; } to { transform: translateY(0); opacity:1; } }
 
+/* ════════════════════════════════════════════════════════════════════
+   MOBILE (≤ 760px) — comprehensive responsive overrides
+   ════════════════════════════════════════════════════════════════════ */
 @media(max-width:760px){
-  .sidebar{position:fixed;left:-100%;top:56px;height:calc(100vh - 56px);z-index:30;transition:left 0.25s;width:min(300px,85vw);box-shadow:var(--shadow-md);}
-  .sidebar.open{left:0;}
-  .hamburger{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid var(--border);border-radius:7px;background:var(--surface);cursor:pointer;color:var(--text);font-size:1.1rem;}
-  .q-page{padding:1.1rem;}
+  :root{--header-h:94px;}
+
+  /* Header: two-row layout — brand + actions on row 1, search full-width on row 2 */
+  header{flex-wrap:wrap;row-gap:0.45rem;padding:0.5rem 0.85rem;height:auto;min-height:56px;
+    padding-top:max(0.5rem, env(safe-area-inset-top));align-items:center;}
+  .brand{gap:0.5rem;}
+  .brand-name{font-size:0.95rem;}
   .brand-sub{display:none;}
-  .nav-link{padding:0.28rem 0.55rem;font-size:0.76rem;}
+  .search-wrap{flex-basis:100%;order:10;max-width:none;}
+  #search{padding:0.5rem 0.8rem 0.5rem 2.1rem;font-size:0.92rem;border-radius:9px;}
+  .header-right{gap:0.3rem;margin-left:auto;}
+  .count-badge{display:none;}
+  .nav-link{font-size:0.74rem;padding:0.32rem 0.55rem;min-height:32px;display:inline-flex;align-items:center;}
+  .hamburger{display:flex;align-items:center;justify-content:center;width:38px;height:38px;
+    border:1px solid var(--border);border-radius:8px;background:var(--surface);cursor:pointer;
+    color:var(--text);font-size:1.18rem;flex-shrink:0;-webkit-tap-highlight-color:transparent;}
+  .hamburger:active{background:var(--surface2);}
+
+  /* Sidebar drawer — uses transform for smoother GPU-accelerated slide */
+  .sidebar{position:fixed;left:0;top:var(--header-h);
+    height:calc(100vh - var(--header-h));z-index:30;
+    transform:translateX(-100%);transition:transform 0.22s ease-out;
+    width:min(310px,88vw);box-shadow:var(--shadow-md);will-change:transform;}
+  .sidebar.open{transform:translateX(0);}
+  .overlay{top:var(--header-h);}
+
+  /* Welcome */
+  .welcome{padding:1.75rem 1.1rem;}
+  .welcome-logo{width:72px;height:72px;margin-bottom:1rem;}
+  .welcome h1{font-size:1.45rem;}
+  .welcome p{font-size:0.88rem;max-width:100%;margin-bottom:1.4rem;}
+  .welcome-stats{gap:0.4rem;}
+  .stat-pill{padding:0.45rem 0.75rem;font-size:0.74rem;}
+
+  /* Question page — reduced padding, room for bottom-sheet */
+  .q-page{padding:0.85rem 0.85rem 5rem;}
+  .q-title{font-size:1.25rem;line-height:1.25;}
+  .q-source{font-size:0.74rem;}
+  .q-intro{padding:0.75rem 0.9rem;font-size:0.86rem;line-height:1.6;border-radius:8px;}
+  .q-breadcrumb{font-size:0.72rem;gap:0.3rem;}
+
+  /* Section headers */
+  .section-header{font-size:0.95rem;}
+
+  /* Scheme toolbar */
+  .scheme-toolbar{gap:0.4rem;}
+  .scheme-toolbar button{padding:0.42rem 0.7rem;font-size:0.74rem;}
+  .scheme-toolbar .prog{font-size:0.72rem;min-width:120px;}
+
+  /* SYNTHESIS FLOW — horizontal scroll instead of wrap */
+  .composed-scheme{padding:0.85rem 0.45rem 1rem;position:relative;
+    /* fade-out edge hint to suggest scrollability */
+    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 12px,#000 calc(100% - 12px),transparent 100%);
+    mask-image:linear-gradient(90deg,transparent 0,#000 12px,#000 calc(100% - 12px),transparent 100%);}
+  .flow{flex-wrap:nowrap;overflow-x:auto;overflow-y:visible;padding:6px 0.5rem 0.5rem;
+    gap:0.3rem 0.25rem;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;
+    scrollbar-width:thin;}
+  .flow::-webkit-scrollbar{height:5px;}
+  .flow::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+  .flow-node{min-width:140px;max-width:160px;scroll-snap-align:center;flex:0 0 auto;}
+  .flow-node .struct{min-height:100px;}
+  .flow-node .label{font-size:0.74rem;}
+  .flow-node .name{font-size:0.7rem;}
+  .flow-arrow{min-width:62px;font-size:0.7rem;}
+  .flow-arrow .arrow-line{width:46px;}
+  .flow-arrow .rl-above,.flow-arrow .rl-below{max-width:80px;font-size:0.68rem;}
+  .flow-break{display:none;} /* disable forced zigzag row-break on mobile */
+  .flow-uturn{display:none;}
+
+  /* Composed info → bottom-sheet on mobile */
+  .composed-info{position:fixed;left:0;right:0;bottom:0;top:auto;width:auto;
+    max-height:72vh;overflow-y:auto;border-radius:14px 14px 0 0;
+    border:1px solid var(--green);border-bottom:none;
+    padding:1rem 1.1rem 1.25rem;
+    padding-bottom:calc(1.25rem + env(safe-area-inset-bottom));
+    box-shadow:0 -10px 32px rgba(60,55,40,0.22);}
+  .composed-info-close{top:8px;right:12px;font-size:1.5rem;padding:4px 10px;line-height:1;}
+  .composed-info-head{font-size:0.78rem;}
+  .composed-info-name{font-size:1rem;}
+  .composed-info-expl{font-size:0.88rem;line-height:1.6;}
+
+  /* MCQ choices: tap-friendly */
+  .mcq-choice{padding:0.7rem 0.85rem;min-height:48px;}
+  .mcq-choice .lbl{min-width:0;font-size:0.88rem;}
+
+  /* Hide answer-struct overflow gracefully */
+  .answer-struct{padding:0.6rem;}
 }
+
+/* Tiny phones (≤ 380px) */
+@media(max-width:380px){
+  .nav-link{padding:0.3rem 0.45rem;font-size:0.7rem;}
+  .brand-name{font-size:0.85rem;}
+  .brand-logo{width:26px;height:26px;}
+  .hamburger{width:36px;height:36px;}
+  .flow-node{min-width:128px;max-width:144px;}
+  .flow-arrow{min-width:54px;}
+  .flow-arrow .arrow-line{width:36px;}
+  .welcome h1{font-size:1.3rem;}
+}
+
 @media(min-width:761px){.hamburger{display:none;}}
 .overlay{display:none;position:fixed;inset:0;background:rgba(60,55,40,0.35);z-index:25;}
 .overlay.open{display:block;}
@@ -288,13 +439,13 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 
 <header>
   <button class="hamburger" onclick="toggleSidebar()" aria-label="Menü">☰</button>
-  <div class="brand">
+  <a href="./index.html" class="brand brand-home" title="Zur Startseite — Reaktions-Referenz">
     <div class="brand-logo">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="14 52 174 187"><path fill="#ff0000" d="M 153.27953,54.242684 141.3862,76.472852 73.360897,76.250643 39.904024,139.16308 16.228467,139.27419 v 13.11599 l 23.452832,0.22273 34.124015,62.80081 68.025306,0.11111 11.33781,21.56406 10.67067,-6.55826 -11.67113,-22.11958 33.79071,-62.80082 -34.12402,-62.801331 12.11554,-21.897371 z m -12.0804,35.318258 30.29893,56.472008 -30.37747,56.07874 -60.322938,0.1571 -30.220377,-56.35367 30.220377,-56.27563 z m 13.04727,56.216728 -22.51801,41.95092 3.81166,2.31872 22.518,-41.87289 c 0,0 2.9e-4,-0.0192 -3.81165,-2.39675 z"/></svg>
     </div>
     <span class="brand-name">OC Quiz</span>
     <span class="brand-sub">ÖChO</span>
-  </div>
+  </a>
   <div class="search-wrap">
     <span class="search-icon">⌕</span>
     <input id="search" type="text" placeholder="Fragen suchen…" oninput="globalSearch(this.value)" autocomplete="off">
@@ -361,21 +512,58 @@ async function init() {
   if (hash) { const q = questions.find(x => x.id === hash); if (q) showQuestion(hash); }
 }
 
-function categories() { return [...new Set(questions.map(q => q.category))]; }
+/* ── Primary-type classification for sidebar grouping ────────────────
+   A "composed" question (has `sections: []`) is classified by its
+   most prominent section type. Order of precedence: synthesis →
+   mechanism → multiple_choice → short_answer. Non-composed questions
+   use their plain `q.type` field. */
+function qPrimaryType(q) {
+  if (Array.isArray(q.sections) && q.sections.length) {
+    const types = q.sections.map(s => s.type);
+    if (types.includes('synthesis'))       return 'synthesis';
+    if (types.includes('mechanism'))       return 'mechanism';
+    if (types.includes('multiple_choice')) return 'multiple_choice';
+    if (types.includes('short_answer'))    return 'short_answer';
+    return 'composed';
+  }
+  return q.type || 'composed';
+}
+
+/* Display order + labels for the four primary type-groups. */
+const TYPE_GROUP_ORDER = ['synthesis', 'mechanism', 'multiple_choice', 'short_answer'];
+const TYPE_GROUP_LABEL = {
+  synthesis:       'Synthese-Aufgaben',
+  mechanism:       'Mechanismen',
+  multiple_choice: 'Multiple Choice',
+  short_answer:    'Theorie / Kurzantwort',
+  composed:        'Sonstige'
+};
 
 function qVisible(q) {
   return !q.difficulty || diffFilter.has(q.difficulty);
 }
 
 function buildSidebar() {
-  const cats = categories();
-  document.getElementById('cat-list').innerHTML = cats.map(cat => {
-    const items = questions.filter(q => q.category === cat);
+  // Group questions by primary type instead of free-form category.
+  const groups = {};
+  for (const q of questions) {
+    const t = qPrimaryType(q);
+    (groups[t] = groups[t] || []).push(q);
+  }
+  // Render in the canonical order, then any unknown types alphabetically.
+  const orderedTypes = [
+    ...TYPE_GROUP_ORDER.filter(t => groups[t]),
+    ...Object.keys(groups).filter(t => !TYPE_GROUP_ORDER.includes(t)).sort()
+  ];
+
+  document.getElementById('cat-list').innerHTML = orderedTypes.map(typeKey => {
+    const items = groups[typeKey];
+    const label = TYPE_GROUP_LABEL[typeKey] || typeKey;
     const visibleN = items.filter(qVisible).length;
-    return `<div class="cat-group" data-cat="${x(cat)}"${visibleN===0?' style="display:none"':''}>
+    return `<div class="cat-group" data-cat="${x(typeKey)}"${visibleN===0?' style="display:none"':''}>
       <div class="cat-header" onclick="toggleCat(this)">
         <span class="cat-arrow">▶</span>
-        <span>${x(cat)}</span>
+        <span>${x(label)}</span>
         <span class="cat-count">${visibleN}</span>
       </div>
       <div class="cat-items">
@@ -384,8 +572,10 @@ function buildSidebar() {
           const badge = d ? `<span class="diff-badge diff-${d}">${d}</span>` : '';
           const hidden = !qVisible(q) ? ' hidden' : '';
           const diffCls = d ? ' diff-'+d : '';
-          const typeTag = q.type ? `<span class="type-tag">${TYPE_LABEL[q.type]||q.type}</span>` : '';
-          return `<div class="q-link${diffCls}${hidden}" id="link-${x(q.id)}" onclick="showQuestion('${x(q.id)}')">${badge}<span class="q-name">${x(q.name)}</span>${typeTag}</div>`;
+          // Show the original `q.category` (source/year) as a small secondary tag
+          // so users can still see which competition/category a question came from.
+          const srcTag = q.category ? `<span class="src-tag" title="${x(q.category)}">${x(q.category)}</span>` : '';
+          return `<div class="q-link${diffCls}${hidden}" id="link-${x(q.id)}" onclick="showQuestion('${x(q.id)}')">${badge}<span class="q-name">${x(q.name)}</span>${srcTag}</div>`;
         }).join('')}
       </div>
     </div>`;
@@ -491,7 +681,20 @@ function renderSynthesis(q) {
 // resetReveals: shared by composed (replaces the overlay-only definition).
 window.resetReveals = function(qid) { showQuestion(qid); };
 
-/* ── Composed-mode synthesis: nodes + arrows flowchart ───────────── */
+/* ── Composed-mode synthesis: SVG graph viewer (same visuals as admin) ──
+   Mounts a SchemeGraphEditor in readOnly mode. The editor handles
+   layout (using saved x/y if present, BFS-layered fallback otherwise),
+   curved edges, and pan/zoom. We wire `onNodeClick` to the existing
+   reveal + info-popup logic.
+
+   The OLD flex-flow renderer is preserved below the new code (function
+   `renderComposedSchemeLegacy`) as a defensive fallback in case
+   SchemeGraphEditor is unavailable. */
+
+// Track active viewer instance(s) per question so we can clean up on
+// re-show and so the toolbar's "Reveal all" / "Reset" buttons can
+// drive the right editor. Keyed by question id.
+const _quizGraphViewers = {};
 
 function renderComposedScheme(q, scheme) {
   const nodes = scheme.nodes || [];
@@ -500,6 +703,116 @@ function renderComposedScheme(q, scheme) {
     return `<div class="composed-scheme"><div class="scheme-empty">
       <strong>Noch keine Strukturen.</strong>
       <div class="upl-hint">Im Admin → Quiz → diese Frage öffnen → Knoten anlegen (mit MOL- oder SMILES-Daten) und mit Pfeilen verbinden.</div>
+    </div></div>`;
+  }
+
+  // Defensive fallback if the editor module didn't load
+  if (typeof window.SchemeGraphEditor !== 'function') {
+    return renderComposedSchemeLegacy(q, scheme);
+  }
+
+  const hiddenCount = nodes.filter(n => !n.given).length;
+  const containerId = 'sg-view-' + q.id;
+  // Info popups (one per hidden node) — same structure as before so we
+  // can reuse the existing CSS + open/close handlers.
+  const infoPanels = nodes.filter(n => !n.given).map(n => {
+    const slot = q.id + '-n-' + n.id;
+    return `<div class="composed-info" id="info-${x(slot)}">
+      <button class="composed-info-close" onclick="closeNodeInfo('${x(slot)}')">×</button>
+      <div class="composed-info-head">${x(n.label || n.id)} aufgedeckt</div>
+      ${n.name ? `<div class="composed-info-name">${x(n.name)}</div>` : ''}
+      ${n.explanation ? `<div class="composed-info-expl">${x(n.explanation)}</div>` : ''}
+      ${n.note ? `<div class="composed-info-expl" style="font-style:italic;color:var(--muted)">${x(n.note)}</div>` : ''}
+      <div class="composed-info-actions">${relatedLink(n.related_reaction_id)}</div>
+    </div>`;
+  }).join('');
+
+  // Mount the editor right after DOM insertion
+  setTimeout(() => {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    // Tear down any previous viewer for this question
+    if (_quizGraphViewers[q.id]) { try { _quizGraphViewers[q.id].destroy(); } catch (_) {} }
+    const viewer = new window.SchemeGraphEditor(container, scheme, {
+      readOnly: true,
+      onNodeClick: (n) => onQuizNodeClick(q.id, n)
+    });
+    _quizGraphViewers[q.id] = viewer;
+    // First-paint: fit to content so the whole synthesis is visible
+    requestAnimationFrame(() => viewer.fitToContent());
+    // Re-run fit once on next frame in case fonts / SVG layouts settled later
+    setTimeout(() => viewer.fitToContent(), 250);
+    updateQuizProgress(q.id);
+  }, 0);
+
+  // Toolbar (progress, reveal-all, reset) sits above the canvas
+  const toolbar = `<div class="scheme-toolbar">
+    <div class="prog"><span id="prog-text-${x(q.id)}">0 / ${hiddenCount} aufgedeckt</span>
+      <div class="prog-bar"><div class="prog-fill" id="prog-fill-${x(q.id)}" style="width:0%"></div></div>
+    </div>
+    <button onclick="quizRevealAll('${x(q.id)}')">Alle aufdecken</button>
+    <button onclick="quizResetReveals('${x(q.id)}')">Zurücksetzen</button>
+  </div>`;
+
+  return toolbar
+    + `<div id="${containerId}" class="sg-viewer-host"></div>`
+    + infoPanels;
+}
+
+/* Click handler for a quiz node: hidden → reveal with animation;
+   already-revealed or given → show the info popup. */
+window.onQuizNodeClick = function(qid, node) {
+  const v = _quizGraphViewers[qid];
+  if (!v) return;
+  const isHidden = !node.given && !v.revealedIds.has(node.id);
+  if (isHidden) {
+    v.setRevealed(node.id, true);
+    updateQuizProgress(qid);
+    // Auto-open info popup so user gets immediate feedback
+    openNodeInfo(qid + '-n-' + node.id);
+  } else {
+    // Revealed or given — show info if we have anything to say
+    if (!node.given) openNodeInfo(qid + '-n-' + node.id);
+  }
+};
+
+window.quizRevealAll = function(qid) {
+  const v = _quizGraphViewers[qid];
+  if (!v) return;
+  for (const n of v.scheme.nodes) {
+    if (!n.given) v.revealedIds.add(n.id);
+  }
+  v.refresh();
+  updateQuizProgress(qid);
+};
+
+window.quizResetReveals = function(qid) {
+  const v = _quizGraphViewers[qid];
+  if (!v) return;
+  v.resetReveals();
+  updateQuizProgress(qid);
+  // Close any open info panels
+  document.querySelectorAll('.composed-info.open').forEach(el => el.classList.remove('open'));
+};
+
+function updateQuizProgress(qid) {
+  const v = _quizGraphViewers[qid];
+  if (!v) return;
+  const c = v.countHidden();
+  const txt = document.getElementById('prog-text-' + qid);
+  const bar = document.getElementById('prog-fill-' + qid);
+  if (txt) txt.textContent = `${c.revealed} / ${c.total} aufgedeckt`;
+  if (bar) bar.style.width = (c.total ? (c.revealed / c.total * 100) : 0) + '%';
+}
+
+/* Legacy flex-flow renderer kept as a defensive fallback. Identical
+   to the implementation that existed before the SVG viewer migration. */
+function renderComposedSchemeLegacy(q, scheme) {
+  const nodes = scheme.nodes || [];
+  const edges = scheme.edges || [];
+  if (!nodes.length) {
+    return `<div class="composed-scheme"><div class="scheme-empty">
+      <strong>Noch keine Strukturen.</strong>
     </div></div>`;
   }
 
@@ -525,7 +838,12 @@ function renderComposedScheme(q, scheme) {
         <div class="name">${x(n.name || '')}</div>
       </div>`;
     }
-    return `<div class="flow-node hidden" id="node-${x(slot)}" data-slot="${x(slot)}" onclick="revealNode('${x(slot)}')">
+    // Embed the structure data on the DOM so revealNode doesn't need to
+    // walk the global `questions` array — sections can then carry their
+    // own node data independently of the parent-question lookup.
+    return `<div class="flow-node hidden" id="node-${x(slot)}" data-slot="${x(slot)}"
+                data-input="${x(n.mol || n.smiles || '')}" data-ismol="${n.mol?1:0}"
+                onclick="revealNode('${x(slot)}')">
       <div class="struct"><span>?</span></div>
       <div class="label">${x(n.label || n.id)}</div>
       <div class="name">${x(n.name || '')}</div>
@@ -630,25 +948,25 @@ window.revealNode = function(slot) {
   if (!n || n.classList.contains('revealed')) return;
   n.classList.remove('hidden');
   n.classList.add('revealed');
-  // Restore the structure into the .struct child
+  // Read structure data from the DOM (embedded on the node element itself).
+  // No dependency on the global `questions` array — works for sections too.
+  const input = n.dataset.input || '';
+  const isMol = n.dataset.ismol === '1';
   const struct = n.querySelector('.struct');
-  if (struct) {
+  if (struct && input) {
     struct.innerHTML = '';
-    const q = questions.find(qq => slot.startsWith(qq.id+'-n-'));
-    if (q && q.scheme && q.scheme.nodes) {
-      const nodeId = slot.slice((q.id+'-n-').length);
-      const node = q.scheme.nodes.find(nn => nn.id === nodeId);
-      if (node) {
-        struct.dataset.input = node.mol || node.smiles || '';
-        struct.dataset.ismol = node.mol ? '1' : '0';
-        struct.dataset.rendered = '';
-        struct.style.fontSize = '';
-        struct.style.color = '';
-        renderAllStructures(q.id);
-      }
-    }
+    struct.dataset.input = input;
+    struct.dataset.ismol = isMol ? '1' : '0';
+    struct.dataset.rendered = '';
+    struct.style.fontSize = '';
+    struct.style.color = '';
+    (async () => {
+      await MolRenderer.ready();
+      if (isMol) MolRenderer.drawMol(input, struct, { width: 180, height: 130 });
+      else       MolRenderer.drawSmiles(input, struct, { width: 180, height: 130 });
+      struct.dataset.rendered = '1';
+    })();
   }
-  // Detach the click handler so re-clicks don't replay reveal
   n.onclick = null;
   openNodeInfo(slot);
   updateComposedProgress();
@@ -792,6 +1110,40 @@ window.revealMech = function(slot) {
   if (c) c.classList.add('revealed');
 };
 
+/* ── Modular sections ─────────────────────────────────────────────
+   A "composite" question carries `sections: []`. Each section has its
+   own type + fields and is rendered independently. Sections of the
+   same type don't collide because we synthesize a unique sub-question
+   id by appending `__s<idx>` to the parent question's id — the
+   per-type renderers use that id as their DOM-id prefix, so all
+   nodes/choices/steps within one section share a private namespace.
+
+   Supported section types: synthesis, multiple_choice, short_answer,
+   mechanism, intro. Each section can optionally carry `title`
+   (renders as a section header) and `body` (Markdown-light prose
+   shown above the section content). The `intro` type renders only
+   the prose — useful for context paragraphs between scheme parts. */
+
+function renderSection(section, parentQid, idx) {
+  if (!section || typeof section !== 'object') return '';
+  const subQ = Object.assign({}, section, { id: parentQid + '__s' + idx });
+  const header = (section.title || section.body) ? `
+    <div class="section-header">
+      ${section.title ? `<h2 class="section-title">${x(section.title)}</h2>` : ''}
+      ${section.body ? `<div class="section-body">${x(section.body)}</div>` : ''}
+    </div>` : '';
+  let inner = '';
+  switch (section.type) {
+    case 'synthesis':       inner = renderSynthesis(subQ); break;
+    case 'multiple_choice': inner = renderMCQ(subQ); break;
+    case 'short_answer':    inner = renderShortAnswer(subQ); break;
+    case 'mechanism':       inner = renderMechanism(subQ); break;
+    case 'intro':           inner = ''; break; // header carries the prose
+    default:                inner = `<div style="color:var(--muted);padding:1rem;font-size:0.85rem">Unbekannter Section-Typ: <code>${x(section.type||'?')}</code></div>`;
+  }
+  return `<section class="q-section q-section-${x(section.type||'unknown')}">${header}${inner}</section>`;
+}
+
 function showQuestion(id) {
   const q = questions.find(x => x.id === id);
   if (!q) return;
@@ -804,7 +1156,12 @@ function showQuestion(id) {
   history.replaceState(null,'','#'+id);
 
   let body = '';
-  if (q.type === 'synthesis')       body = renderSynthesis(q);
+  if (Array.isArray(q.sections) && q.sections.length) {
+    // Modular question — a list of typed sections rendered in order.
+    // Each section gets a unique DOM-id prefix so multiple sections of
+    // the same type don't collide.
+    body = q.sections.map((sec, idx) => renderSection(sec, q.id, idx)).join('');
+  } else if (q.type === 'synthesis')       body = renderSynthesis(q);
   else if (q.type === 'multiple_choice') body = renderMCQ(q);
   else if (q.type === 'short_answer')    body = renderShortAnswer(q);
   else if (q.type === 'mechanism')       body = renderMechanism(q);
@@ -852,8 +1209,9 @@ function globalSearch(qstr) {
       const q   = questions.find(x => x.id === id);
       const hit = !s
         || q.name.toLowerCase().includes(s)
-        || q.category.toLowerCase().includes(s)
+        || (q.category||'').toLowerCase().includes(s)
         || (q.type||'').toLowerCase().includes(s)
+        || (TYPE_GROUP_LABEL[qPrimaryType(q)]||'').toLowerCase().includes(s)
         || (q.intro||'').toLowerCase().includes(s);
       link.classList.toggle('hidden', !hit);
       if (hit) any = true;
@@ -868,6 +1226,23 @@ function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('overlay').classList.toggle('open');
 }
+
+// Keep --header-h CSS var in sync with the actual rendered header height.
+// Without this, the sidebar drawer top + the layout height calc drift apart
+// whenever the header wraps differently (e.g. small phones, tablet rotation).
+function syncHeaderHeight() {
+  const h = document.querySelector('header');
+  if (!h) return;
+  document.documentElement.style.setProperty('--header-h', h.offsetHeight + 'px');
+}
+window.addEventListener('resize', syncHeaderHeight);
+window.addEventListener('orientationchange', syncHeaderHeight);
+if (window.ResizeObserver) {
+  new ResizeObserver(syncHeaderHeight).observe(document.querySelector('header'));
+} else {
+  document.addEventListener('DOMContentLoaded', syncHeaderHeight);
+}
+syncHeaderHeight();
 
 function showError(msg) {
   document.getElementById('main').innerHTML = `

@@ -98,3 +98,6 @@ const RDKitHelper = (() => {
 
   return { ready, bakeLayout, svgFor, isReady };
 })();
+
+// Expose on window for cross-file consumers (scheme-graph-editor.js).
+window.RDKitHelper = RDKitHelper;

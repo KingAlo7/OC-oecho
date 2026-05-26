@@ -154,3 +154,8 @@ const MolRenderer = (() => {
 
   return { ready, drawMol, drawSmiles, drawAuto, isMol };
 })();
+
+// Expose on window so cross-file consumers (scheme-graph-editor.js,
+// etc.) can read `window.MolRenderer`. `const` at script top-level
+// creates a global lexical binding but does NOT attach to `window`.
+window.MolRenderer = MolRenderer;

@@ -31,6 +31,7 @@
   --sidebar:260px;
   --shadow-sm:0 1px 2px rgba(60,55,40,0.04);
   --shadow-md:0 2px 8px rgba(60,55,40,0.06);
+  --header-h:56px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;overflow:hidden;}
@@ -42,6 +43,9 @@ header{
   flex-shrink:0;z-index:20;box-shadow:var(--shadow-sm);
 }
 .brand{display:flex;align-items:center;gap:0.6rem;flex-shrink:0;}
+.brand-home{text-decoration:none;color:inherit;transition:opacity 0.12s;-webkit-tap-highlight-color:transparent;}
+.brand-home:hover{opacity:0.78;}
+.brand-home:active{opacity:0.6;}
 .brand-logo{width:30px;height:30px;color:var(--accent);flex-shrink:0;}
 .brand-logo svg{width:100%;height:100%;display:block;}
 .brand-name{font-size:1.05rem;font-weight:700;color:var(--text);letter-spacing:-0.01em;white-space:nowrap;}
@@ -73,7 +77,7 @@ header{
 .nav-link.muted{color:var(--muted);border-color:var(--border2);}
 .nav-link.muted:hover{background:var(--surface2);color:var(--text);border-color:var(--muted);}
 
-.layout{display:flex;flex:1;overflow:hidden;height:calc(100vh - 56px);}
+.layout{display:flex;flex:1;overflow:hidden;height:calc(100vh - var(--header-h));}
 
 .sidebar{
   width:var(--sidebar);background:var(--surface);
@@ -279,19 +283,72 @@ header{
 .nav-btn-label{font-size:0.78rem;color:var(--muted);max-width:200px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
-@media(max-width:700px){
-  .sidebar{position:fixed;left:-100%;top:56px;height:calc(100vh - 56px);
-    z-index:30;transition:left 0.25s;width:min(300px,85vw);box-shadow:var(--shadow-md);}
-  .sidebar.open{left:0;}
-  .hamburger{display:flex;align-items:center;justify-content:center;
-    width:36px;height:36px;border:1px solid var(--border);border-radius:7px;
-    background:var(--surface);cursor:pointer;color:var(--text);font-size:1.1rem;}
-  .rxn-page{padding:1.25rem;}
-  .detail-row{grid-template-columns:120px 1fr;}
+/* ════════════════════════════════════════════════════════════════════
+   MOBILE (≤ 760px) — comprehensive responsive overrides
+   ════════════════════════════════════════════════════════════════════ */
+@media(max-width:760px){
+  :root{--header-h:94px;}
+
+  /* Two-row header: brand + actions on row 1, search full-width on row 2 */
+  header{flex-wrap:wrap;row-gap:0.45rem;padding:0.5rem 0.85rem;height:auto;min-height:56px;
+    padding-top:max(0.5rem, env(safe-area-inset-top));align-items:center;}
+  .brand{gap:0.5rem;}
+  .brand-name{font-size:0.95rem;}
   .brand-sub{display:none;}
-  .nav-link{padding:0.28rem 0.55rem;font-size:0.76rem;}
+  .search-wrap{flex-basis:100%;order:10;max-width:none;}
+  #search{padding:0.5rem 0.8rem 0.5rem 2.1rem;font-size:0.92rem;border-radius:9px;}
+  .header-right{gap:0.3rem;margin-left:auto;}
+  .count-badge{display:none;}
+  /* On mobile, keep only the primary Quiz CTA visible — muted nav links
+     (Export / Admin) are desktop-only features and would force a 3rd
+     header row. They remain reachable via direct URL. */
+  .nav-link.muted{display:none;}
+  .nav-link{font-size:0.74rem;padding:0.32rem 0.55rem;min-height:32px;
+    display:inline-flex;align-items:center;}
+  .hamburger{display:flex;align-items:center;justify-content:center;width:38px;height:38px;
+    border:1px solid var(--border);border-radius:8px;background:var(--surface);cursor:pointer;
+    color:var(--text);font-size:1.18rem;flex-shrink:0;-webkit-tap-highlight-color:transparent;}
+  .hamburger:active{background:var(--surface2);}
+
+  /* Sidebar drawer — uses transform for smoother GPU-accelerated slide */
+  .sidebar{position:fixed;left:0;top:var(--header-h);
+    height:calc(100vh - var(--header-h));z-index:30;
+    transform:translateX(-100%);transition:transform 0.22s ease-out;
+    width:min(310px,88vw);box-shadow:var(--shadow-md);will-change:transform;}
+  .sidebar.open{transform:translateX(0);}
+  .overlay{top:var(--header-h);}
+
+  /* Welcome */
+  .welcome{padding:1.75rem 1.1rem;}
+  .welcome-logo{width:72px;height:72px;margin-bottom:1rem;}
+  .welcome h1{font-size:1.45rem;}
+  .welcome p{font-size:0.88rem;max-width:100%;margin-bottom:1.4rem;}
+
+  /* Reaction page */
+  .rxn-page{padding:0.85rem 0.85rem 2.5rem;}
+  .rxn-title{font-size:1.2rem;line-height:1.25;}
+  .detail-row{grid-template-columns:96px 1fr;font-size:0.84rem;gap:0.5rem;}
+  .rxn-drawing{padding:0.75rem;}
+  .rxn-drawing svg{width:100%;height:auto;}
+  .key-points li{font-size:0.86rem;}
+
+  /* Bottom nav (prev/next reaction) */
+  .rxn-nav{flex-wrap:wrap;gap:0.5rem;}
+  .nav-btn{flex:1;min-width:0;padding:0.5rem 0.7rem;font-size:0.78rem;}
+  .nav-btn-label{display:none;} /* hide preview text on mobile */
 }
-@media(min-width:701px){.hamburger{display:none;}}
+
+/* Tiny phones (≤ 380px) */
+@media(max-width:380px){
+  .nav-link{padding:0.3rem 0.45rem;font-size:0.7rem;}
+  .brand-name{font-size:0.85rem;}
+  .brand-logo{width:26px;height:26px;}
+  .hamburger{width:36px;height:36px;}
+  .welcome h1{font-size:1.3rem;}
+  .detail-row{grid-template-columns:80px 1fr;font-size:0.8rem;}
+}
+
+@media(min-width:761px){.hamburger{display:none;}}
 .overlay{display:none;position:fixed;inset:0;background:rgba(60,55,40,0.35);z-index:25;}
 .overlay.open{display:block;}
 </style>
@@ -300,7 +357,7 @@ header{
 
 <header>
   <button class="hamburger" onclick="toggleSidebar()" aria-label="Menü">☰</button>
-  <div class="brand">
+  <a href="./index.html" class="brand brand-home" title="Startseite — Referenz">
     <div class="brand-logo">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="14 52 174 187">
         <path fill="#ff0000" d="M 153.27953,54.242684 141.3862,76.472852 73.360897,76.250643 39.904024,139.16308 16.228467,139.27419 v 13.11599 l 23.452832,0.22273 34.124015,62.80081 68.025306,0.11111 11.33781,21.56406 10.67067,-6.55826 -11.67113,-22.11958 33.79071,-62.80082 -34.12402,-62.801331 12.11554,-21.897371 z m -12.0804,35.318258 30.29893,56.472008 -30.37747,56.07874 -60.322938,0.1571 -30.220377,-56.35367 30.220377,-56.27563 z m 13.04727,56.216728 -22.51801,41.95092 3.81166,2.31872 22.518,-41.87289 c 0,0 2.9e-4,-0.0192 -3.81165,-2.39675 z"/>
@@ -308,7 +365,7 @@ header{
     </div>
     <span class="brand-name">OC Referenz</span>
     <span class="brand-sub">ÖChO</span>
-  </div>
+  </a>
   <div class="search-wrap">
     <span class="search-icon">⌕</span>
     <input id="search" type="text" placeholder="Reaktionen, Tags suchen…" oninput="globalSearch(this.value)" autocomplete="off">
@@ -585,6 +642,20 @@ function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('overlay').classList.toggle('open');
 }
+
+// Keep --header-h CSS var in sync with the actual rendered header height
+// so the sidebar drawer and layout calc stay aligned across screen sizes / rotation.
+function syncHeaderHeight() {
+  const h = document.querySelector('header');
+  if (!h) return;
+  document.documentElement.style.setProperty('--header-h', h.offsetHeight + 'px');
+}
+window.addEventListener('resize', syncHeaderHeight);
+window.addEventListener('orientationchange', syncHeaderHeight);
+if (window.ResizeObserver) {
+  new ResizeObserver(syncHeaderHeight).observe(document.querySelector('header'));
+}
+syncHeaderHeight();
 
 function showError(msg) {
   document.getElementById('main').innerHTML = `

@@ -11,5 +11,8 @@ rxn_*.txt
 rxn_*.pdf
 build_reactions.py
 rework_reactions.py
+# Local PDF / DOCX source files for the ÖChO transcription scripts
+# under tools/add-oecho-*.js — not redistributed in the repo.
+tools/oecho-pdfs/
 # Versehentlich erstellte Dateien aus Pfad-Eingabefehlern
 C\357\200\272Users*

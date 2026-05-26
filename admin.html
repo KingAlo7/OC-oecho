@@ -11,6 +11,7 @@
 <script src="./reaction-drawer.js"></script>
 <script src="./mol-renderer.js"></script>
 <script src="./rdkit-helper.js"></script>
+<script src="./scheme-graph-editor.js"></script>
 <style>
 :root{
   --bg:#faf9f5;
@@ -44,6 +45,9 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-ap
 
 header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.25rem;height:56px;display:flex;align-items:center;gap:0.85rem;flex-shrink:0;box-shadow:var(--shadow-sm);}
 .brand{display:flex;align-items:center;gap:0.6rem;flex-shrink:0;}
+.brand-home{text-decoration:none;color:inherit;transition:opacity 0.12s;-webkit-tap-highlight-color:transparent;}
+.brand-home:hover{opacity:0.78;}
+.brand-home:active{opacity:0.6;}
 .brand-logo{width:30px;height:30px;color:var(--accent);flex-shrink:0;}
 .brand-logo svg{width:100%;height:100%;display:block;}
 .brand-name{font-size:1.05rem;font-weight:700;color:var(--text);letter-spacing:-0.01em;white-space:nowrap;}
@@ -248,6 +252,104 @@ select.fi option{background:var(--surface);color:var(--text);}
 .edge-reagent-row input{font-size:0.78rem;padding:0.3rem 0.55rem;border:1px solid var(--border);border-radius:5px;font-family:inherit;}
 .edge-reagent-row input:focus{outline:none;border-color:var(--accent);}
 
+/* WYSIWYG live scheme preview */
+.scheme-preview-wrap{background:#fff;border:1px solid var(--border);border-radius:10px;padding:0.85rem 0.7rem;margin-bottom:1rem;box-shadow:var(--shadow-sm);position:relative;}
+.scheme-preview-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);}
+.scheme-preview-hint{font-weight:500;text-transform:none;letter-spacing:0;color:var(--muted2);font-size:0.7rem;}
+.scheme-preview{display:flex;flex-wrap:wrap;gap:0.45rem 0.3rem;align-items:stretch;justify-content:flex-start;min-height:80px;padding:0.45rem;border:1px dashed var(--border2);border-radius:8px;background:var(--surface2);overflow-x:auto;}
+.scheme-preview-empty{padding:1.5rem;text-align:center;color:var(--muted2);font-style:italic;font-size:0.85rem;}
+.sp-node{flex:0 0 auto;min-width:118px;max-width:148px;display:flex;flex-direction:column;align-items:center;gap:0.25rem;padding:0.4rem;border:1px solid var(--border);border-radius:7px;background:#fff;cursor:pointer;transition:all 0.12s;position:relative;}
+.sp-node:hover{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 2px 6px rgba(226,0,26,0.12);transform:translateY(-1px);}
+.sp-node.given{background:var(--surface2);}
+.sp-node.hidden-node{border:2px dashed var(--accent);background:rgba(255,251,232,0.7);}
+.sp-node .struct{background:#fff;border-radius:5px;min-height:74px;width:100%;display:flex;justify-content:center;align-items:center;overflow:hidden;}
+.sp-node .struct svg{display:block;max-width:100%;height:auto;}
+.sp-node .struct.ph{color:var(--muted2);font-size:0.72rem;font-style:italic;}
+.sp-node .lbl{font-size:0.74rem;font-weight:700;color:var(--accent);letter-spacing:0.02em;text-align:center;}
+.sp-node .nm{font-size:0.68rem;color:var(--muted);text-align:center;line-height:1.2;max-width:100%;overflow:hidden;text-overflow:ellipsis;}
+.sp-node .deg-badge{position:absolute;top:-7px;right:-7px;display:flex;gap:2px;font-size:0.6rem;font-weight:700;}
+.sp-node .deg-badge .deg{padding:1px 5px;border-radius:9px;border:1.5px solid #fff;line-height:1;}
+.sp-node .deg-badge .in{background:var(--diff-B);color:#fff;}
+.sp-node .deg-badge .out{background:var(--green);color:#fff;}
+.sp-node .deg-badge .orphan{background:var(--yellow);color:#fff;}
+.sp-arrow{flex:0 0 auto;align-self:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.1rem;min-width:64px;padding:0.15rem 0.25rem;font-size:0.66rem;color:var(--text-soft);}
+.sp-arrow .ra{text-align:center;font-weight:500;line-height:1.15;min-height:0.9em;max-width:90px;}
+.sp-arrow .rb{text-align:center;color:var(--muted);font-size:0.62rem;line-height:1.15;min-height:0.7em;max-width:90px;}
+.sp-arrow .ln{width:46px;height:2px;background:var(--text-soft);position:relative;}
+.sp-arrow .ln::after{content:'';position:absolute;right:-1px;top:50%;transform:translateY(-50%);border-left:7px solid var(--text-soft);border-top:4px solid transparent;border-bottom:4px solid transparent;}
+.sp-arrow.merge::before{content:'+';position:absolute;font-weight:700;color:var(--muted);font-size:0.85rem;}
+.sp-row-break{flex-basis:100%;height:0;}
+.node-card.is-highlighted{outline:2px solid var(--accent);outline-offset:2px;animation:hl-pulse 1s ease-out;}
+@keyframes hl-pulse { 0%{box-shadow:0 0 0 0 var(--accent-soft);} 100%{box-shadow:0 0 0 12px transparent;} }
+.node-degree-pill{font-size:0.62rem;padding:0.05rem 0.4rem;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--muted);font-weight:600;margin-left:0.4rem;}
+.node-degree-pill.has-warning{background:#fff7e6;border-color:var(--yellow);color:var(--yellow);}
+.fork-btn{font-size:0.72rem;padding:0.28rem 0.55rem;border:1px solid var(--green);background:var(--green-soft);color:var(--green);border-radius:5px;cursor:pointer;font-family:inherit;font-weight:600;}
+.fork-btn:hover{background:var(--green);color:#fff;}
+
+/* ── SchemeGraphEditor (drag-and-drop visual graph editor) ─────── */
+.sg-host{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow-sm);}
+.sg-toolbar{display:flex;align-items:center;gap:0.4rem;padding:0.5rem 0.7rem;background:var(--surface2);border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.sg-btn{background:var(--surface);border:1px solid var(--border);color:var(--text-soft);padding:0.32rem 0.7rem;border-radius:6px;font-size:0.76rem;cursor:pointer;font-family:inherit;font-weight:600;}
+.sg-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
+.sg-zoom-label{font-size:0.7rem;color:var(--muted);font-family:ui-monospace,monospace;padding:0 0.3rem;}
+.sg-hint{font-size:0.7rem;color:var(--muted2);margin-left:auto;font-style:italic;max-width:60%;text-align:right;}
+.sg-canvas{display:block;width:100%;height:520px;background:repeating-linear-gradient(0deg,#fdfcf6 0,#fdfcf6 19px,#f3f2e8 19px,#f3f2e8 20px),repeating-linear-gradient(90deg,#fdfcf6 0,#fdfcf6 19px,#f3f2e8 19px,#f3f2e8 20px);cursor:grab;outline:none;touch-action:none;user-select:none;}
+.sg-canvas:focus{box-shadow:inset 0 0 0 2px var(--accent-soft);}
+.sg-canvas:active{cursor:grabbing;}
+
+.sg-node{cursor:grab;}
+.sg-node:active{cursor:grabbing;}
+.sg-node-bg{fill:#ffffff;stroke:#cfceb8;stroke-width:1.5;}
+.sg-node.given .sg-node-bg{fill:#f3f3ec;}
+.sg-node.hidden .sg-node-bg{fill:#fffbe8;stroke:#e2001a;stroke-dasharray:4 3;}
+.sg-node.selected .sg-node-bg{stroke:#e2001a;stroke-width:2.5;stroke-dasharray:none;filter:drop-shadow(0 2px 8px rgba(226,0,26,0.25));}
+.sg-node-label{font:bold 12px 'Segoe UI',system-ui,sans-serif;fill:#e2001a;letter-spacing:0.02em;pointer-events:none;}
+.sg-node-name{font:11px 'Segoe UI',system-ui,sans-serif;fill:#6b6a5d;pointer-events:none;}
+.sg-node-deg{font:600 9px 'Segoe UI',system-ui,sans-serif;fill:#9a9889;pointer-events:none;}
+.sg-handle{fill:#5a8a2a;stroke:#fff;stroke-width:2;cursor:crosshair;transition:r 0.12s,fill 0.12s;}
+.sg-handle:hover{fill:#3d6818;r:9;}
+.sg-ph{font:italic 11px 'Segoe UI',system-ui,sans-serif;color:#9a9889;}
+.sg-err{font:600 10px sans-serif;color:#c91020;}
+
+.sg-edge-line{stroke:#3a3a35;stroke-width:1.8;}
+.sg-edge.selected .sg-edge-line{stroke:#e2001a;stroke-width:2.6;}
+.sg-edge-hit{cursor:pointer;}
+.sg-edge-label{font:500 11px 'Segoe UI',system-ui,sans-serif;fill:#3a3a35;pointer-events:none;}
+.sg-edge-label.below{fill:#6b6a5d;font-size:10px;}
+.sg-edge-orphan{stroke:#b87a00;}
+.sg-edge-draft{stroke:#5a8a2a;stroke-width:2;stroke-dasharray:6 3;pointer-events:none;}
+
+/* Sections (composed questions) */
+.sec-tabs{display:flex;gap:0.3rem;border-bottom:1px solid var(--border);padding:0 0.5rem;overflow-x:auto;flex-wrap:nowrap;}
+.sec-tab{padding:0.5rem 0.85rem;border:none;background:none;color:var(--text-soft);font-size:0.8rem;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;font-family:inherit;white-space:nowrap;display:flex;align-items:center;gap:0.4rem;}
+.sec-tab:hover{color:var(--accent);}
+.sec-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.sec-tab .sec-type-tag{font-size:0.62rem;padding:0.05rem 0.35rem;border-radius:3px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);font-weight:700;text-transform:uppercase;}
+.sec-tab .sec-x{background:none;border:none;color:var(--muted2);cursor:pointer;padding:0 0.15rem;font-size:0.9rem;line-height:1;}
+.sec-tab .sec-x:hover{color:var(--red);}
+.sec-tab-add{padding:0.5rem 0.7rem;border:1px dashed var(--border2);border-radius:5px;background:var(--surface);color:var(--muted);font-size:0.74rem;font-weight:600;cursor:pointer;margin-left:0.5rem;flex-shrink:0;align-self:center;font-family:inherit;}
+.sec-tab-add:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
+.sec-body{padding:0.85rem 0;}
+.sec-meta{display:flex;gap:0.5rem;margin-bottom:0.7rem;}
+.sec-meta input{flex:1;font-size:0.86rem;padding:0.4rem 0.7rem;border:1px solid var(--border);border-radius:6px;font-family:inherit;}
+.sec-meta input:focus{outline:none;border-color:var(--accent);}
+
+/* Selected node/edge detail panel beneath graph */
+.sg-detail{margin-top:0.85rem;padding:0.9rem 1rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;}
+.sg-detail-head{font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent);margin-bottom:0.55rem;display:flex;align-items:center;gap:0.5rem;}
+.sg-detail-empty{color:var(--muted);font-style:italic;font-size:0.82rem;}
+.sg-detail .row2{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;}
+.sg-detail .field{margin-bottom:0.55rem;}
+.sg-detail label{display:block;font-size:0.7rem;font-weight:600;color:var(--muted);margin-bottom:0.2rem;text-transform:uppercase;letter-spacing:0.04em;}
+.sg-detail input, .sg-detail textarea, .sg-detail select{width:100%;font-size:0.84rem;padding:0.4rem 0.6rem;border:1px solid var(--border);border-radius:5px;font-family:inherit;background:#fff;}
+.sg-detail textarea{min-height:60px;resize:vertical;}
+.sg-detail input:focus, .sg-detail textarea:focus, .sg-detail select:focus{outline:none;border-color:var(--accent);}
+.sg-detail-actions{display:flex;gap:0.4rem;margin-top:0.6rem;flex-wrap:wrap;}
+.sg-detail-actions button{font-size:0.76rem;padding:0.35rem 0.7rem;border:1px solid var(--border);background:var(--surface);color:var(--text-soft);border-radius:5px;cursor:pointer;font-family:inherit;font-weight:600;}
+.sg-detail-actions button.primary{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
+.sg-detail-actions button.danger{border-color:var(--red);color:var(--red);background:var(--red-soft);}
+.sg-detail-actions button:hover{filter:brightness(0.95);}
+
 /* OCL editor modal */
 .ocl-modal{position:fixed;inset:0;background:rgba(20,18,12,0.55);z-index:200;display:none;align-items:center;justify-content:center;padding:1.5rem;}
 .ocl-modal.open{display:flex;}
@@ -269,7 +371,7 @@ select.fi option{background:var(--surface);color:var(--text);}
 <body>
 
 <header>
-  <div class="brand">
+  <a href="./index.html" class="brand brand-home" title="Zur Startseite — Referenz">
     <div class="brand-logo">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="14 52 174 187">
         <path fill="#ff0000" d="M 153.27953,54.242684 141.3862,76.472852 73.360897,76.250643 39.904024,139.16308 16.228467,139.27419 v 13.11599 l 23.452832,0.22273 34.124015,62.80081 68.025306,0.11111 11.33781,21.56406 10.67067,-6.55826 -11.67113,-22.11958 33.79071,-62.80082 -34.12402,-62.801331 12.11554,-21.897371 z m -12.0804,35.318258 30.29893,56.472008 -30.37747,56.07874 -60.322938,0.1571 -30.220377,-56.35367 30.220377,-56.27563 z m 13.04727,56.216728 -22.51801,41.95092 3.81166,2.31872 22.518,-41.87289 c 0,0 2.9e-4,-0.0192 -3.81165,-2.39675 z"/>
@@ -277,7 +379,7 @@ select.fi option{background:var(--surface);color:var(--text);}
     </div>
     <span class="brand-name">OC Referenz</span>
     <span class="brand-sub">Admin</span>
-  </div>
+  </a>
   <span class="mode-badge" id="mode-badge">…</span>
   <div class="hnav">
     <a href="./index.html">Referenz</a>
@@ -746,7 +848,8 @@ const Q_TYPES = [
   { id: 'synthesis',       label: 'Mehrstufige Synthese' },
   { id: 'multiple_choice', label: 'Multiple Choice' },
   { id: 'short_answer',    label: 'Theorie (Kurzantwort)' },
-  { id: 'mechanism',       label: 'Mechanismus' }
+  { id: 'mechanism',       label: 'Mechanismus' },
+  { id: 'composed',        label: 'Composed (mehrere Abschnitte)' }
 ];
 const Q_TYPE_LABEL = Object.fromEntries(Q_TYPES.map(t => [t.id, t.label]));
 
@@ -774,6 +877,11 @@ function renderQList(qstr='') {
 
 function selQFn(i) {
   selQ = i;
+  // Tear down any prior graph editor and reset composed-section state
+  // so switching between questions doesn't leak state.
+  _teardownAllGraphEditors();
+  _composedSections = null;
+  _composedActiveSec = 0;
   renderQList(document.getElementById('q-search').value);
   buildQForm(questions[i]);
 }
@@ -885,10 +993,32 @@ function qTypeChange(type, q) {
   q = q || (selQ!==null ? questions[selQ] : {});
   const body = document.getElementById('q-type-body');
   if (!body) return;
-  if (type === 'synthesis')           body.innerHTML = renderSynthEditor(q);
+
+  // If the question carries `sections[]`, it's a composed question and
+  // takes priority over the radio-button `type` (the radio is left as-is
+  // for legacy compatibility but the actual UI is the section editor).
+  if (Array.isArray(q.sections) && q.sections.length > 0) {
+    body.innerHTML = renderComposedQEditor(q);
+    initComposedSectionUI(q);
+    return;
+  }
+
+  // Tear down any prior graph editor instance to avoid memory leaks
+  _teardownAllGraphEditors();
+
+  if (type === 'synthesis')           {
+    body.innerHTML = renderSynthEditor(q);
+    initSynthGraphEditor(q.scheme || { nodes: [], edges: [] }, 'main', q);
+  }
   else if (type === 'multiple_choice') body.innerHTML = renderMCQEditor(q);
   else if (type === 'short_answer')    body.innerHTML = renderSAEditor(q);
   else if (type === 'mechanism')       body.innerHTML = renderMechEditor(q);
+  else if (type === 'composed') {
+    // User chose composed via radio: bootstrap with one empty synthesis section
+    if (!q.sections) q.sections = [{ type:'synthesis', title:'', scheme:{nodes:[],edges:[]} }];
+    body.innerHTML = renderComposedQEditor(q);
+    initComposedSectionUI(q);
+  }
   // Re-render previews for any pre-existing SMILES fields after a tiny delay
   setTimeout(refreshAllMiniPreviews, 10);
   mu();
@@ -1010,14 +1140,32 @@ function clearImg(hiddenId) {
   mu();
 }
 
-/* — Synthesis editor (mode-aware) — */
-let _editScheme = null;   // current scheme being edited (mutated live)
-let _selRegion  = -1;
-let _drawingFrom = null;
-let _activeNodeIdx = -1;  // index of node being edited in OCL modal
+/* — Synthesis editor — driven by SchemeGraphEditor (visual drag-and-drop) — */
+let _editScheme = null;   // legacy alias: mirrors active editor's scheme for the Ketcher modal
+let _selRegion  = -1;     // legacy (unused)
+let _drawingFrom = null;  // legacy (unused)
+let _activeNodeIdx = -1;  // index of node being edited in OCL modal (legacy by index)
+let _activeNodeId  = null; // NEW: id of node being edited via graph editor
+let _activeEditor  = null; // NEW: currently active SchemeGraphEditor
+
+// Section state for composed questions
+let _composedSections = null;       // working copies of q.sections (mutable)
+let _composedActiveSec = 0;         // index of active section
+const _composedSectionEditors = {}; // sectionIdx → SchemeGraphEditor instance (for synthesis sections)
+
+function _teardownAllGraphEditors() {
+  if (_activeEditor) { try { _activeEditor.destroy(); } catch(_){} }
+  _activeEditor = null;
+  Object.values(_composedSectionEditors).forEach(ed => { try { ed.destroy(); } catch(_){} });
+  Object.keys(_composedSectionEditors).forEach(k => delete _composedSectionEditors[k]);
+}
+
+/* ── Plain `type:synthesis` editor — graph + detail panel ─────── */
 
 function renderSynthEditor(q) {
-  // Initialize edit state from question (composed mode only)
+  // Mirror into _editScheme so the Ketcher modal (which uses _editScheme[idx])
+  // operates on the same data. The SchemeGraphEditor will be initialized
+  // against this same object reference, so all mutations are shared.
   const fallback = { nodes:[], edges:[] };
   _editScheme = Object.assign(fallback, JSON.parse(JSON.stringify(q.scheme || {})));
   if (!_editScheme.nodes) _editScheme.nodes = [];
@@ -1026,14 +1174,442 @@ function renderSynthEditor(q) {
   delete _editScheme.mode;
   delete _editScheme.image; delete _editScheme.image_width; delete _editScheme.image_height;
   delete _editScheme.regions;
-  return renderComposedEditor();
+  return `
+    <div class="fsec">
+      <div class="fsec-title">Synthese-Schema (visuell)</div>
+      <div id="sg-container-main"></div>
+      <div id="sg-detail-main" class="sg-detail">
+        <div class="sg-detail-empty">Klick auf einen Knoten oder Pfeil im Diagramm, um Details zu bearbeiten. Doppelklick auf einen Knoten öffnet den Struktureditor (Ketcher).</div>
+      </div>
+    </div>`;
 }
 
-/* ── Composed-mode editor ─────────────────────────────────────── */
+function initSynthGraphEditor(scheme, key, q) {
+  const container = document.getElementById('sg-container-' + key);
+  if (!container || typeof SchemeGraphEditor === 'undefined') return;
+  const editor = new SchemeGraphEditor(container, scheme, {
+    onChange: () => { mu(); },
+    onSelectNode: (n) => renderNodeDetail(n, key, editor),
+    onSelectEdge: (e, idx) => renderEdgeDetail(e, idx, key, editor),
+    onRequestStructEdit: (n) => openStructEditorForGraphNode(n, editor)
+  });
+  if (key === 'main') {
+    _activeEditor = editor;
+    // Keep _editScheme pointing at the editor's scheme so Ketcher modal works
+    _editScheme = editor.scheme;
+  } else if (key.startsWith('sec')) {
+    const idx = parseInt(key.slice(3), 10);
+    _composedSectionEditors[idx] = editor;
+    _activeEditor = editor;
+    _editScheme = editor.scheme;
+  }
+  // Layout fits content on first paint
+  requestAnimationFrame(() => editor.fitToContent());
+}
+
+/* ── Detail panel for selected node / edge ────────────────────── */
+
+function renderNodeDetail(n, key, editor) {
+  const panel = document.getElementById('sg-detail-' + key);
+  if (!panel) return;
+  if (!n) {
+    panel.innerHTML = '<div class="sg-detail-empty">Klick auf einen Knoten oder Pfeil zum Bearbeiten.</div>';
+    return;
+  }
+  panel.innerHTML = `
+    <div class="sg-detail-head">Knoten ${x(n.label || n.id)}
+      <span style="font-weight:400;color:var(--muted);font-size:0.7rem">${editor._degreeOf(n.id).in} eingehend · ${editor._degreeOf(n.id).out} ausgehend</span>
+    </div>
+    <div class="row2">
+      <div class="field"><label>ID / Label</label>
+        <input id="nd-id" value="${x(n.id||'')}" oninput="__patchSelectedNode('${x(key)}','id', this.value)"></div>
+      <div class="field"><label>Vollständiger Name</label>
+        <input id="nd-name" value="${x(n.name||'')}" placeholder="z. B. (R)-Tropasäure" oninput="__patchSelectedNode('${x(key)}','name', this.value)"></div>
+    </div>
+    <div class="field"><label style="display:flex;align-items:center;gap:0.45rem;cursor:pointer"><input type="checkbox" id="nd-given" ${n.given?'checked':''} onchange="__patchSelectedNode('${x(key)}','given', this.checked)"> Vorgegeben (immer sichtbar — sonst Reveal-Karte)</label></div>
+    <div class="field"><label>Erläuterung (sichtbar nach Reveal)</label>
+      <textarea id="nd-expl" oninput="__patchSelectedNode('${x(key)}','explanation', this.value)">${x(n.explanation||'')}</textarea></div>
+    <div class="field"><label>Notiz / Hinweis (kursiv)</label>
+      <input id="nd-note" value="${x(n.note||'')}" oninput="__patchSelectedNode('${x(key)}','note', this.value)"></div>
+    <div class="field"><label>Verwandte Reaktion</label>
+      <select id="nd-rel" onchange="__patchSelectedNode('${x(key)}','related_reaction_id', this.value)">${getReactionOptions(n.related_reaction_id||'')}</select></div>
+    <details style="margin-top:0.4rem">
+      <summary style="cursor:pointer;font-size:0.74rem;color:var(--muted);font-weight:600">SMILES / MOL direkt bearbeiten</summary>
+      <div class="field" style="margin-top:0.4rem"><label>SMILES (Fallback wenn kein MOL)</label>
+        <input id="nd-smi" value="${x(n.smiles||'')}" oninput="__patchSelectedNode('${x(key)}','smiles', this.value)"></div>
+      <div class="field"><label>MOL (V2000/V3000, bevorzugt)</label>
+        <textarea id="nd-mol" style="font-family:ui-monospace,monospace;font-size:0.72rem;min-height:80px" oninput="__patchSelectedNode('${x(key)}','mol', this.value)">${x(n.mol||'')}</textarea></div>
+    </details>
+    <div class="sg-detail-actions">
+      <button class="primary" onclick="openStructEditorForGraphNode(_activeEditor._nodeById('${x(n.id)}'), _activeEditor)">✎ Struktur (Ketcher)</button>
+      <button onclick="bakeNodeLayoutById('${x(n.id)}', _activeEditor)" title="RDKit-CoordGen Koordinaten neu berechnen">Layout neu</button>
+      <button onclick="openOCRForGraphNode('${x(n.id)}', _activeEditor)" title="Strukturbild hochladen (OCR mit DECIMER)">OCR…</button>
+      <button class="danger" onclick="_activeEditor.deleteNode('${x(n.id)}')">× Knoten löschen</button>
+    </div>`;
+}
+
+function renderEdgeDetail(e, idx, key, editor) {
+  const panel = document.getElementById('sg-detail-' + key);
+  if (!panel) return;
+  if (!e) {
+    panel.innerHTML = '<div class="sg-detail-empty">Klick auf einen Knoten oder Pfeil zum Bearbeiten.</div>';
+    return;
+  }
+  const nodeOpts = editor.scheme.nodes.map(n => `<option value="${x(n.id)}">${x(n.label||n.id)}${n.name?' — '+x(n.name):''}</option>`).join('');
+  const fromChips = (e.from||[]).map((fid, j) =>
+    `<span style="display:inline-flex;align-items:center;gap:0.25rem;font-size:0.78rem;padding:0.18rem 0.55rem;border-radius:5px;background:var(--surface);border:1px solid var(--border2);color:var(--text-soft);font-weight:600;margin-right:0.3rem">${x(fid)} <button onclick="__edgeRmFrom('${x(key)}',${idx},${j})" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:0.85rem;padding:0;line-height:1">×</button></span>`
+  ).join('');
+  panel.innerHTML = `
+    <div class="sg-detail-head">Pfeil (Reaktionsschritt ${idx + 1})</div>
+    <div class="field">
+      <label>Quelle(n) — FROM (mehrere = A + B → Produkt)</label>
+      <div style="display:flex;align-items:center;gap:0.3rem;flex-wrap:wrap">
+        ${fromChips}
+        <select onchange="__edgeAddFrom('${x(key)}',${idx}, this.value); this.value=''" style="width:auto;font-size:0.8rem">
+          <option value="">+ Knoten</option>${nodeOpts}
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Ziel — TO</label>
+      <select onchange="__edgePatch('${x(key)}',${idx},'to', this.value)">
+        <option value="">—</option>
+        ${editor.scheme.nodes.map(n => `<option value="${x(n.id)}" ${e.to===n.id?'selected':''}>${x(n.label||n.id)}${n.name?' — '+x(n.name):''}</option>`).join('')}
+      </select>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Reagenz oben</label>
+        <input value="${x(e.reagent_above||'')}" placeholder="z. B. H_2SO_4" oninput="__edgePatch('${x(key)}',${idx},'reagent_above', this.value)"></div>
+      <div class="field"><label>Reagenz unten</label>
+        <input value="${x(e.reagent_below||'')}" placeholder="z. B. Δ" oninput="__edgePatch('${x(key)}',${idx},'reagent_below', this.value)"></div>
+    </div>
+    <div class="sg-detail-actions">
+      <button class="danger" onclick="_activeEditor.deleteEdge(${idx})">× Pfeil löschen</button>
+    </div>`;
+}
+
+window.__patchSelectedNode = function(key, prop, value) {
+  const ed = (key === 'main') ? _activeEditor : _composedSectionEditors[parseInt(key.slice(3),10)];
+  if (!ed || !ed.selected || ed.selected.kind !== 'node') return;
+  const id = ed.selected.id;
+  ed.updateNode(id, { [prop]: value });
+  // After ID change, re-render detail panel with new ID
+  if (prop === 'id') {
+    // Update label too if it tracked the id
+    const n = ed._nodeById(value);
+    if (n) {
+      ed.selected.id = value;
+      renderNodeDetail(n, key, ed);
+    }
+  }
+};
+
+window.__edgePatch = function(key, idx, prop, value) {
+  const ed = (key === 'main') ? _activeEditor : _composedSectionEditors[parseInt(key.slice(3),10)];
+  if (!ed) return;
+  ed.updateEdge(idx, { [prop]: value });
+  renderEdgeDetail(ed.scheme.edges[idx], idx, key, ed);
+};
+window.__edgeAddFrom = function(key, idx, nodeId) {
+  if (!nodeId) return;
+  const ed = (key === 'main') ? _activeEditor : _composedSectionEditors[parseInt(key.slice(3),10)];
+  if (!ed) return;
+  const e = ed.scheme.edges[idx];
+  if (!e) return;
+  if (!e.from) e.from = [];
+  if (e.from.includes(nodeId)) return;
+  e.from.push(nodeId);
+  ed.refresh();
+  ed.onChange();
+  renderEdgeDetail(e, idx, key, ed);
+};
+window.__edgeRmFrom = function(key, idx, fromIdx) {
+  const ed = (key === 'main') ? _activeEditor : _composedSectionEditors[parseInt(key.slice(3),10)];
+  if (!ed) return;
+  const e = ed.scheme.edges[idx];
+  if (!e || !e.from) return;
+  e.from.splice(fromIdx, 1);
+  ed.refresh();
+  ed.onChange();
+  renderEdgeDetail(e, idx, key, ed);
+};
+
+/* ── Bridge: Ketcher / OCR / RDKit-bake from graph node ─────── */
+
+window.openStructEditorForGraphNode = async function(node, editor) {
+  if (!node) return;
+  _activeEditor = editor; // ensure commit hits the right editor
+  _activeNodeId = node.id;
+  // Also reflect into legacy _editScheme + _activeNodeIdx so the
+  // existing Ketcher modal HTML keeps working unchanged.
+  _editScheme = editor.scheme;
+  _activeNodeIdx = editor.scheme.nodes.findIndex(n => n.id === node.id);
+  document.getElementById('ocl-modal-title').textContent =
+    'Struktur bearbeiten — ' + (node.label || node.id);
+  document.getElementById('ocl-modal').classList.add('open');
+  const status = document.getElementById('ocl-editor-status');
+  status.textContent = 'Ketcher wird geladen…';
+  const iframe = document.getElementById('ketcher-iframe');
+  iframe.src = KETCHER_URL;
+  await _waitForKetcher(iframe);
+  try {
+    const k = iframe.contentWindow.ketcher;
+    try {
+      k.editor.setOptions(JSON.stringify({
+        hideTerminalLabels:  true,
+        hideImplicitHydrogen: true,
+        showStereoFlags:     false,
+        showValenceWarnings: false,
+        atomColoring:        true
+      }));
+    } catch (e) { console.warn('Ketcher setOptions:', e); }
+    if (node.mol)         await k.setMolecule(node.mol);
+    else if (node.smiles) await k.setMolecule(node.smiles);
+    status.textContent = 'Ketcher bereit · ' + (node.label || node.id);
+  } catch (e) {
+    status.textContent = 'Strukturladen fehlgeschlagen: ' + e.message;
+    console.error('openStructEditorForGraphNode:', e);
+  }
+  updateMetaFromKetcher();
+};
+
+window.bakeNodeLayoutById = async function(id, editor) {
+  if (!editor) return;
+  const n = editor._nodeById(id);
+  if (!n || (!n.mol && !n.smiles)) { toast('Keine Struktur zum Layouten', 'err'); return; }
+  if (typeof window.RDKitHelper === 'undefined') { toast('RDKit-Helper nicht verfügbar', 'err'); return; }
+  try {
+    const inp = n.mol || n.smiles;
+    const isMol = !!n.mol;
+    const fresh = await window.RDKitHelper.bakeLayout(inp, isMol);
+    if (fresh) {
+      editor.updateNode(id, { mol: fresh });
+      toast('Layout neu berechnet ✓');
+    } else toast('Layout-Berechnung fehlgeschlagen', 'err');
+  } catch (e) { toast('RDKit-Fehler: ' + e.message, 'err'); }
+};
+
+window.openOCRForGraphNode = async function(id, editor) {
+  if (!editor) return;
+  // Trigger file picker, send to /ocr endpoint, fill node.smiles/mol on success
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = async () => {
+    const f = inp.files && inp.files[0];
+    if (!f) return;
+    const fd = new FormData();
+    fd.append('image', f);
+    try {
+      toast('OCR läuft…');
+      const r = await fetch('/api/ocr', { method:'POST', body: fd });
+      if (!r.ok) { toast('OCR fehlgeschlagen: ' + r.status, 'err'); return; }
+      const j = await r.json();
+      if (j.smiles || j.mol) {
+        editor.updateNode(id, { smiles: j.smiles || '', mol: j.mol || '' });
+        toast('OCR ✓ — Struktur eingelesen');
+      } else {
+        toast('OCR: keine Struktur erkannt', 'err');
+      }
+    } catch (e) { toast('OCR-Fehler: ' + e.message, 'err'); }
+  };
+  inp.click();
+};
+
+/* ── Composed-question editor with section tabs ───────────────── */
+
+function renderComposedQEditor(q) {
+  return `
+    <div class="fsec">
+      <div class="fsec-title">Abschnitte (composed)</div>
+      <div class="sec-tabs" id="sec-tabs"></div>
+      <div id="sec-body" class="sec-body"></div>
+      <div class="helper-text" style="margin-top:0.4rem">Jeder Abschnitt wird im Quiz als eigene Karte gerendert. Synthese-Abschnitte nutzen den visuellen Graph-Editor unten; andere Typen behalten ihre Formularansicht.</div>
+    </div>`;
+}
+
+function initComposedSectionUI(q) {
+  _teardownAllGraphEditors();
+  // Deep-clone sections so edits don't mutate the question until save
+  _composedSections = (q.sections || []).map(s => JSON.parse(JSON.stringify(s)));
+  if (_composedSections.length === 0) {
+    _composedSections.push({ type:'synthesis', title:'Schema', scheme:{nodes:[],edges:[]} });
+  }
+  _composedActiveSec = 0;
+  renderComposedSecTabs();
+  renderActiveComposedSection();
+}
+
+function renderComposedSecTabs() {
+  const tabs = document.getElementById('sec-tabs');
+  if (!tabs) return;
+  tabs.innerHTML = _composedSections.map((s, i) => `
+    <button class="sec-tab${i===_composedActiveSec?' active':''}" onclick="switchComposedSection(${i})">
+      <span>${i+1}. ${x(s.title || _sectionTypeLabel(s.type))}</span>
+      <span class="sec-type-tag">${x(_sectionTypeShort(s.type))}</span>
+      <span class="sec-x" onclick="event.stopPropagation();removeComposedSection(${i})" title="Abschnitt löschen">×</span>
+    </button>
+  `).join('') + `<button class="sec-tab-add" onclick="addComposedSection()">＋ Abschnitt</button>`;
+}
+
+function _sectionTypeLabel(t) {
+  return ({synthesis:'Synthese-Schema', multiple_choice:'Multiple Choice', short_answer:'Kurzantwort', mechanism:'Mechanismus', intro:'Einleitung'})[t] || (t || 'Abschnitt');
+}
+function _sectionTypeShort(t) {
+  return ({synthesis:'SYN', multiple_choice:'MC', short_answer:'SA', mechanism:'MECH', intro:'INTRO'})[t] || (t||'?').slice(0,4).toUpperCase();
+}
+
+window.switchComposedSection = function(newIdx) {
+  if (newIdx === _composedActiveSec) return;
+  collectActiveComposedSection();
+  _composedActiveSec = newIdx;
+  renderComposedSecTabs();
+  renderActiveComposedSection();
+};
+
+window.addComposedSection = function() {
+  collectActiveComposedSection();
+  const type = prompt('Typ des neuen Abschnitts? (synthesis, multiple_choice, short_answer, mechanism, intro)', 'synthesis');
+  if (!type) return;
+  const sec = { type, title: '' };
+  if (type === 'synthesis') sec.scheme = { nodes: [], edges: [] };
+  if (type === 'multiple_choice') sec.choices = [];
+  if (type === 'mechanism') sec.mech_steps = [];
+  _composedSections.push(sec);
+  _composedActiveSec = _composedSections.length - 1;
+  renderComposedSecTabs();
+  renderActiveComposedSection();
+  mu();
+};
+
+window.removeComposedSection = function(i) {
+  if (_composedSections.length <= 1) { toast('Mindestens ein Abschnitt erforderlich', 'err'); return; }
+  if (!confirm('Abschnitt ' + (i+1) + ' löschen?')) return;
+  collectActiveComposedSection();
+  _composedSections.splice(i, 1);
+  if (_composedActiveSec >= _composedSections.length) _composedActiveSec = _composedSections.length - 1;
+  // Tear down any graph editor for this section
+  if (_composedSectionEditors[i]) { try { _composedSectionEditors[i].destroy(); } catch(_){} delete _composedSectionEditors[i]; }
+  renderComposedSecTabs();
+  renderActiveComposedSection();
+  mu();
+};
+
+function renderActiveComposedSection() {
+  const body = document.getElementById('sec-body');
+  if (!body) return;
+  const sec = _composedSections[_composedActiveSec];
+  if (!sec) { body.innerHTML = ''; return; }
+
+  // Section-meta strip (title input applies to all section types)
+  const metaHtml = `
+    <div class="sec-meta">
+      <input id="sec-title" placeholder="Abschnitts-Titel (optional)" value="${x(sec.title||'')}" oninput="_composedSections[${_composedActiveSec}].title = this.value; renderComposedSecTabs(); mu()">
+    </div>`;
+
+  if (sec.type === 'synthesis') {
+    body.innerHTML = metaHtml + `
+      <div id="sg-container-sec${_composedActiveSec}"></div>
+      <div id="sg-detail-sec${_composedActiveSec}" class="sg-detail">
+        <div class="sg-detail-empty">Klick auf einen Knoten oder Pfeil zum Bearbeiten.</div>
+      </div>`;
+    initSynthGraphEditor(sec.scheme || (sec.scheme = { nodes: [], edges: [] }), 'sec' + _composedActiveSec, sec);
+    return;
+  }
+  if (sec.type === 'multiple_choice') {
+    body.innerHTML = metaHtml + renderMCQEditor(sec);
+    setTimeout(refreshAllMiniPreviews, 10);
+    return;
+  }
+  if (sec.type === 'short_answer') {
+    body.innerHTML = metaHtml + renderSAEditor(sec);
+    return;
+  }
+  if (sec.type === 'mechanism') {
+    body.innerHTML = metaHtml + renderMechEditor(sec);
+    setTimeout(refreshAllMiniPreviews, 10);
+    return;
+  }
+  if (sec.type === 'intro') {
+    body.innerHTML = metaHtml + `
+      <div class="field"><label>Einleitungs-Text</label>
+        <textarea style="min-height:180px;width:100%;padding:0.5rem 0.7rem;border:1px solid var(--border);border-radius:6px;font-family:inherit" oninput="_composedSections[${_composedActiveSec}].body = this.value; mu()">${x(sec.body||'')}</textarea></div>`;
+    return;
+  }
+  body.innerHTML = metaHtml + `<div class="sg-detail-empty">Unbekannter Abschnitts-Typ: <code>${x(sec.type||'?')}</code></div>`;
+}
+
+/* Pull form-field values for the currently visible non-synthesis
+   section back into _composedSections so they survive a tab switch
+   or a save. Synthesis sections are already kept in sync via the
+   graph editor's onChange. */
+function collectActiveComposedSection() {
+  if (!_composedSections) return;
+  const sec = _composedSections[_composedActiveSec];
+  if (!sec) return;
+  if (sec.type === 'synthesis') {
+    const ed = _composedSectionEditors[_composedActiveSec];
+    if (ed) sec.scheme = JSON.parse(JSON.stringify(ed.scheme));
+    return;
+  }
+  if (sec.type === 'multiple_choice') {
+    const v = id => document.getElementById(id)?.value?.trim() || '';
+    sec.prompt = v('mcq-prompt');
+    const gv = id => document.getElementById('mcq-g-'+id)?.value || '';
+    const givens = {};
+    if (gv('smi')) givens.smiles = gv('smi');
+    if (gv('img')) givens.image  = gv('img');
+    if (gv('rl'))  givens.reagent_label = gv('rl');
+    if (gv('rlb')) givens.reagent_label_below = gv('rlb');
+    if (Object.keys(givens).length) sec.givens = givens; else delete sec.givens;
+    sec.choices = collectMCQChoices();
+    const r = document.getElementById('mcq-related')?.value || '';
+    if (r) sec.related_reaction_id = r; else delete sec.related_reaction_id;
+    const e = document.getElementById('mcq-expl')?.value?.trim() || '';
+    if (e) sec.explanation = e; else delete sec.explanation;
+    return;
+  }
+  if (sec.type === 'short_answer') {
+    sec.prompt = document.getElementById('sa-prompt')?.value?.trim() || '';
+    sec.expected_answer = document.getElementById('sa-expected')?.value?.trim() || '';
+    const r = document.getElementById('sa-related')?.value || '';
+    if (r) sec.related_reaction_id = r; else delete sec.related_reaction_id;
+    return;
+  }
+  if (sec.type === 'mechanism') {
+    sec.prompt = document.getElementById('mech-prompt')?.value?.trim() || '';
+    const gv = id => document.getElementById('mech-g-'+id)?.value || '';
+    const givens = {};
+    if (gv('smi')) givens.smiles = gv('smi');
+    if (gv('img')) givens.image  = gv('img');
+    if (gv('rl'))  givens.reagent_label = gv('rl');
+    if (gv('rlb')) givens.reagent_label_below = gv('rlb');
+    if (Object.keys(givens).length) sec.givens = givens; else delete sec.givens;
+    sec.mech_steps = collectMechSteps();
+    const r = document.getElementById('mech-related')?.value || '';
+    if (r) sec.related_reaction_id = r; else delete sec.related_reaction_id;
+    const e = document.getElementById('mech-expl')?.value?.trim() || '';
+    if (e) sec.explanation = e; else delete sec.explanation;
+    return;
+  }
+}
+
+window.renderComposedSecTabs = renderComposedSecTabs;
+
+/* ── Legacy form-based editor (kept for back-compat with old code paths
+   that referenced these helpers; the new flow does not call them) ── */
 
 function renderComposedEditor() {
   setTimeout(refreshNodePreviewsAfter, 0);
+  setTimeout(refreshSchemePreview, 50);
   return `
+    <div class="scheme-preview-wrap">
+      <div class="scheme-preview-head">
+        <span>Live-Vorschau</span>
+        <span class="scheme-preview-hint">Klick auf einen Knoten = Editor öffnen ▸ Badges: ${'<span class="deg in" style="font-size:0.6rem;padding:1px 5px;border-radius:9px;color:#fff;background:var(--diff-B)">in</span>'} eingehende, ${'<span class="deg out" style="font-size:0.6rem;padding:1px 5px;border-radius:9px;color:#fff;background:var(--green)">out</span>'} ausgehende Kanten</span>
+      </div>
+      <div id="scheme-preview" class="scheme-preview">
+        <div class="scheme-preview-empty">Fügen Sie Knoten und Pfeile hinzu — die Vorschau erscheint hier.</div>
+      </div>
+    </div>
     <div class="fsec">
       <div class="fsec-title">Strukturen (Knoten)</div>
       <div id="nodes-wrap">${(_editScheme.nodes||[]).map((n,i)=>nodeCardEditor(n,i)).join('')}</div>
@@ -1047,7 +1623,7 @@ function renderComposedEditor() {
       <div id="edges-wrap">${(_editScheme.edges||[]).map((e,i)=>edgeCardEditor(e,i)).join('')}</div>
       <button class="bxs sec" onclick="addEdge()" style="margin-top:0.5rem">＋ Pfeil</button>
       <div class="helper-text" style="margin-top:0.5rem">
-        <strong>from</strong>: Quell-Knoten (mehrere möglich für Kombinationsreaktionen wie A + B → C). <strong>to</strong>: Ziel-Knoten. <strong>Reagenz oben/unten</strong>: LaTeX-Syntax erlaubt (<code>H_2SO_4</code>, <code>\\Delta</code>, <code>NH_3</code>).
+        <strong>from</strong>: Quell-Knoten (mehrere möglich für Kombinationsreaktionen wie A + B → C). Ein Knoten kann <em>mehrere</em> ausgehende Pfeile haben — so entstehen Verzweigungen (z. B. Diels-Alder mit zwei alternativen Produkten). <strong>to</strong>: Ziel-Knoten. <strong>Reagenz oben/unten</strong>: LaTeX-Syntax erlaubt (<code>H_2SO_4</code>, <code>\\Delta</code>, <code>NH_3</code>).
       </div>
     </div>`;
 }
@@ -1056,11 +1632,15 @@ function nodeCardEditor(n, i) {
   n = n || {};
   const previewId = 'node-prev-'+i;
   const hasStruct = n.mol || n.smiles;
+  const deg = nodeDegree(n.id);
+  const orphan = deg.in === 0 && deg.out === 0 && (_editScheme.edges||[]).length > 0;
+  const degPill = `<span class="node-degree-pill${orphan?' has-warning':''}" title="${orphan?'⚠ kein Pfeil betrifft diesen Knoten':'Pfeil-Anzahl'}">↘${deg.in}·↗${deg.out}</span>`;
   return `
-    <div class="node-card${n.given?' given-card':''}" data-i="${i}">
+    <div class="node-card${n.given?' given-card':''}" data-i="${i}" id="node-card-${i}">
       <div class="node-card-head">
         <div class="node-card-num">${i+1}</div>
-        <div class="node-card-title">${x(n.label||'?')}${n.name?' — '+x(n.name):''}</div>
+        <div class="node-card-title">${x(n.label||'?')}${n.name?' — '+x(n.name):''}${degPill}</div>
+        <button class="fork-btn" onclick="quickEdgeFrom('${x(n.id||'')}')" title="Neuen Pfeil ausgehend von diesem Knoten erstellen — für Verzweigungen">↗ Pfeil ab hier</button>
         <div class="step-controls">
           <button onclick="moveNode(${i},-1)">↑</button>
           <button onclick="moveNode(${i},+1)">↓</button>
@@ -1174,6 +1754,8 @@ window.updateNodeProp = function(i, k, v) {
     // We don't have the old ID here, but the user can fix edges manually.
     // The header label will refresh on next rerender.
   }
+  // Debounced live preview refresh (avoid thrashing during fast typing)
+  scheduleSchemePreviewRefresh();
 };
 window.rerenderNode = function(i) {
   const card = document.querySelector(`.node-card[data-i="${i}"]`);
@@ -1186,10 +1768,12 @@ function rerenderNodes() {
   refreshNodePreviewsAfter();
   // Edges depend on node ids → rerender to refresh dropdowns
   rerenderEdges();
+  refreshSchemePreview();
 }
 function rerenderEdges() {
   const wrap = document.getElementById('edges-wrap');
   if (wrap) wrap.innerHTML = (_editScheme.edges||[]).map((e,i)=>edgeCardEditor(e,i)).join('');
+  refreshSchemePreview();
 }
 
 async function refreshNodePreviewsAfter() {
@@ -1203,6 +1787,160 @@ async function refreshNodePreviewsAfter() {
     else if (n.smiles) MolRenderer.drawSmiles(n.smiles, el, { width: 110, height: 100 });
   });
 }
+
+/* ── WYSIWYG scheme-graph helpers ─────────────────────────────────
+   `nodeDegree(id)` — returns {in, out} = #edges pointing to / leaving the
+                       node. Used for badges and orphan warning.
+   `refreshSchemePreview()` — re-renders the top live preview using the
+                       same node/edge ordering algorithm as quiz.html, but
+                       with admin-only affordances: click a node → its
+                       editor card scrolls into view + flashes.
+   `quickEdgeFrom(id)` — creates a new edge prefilled with `from=[id]`
+                       and scrolls to it. Used by the per-node fork
+                       button to quickly branch out from any node. */
+
+function nodeDegree(id) {
+  if (!id) return {in:0, out:0};
+  let inDeg = 0, outDeg = 0;
+  for (const e of (_editScheme.edges||[])) {
+    if (e.to === id) inDeg++;
+    if ((e.from||[]).includes(id)) outDeg++;
+  }
+  return {in:inDeg, out:outDeg};
+}
+
+let _previewRefreshTimer = null;
+function scheduleSchemePreviewRefresh() {
+  if (_previewRefreshTimer) clearTimeout(_previewRefreshTimer);
+  _previewRefreshTimer = setTimeout(() => { _previewRefreshTimer = null; refreshSchemePreview(); }, 200);
+}
+
+async function refreshSchemePreview() {
+  const container = document.getElementById('scheme-preview');
+  if (!container) return;
+  const nodes = _editScheme.nodes || [];
+  const edges = _editScheme.edges || [];
+  if (!nodes.length) {
+    container.innerHTML = '<div class="scheme-preview-empty">Fügen Sie Knoten und Pfeile hinzu — die Vorschau erscheint hier.</div>';
+    return;
+  }
+  await MolRenderer.ready();
+  const nodeById = Object.fromEntries(nodes.map(n => [n.id, n]));
+  const placed = new Set();
+  const parts = [];
+
+  const nodeHtml = (n, idx) => {
+    const i = nodes.indexOf(n);
+    const cls = n.given ? 'given' : 'hidden-node';
+    const deg = nodeDegree(n.id);
+    const badge = `<div class="deg-badge">
+      ${deg.in>0?`<span class="deg in" title="${deg.in} eingehend">↘${deg.in}</span>`:''}
+      ${deg.out>0?`<span class="deg out" title="${deg.out} ausgehend">↗${deg.out}</span>`:''}
+      ${deg.in===0&&deg.out===0?`<span class="deg orphan" title="kein Pfeil">⚠</span>`:''}
+    </div>`;
+    return `<div class="sp-node ${cls}" onclick="focusNodeCard(${i})" title="Knoten ${x(n.label||n.id)} bearbeiten">
+      ${badge}
+      <div class="struct${(n.mol||n.smiles)?'':' ph'}" id="sp-struct-${idx}">${(n.mol||n.smiles)?'':'(leer)'}</div>
+      <div class="lbl">${x(n.label||n.id||'?')}</div>
+      ${n.name?`<div class="nm">${x(n.name)}</div>`:''}
+    </div>`;
+  };
+  const arrowHtml = (e) => {
+    const above = e.reagent_above || '';
+    const below = e.reagent_below || '';
+    return `<div class="sp-arrow">
+      <div class="ra">${x(above)}</div>
+      <div class="ln"></div>
+      <div class="rb">${x(below)}</div>
+    </div>`;
+  };
+
+  let svgIdx = 0;
+  const placeNode = (n) => { parts.push(nodeHtml(n, svgIdx++)); placed.add(n.id); };
+
+  if (edges.length === 0) {
+    nodes.forEach(placeNode);
+  } else {
+    edges.forEach(edge => {
+      (edge.from||[]).forEach((fid, j) => {
+        const fn = nodeById[fid];
+        if (!fn) return;
+        if (!placed.has(fid)) placeNode(fn);
+        if (j < (edge.from||[]).length - 1) {
+          parts.push(`<div class="sp-arrow" style="min-width:24px;position:relative"><div class="ra"></div><div style="font-weight:700;color:var(--muted);font-size:0.85rem;line-height:1">+</div><div class="rb"></div></div>`);
+        }
+      });
+      parts.push(arrowHtml(edge));
+      const tn = nodeById[edge.to];
+      if (tn && !placed.has(edge.to)) placeNode(tn);
+    });
+    nodes.forEach(n => { if (!placed.has(n.id)) placeNode(n); });
+  }
+  container.innerHTML = parts.join('');
+  // Render molecule SVGs into each .struct
+  let k = 0;
+  for (const n of nodes) {
+    if (!placed.has(n.id)) continue;
+    // walk in the same order: count matching nodes
+  }
+  // Simpler: just iterate all .struct elements in DOM order and pair with nodes.
+  const structs = container.querySelectorAll('.sp-struct, [id^="sp-struct-"]');
+  // Map: spStruct DOM index → node (in placement order)
+  const placedOrder = [];
+  if (edges.length === 0) placedOrder.push(...nodes);
+  else {
+    const seen = new Set();
+    edges.forEach(e => {
+      (e.from||[]).forEach(fid => { if (!seen.has(fid) && nodeById[fid]) { seen.add(fid); placedOrder.push(nodeById[fid]); }});
+      if (e.to && nodeById[e.to] && !seen.has(e.to)) { seen.add(e.to); placedOrder.push(nodeById[e.to]); }
+    });
+    nodes.forEach(n => { if (!seen.has(n.id)) placedOrder.push(n); });
+  }
+  placedOrder.forEach((n, i) => {
+    const el = container.querySelector('#sp-struct-'+i);
+    if (!el) return;
+    if (!(n.mol || n.smiles)) return; // keep placeholder
+    el.innerHTML = '';
+    try {
+      if (n.mol)         MolRenderer.drawMol(n.mol, el, { width: 110, height: 74 });
+      else if (n.smiles) MolRenderer.drawSmiles(n.smiles, el, { width: 110, height: 74 });
+    } catch (e) {
+      el.innerHTML = '<span style="color:var(--red);font-size:0.65rem">Render-Fehler</span>';
+    }
+  });
+}
+
+window.focusNodeCard = function(i) {
+  const card = document.getElementById('node-card-'+i);
+  if (!card) return;
+  card.scrollIntoView({behavior:'smooth', block:'center'});
+  // Flash animation
+  card.classList.remove('is-highlighted');
+  void card.offsetWidth; // restart animation
+  card.classList.add('is-highlighted');
+  setTimeout(() => card.classList.remove('is-highlighted'), 1100);
+};
+
+window.quickEdgeFrom = function(nodeId) {
+  _editScheme.edges = _editScheme.edges || [];
+  _editScheme.edges.push({ from: nodeId ? [nodeId] : [], to:'', reagent_above:'', reagent_below:'' });
+  rerenderEdges();
+  refreshSchemePreview();
+  mu();
+  // Scroll to the new edge
+  setTimeout(() => {
+    const wrap = document.getElementById('edges-wrap');
+    if (!wrap) return;
+    const cards = wrap.querySelectorAll('.edge-card');
+    const last = cards[cards.length - 1];
+    if (last) {
+      last.scrollIntoView({behavior:'smooth', block:'center'});
+      last.style.transition = 'background 0.4s';
+      last.style.background = 'var(--accent-soft)';
+      setTimeout(() => { last.style.background = ''; }, 700);
+    }
+  }, 60);
+};
 
 window.addEdge = function() {
   _editScheme.edges.push({ from:[], to:'', reagent_above:'', reagent_below:'' });
@@ -1224,6 +1962,7 @@ window.updateEdgeProp = function(i, k, v) {
   if (!_editScheme.edges[i]) return;
   _editScheme.edges[i][k] = v;
   mu();
+  scheduleSchemePreviewRefresh();
 };
 window.addEdgeFrom = function(i, nodeId) {
   if (!nodeId || !_editScheme.edges[i]) return;
@@ -1648,6 +2387,59 @@ function collectMechSteps() {
 
 /* ── Collect + save ──────────────────────────────────────────────── */
 
+/* Serialize a scheme {nodes,edges} into the JSON shape we persist —
+   strips undefined / empty optionals, keeps optional x/y layout hints
+   when present (admin-only; quiz renderer ignores them). */
+function _serializeScheme(scheme) {
+  const out = { nodes: [], edges: [] };
+  out.nodes = (scheme.nodes || []).map(n => {
+    const o = { id: n.id || '', label: n.label || n.id || '', given: !!n.given };
+    if (n.name)        o.name = n.name;
+    if (n.mol)         o.mol = n.mol;
+    if (n.smiles)      o.smiles = n.smiles;
+    if (n.explanation) o.explanation = n.explanation;
+    if (n.note)        o.note = n.note;
+    if (n.related_reaction_id) o.related_reaction_id = n.related_reaction_id;
+    if (typeof n.x === 'number') o.x = Math.round(n.x);
+    if (typeof n.y === 'number') o.y = Math.round(n.y);
+    return o;
+  });
+  out.edges = (scheme.edges || []).map(e => {
+    const o = { from: e.from || [], to: e.to || '' };
+    if (e.reagent_above) o.reagent_above = e.reagent_above;
+    if (e.reagent_below) o.reagent_below = e.reagent_below;
+    return o;
+  });
+  return out;
+}
+
+/* Serialize a single section for composed questions. */
+function _serializeSection(sec) {
+  const o = { type: sec.type };
+  if (sec.title) o.title = sec.title;
+  if (sec.body)  o.body  = sec.body;
+  if (sec.type === 'synthesis') {
+    o.scheme = _serializeScheme(sec.scheme || {});
+  } else if (sec.type === 'multiple_choice') {
+    if (sec.prompt) o.prompt = sec.prompt;
+    if (sec.givens && Object.keys(sec.givens).length) o.givens = sec.givens;
+    if (sec.choices) o.choices = sec.choices;
+    if (sec.related_reaction_id) o.related_reaction_id = sec.related_reaction_id;
+    if (sec.explanation) o.explanation = sec.explanation;
+  } else if (sec.type === 'short_answer') {
+    if (sec.prompt) o.prompt = sec.prompt;
+    if (sec.expected_answer) o.expected_answer = sec.expected_answer;
+    if (sec.related_reaction_id) o.related_reaction_id = sec.related_reaction_id;
+  } else if (sec.type === 'mechanism') {
+    if (sec.prompt) o.prompt = sec.prompt;
+    if (sec.givens && Object.keys(sec.givens).length) o.givens = sec.givens;
+    if (sec.mech_steps) o.mech_steps = sec.mech_steps;
+    if (sec.related_reaction_id) o.related_reaction_id = sec.related_reaction_id;
+    if (sec.explanation) o.explanation = sec.explanation;
+  }
+  return o;
+}
+
 function collectQ() {
   const type = document.querySelector('input[name="q-type"]:checked')?.value || 'synthesis';
   const q = {
@@ -1665,27 +2457,21 @@ function collectQ() {
   const hints = getHints();
   if (hints.length) q.hints = hints;
 
+  // Composed-mode questions take priority: their sections override type-specific fields.
+  if (_composedSections && _composedSections.length > 0) {
+    collectActiveComposedSection();
+    q.sections = _composedSections.map(s => _serializeSection(s));
+    // Composed questions store their concrete kind via `type:'composed'` so they
+    // round-trip cleanly. The current quiz.html renderer detects composed via
+    // q.sections regardless of q.type.
+    q.type = 'composed';
+    return q;
+  }
+
   if (type === 'synthesis') {
-    if (_editScheme) {
-      const scheme = {};
-      scheme.nodes = (_editScheme.nodes || []).map(n => {
-        const out = { id: n.id || '', label: n.label || n.id || '', given: !!n.given };
-        if (n.name)        out.name = n.name;
-        if (n.mol)         out.mol = n.mol;
-        if (n.smiles)      out.smiles = n.smiles;
-        if (n.explanation) out.explanation = n.explanation;
-        if (n.note)        out.note = n.note;
-        if (n.related_reaction_id) out.related_reaction_id = n.related_reaction_id;
-        return out;
-      });
-      scheme.edges = (_editScheme.edges || []).map(e => {
-        const out = { from: e.from || [], to: e.to || '' };
-        if (e.reagent_above) out.reagent_above = e.reagent_above;
-        if (e.reagent_below) out.reagent_below = e.reagent_below;
-        return out;
-      });
-      q.scheme = scheme;
-    }
+    // Pull current scheme directly from the active graph editor when available.
+    const live = (_activeEditor && _activeEditor.scheme) || _editScheme;
+    if (live) q.scheme = _serializeScheme(live);
   } else if (type === 'multiple_choice') {
     q.prompt = document.getElementById('mcq-prompt').value.trim();
     const givens = (() => {
