@@ -6,9 +6,8 @@
 <meta name="theme-color" content="#c2c5a6">
 <title>OC Referenz — Admin</title>
 <link rel="icon" type="image/svg+xml" href="./assets/logo.svg">
-<script src="https://unpkg.com/smiles-drawer@2/dist/smiles-drawer.min.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/openchemlib/dist/openchemlib-full.js"></script>
-<script src="./reaction-drawer.js"></script>
 <script src="./mol-renderer.js"></script>
 <script src="./rdkit-helper.js"></script>
 <script src="./scheme-graph-editor.js"></script>
@@ -134,8 +133,6 @@ select.fi option{background:var(--surface);color:var(--text);}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;}
 .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem;}
 
-.tags-wrap{display:flex;flex-wrap:wrap;gap:0.3rem;padding:0.4rem 0.55rem;background:var(--surface);border:1px solid var(--border);border-radius:7px;min-height:38px;align-items:center;cursor:text;transition:all 0.15s;}
-.tags-wrap:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
 .chip{display:inline-flex;align-items:center;gap:0.25rem;font-size:0.72rem;padding:0.15rem 0.5rem;border-radius:20px;background:var(--surface2);color:var(--text-soft);border:1px solid var(--border2);font-weight:500;}
 .chip button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.7rem;padding:0;line-height:1;}
 .chip button:hover{color:var(--red);}
@@ -216,6 +213,16 @@ select.fi option{background:var(--surface);color:var(--text);}
 .imgdrop .img-prev{width:60px;height:60px;border:1px solid var(--border);border-radius:5px;background:#fff center/contain no-repeat;flex-shrink:0;}
 .imgdrop button{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:0.28rem 0.55rem;border-radius:5px;cursor:pointer;font-size:0.74rem;font-family:inherit;}
 .imgdrop button:hover{color:var(--red);border-color:var(--red);background:var(--red-soft);}
+.sec-add-wrap{position:relative;display:inline-block;}
+.sec-add-menu{display:none;position:absolute;z-index:40;top:calc(100% + 4px);left:0;min-width:190px;background:var(--surface);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.12);padding:0.25rem;}
+.sec-add-menu.open{display:block;}
+.sec-add-menu button{display:block;width:100%;text-align:left;padding:0.45rem 0.6rem;border:0;background:none;border-radius:5px;font-size:0.82rem;cursor:pointer;color:var(--text);}
+.sec-add-menu button:hover{background:var(--accent-soft);color:var(--accent);}
+.given-toggle{display:flex;gap:0;border:1px solid var(--border);border-radius:7px;overflow:hidden;}
+.given-toggle button{flex:1;padding:0.45rem 0.6rem;border:0;background:var(--surface);font-size:0.8rem;font-weight:600;cursor:pointer;color:var(--muted);transition:all 0.12s;}
+.given-toggle button + button{border-left:1px solid var(--border);}
+.given-toggle button:hover{background:var(--surface2);}
+.given-toggle button.active{background:var(--accent);color:#fff;}
 .type-switch{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.6rem;}
 .type-switch label{flex:1;min-width:120px;display:flex;align-items:center;gap:0.4rem;padding:0.55rem 0.7rem;border:1px solid var(--border);border-radius:7px;cursor:pointer;font-size:0.82rem;background:var(--surface);transition:all 0.12s;font-weight:500;}
 .type-switch label:hover{border-color:var(--muted2);}
@@ -301,6 +308,7 @@ select.fi option{background:var(--surface);color:var(--text);}
 .sg-node:active{cursor:grabbing;}
 .sg-node-bg{fill:#ffffff;stroke:#cfceb8;stroke-width:1.5;}
 .sg-node.given .sg-node-bg{fill:#f3f3ec;}
+.sg-node-given{font:600 9px 'Segoe UI',system-ui,sans-serif;fill:#3f7d3f;letter-spacing:0.04em;pointer-events:none;}
 .sg-node.hidden .sg-node-bg{fill:#fffbe8;stroke:#e2001a;stroke-dasharray:4 3;}
 .sg-node.selected .sg-node-bg{stroke:#e2001a;stroke-width:2.5;stroke-dasharray:none;filter:drop-shadow(0 2px 8px rgba(226,0,26,0.25));}
 .sg-node-label{font:bold 12px 'Segoe UI',system-ui,sans-serif;fill:#e2001a;letter-spacing:0.02em;pointer-events:none;}
@@ -601,7 +609,7 @@ function renderList(q='') {
   document.getElementById('rxn-list').innerHTML = cats.map(cat => {
     const items = reactions.map((r,i)=>({r,i})).filter(({r}) =>
       r.category===cat && (!f || r.name.toLowerCase().includes(f)
-        || (r.tags||[]).some(t=>t.toLowerCase().includes(f))
+
         || (r.id||'').toLowerCase().includes(f)));
     if (!items.length) return '';
     return `<div class="cat-hdr">${x(cat)} <span>${items.length}</span></div>`
@@ -652,17 +660,13 @@ function buildForm(r) {
       <select class="fi" id="f-cat" onchange="catToggle(this)">${catOpts}</select>
       <input class="fi" id="f-cat-new" placeholder="Neue Kategorie eingeben…" style="display:none;margin-top:0.4rem" oninput="mu()">
     </div>
-    <div class="field"><label>Tags <small style="color:var(--muted2)">(Enter oder Komma)</small></label>
-      <div class="tags-wrap" id="tags-wrap" onclick="document.getElementById('ti').focus()">
-        ${(r.tags||[]).map(t=>`<span class="chip">${x(t)}<button onclick="rmTag('${x(t)}')">×</button></span>`).join('')}
-        <input class="tag-inp" id="ti" placeholder="Tag…" onkeydown="tagKey(event)">
-      </div></div>
   </div>
 
   <div class="fsec">
     <div class="fsec-title">Struktur</div>
     <div class="field"><label>Reaktions-SMILES <small style="color:var(--muted2)">Reaktanten&gt;Reagenz&gt;Produkte</small></label>
       <input class="fi" id="f-smi" value="${x(r.reaction_smiles||'')}" placeholder="CC(C)(C)Br&gt;H2O&gt;CC(C)(C)OH" oninput="mu();schedP()">
+      <button class="bxs sec" style="margin-top:0.4rem" onclick="openReactionStructEditor()">✎ Struktur zeichnen (Ketcher)</button>
     </div>
     <div class="smi-prev" id="smi-prev"><div class="smi-ph">SMILES oben eingeben zur Vorschau</div></div>
     <div class="row2" style="margin-top:0.75rem">
@@ -717,31 +721,34 @@ function getCat() {
     : sel.value;
 }
 
-function getTags() { return [...document.querySelectorAll('#tags-wrap .chip')].map(c=>c.firstChild.textContent.trim()); }
-function rmTag(t) { document.querySelectorAll('#tags-wrap .chip').forEach(c=>{ if(c.firstChild.textContent.trim()===t) c.remove(); }); mu(); }
-function tagKey(e) {
-  if (e.key==='Enter'||e.key===',') {
-    e.preventDefault();
-    const v=e.target.value.trim().replace(/,$/,'');
-    if(v){ const w=document.getElementById('tags-wrap'); const s=document.createElement('span'); s.className='chip'; s.innerHTML=x(v)+`<button onclick="rmTag('${x(v)}')">×</button>`; w.insertBefore(s,e.target); e.target.value=''; mu(); }
-  } else if(e.key==='Backspace'&&e.target.value==='') {
-    const c=[...document.querySelectorAll('#tags-wrap .chip')]; if(c.length){c[c.length-1].remove();mu();}
-  }
-}
-
 function addKP() { const l=document.getElementById('kp-list'); const i=l.children.length; const d=document.createElement('div'); d.className='kp-row'; d.innerHTML=`<input value="" oninput="mu()"><button class="kp-del" onclick="rmKP(${i})">×</button>`; l.appendChild(d); d.querySelector('input').focus(); mu(); }
 function rmKP(i) { document.getElementById('kp-list').children[i]?.remove(); mu(); }
 function getKPs() { return [...document.querySelectorAll('#kp-list input')].map(i=>i.value.trim()).filter(Boolean); }
 
 let pt; function schedP(){clearTimeout(pt);pt=setTimeout(()=>{const s=document.getElementById('f-smi')?.value?.trim();const l=document.getElementById('f-rl')?.value?.trim();const lb=document.getElementById('f-rlb')?.value?.trim();if(s)drawP(s,l,lb);else{const b=document.getElementById('smi-prev');if(b)b.innerHTML='<div class="smi-ph">SMILES oben eingeben zur Vorschau</div>';}},500);}
-function drawP(smiles,label,labelBelow){const b=document.getElementById('smi-prev');if(!b)return;b.innerHTML='<svg id="psv" xmlns="http://www.w3.org/2000/svg"></svg>';requestAnimationFrame(()=>{const svg=document.getElementById('psv');if(svg)ReactionRenderer.draw(smiles,svg,'light',label||'{reagents}',labelBelow||'');});}
+/* Preview a reaction (or a lone structure) with the same OpenChemLib
+   renderer the quiz uses, so what you see here is what a student sees. */
+function drawP(smiles, label, labelBelow) {
+  const b = document.getElementById('smi-prev');
+  if (!b) return;
+  b.innerHTML = '<div class="smi-ph">Rendern…</div>';
+  MolRenderer.ready().then(() => {
+    const host = document.getElementById('smi-prev');
+    if (!host) return;
+    if (smiles.includes('>') || label || labelBelow) {
+      MolRenderer.drawReaction(smiles.includes('>') ? smiles : smiles + '>>', host,
+        { above: label, below: labelBelow, width: 190, height: 150 });
+    } else {
+      MolRenderer.drawAuto(smiles, host, { width: 240, height: 180 });
+    }
+  }).catch(e => { b.innerHTML = '<div class="smi-ph">Renderer nicht verfügbar</div>'; console.error(e); });
+}
 
 function collect() {
   const r={}, g=id=>document.getElementById(id)?.value?.trim(), s=(k,v)=>{if(v)r[k]=v;};
   r.id=g('f-id'); r.category=getCat(); r.name=g('f-name');
   s('difficulty',g('f-diff'));
   s('reaktionstyp',g('f-rtyp')); s('transformation',g('f-trans'));
-  r.tags=getTags();
   s('reaction_smiles',g('f-smi')); s('reagent_label',g('f-rl')); s('reagent_label_below',g('f-rlb')); s('general_scheme',g('f-gs'));
   s('conditions',g('f-cond')); s('stereochemistry',g('f-stereo')); s('solvent',g('f-solv'));
   const kps=getKPs(); if(kps.length) r.key_points=kps;
@@ -775,7 +782,7 @@ async function saveRxn() {
 
 function newRxn(){
   const cats=[...new Set(reactions.map(r=>r.category))];
-  const r={id:'neu-'+Date.now(),category:cats[0]||'Unkategorisiert',name:'Neue Reaktion',tags:[]};
+  const r={id:'neu-'+Date.now(),category:cats[0]||'Unkategorisiert',name:'Neue Reaktion'};
   reactions.push(r); selRxn=reactions.length-1; renderList(); buildForm(r); unsaved=true; setBadge();
 }
 function dupRxn(){
@@ -844,14 +851,16 @@ function mu(){unsaved=true;setBadge();}
    Quiz editor
    ════════════════════════════════════════════════════════════════════ */
 
-const Q_TYPES = [
-  { id: 'synthesis',       label: 'Mehrstufige Synthese' },
+/* Section kinds available inside a question. There is no longer a
+   question-level type: every question is a list of these. */
+const SECTION_TYPES = [
+  { id: 'synthesis',       label: 'Synthese-Schema' },
   { id: 'multiple_choice', label: 'Multiple Choice' },
-  { id: 'short_answer',    label: 'Theorie (Kurzantwort)' },
+  { id: 'short_answer',    label: 'Kurzantwort' },
   { id: 'mechanism',       label: 'Mechanismus' },
-  { id: 'composed',        label: 'Composed (mehrere Abschnitte)' }
+  { id: 'intro',           label: 'Text / Einleitung' }
 ];
-const Q_TYPE_LABEL = Object.fromEntries(Q_TYPES.map(t => [t.id, t.label]));
+const SECTION_TYPE_LABEL = Object.fromEntries(SECTION_TYPES.map(t => [t.id, t.label]));
 
 function renderQList(qstr='') {
   const f = (qstr || '').toLowerCase();
@@ -860,14 +869,14 @@ function renderQList(qstr='') {
     const items = questions.map((q,i)=>({q,i})).filter(({q}) =>
       (q.category||'Unkategorisiert')===cat && (!f
         || (q.name||'').toLowerCase().includes(f)
-        || (q.id||'').toLowerCase().includes(f)
-        || (q.type||'').toLowerCase().includes(f)));
+        || (q.id||'').toLowerCase().includes(f)));
     if (!items.length) return '';
     return `<div class="cat-hdr">${x(cat)} <span>${items.length}</span></div>`
       + items.map(({q,i}) => {
           const d = q.difficulty;
           const badge = d ? `<span class="diff-badge diff-${d}">${d}</span>` : '';
-          const typeTag = q.type ? `<span class="q-type-tag">${Q_TYPE_LABEL[q.type]||q.type}</span>` : '';
+          const nSec = (q.sections || []).length;
+          const typeTag = nSec ? `<span class="q-type-tag">${nSec} Abschnitt${nSec===1?'':'e'}</span>` : '';
           return `<div class="rxn-row${selQ===i?' active':''}${d?' diff-row-'+d:''}" onclick="selQFn(${i})">${badge}${x(q.name||'(unbenannt)')}${typeTag}</div>`;
         }).join('');
   }).join('') || '<div style="padding:1rem;color:var(--muted);font-size:0.82rem">Keine Treffer</div>';
@@ -908,10 +917,6 @@ function buildQForm(q) {
   const catOpts = cats.map(c => `<option value="${x(c)}"${q.category===c?' selected':''}>${x(c)}</option>`).join('')
                 + `<option value="__new__">— Neue Kategorie —</option>`;
 
-  const typeSwitch = Q_TYPES.map(t => `
-    <label><input type="radio" name="q-type" value="${t.id}" ${q.type===t.id?'checked':''} onchange="qTypeChange(this.value)"><span>${t.label}</span></label>
-  `).join('');
-
   document.getElementById('q-edit-panel').innerHTML = `
     <div class="fsec">
       <div class="fsec-title">Identität</div>
@@ -931,9 +936,6 @@ function buildQForm(q) {
       <div class="field"><label>Kategorie</label>
         <select class="fi" id="q-cat" onchange="qCatToggle(this)">${catOpts}</select>
         <input class="fi" id="q-cat-new" placeholder="Neue Kategorie eingeben…" style="display:none;margin-top:0.4rem" oninput="mu()">
-      </div>
-      <div class="field"><label>Typ</label>
-        <div class="type-switch">${typeSwitch}</div>
       </div>
       <div class="field"><label>Quelle / Literatur (optional)</label>
         <input class="fi" id="q-source" value="${x(q.source||'')}" placeholder="Stork, G. … J. Am. Chem. Soc. 1951, 73, 4501." oninput="mu()">
@@ -961,7 +963,7 @@ function buildQForm(q) {
     <div class="helper-text">„Übernehmen" speichert lokal im Browser. Im Server-Modus wird zusätzlich data/questions.json geschrieben.</div>
   `;
 
-  qTypeChange(q.type || 'synthesis', q);
+  renderQBody(q);
 }
 
 function qCatToggle(sel) {
@@ -989,39 +991,20 @@ function addHint() {
 function rmHint(i) { document.getElementById('q-hints-list').children[i]?.remove(); mu(); }
 function getHints() { return [...document.querySelectorAll('#q-hints-list input')].map(i=>i.value.trim()).filter(Boolean); }
 
-function qTypeChange(type, q) {
+/* Render the body of the question form: always the section editor. */
+function renderQBody(q) {
   q = q || (selQ!==null ? questions[selQ] : {});
   const body = document.getElementById('q-type-body');
   if (!body) return;
 
-  // If the question carries `sections[]`, it's a composed question and
-  // takes priority over the radio-button `type` (the radio is left as-is
-  // for legacy compatibility but the actual UI is the section editor).
-  if (Array.isArray(q.sections) && q.sections.length > 0) {
-    body.innerHTML = renderComposedQEditor(q);
-    initComposedSectionUI(q);
-    return;
-  }
-
-  // Tear down any prior graph editor instance to avoid memory leaks
   _teardownAllGraphEditors();
 
-  if (type === 'synthesis')           {
-    body.innerHTML = renderSynthEditor(q);
-    initSynthGraphEditor(q.scheme || { nodes: [], edges: [] }, 'main', q);
+  if (!Array.isArray(q.sections) || q.sections.length === 0) {
+    q.sections = [{ type: 'synthesis', title: 'Schema', scheme: { nodes: [], edges: [] } }];
   }
-  else if (type === 'multiple_choice') body.innerHTML = renderMCQEditor(q);
-  else if (type === 'short_answer')    body.innerHTML = renderSAEditor(q);
-  else if (type === 'mechanism')       body.innerHTML = renderMechEditor(q);
-  else if (type === 'composed') {
-    // User chose composed via radio: bootstrap with one empty synthesis section
-    if (!q.sections) q.sections = [{ type:'synthesis', title:'', scheme:{nodes:[],edges:[]} }];
-    body.innerHTML = renderComposedQEditor(q);
-    initComposedSectionUI(q);
-  }
-  // Re-render previews for any pre-existing SMILES fields after a tiny delay
+  body.innerHTML = renderComposedQEditor(q);
+  initComposedSectionUI(q);
   setTimeout(refreshAllMiniPreviews, 10);
-  mu();
 }
 
 /* ── Sub-editors per type ────────────────────────────────────────── */
@@ -1085,20 +1068,18 @@ function miniPrev(prefix) {
     box.innerHTML = '<span style="color:var(--muted2);font-size:0.78rem;font-style:italic">Vorschau</span>';
     return;
   }
-  box.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" id="${prefix}-svg"></svg>`;
-  requestAnimationFrame(() => {
-    const svg = document.getElementById(prefix+'-svg');
-    if (!svg) return;
-    let s = smi;
-    const hasArrow = s.includes('>');
-    const wantsArrow = !!(rl || rlb);
-    if (!hasArrow && wantsArrow) s = s + '>>';
-    try {
-      if (s.includes('>')) ReactionRenderer.draw(s, svg, 'light', rl || '{reagents}', rlb);
-      else                 ReactionRenderer.drawMolecule(s, svg, 'light');
-    } catch (e) {
-      box.innerHTML = '<span style="color:var(--red);font-size:0.78rem">⚠ SMILES-Fehler</span>';
+  box.innerHTML = '<span style="color:var(--muted2);font-size:0.78rem;font-style:italic">Rendern…</span>';
+  MolRenderer.ready().then(() => {
+    const host = document.getElementById(prefix+'-prev');
+    if (!host) return;
+    if (smi.includes('>') || rl || rlb) {
+      MolRenderer.drawReaction(smi.includes('>') ? smi : smi + '>>', host,
+        { above: rl, below: rlb, width: 130, height: 105 });
+    } else {
+      MolRenderer.drawAuto(smi, host, { width: 170, height: 130 });
     }
+  }).catch(() => {
+    box.innerHTML = '<span style="color:var(--red);font-size:0.78rem">⚠ Renderfehler</span>';
   });
 }
 function refreshAllMiniPreviews() {
@@ -1160,30 +1141,6 @@ function _teardownAllGraphEditors() {
   Object.keys(_composedSectionEditors).forEach(k => delete _composedSectionEditors[k]);
 }
 
-/* ── Plain `type:synthesis` editor — graph + detail panel ─────── */
-
-function renderSynthEditor(q) {
-  // Mirror into _editScheme so the Ketcher modal (which uses _editScheme[idx])
-  // operates on the same data. The SchemeGraphEditor will be initialized
-  // against this same object reference, so all mutations are shared.
-  const fallback = { nodes:[], edges:[] };
-  _editScheme = Object.assign(fallback, JSON.parse(JSON.stringify(q.scheme || {})));
-  if (!_editScheme.nodes) _editScheme.nodes = [];
-  if (!_editScheme.edges) _editScheme.edges = [];
-  // Strip legacy overlay fields if present
-  delete _editScheme.mode;
-  delete _editScheme.image; delete _editScheme.image_width; delete _editScheme.image_height;
-  delete _editScheme.regions;
-  return `
-    <div class="fsec">
-      <div class="fsec-title">Synthese-Schema (visuell)</div>
-      <div id="sg-container-main"></div>
-      <div id="sg-detail-main" class="sg-detail">
-        <div class="sg-detail-empty">Klick auf einen Knoten oder Pfeil im Diagramm, um Details zu bearbeiten. Doppelklick auf einen Knoten öffnet den Struktureditor (Ketcher).</div>
-      </div>
-    </div>`;
-}
-
 function initSynthGraphEditor(scheme, key, q) {
   const container = document.getElementById('sg-container-' + key);
   if (!container || typeof SchemeGraphEditor === 'undefined') return;
@@ -1222,7 +1179,13 @@ function renderNodeDetail(n, key, editor) {
     </div>
     <div class="field"><label>ID / Label</label>
       <input id="nd-id" value="${x(n.id||'')}" oninput="__patchSelectedNode('${x(key)}','id', this.value)"></div>
-    <div class="field"><label style="display:flex;align-items:center;gap:0.45rem;cursor:pointer"><input type="checkbox" id="nd-given" ${n.given?'checked':''} onchange="__patchSelectedNode('${x(key)}','given', this.checked)"> Vorgegeben (immer sichtbar — sonst Reveal-Karte)</label></div>
+    <div class="field"><label>Im Quiz</label>
+      <div class="given-toggle">
+        <button class="${n.given?'':'active'}" onclick="__setNodeGiven('${x(key)}','${x(n.id)}', false)">? Gesucht</button>
+        <button class="${n.given?'active':''}" onclick="__setNodeGiven('${x(key)}','${x(n.id)}', true)">✓ Vorgegeben</button>
+      </div>
+      <small style="color:var(--muted2);display:block;margin-top:0.3rem">Vorgegebene Strukturen sind wie im BW-Angabenblatt von Anfang an sichtbar und müssen nicht aufgedeckt werden. Kurzbefehl: <kbd>G</kbd> bei ausgewähltem Knoten.</small>
+    </div>
     <div class="field"><label>Erläuterung (sichtbar nach Reveal)</label>
       <textarea id="nd-expl" oninput="__patchSelectedNode('${x(key)}','explanation', this.value)">${x(n.explanation||'')}</textarea></div>
     <div class="field"><label>Notiz / Hinweis (kursiv)</label>
@@ -1328,6 +1291,39 @@ window.__edgeRmFrom = function(key, idx, fromIdx) {
   ed.onChange();
   renderEdgeDetail(e, idx, key, ed);
 };
+
+/* Flip a node between "given" (drawn for the student) and "sought"
+   (a reveal card). Re-renders the node so the change is visible on the
+   canvas immediately, not just in the form. */
+window.__setNodeGiven = function(key, nodeId, val) {
+  const ed = (key === 'main') ? _activeEditor : _composedSectionEditors[parseInt(key.slice(3), 10)];
+  if (!ed) return;
+  const n = ed._nodeById(nodeId);
+  if (!n) return;
+  n.given = !!val;
+  ed.refreshNode(nodeId);
+  renderNodeDetail(n, key, ed);
+  mu();
+};
+
+/* "G" toggles the selected node while the canvas has focus. */
+window.addEventListener('keydown', ev => {
+  if (ev.key !== 'g' && ev.key !== 'G') return;
+  if (ev.ctrlKey || ev.metaKey || ev.altKey) return;
+  const t = ev.target;
+  if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+  const ed = _activeEditor;
+  if (!ed || ed.readOnly || !ed.selected || ed.selected.kind !== 'node') return;
+  const n = ed._nodeById(ed.selected.id);
+  if (!n) return;
+  ev.preventDefault();
+  n.given = !n.given;
+  ed.refreshNode(n.id);
+  const key = (ed === _activeEditor && _composedSections) ? 'sec' + _composedActiveSec : 'main';
+  renderNodeDetail(n, key, ed);
+  mu();
+  toast(n.given ? 'Knoten ' + (n.label || n.id) + ' ist jetzt vorgegeben' : 'Knoten ' + (n.label || n.id) + ' ist jetzt gesucht');
+});
 
 /* ── Bridge: Ketcher / OCR / RDKit-bake from graph node ─────── */
 
@@ -1443,7 +1439,7 @@ function renderComposedSecTabs() {
       <span class="sec-type-tag">${x(_sectionTypeShort(s.type))}</span>
       <span class="sec-x" onclick="event.stopPropagation();removeComposedSection(${i})" title="Abschnitt löschen">×</span>
     </button>
-  `).join('') + `<button class="sec-tab-add" onclick="addComposedSection()">＋ Abschnitt</button>`;
+  `).join('') + `<span class="sec-add-wrap"><button class="sec-tab-add" onclick="addComposedSection()">＋ Abschnitt</button><span class="sec-add-menu" id="sec-add-menu">${SECTION_TYPES.map(t => `<button onclick="addComposedSectionOfType('${t.id}')">${x(t.label)}</button>`).join('')}</span></span>`;
 }
 
 function _sectionTypeLabel(t) {
@@ -1462,9 +1458,16 @@ window.switchComposedSection = function(newIdx) {
 };
 
 window.addComposedSection = function() {
-  collectActiveComposedSection();
-  const type = prompt('Typ des neuen Abschnitts? (synthesis, multiple_choice, short_answer, mechanism, intro)', 'synthesis');
+  const menu = document.getElementById('sec-add-menu');
+  if (menu) { menu.classList.toggle('open'); return; }
+};
+
+/* Actually append a section of the chosen kind. */
+window.addComposedSectionOfType = function(type) {
+  const menu = document.getElementById('sec-add-menu');
+  if (menu) menu.classList.remove('open');
   if (!type) return;
+  collectActiveComposedSection();
   const sec = { type, title: '' };
   if (type === 'synthesis') sec.scheme = { nodes: [], edges: [] };
   if (type === 'multiple_choice') sec.choices = [];
@@ -2045,6 +2048,7 @@ async function updateMetaFromKetcher() {
 }
 
 window.closeStructEditor = function() {
+  _structTarget = null;
   document.getElementById('ocl-modal').classList.remove('open');
   // Blank the iframe to free the React app and indigo-ketcher WASM
   const iframe = document.getElementById('ketcher-iframe');
@@ -2052,7 +2056,73 @@ window.closeStructEditor = function() {
   _activeNodeIdx = -1;
 };
 
+/* When set, the modal commits here instead of to a quiz node.
+   { title, load(): string, save(mol, smiles) } */
+let _structTarget = null;
+
+/* Open Ketcher on an arbitrary structure (used by the reaction form). */
+window.openStructEditorFor = async function(target) {
+  _structTarget = target;
+  _activeNodeIdx = -1;
+  document.getElementById('ocl-modal-title').textContent = target.title || 'Struktur bearbeiten';
+  document.getElementById('ocl-modal').classList.add('open');
+  const status = document.getElementById('ocl-editor-status');
+  status.textContent = 'Ketcher wird geladen…';
+  const iframe = document.getElementById('ketcher-iframe');
+  iframe.src = KETCHER_URL;
+  await _waitForKetcher(iframe);
+  try {
+    const k = iframe.contentWindow.ketcher;
+    try {
+      k.editor.setOptions(JSON.stringify({
+        hideTerminalLabels:  true,
+        hideImplicitHydrogen: true,
+        showStereoFlags:     false,
+        showValenceWarnings: false,
+        atomColoring:        true
+      }));
+    } catch (e) { console.warn('Ketcher setOptions:', e); }
+    const cur = target.load ? target.load() : '';
+    if (cur) await k.setMolecule(cur);
+    status.textContent = 'Ketcher bereit';
+  } catch (e) {
+    status.textContent = 'Strukturladen fehlgeschlagen: ' + e.message;
+    console.error('openStructEditorFor:', e);
+  }
+  updateMetaFromKetcher();
+};
+
+/* The reaction form's "Struktur zeichnen" button. Ketcher round-trips
+   reaction SMILES, so the arrow and both sides come back in one string. */
+window.openReactionStructEditor = function() {
+  const field = document.getElementById('f-smi');
+  if (!field) return;
+  openStructEditorFor({
+    title: 'Reaktion zeichnen (Ketcher)',
+    load: () => field.value.trim(),
+    save: (mol, smiles) => {
+      if (!smiles) { toast('Ketcher lieferte kein SMILES', 'err'); return; }
+      field.value = smiles;
+      mu();
+      schedP();
+    }
+  });
+};
+
 window.commitStructEditor = async function() {
+  if (_structTarget) {
+    const iframe0 = document.getElementById('ketcher-iframe');
+    const k0 = iframe0 && iframe0.contentWindow && iframe0.contentWindow.ketcher;
+    if (k0) {
+      let mol = '', smiles = '';
+      try { mol    = await k0.getMolfile('v2000'); } catch (e) { console.warn('getMolfile:', e); }
+      try { smiles = await k0.getSmiles(); }        catch (e) { console.warn('getSmiles:', e); }
+      try { _structTarget.save(mol, smiles); } catch (e) { console.error('struct save:', e); }
+    }
+    _structTarget = null;
+    closeStructEditor();
+    return;
+  }
   const idx = _activeNodeIdx;
   if (idx < 0) { closeStructEditor(); return; }
   const iframe = document.getElementById('ketcher-iframe');
@@ -2388,6 +2458,9 @@ function collectMechSteps() {
    when present (admin-only; quiz renderer ignores them). */
 function _serializeScheme(scheme) {
   const out = { nodes: [], edges: [] };
+  // 'manual' means a human dragged nodes and the quiz viewer must not
+  // re-flow the scheme to the reader's screen width.
+  if (scheme.layout === 'manual') out.layout = 'manual';
   out.nodes = (scheme.nodes || []).map(n => {
     const o = { id: n.id || '', label: n.label || n.id || '', given: !!n.given };
     if (n.mol)         o.mol = n.mol;
@@ -2436,12 +2509,11 @@ function _serializeSection(sec) {
 }
 
 function collectQ() {
-  const type = document.querySelector('input[name="q-type"]:checked')?.value || 'synthesis';
   const q = {
     id: document.getElementById('q-id').value.trim(),
     category: getQCat(),
     name: document.getElementById('q-name').value.trim(),
-    type
+    type: 'composed'
   };
   const diff = document.getElementById('q-diff').value;
   if (diff) q.difficulty = diff;
@@ -2452,60 +2524,11 @@ function collectQ() {
   const hints = getHints();
   if (hints.length) q.hints = hints;
 
-  // Composed-mode questions take priority: their sections override type-specific fields.
-  if (_composedSections && _composedSections.length > 0) {
-    collectActiveComposedSection();
-    q.sections = _composedSections.map(s => _serializeSection(s));
-    // Composed questions store their concrete kind via `type:'composed'` so they
-    // round-trip cleanly. The current quiz.html renderer detects composed via
-    // q.sections regardless of q.type.
-    q.type = 'composed';
-    return q;
-  }
-
-  if (type === 'synthesis') {
-    // Pull current scheme directly from the active graph editor when available.
-    const live = (_activeEditor && _activeEditor.scheme) || _editScheme;
-    if (live) q.scheme = _serializeScheme(live);
-  } else if (type === 'multiple_choice') {
-    q.prompt = document.getElementById('mcq-prompt').value.trim();
-    const givens = (() => {
-      const v = id => document.getElementById('mcq-g-'+id)?.value || '';
-      const o = {};
-      const smi = v('smi'); if (smi) o.smiles = smi;
-      const img = v('img'); if (img) o.image  = img;
-      const rl = v('rl'); if (rl) o.reagent_label = rl;
-      const rlb = v('rlb'); if (rlb) o.reagent_label_below = rlb;
-      return o;
-    })();
-    if (Object.keys(givens).length) q.givens = givens;
-    q.choices = collectMCQChoices();
-    const rel = document.getElementById('mcq-related').value;
-    if (rel) q.related_reaction_id = rel;
-    const expl = document.getElementById('mcq-expl').value.trim();
-    if (expl) q.explanation = expl;
-  } else if (type === 'short_answer') {
-    q.prompt = document.getElementById('sa-prompt').value.trim();
-    q.expected_answer = document.getElementById('sa-expected').value.trim();
-    const rel = document.getElementById('sa-related').value;
-    if (rel) q.related_reaction_id = rel;
-  } else if (type === 'mechanism') {
-    q.prompt = document.getElementById('mech-prompt').value.trim();
-    const givens = (() => {
-      const v = id => document.getElementById('mech-g-'+id)?.value || '';
-      const o = {};
-      const smi = v('smi'); if (smi) o.smiles = smi;
-      const img = v('img'); if (img) o.image  = img;
-      const rl = v('rl'); if (rl) o.reagent_label = rl;
-      const rlb = v('rlb'); if (rlb) o.reagent_label_below = rlb;
-      return o;
-    })();
-    if (Object.keys(givens).length) q.givens = givens;
-    q.mech_steps = collectMechSteps();
-    const rel = document.getElementById('mech-related').value;
-    if (rel) q.related_reaction_id = rel;
-    const expl = document.getElementById('mech-expl').value.trim();
-    if (expl) q.explanation = expl;
+  // A question IS its list of sections.
+  collectActiveComposedSection();
+  q.sections = (_composedSections || []).map(sec => _serializeSection(sec));
+  if (!q.sections.length) {
+    q.sections = [{ type: 'synthesis', scheme: { nodes: [], edges: [] } }];
   }
   return q;
 }
@@ -2531,7 +2554,13 @@ async function saveQ() {
 
 function newQ() {
   const cats = [...new Set(questions.map(q => q.category||'Theoriefragen'))];
-  const q = { id: 'q-'+Date.now(), category: cats[0]||'Theoriefragen', name: 'Neue Frage', type: 'short_answer', expected_answer: '' };
+  const q = {
+    id: 'q-'+Date.now(),
+    category: cats[0]||'Theoriefragen',
+    name: 'Neue Frage',
+    type: 'composed',
+    sections: [{ type: 'synthesis', title: 'Schema', scheme: { nodes: [], edges: [] } }]
+  };
   questions.push(q); selQ = questions.length-1;
   renderQList(); buildQForm(q); unsaved = true; setBadge();
 }

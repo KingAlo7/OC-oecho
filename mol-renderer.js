@@ -143,6 +143,212 @@ const MolRenderer = (() => {
     }
   }
 
+  /* ── Reaction rendering ───────────────────────────────────────────
+     Draws "A.B>>C" (or "A>reagent>C") as a row of structures joined by
+     a textbook reaction arrow, laid out the way the ÖChO Bundeswettbewerb
+     sheets do it: the reagent sits centred DIRECTLY above the shaft, the
+     conditions centred directly below, and the shaft grows so it is
+     never shorter than the text it carries.
+
+     This replaces the old smiles-drawer path. smiles-drawer parsed the
+     reaction itself but placed labels by its own rules and needed a
+     second rendering engine on every page; OCL already renders every
+     structure here, so the arrow is the only thing left to draw. */
+
+  const RXN_LABEL_FONT_ABOVE = "500 12px 'Segoe UI', system-ui, -apple-system, sans-serif";
+  const RXN_LABEL_FONT_BELOW = "500 11px 'Segoe UI', system-ui, -apple-system, sans-serif";
+  const RXN_LINE_H = 14;
+  const RXN_MAX_LINE_W = 150;
+  const RXN_MIN_SHAFT = 68;
+
+  let _rxnCtx = null;
+  function _measure(text, font) {
+    if (!_rxnCtx) {
+      try { _rxnCtx = document.createElement('canvas').getContext('2d'); } catch (_) { _rxnCtx = null; }
+    }
+    if (!_rxnCtx) return String(text).length * 6.6;
+    _rxnCtx.font = font;
+    return _rxnCtx.measureText(String(text)).width;
+  }
+
+  /* LaTeX-lite: H_2SO_4 renders with a real subscript, ^+ with a
+     superscript — the notation the reaction data already uses. */
+  function _sub(text) {
+    return String(text == null ? '' : text)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/_\{([^}]+)\}/g,  function (m, t) { return '<tspan baseline-shift="sub" font-size="80%">' + t + '</tspan>'; })
+      .replace(/\^\{([^}]+)\}/g, function (m, t) { return '<tspan baseline-shift="super" font-size="80%">' + t + '</tspan>'; })
+      .replace(/_([A-Za-z0-9+\-])/g,  function (m, t) { return '<tspan baseline-shift="sub" font-size="80%">' + t + '</tspan>'; })
+      .replace(/\^([A-Za-z0-9+\-])/g, function (m, t) { return '<tspan baseline-shift="super" font-size="80%">' + t + '</tspan>'; });
+  }
+
+  /* Width estimate ignores the markup, matching what the eye sees. */
+  function _plain(text) {
+    return String(text == null ? '' : text).replace(/[_^]\{?([^}]*)\}?/g, '$1');
+  }
+
+  function _wrap(text, font) {
+    const raw = String(text == null ? '' : text).trim();
+    if (!raw) return [];
+    const out = [];
+    const chunks = raw.split(/\\n|\n/).map(function (s) { return s.trim(); }).filter(Boolean);
+    for (const chunk of chunks) {
+      if (_measure(_plain(chunk), font) <= RXN_MAX_LINE_W) { out.push(chunk); continue; }
+      const atoms = chunk.split(/(?<=[;,])\s+|\s+\/\s+|\s+(?=dann\s)|\s+(?=\d[.)]\s)/)
+                         .map(function (s) { return s.trim(); }).filter(Boolean);
+      let line = '';
+      for (const a of atoms) {
+        const cand = line ? line + ' ' + a : a;
+        if (line && _measure(_plain(cand), font) > RXN_MAX_LINE_W) { out.push(line); line = a; }
+        else line = cand;
+      }
+      if (line) out.push(line);
+    }
+    return out;
+  }
+
+  /* Build the arrow as its own inline SVG so it sits in the flex row
+     next to the structures. */
+  function _arrow(above, below) {
+    const aLines = _wrap(above, RXN_LABEL_FONT_ABOVE);
+    const bLines = _wrap(below, RXN_LABEL_FONT_BELOW);
+    const widest = Math.max.apply(null, [0]
+      .concat(aLines.map(function (l) { return _measure(_plain(l), RXN_LABEL_FONT_ABOVE); }))
+      .concat(bLines.map(function (l) { return _measure(_plain(l), RXN_LABEL_FONT_BELOW); })));
+    const shaft = Math.max(RXN_MIN_SHAFT, Math.ceil(widest) + 22);
+    const w = shaft + 8;
+    const topH = aLines.length * RXN_LINE_H + 8;
+    const botH = bLines.length * RXN_LINE_H + 8;
+    const h = topH + botH + 12;
+    const cy = topH + 6;
+    const cx = w / 2;
+
+    let txt = '';
+    aLines.forEach(function (l, i) {
+      const y = cy - 6 - (aLines.length - 1 - i) * RXN_LINE_H;
+      txt += '<text x="' + cx + '" y="' + y + '" text-anchor="middle" style="font:' + RXN_LABEL_FONT_ABOVE + ';fill:#3a3a35">' + _sub(l) + '</text>';
+    });
+    bLines.forEach(function (l, i) {
+      const y = cy + 6 + RXN_LINE_H * 0.82 + i * RXN_LINE_H;
+      txt += '<text x="' + cx + '" y="' + y + '" text-anchor="middle" style="font:' + RXN_LABEL_FONT_BELOW + ';fill:#6b6a5d">' + _sub(l) + '</text>';
+    });
+
+    const x1 = 4, x2 = 4 + shaft;
+    return {
+      w: w, h: h,
+      svg: '<svg class="rxn-arrow" xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h +
+        '" viewBox="0 0 ' + w + ' ' + h + '" overflow="visible">' +
+        '<line x1="' + x1 + '" y1="' + cy + '" x2="' + (x2 - 7) + '" y2="' + cy + '" stroke="#3a3a35" stroke-width="1.6"/>' +
+        '<path d="M' + (x2 - 8) + ',' + (cy - 4.2) + ' L' + x2 + ',' + cy + ' L' + (x2 - 8) + ',' + (cy + 4.2) + ' z" fill="#3a3a35"/>' +
+        txt + '</svg>'
+    };
+  }
+
+  /* Split "A.B>agent>C.D" (or "A.B>>C.D") into { left, agent, right }. */
+  function parseReaction(rxn) {
+    const parts = String(rxn || '').split('>');
+    const clean = function (s) {
+      return String(s || '').split('.').map(function (t) { return t.trim(); }).filter(Boolean);
+    };
+    if (parts.length >= 3) return { left: clean(parts[0]), agent: clean(parts[1]), right: clean(parts.slice(2).join('>')) };
+    if (parts.length === 2) return { left: clean(parts[0]), agent: [], right: clean(parts[1]) };
+    return { left: clean(rxn), agent: [], right: [] };
+  }
+
+  /**
+   * Compose a reaction into ONE self-contained SVG string.
+   *
+   * Every structure OCL renders is nested as an <svg x y width height>
+   * inside an outer <svg>, so the result is a single element: it can be
+   * dropped into the page, measured, or written straight out as an
+   * .svg file (which is what the export view does). smiles-drawer used
+   * to own this job; doing it here means one rendering engine for the
+   * whole site and one place where arrow labels are positioned.
+   *
+   * @returns {{svg:string, width:number, height:number}}
+   */
+  function reactionSvg(rxn, opts) {
+    const o = Object.assign({}, DEFAULTS, opts || {});
+    const parsed = parseReaction(rxn);
+    const cells = [];
+
+    const molCell = function (smi) {
+      let inner;
+      try {
+        inner = window.OCL.Molecule.fromSmiles(smi).toSVG(o.width, o.height, undefined, o);
+      } catch (err) {
+        inner = '<svg xmlns="http://www.w3.org/2000/svg" width="' + o.width + '" height="' + o.height +
+          '"><text x="6" y="20" font-family="monospace" font-size="12" fill="#c91020">&#9888; ' +
+          String(smi).replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</text></svg>';
+      }
+      return { kind: 'svg', svg: inner, w: o.width, h: o.height };
+    };
+
+    const addSide = function (list) {
+      list.forEach(function (smi, i) {
+        if (i) cells.push({ kind: 'plus', w: 20, h: 20 });
+        cells.push(molCell(smi));
+      });
+    };
+
+    addSide(parsed.left);
+    const above = [o.above, parsed.agent.join(' + ')].filter(Boolean).join(', ');
+    const arrow = _arrow(above, o.below);
+    cells.push({ kind: 'svg', svg: arrow.svg, w: arrow.w, h: arrow.h });
+    addSide(parsed.right);
+
+    const gap = 6;
+    const totalW = cells.reduce(function (a, c) { return a + c.w; }, 0) + gap * (cells.length - 1);
+    const totalH = Math.max.apply(null, cells.map(function (c) { return c.h; }));
+
+    let x = 0, body = '';
+    for (const c of cells) {
+      const y = (totalH - c.h) / 2;
+      if (c.kind === 'plus') {
+        body += '<text x="' + (x + c.w / 2) + '" y="' + (totalH / 2 + 5) +
+          '" text-anchor="middle" style="font:400 16px \'Segoe UI\',system-ui,sans-serif;fill:#3a3a35">+</text>';
+      } else {
+        // Nest the child SVG; it keeps its own coordinate system.
+        body += c.svg.replace(/^\s*<svg\b/, '<svg x="' + x + '" y="' + y + '"');
+      }
+      x += c.w + gap;
+    }
+
+    return {
+      svg: '<svg xmlns="http://www.w3.org/2000/svg" width="' + Math.ceil(totalW) + '" height="' + Math.ceil(totalH) +
+        '" viewBox="0 0 ' + Math.ceil(totalW) + ' ' + Math.ceil(totalH) + '">' + body + '</svg>',
+      width: Math.ceil(totalW),
+      height: Math.ceil(totalH)
+    };
+  }
+
+  /**
+   * Render a reaction SMILES into a target element.
+   * @param {string} rxn  e.g. "CC=C.Br>>CC(Br)C"
+   * @param {HTMLElement|string} target
+   * @param {object} [opts] { above, below, width, height }
+   *   `above` / `below` are the reagent and condition labels; they
+   *   accept LaTeX-lite subscripts ("H_2SO_4").
+   * @returns {SVGElement|null} the composed <svg>, for callers that
+   *   need to measure or export it.
+   */
+  function drawReaction(rxn, target, opts) {
+    const el = _clear(target);
+    if (!el) return null;
+    if (!window.OCL) { _renderError(target, 'OCL not loaded'); return null; }
+    const parsed = parseReaction(rxn);
+    if (!parsed.left.length && !parsed.right.length) { _renderError(target, 'Leere Reaktion'); return null; }
+    const out = reactionSvg(rxn, opts);
+    el.innerHTML = out.svg;
+    const svgEl = el.firstElementChild;
+    if (svgEl) {
+      svgEl.style.display = 'block';
+      svgEl.style.maxWidth = '100%';
+      svgEl.style.height = 'auto';
+    }
+    return svgEl;
+  }
+
   /**
    * Auto-pick: if `input` smells like MOL, use drawMol; otherwise drawSmiles.
    * Useful for fields that may hold either format.
@@ -152,7 +358,7 @@ const MolRenderer = (() => {
     return isMol(input) ? drawMol(input, target, opts) : drawSmiles(input, target, opts);
   }
 
-  return { ready, drawMol, drawSmiles, drawAuto, isMol };
+  return { ready, drawMol, drawSmiles, drawAuto, drawReaction, reactionSvg, parseReaction, isMol };
 })();
 
 // Expose on window so cross-file consumers (scheme-graph-editor.js,

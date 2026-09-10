@@ -1,6 +1,8 @@
 # OC Referenz + Quiz
 
-Interaktives Nachschlagewerk für organische Chemie auf IChO-Niveau, mit zusätzlichem Quiz-Modus für mehrstufige Synthesen, Mechanismen und Regioselektivität. Über 80 benannte Reaktionen mit Strukturen, Bedingungen und mechanistischen Hinweisen — plus ein Quiz-Modus mit verbrückten Polycyclen, der OpenChemLib zum Rendern, RDKit-JS für Layout-Optimierung und Ketcher als Editor verwendet.
+Interaktives Nachschlagewerk für organische Chemie auf IChO-Niveau, mit Quiz-Modus für mehrstufige Synthesen, Mechanismen und Regioselektivität. Schwerpunkt sind die Organik-Aufgaben der ÖChO-Bundeswettbewerbe. Gerendert wird durchgehend mit OpenChemLib, gezeichnet mit Ketcher, Layout-Optimierung über RDKit-JS.
+
+> **Hinweis:** Die Reaktionsreferenz (`data/reactions.json`) ist derzeit leer — der Datenbestand wird neu aufgebaut. Der Browser und der Admin-Editor funktionieren unverändert; neue Einträge werden mit Ketcher gezeichnet.
 
 **Live:** https://kingalo7.github.io/OC-oecho/
 
@@ -10,28 +12,31 @@ Interaktives Nachschlagewerk für organische Chemie auf IChO-Niveau, mit zusätz
 
 ### Reaktionsreferenz (`index.html`)
 - Kategorisierte Seitenleiste mit aufklappbaren Gruppen und Volltextsuche
-- Reaktionsstrukturen via [smiles-drawer v2](https://github.com/reymond-group/smilesDrawer)
+- Reaktionsstrukturen via OpenChemLib; der Pfeil samt Reagenz-Beschriftung wird von `mol-renderer.js` gesetzt
 - Schwierigkeits-Filter (A — Einsteiger / B — JÖChO / C — BW / D — Spezial)
 - Hash-basierte Direktlinks (`#reaktions-id`), mobil-responsiv
 - Druck-/PDF-Export via `export.html`
 
 ### Quiz (`quiz.html`)
-Vier Fragentypen, alle mit Klick-zum-Aufdecken und Link zur passenden Referenzreaktion:
+Jede Frage ist eine **Aufgabe aus Abschnitten** (`type: "composed"`) — so wie eine BW-Angabe aus A., B., C. besteht. Es gibt keinen Fragen-Typ mehr zu wählen; gewählt wird pro Abschnitt:
 
-| Typ | Beschreibung |
+| Abschnitts-Typ | Beschreibung |
 |---|---|
-| `synthesis` | Mehrstufige Synthese als Flowchart aus Strukturen + beschrifteten Pfeilen. Knoten werden einzeln aufgedeckt. Beispiel: Stork's Cantharidin-Synthese (1951) — 15 Strukturen, 13 Pfeile, von Furan + DMAD bis Cantharidin. |
+| `synthesis` | Mehrstufiges Schema aus Strukturen + beschrifteten Pfeilen, im Serpentinen-Layout der BW-Angaben. Vorgegebene Strukturen sind sofort sichtbar, gesuchte werden per Klick aufgedeckt. |
 | `multiple_choice` | 2–4 Antwortmöglichkeiten mit Strukturen, Klick-Grading. Z. B. Markownikow vs. Anti-Markownikow. |
 | `short_answer` | Freitext-Frage mit Musterlösung. Z. B. SN1- vs. SN2-Faktoren. |
 | `mechanism` | Schrittweise Mechanismus-Aufdeckung. Z. B. basenkatalysierte Aldol-Addition: Enolat → Alkoxid → Aldol. |
+| `intro` | Reiner Fließtext zwischen zwei Schema-Teilen. |
 
 ### Admin (`admin.html`)
-- Tab **Reaktionen** — Editor für `data/reactions.json` mit Live-SMILES-Vorschau
+- Tab **Reaktionen** — Editor für `data/reactions.json`; „✎ Struktur zeichnen (Ketcher)" öffnet denselben Editor wie im Quiz und schreibt das Reaktions-SMILES zurück
 - Tab **Quiz** — Editor für `data/questions.json`:
-  - Knoten-Karten mit OCL-Live-Preview, Ketcher-Editor pro Struktur, OCR-Button
+  - Abschnitts-Reiter (`＋ Abschnitt` → Typ aus der Liste wählen)
+  - Graph-Editor mit Ketcher pro Struktur, OCR-Button und OCL-Live-Preview
   - Kanten-Editor mit `from[]`, `to`, Reagenz-Beschriftung über/unter dem Pfeil
+  - **Vorgegeben / Gesucht** je Knoten — Schalter im Detailpanel oder Taste <kbd>G</kbd>
+  - **Auto-Layout** ordnet das Schema im Serpentinen-Muster der BW-Angaben an
   - „Layout neu" pro Knoten (RDKit-CoordGen für textbuchgenaue 2D-Koordinaten)
-  - „Alle Layouts neu berechnen" für Batch-Import-Bereinigung
 - Tab **Commit** — Push-to-`main` via GitHub REST API mit PAT (im Browser-`localStorage`)
 
 ---
@@ -44,13 +49,12 @@ Vier Fragentypen, alle mit Klick-zum-Aufdecken und Link zur passenden Referenzre
 | Lokaler Server | Node.js + Express | Nur für Admin-Schreibzugriff (Reactions/Questions/OCR-Sidecar) |
 | Frontend | Vanilla JS + HTML | Kein Build, kein Bundler, kein Framework |
 | Daten | JSON in `data/` | Menschenlesbar, git-freundlich |
-| Reaktionsrenderer | smiles-drawer v2 (CDN) | Lightweight für die Referenz (SMILES → SVG) |
-| Quiz-Renderer | OpenChemLib v8 (CDN, ~500 KB) | MOL/SMILES → SVG, läuft auch auf Pages |
+| Renderer (überall) | OpenChemLib v8 (CDN, ~500 KB) | MOL/SMILES → SVG, läuft auch auf Pages; `mol-renderer.js` setzt Pfeil + Beschriftung |
 | Layout-Optimierung | RDKit-JS (CDN, ~4 MB, lazy) | CoordGen-2D-Layout, nur Admin |
 | Struktur-Editor | Ketcher 3.12 (vendor/, ~26 MB committed) | EPAM, eingebettet via iframe, lädt auf Lokal + Pages |
 | OCR (optional) | DECIMER + RDKit (Python) | Lokaler Sidecar, nur Admin |
 
-**Pages-Bundle** = OCL (500 KB) + Smiles-Drawer (150 KB) + HTML/CSS/JS — keine WASM, kein Ketcher.
+**Pages-Bundle** = OCL (500 KB) + HTML/CSS/JS — keine WASM. Ketcher liegt im Repo und wird nur im Admin geladen.
 
 ---
 
@@ -62,8 +66,8 @@ OC-oecho/
 ├── quiz.html               ← Quiz-Viewer (Multi-Typ)
 ├── export.html             ← Druckansicht
 ├── admin.html              ← Admin-Bereich (Reaktionen + Quiz + Commit)
-├── reaction-drawer.js      ← smiles-drawer v2 Wrapper
-├── mol-renderer.js         ← OpenChemLib-Wrapper (MOL/SMILES → SVG)
+├── mol-renderer.js         ← OpenChemLib-Wrapper (MOL/SMILES/Reaktion → SVG)
+├── scheme-graph-editor.js  ← SVG-Schema-Editor + Quiz-Viewer (Serpentinen-Layout)
 ├── rdkit-helper.js         ← Lazy-Loader für RDKit-JS (Admin-Layout-Optimierung)
 ├── server.js               ← Express-Server + /api/questions + /api/ocr
 ├── package.json
@@ -142,7 +146,7 @@ Alternativ-Backends: `molscribe` (~500 MB), `osra` (klassische CV, leichter).
 
 ### `data/reactions.json` — Reaktionsreferenz
 
-Array von Reaktionsobjekten, gerendert via smiles-drawer. Pflichtfelder: `id`, `category`, `name`. Häufige Felder:
+Array von Reaktionsobjekten, gerendert via OpenChemLib. Pflichtfelder: `id`, `category`, `name`. Häufige Felder:
 
 | Feld | Typ | Beschreibung |
 |---|---|---|
@@ -156,17 +160,24 @@ Array von Reaktionsobjekten, gerendert via smiles-drawer. Pflichtfelder: `id`, `
 | `conditions` | `string` | Reaktionsbedingungen |
 | `key_points` | `string[]` | Mechanismusstichpunkte |
 | `notes` | `string` | Erweiterter Kontext |
-| `tags` | `string[]` | Suche |
 
 ### `data/questions.json` — Quizfragen
 
-Array von Fragenobjekten. Gemeinsame Felder: `id`, `category`, `name`, `type`, optional `difficulty`, `intro`, `hints`, `related_reaction_id`. Typ-spezifisch:
-
-**`type: "synthesis"`** — Composed-Modus mit Knoten + Kanten:
+Array von Fragenobjekten. Jede Frage hat `type: "composed"` und ein Array `sections`; die Felder `id`, `category`, `name` sind Pflicht, `difficulty`, `source`, `intro`, `hints` optional.
 
 ```json
 {
-  "id": "stork-cantharidin-1951",
+  "id": "bw43-2017-atropin",
+  "type": "composed",
+  "name": "Atropin — Tropin + Tropasäure (BW 2017)",
+  "sections": [ { "type": "synthesis", "title": "Strang 1", "scheme": { } } ]
+}
+```
+
+**Abschnitt `type: "synthesis"`** — Knoten + Kanten:
+
+```json
+{
   "type": "synthesis",
   "scheme": {
     "nodes": [
@@ -184,11 +195,15 @@ Array von Fragenobjekten. Gemeinsame Felder: `id`, `category`, `name`, `type`, o
 }
 ```
 
-- `given: true` → Struktur ist von Anfang an sichtbar
+- `given: true` → Struktur ist von Anfang an sichtbar (wie in der BW-Angabe gezeichnet)
 - `given: false` → Struktur ist mit „?" überdeckt, Klick deckt auf
 - `mol` (bevorzugt) wird vor `smiles` gerendert — enthält die optimierten Koordinaten
+- `x`/`y` sind Layout-Hinweise. Fehlt `"layout": "manual"` am Schema, rechnet der Viewer das
+  Serpentinen-Layout für die Bildschirmbreite des Lesers neu (4–5 Spalten am Laptop, 2 am Handy).
+  Sobald jemand im Admin einen Knoten zieht, wird `"layout": "manual"` gesetzt und die
+  Positionen bleiben unangetastet.
 
-**`type: "multiple_choice"`** — Strukturen oder Text-Antworten:
+**Abschnitt `type: "multiple_choice"`** — Strukturen oder Text-Antworten:
 
 ```json
 {
@@ -203,7 +218,7 @@ Array von Fragenobjekten. Gemeinsame Felder: `id`, `category`, `name`, `type`, o
 }
 ```
 
-**`type: "short_answer"`** — Freitext mit Musterlösung:
+**Abschnitt `type: "short_answer"`** — Freitext mit Musterlösung:
 
 ```json
 {
@@ -213,7 +228,7 @@ Array von Fragenobjekten. Gemeinsame Felder: `id`, `category`, `name`, `type`, o
 }
 ```
 
-**`type: "mechanism"`** — Schrittweise Aufdeckung:
+**Abschnitt `type: "mechanism"`** — Schrittweise Aufdeckung:
 
 ```json
 {

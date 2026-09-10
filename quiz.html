@@ -6,9 +6,7 @@
 <meta name="theme-color" content="#c2c5a6">
 <title>OC Quiz — ÖChO</title>
 <link rel="icon" type="image/svg+xml" href="./assets/logo.svg">
-<script src="https://unpkg.com/smiles-drawer@2/dist/smiles-drawer.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/openchemlib/dist/openchemlib-full.js"></script>
-<script src="./reaction-drawer.js"></script>
 <script src="./mol-renderer.js"></script>
 <script src="./scheme-graph-editor.js"></script>
 <style>
@@ -147,6 +145,8 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .step-prompt{font-size:0.9rem;line-height:1.7;color:var(--text);margin-bottom:0.9rem;}
 .step-given{background:#fff;border:1px solid var(--border);border-radius:8px;padding:1.2rem 1rem;display:flex;justify-content:center;align-items:center;min-height:120px;margin-bottom:0.9rem;overflow-x:auto;}
 .step-given svg{display:block;max-width:100%;height:auto;}
+.struct-slot{display:flex;justify-content:center;align-items:center;width:100%;}
+.struct-slot svg{display:block;max-width:100%;height:auto;}
 .step-given img{display:block;max-width:100%;height:auto;}
 .step-given .ph{font-size:0.85rem;color:var(--muted2);font-style:italic;}
 
@@ -256,7 +256,11 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 
 .sg-host .sg-canvas{display:block;width:100%;height:480px;background:repeating-linear-gradient(0deg,#fdfcf6 0,#fdfcf6 19px,#f3f2e8 19px,#f3f2e8 20px),repeating-linear-gradient(90deg,#fdfcf6 0,#fdfcf6 19px,#f3f2e8 19px,#f3f2e8 20px);cursor:grab;outline:none;touch-action:none;user-select:none;}
 .sg-host .sg-canvas:active{cursor:grabbing;}
-.sg-readonly .sg-canvas{cursor:default;}
+/* The viewer canvas grows with the scheme and the page scrolls past it.
+   touch-action MUST stay auto: any restricted value (even pan-y) makes
+   Chrome swallow wheel and touch scrolling over the canvas, which left
+   the reader stranded on a tall scheme. */
+.sg-readonly .sg-canvas{cursor:default;height:auto;min-height:300px;touch-action:auto;}
 
 /* Node styling shared with admin — duplicated here so quiz works
    standalone (admin loads its own copy). */
@@ -595,11 +599,16 @@ function openSidebarFor(id) {
 }
 
 function showWelcome() {
+  // Every question is a composed question now, so the interesting
+  // count is what KINDS of section they contain.
   const byType = {};
-  questions.forEach(q => { byType[q.type] = (byType[q.type]||0) + 1; });
-  const statsHtml = Object.entries(byType).map(([t,n]) =>
-    `<div class="stat-pill"><b>${n}</b> ${TYPE_LABEL[t]||t}</div>`
-  ).join('');
+  questions.forEach(q => (q.sections || []).forEach(sec => {
+    if (sec.type && sec.type !== 'intro') byType[sec.type] = (byType[sec.type]||0) + 1;
+  }));
+  const statsHtml = [`<div class="stat-pill"><b>${questions.length}</b> Aufgaben</div>`]
+    .concat(Object.entries(byType).map(([t,n]) =>
+      `<div class="stat-pill"><b>${n}</b> ${TYPE_LABEL[t]||t}</div>`))
+    .join('');
   document.getElementById('main').innerHTML = `
     <div class="welcome">
       <div class="welcome-logo">${LOGO_SVG}</div>
@@ -611,6 +620,26 @@ function showWelcome() {
 
 /* ── Renderers per type ──────────────────────────────────────────── */
 
+/* Structures are rendered by OpenChemLib throughout — the same engine
+   the scheme viewer uses — so a molecule looks identical wherever it
+   appears. A reagent label turns a lone structure into a one-step
+   reaction so the arrow (and its centred label) is drawn. */
+function drawStructInto(host, smiles, above, below, opts) {
+  if (!host || !smiles) return;
+  MolRenderer.ready().then(() => {
+    if (smiles.includes('>')) {
+      MolRenderer.drawReaction(smiles, host, Object.assign({ above, below }, opts || {}));
+    } else if (above || below) {
+      MolRenderer.drawReaction(smiles + '>>', host, Object.assign({ above, below }, opts || {}));
+    } else {
+      MolRenderer.drawAuto(smiles, host, opts || {});
+    }
+  }).catch(err => {
+    host.innerHTML = '<div class="ph">Struktur konnte nicht geladen werden</div>';
+    console.error('drawStructInto:', err);
+  });
+}
+
 function renderGiven(g, slot) {
   // g: { smiles?, image?, reagent_label?, reagent_label_below? }
   if (!g) return '<div class="ph">Keine Struktur angegeben</div>';
@@ -619,20 +648,11 @@ function renderGiven(g, slot) {
   }
   if (g.smiles) {
     const id = 'given-svg-'+slot;
-    // If the SMILES has no '>>' but a reagent label is present, render as a
-    // half-reaction (reactants > reagent > nothing) so the arrow+label shows.
-    let smi = g.smiles;
-    const hasArrow = smi.includes('>');
-    const wantsArrow = !!(g.reagent_label || g.reagent_label_below);
-    if (!hasArrow && wantsArrow) smi = smi + '>>';
-    const isReaction = smi.includes('>');
     setTimeout(() => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      if (isReaction) ReactionRenderer.draw(smi, el, 'light', g.reagent_label || '{reagents}', g.reagent_label_below || '');
-      else            ReactionRenderer.drawMolecule(smi, el, 'light');
+      drawStructInto(document.getElementById(id), g.smiles,
+        g.reagent_label, g.reagent_label_below, { width: 200, height: 150 });
     }, 0);
-    return `<svg id="${id}" xmlns="http://www.w3.org/2000/svg"></svg>`;
+    return `<div id="${id}" class="struct-slot"></div>`;
   }
   return '<div class="ph">Keine Struktur angegeben</div>';
 }
@@ -642,14 +662,10 @@ function renderAnswerStruct(a, slot) {
   if (a.image) return `<img src="${a.image}" alt="Lösung">`;
   if (a.smiles) {
     const id = 'ans-svg-'+slot;
-    const isReaction = a.smiles.includes('>');
     setTimeout(() => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      if (isReaction) ReactionRenderer.draw(a.smiles, el, 'light', '', '');
-      else            ReactionRenderer.drawMolecule(a.smiles, el, 'light');
+      drawStructInto(document.getElementById(id), a.smiles, '', '', { width: 200, height: 150 });
     }, 0);
-    return `<svg id="${id}" xmlns="http://www.w3.org/2000/svg"></svg>`;
+    return `<div id="${id}" class="struct-slot"></div>`;
   }
   return '<div class="ph">Keine Struktur angegeben</div>';
 }
@@ -735,9 +751,10 @@ function renderComposedScheme(q, scheme) {
       onNodeClick: (n) => onQuizNodeClick(q.id, n)
     });
     _quizGraphViewers[q.id] = viewer;
-    // First-paint: fit to content so the whole synthesis is visible
-    requestAnimationFrame(() => viewer.fitToContent());
-    // Re-run fit once on next frame in case fonts / SVG layouts settled later
+    // First paint: lay the scheme out for the width we actually have
+    // (four columns on a laptop, two on a phone), then fit it.
+    requestAnimationFrame(() => { if (!viewer.reflow(true)) viewer.fitToContent(); });
+    // Re-run once fonts / SVG metrics have settled.
     setTimeout(() => viewer.fitToContent(), 250);
     updateQuizProgress(q.id);
   }, 0);
@@ -927,12 +944,10 @@ async function renderAllStructures(qid) {
   });
 }
 
-/* LaTeX-style sub/superscript for reagent labels — reuses the converter
-   from reaction-drawer.js if available, else passes through. */
+/* LaTeX-style sub/superscript for reagent labels shown as HTML
+   (the SVG renderers do their own tspan-based version). */
 function renderLatexLabel(s) {
   if (!s) return '';
-  // Use ReactionRenderer's converter if available (it's defined as a closure
-  // private fn; we replicate the common subset here).
   return x(s)
     .replace(/_\{([^}]+)\}/g, (_, t) => '<sub>'+t+'</sub>')
     .replace(/\^\{([^}]+)\}/g, (_, t) => '<sup>'+t+'</sup>')
@@ -1000,14 +1015,11 @@ function renderMCQ(q) {
     let structHtml = '';
     if (c.image) structHtml = `<img src="${c.image}" alt="">`;
     else if (c.smiles) {
-      const isReaction = c.smiles.includes('>');
       setTimeout(() => {
-        const el = document.getElementById('mcq-svg-'+slot);
-        if (!el) return;
-        if (isReaction) ReactionRenderer.draw(c.smiles, el, 'light', '', '');
-        else            ReactionRenderer.drawMolecule(c.smiles, el, 'light');
+        drawStructInto(document.getElementById('mcq-svg-'+slot), c.smiles, '', '',
+          { width: 170, height: 130 });
       }, 0);
-      structHtml = `<svg id="mcq-svg-${slot}" xmlns="http://www.w3.org/2000/svg"></svg>`;
+      structHtml = `<div id="mcq-svg-${slot}" class="struct-slot"></div>`;
     }
     const marker = String.fromCharCode(65+i);
     return `<div class="mcq-choice" data-correct="${c.correct?1:0}" data-i="${i}" onclick="pickMCQ(this, '${q.id}')">
@@ -1181,8 +1193,6 @@ function showQuestion(id) {
         <span class="cat-name">${x(q.category)}</span>
         <span class="sep">›</span>
         <span>${x(q.name)}</span>
-        <span class="sep">·</span>
-        <span class="q-type-badge">${TYPE_LABEL[q.type]||q.type||'?'}</span>
         ${q.difficulty ? `<span class="diff-badge diff-${q.difficulty}">${q.difficulty}</span>` : ''}
       </div>
       <h1 class="q-title">${x(q.name)}</h1>
@@ -1207,7 +1217,6 @@ function globalSearch(qstr) {
       const hit = !s
         || q.name.toLowerCase().includes(s)
         || (q.category||'').toLowerCase().includes(s)
-        || (q.type||'').toLowerCase().includes(s)
         || (TYPE_GROUP_LABEL[qPrimaryType(q)]||'').toLowerCase().includes(s)
         || (q.intro||'').toLowerCase().includes(s);
       link.classList.toggle('hidden', !hit);

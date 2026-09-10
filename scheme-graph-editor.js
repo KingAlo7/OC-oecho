@@ -60,6 +60,107 @@
   const HANDLE_R = 7;
   const ARROW_HEAD = 9;
 
+  /* ── Textbook-style arrow + label metrics ───────────────────────
+     Modelled on the ÖChO Bundeswettbewerb exam sheets: the reagent
+     sits centred DIRECTLY over the arrow shaft, a hair above it, and
+     the conditions sit centred directly under it. Long reagent lists
+     wrap onto stacked lines (BW writes "1. O3" / "2. (CH3)2S") rather
+     than running past the arrowhead — so the shaft is always at least
+     as long as the widest label line. */
+  const LABEL_FONT_ABOVE = "500 11px 'Segoe UI', system-ui, -apple-system, sans-serif";
+  const LABEL_FONT_BELOW = "500 10px 'Segoe UI', system-ui, -apple-system, sans-serif";
+  const LABEL_LINE_H   = 12.5;  // line box height for stacked label lines
+  const LABEL_MAX_W    = 124;   // px — wrap a label line wider than this
+  const LABEL_PAD_X    = 14;    // px of shaft that must stay clear of text
+  const LABEL_GAP      = 4;     // px between shaft and nearest text line
+  const ARROW_MIN      = 74;    // px — shortest arrow we ever draw
+  const ARROW_MAX      = 210;   // px — longest; beyond this we wrap harder
+  const STACK_GAP      = 26;    // px between nodes stacked in one column
+  const ROW_GAP        = 74;    // px of vertical run for the wrap-around arrow
+
+  /* Canvas-based text measurement. getBBox() would be exact but needs
+     the element in the DOM and a layout pass; a 2D context with the
+     same font is accurate to well under a pixel and keeps layout
+     computation synchronous and side-effect free. */
+  let _measureCtx = null;
+  function measureText(text, font) {
+    if (!_measureCtx) {
+      try { _measureCtx = document.createElement('canvas').getContext('2d'); }
+      catch (_) { _measureCtx = null; }
+    }
+    if (!_measureCtx) return String(text).length * 6.2;  // last-resort estimate
+    _measureCtx.font = font;
+    return _measureCtx.measureText(String(text)).width;
+  }
+
+  /* Split a reagent string into stacked lines. Explicit newlines win;
+     otherwise we break on the separators chemists already write
+     ("1. X; 2. Y", "A, dann B", "H2/Pd / EtOH") and greedily pack
+     lines up to LABEL_MAX_W. */
+  function wrapLabel(text, font) {
+    const raw = String(text == null ? '' : text);
+    if (!raw.trim()) return [];
+    const explicit = raw.split(/\n|\n/).map(s => s.trim()).filter(Boolean);
+    const out = [];
+    for (const chunk of explicit) {
+      if (measureText(plainChemText(chunk), font) <= LABEL_MAX_W) { out.push(chunk); continue; }
+      // Break into atoms at separators, keeping the separator with the
+      // left-hand atom so "1. LiOH," still reads correctly.
+      const atoms = chunk.split(/(?<=[;,])\s+|\s+\/\s+|\s+(?=dann\s)|\s+(?=\d\.\s)|\s+(?=\d\)\s)/)
+                         .map(s => s.trim()).filter(Boolean);
+      let line = '';
+      for (const a of atoms) {
+        const cand = line ? line + ' ' + a : a;
+        if (line && measureText(plainChemText(cand), font) > LABEL_MAX_W) { out.push(line); line = a; }
+        else line = cand;
+      }
+      if (line) out.push(line);
+      // A single unbreakable atom can still overflow — accept it; the
+      // arrow grows to ARROW_MAX and the text is simply the long one.
+    }
+    return out;
+  }
+
+  /* Chemists write "Cl-CO_2Me" and "(CH_3)_2S" in the data; draw them
+     with real sub/superscripts, the way the exam sheets set them.
+     Fills an existing <text> with tspans instead of plain text. */
+  function setChemText(textEl, str) {
+    const s = String(str == null ? '' : str);
+    const re = /([_^])(?:\{([^}]*)\}|([A-Za-z0-9+\-]))/g;
+    let last = 0, m;
+    while ((m = re.exec(s)) !== null) {
+      if (m.index > last) textEl.appendChild(document.createTextNode(s.slice(last, m.index)));
+      const t = svg('tspan', {
+        'baseline-shift': m[1] === '_' ? 'sub' : 'super',
+        'font-size': '78%'
+      });
+      t.textContent = m[2] != null ? m[2] : m[3];
+      textEl.appendChild(t);
+      last = re.lastIndex;
+    }
+    if (last < s.length) textEl.appendChild(document.createTextNode(s.slice(last)));
+    return textEl;
+  }
+
+  /* The markup is invisible on screen, so measure what the reader sees. */
+  function plainChemText(str) {
+    return String(str == null ? '' : str).replace(/[_^]\{?([^}]*)\}?/g, '$1');
+  }
+
+  /* Full metrics for one edge's above/below labels: stacked lines,
+     the widest line, and the shaft length needed to sit under them. */
+  function edgeLabelMetrics(edge) {
+    const above = wrapLabel(edge && edge.reagent_above, LABEL_FONT_ABOVE);
+    const below = wrapLabel(edge && edge.reagent_below, LABEL_FONT_BELOW);
+    const wa = Math.max(0, ...above.map(l => measureText(plainChemText(l), LABEL_FONT_ABOVE)));
+    const wb = Math.max(0, ...below.map(l => measureText(plainChemText(l), LABEL_FONT_BELOW)));
+    const w  = Math.max(wa, wb);
+    return {
+      above, below,
+      width: w,
+      shaft: Math.max(ARROW_MIN, Math.min(ARROW_MAX, Math.ceil(w) + LABEL_PAD_X * 2))
+    };
+  }
   function nextLetterId(usedSet) {
     for (let c = 65; c <= 90; c++) {  // A..Z
       const ch = String.fromCharCode(c);
@@ -107,14 +208,11 @@
       // Viewer-only reveal state. Given nodes (n.given === true) are
       // always visible; we only track non-given nodes here.
       this.revealedIds = new Set(opts.revealedNodeIds || []);
-      // Label bounding-box registry — reset each refresh, used for
-      // edge-label collision avoidance.
-      this._labelBoxes = [];
-
       this._build();
       this._ensurePositions();
       this.refresh();
       this._bindEvents();
+      this._bindResize();
     }
 
     /* ─── DOM scaffolding ──────────────────────────────────────── */
@@ -130,7 +228,7 @@
              <button class="sg-btn" data-act="zoomin" title="Zoom +">＋</button>
              <button class="sg-btn" data-act="zoomout" title="Zoom −">−</button>
              <span class="sg-zoom-label" id="sg-zoom-label">100 %</span>
-             <span class="sg-hint">Tippe auf einen ✱-Knoten zum Aufdecken · Hintergrund ziehen = verschieben · Mausrad = Zoom</span>
+             <span class="sg-hint">Tippe auf einen ✱-Knoten zum Aufdecken · Hintergrund ziehen = verschieben · Strg + Mausrad = Zoom</span>
            </div>`
         : `<div class="sg-toolbar">
              <button class="sg-btn" data-act="add">＋ Knoten</button>
@@ -139,7 +237,7 @@
              <button class="sg-btn" data-act="zoomin" title="Zoom +">＋</button>
              <button class="sg-btn" data-act="zoomout" title="Zoom -">−</button>
              <span class="sg-zoom-label" id="sg-zoom-label">100 %</span>
-             <span class="sg-hint">Knoten ziehen · von ⇢-Griff zu Knoten ziehen = Pfeil · Klick = auswählen · Entf = löschen</span>
+             <span class="sg-hint">Knoten ziehen · von ⇢-Griff zu Knoten ziehen = Pfeil · Klick = auswählen · G = vorgegeben · Entf = löschen · Strg + Mausrad = Zoom</span>
            </div>`;
       this.container.innerHTML = toolbar + `
         <svg class="sg-canvas" xmlns="${NS}" tabindex="0">
@@ -161,22 +259,58 @@
 
     /* ─── Layout ──────────────────────────────────────────────── */
 
-    _ensurePositions() {
-      const missingAny = this.scheme.nodes.some(n => typeof n.x !== 'number' || typeof n.y !== 'number');
-      if (missingAny) this.autoLayout();
+    /* Positions are considered machine-owned unless the author has
+       dragged a node (which stamps scheme.layout = 'manual'). That lets
+       the quiz viewer re-flow an auto layout to the reader's screen
+       width while never touching a hand-placed scheme. */
+    _isAutoLayout() {
+      return this.scheme.layout !== 'manual';
     }
 
-    autoLayout() {
+    _ensurePositions() {
+      const missingAny = this.scheme.nodes.some(n => typeof n.x !== 'number' || typeof n.y !== 'number');
+      if (missingAny || this._isAutoLayout()) this.autoLayout();
+    }
+
+    /* How many structure columns fit across the canvas at 100 %.
+       Desktop admin lands on 4-5, a phone on 2 — the same numbers the
+       BW sheets use when a scheme has to fit a printed page. */
+    _fitColumns(pitch) {
+      const avail = (this.svg && this.svg.clientWidth) || this.container.clientWidth || 0;
+      if (!avail) return 4;
+      const usable = Math.max(NODE_W, avail - 48);
+      return Math.max(2, Math.min(5, Math.floor((usable + pitch - NODE_W) / pitch)));
+    }
+
+    /* ── Serpentine (boustrophedon) layout ───────────────────────────
+       The straight-row layout this replaces put an N-step synthesis on
+       one 3000 px line — unreadable on a phone and clipped in print.
+       The BW exam sheets instead snake the scheme: a row runs left to
+       right, a short arrow drops to the next row, that row runs right
+       to left, and so on. This reproduces that.
+
+         A ──→ B ──→ C ──→ D
+                           │
+         H ←── G ←── F ←── E
+         │
+         I ──→ J ──→ …
+
+       Nodes that share a topological layer (two reactants converging on
+       one product) stack vertically inside a single column instead of
+       consuming two serpentine slots.
+
+       `opts.columns` forces a column count; otherwise it is derived
+       from the canvas width, so the very same call produces a wide
+       desktop layout and a narrow phone layout. */
+    autoLayout(opts) {
+      opts = opts || {};
       const nodes = this.scheme.nodes;
       const edges = this.scheme.edges;
       if (!nodes.length) return;
 
-      // BFS layered layout. Each layer pushed one step right of its
-      // earliest predecessor's layer. Unreachable nodes get their own
-      // tail layer so they don't pile up at x=0.
+      /* ── 1. Topological layering ─────────────────────────────── */
       const ids = new Set(nodes.map(n => n.id));
-      const incoming = {};
-      const outgoing = {};
+      const incoming = {}, outgoing = {};
       ids.forEach(id => { incoming[id] = []; outgoing[id] = []; });
       for (const e of edges) {
         if (!ids.has(e.to)) continue;
@@ -197,33 +331,77 @@
         remaining.delete(id);
         for (const tid of outgoing[id]) {
           if (!remaining.has(tid)) continue;
-          // tid's layer = max(predecessors) + 1 once all preds visited
-          const allPredsResolved = incoming[tid].every(pid => layer[pid] != null);
-          if (allPredsResolved) {
+          if (incoming[tid].every(pid => layer[pid] != null)) {
             layer[tid] = Math.max(...incoming[tid].map(pid => layer[pid])) + 1;
             queue.push(tid);
           }
         }
       }
-      // Anything left (cycles or orphans without inc-edge resolution) — give next free layer
       let maxL = Math.max(0, ...Object.values(layer));
       [...remaining].sort().forEach(id => { layer[id] = ++maxL; });
 
-      // Group + position
-      const byLayer = {};
+      /* A node with no incoming edge is a starting material or a
+         side reagent. Left at layer 0 it would sit at the far left of
+         the scheme with a long wire running across the whole diagram
+         to wherever it is actually used — the arrow then crosses other
+         arrows and its label lands on top of theirs. The exam sheets
+         instead draw a reagent right beside the step it feeds, so pull
+         each source down to just before its earliest consumer. */
+      for (const n of nodes) {
+        if (incoming[n.id].length || !outgoing[n.id].length) continue;
+        const earliest = Math.min(...outgoing[n.id].map(t => layer[t]));
+        if (earliest - 1 > layer[n.id]) layer[n.id] = earliest - 1;
+      }
+      const floor = Math.min(...Object.values(layer));
+      if (floor) for (const id of Object.keys(layer)) layer[id] -= floor;
+
+      /* ── 2. Group into columns, one per layer ────────────────── */
+      const byLayer = new Map();
       nodes.forEach(n => {
         const l = layer[n.id] || 0;
-        (byLayer[l] = byLayer[l] || []).push(n);
+        if (!byLayer.has(l)) byLayer.set(l, []);
+        byLayer.get(l).push(n);
       });
-      Object.entries(byLayer).forEach(([l, group]) => {
-        const x = parseInt(l) * (NODE_W + GAP_X);
-        // Sort within layer by appearance in nodes[] for stability
-        group.sort((a, b) => nodes.indexOf(a) - nodes.indexOf(b));
-        group.forEach((n, i) => {
-          n.x = x;
-          n.y = i * (NODE_H + GAP_Y);
+      const columns = [...byLayer.keys()].sort((a, b) => a - b)
+        .map(l => byLayer.get(l).sort((a, b) => nodes.indexOf(a) - nodes.indexOf(b)));
+
+      /* ── 3. Column pitch wide enough for the longest reagent ─── */
+      let shaft = ARROW_MIN;
+      for (const e of edges) shaft = Math.max(shaft, edgeLabelMetrics(e).shaft);
+      const pitch = NODE_W + shaft;
+
+      const cols = Math.max(1, opts.columns || this.layoutColumns || this._fitColumns(pitch));
+
+      /* ── 4. Snake the columns into rows ──────────────────────── */
+      const rows = [];
+      for (let i = 0; i < columns.length; i += cols) rows.push(columns.slice(i, i + cols));
+
+      let y = 0;
+      rows.forEach((row, r) => {
+        const tallest = Math.max(...row.map(c => c.length));
+        const rowH = tallest * NODE_H + (tallest - 1) * STACK_GAP;
+        row.forEach((group, c) => {
+          // Odd rows run right-to-left, so the reader's eye continues
+          // from where the previous row ended instead of jumping back.
+          const slot = (r % 2 === 0) ? c : (cols - 1 - c);
+          const x = slot * pitch;
+          const stackH = group.length * NODE_H + (group.length - 1) * STACK_GAP;
+          const y0 = y + (rowH - stackH) / 2;
+          group.forEach((n, k) => {
+            n.x = x;
+            n.y = y0 + k * (NODE_H + STACK_GAP);
+          });
         });
+        y += rowH + ROW_GAP;
       });
+
+      // Left-align the whole diagram at x = 0 even when the last row is
+      // short and runs right-to-left.
+      const minX = Math.min(...nodes.map(n => n.x));
+      if (minX) nodes.forEach(n => { n.x -= minX; });
+
+      this.scheme.layout = 'auto';
+      this._layoutCols = cols;
     }
 
     /* ─── Render ──────────────────────────────────────────────── */
@@ -232,16 +410,10 @@
       // Clear viewport
       while (this.viewport.firstChild) this.viewport.removeChild(this.viewport.firstChild);
       this._applyView();
-      // Reset label collision registry for this render pass
-      this._labelBoxes = [];
 
-      // Edges layer first (drawn behind nodes). Reserve the node
-      // bounding boxes in the registry so labels never overlap nodes.
+      // Edges layer first, so arrows are drawn behind the structures.
       const edgesG = svg('g', { class: 'sg-edges' });
       this.viewport.appendChild(edgesG);
-      for (const n of this.scheme.nodes) {
-        this._labelBoxes.push({ x: n.x || 0, y: n.y || 0, w: NODE_W, h: NODE_H, kind: 'node' });
-      }
 
       this.scheme.edges.forEach((e, idx) => {
         const fromIds = e.from || [];
@@ -402,6 +574,15 @@
         g.appendChild(nameText);
       }
 
+      // Edit mode: say plainly whether this structure is handed to the
+      // student or is one they have to work out — the difference is
+      // otherwise only a subtle change of fill.
+      if (!this.readOnly && n.given) {
+        const gv = svg('text', { class: 'sg-node-given', x: 12, y: 15 });
+        gv.textContent = '✓ vorgegeben';
+        g.appendChild(gv);
+      }
+
       // Edit mode only: drag-to-create-edge handle + degree badge
       if (!this.readOnly) {
         const handle = svg('circle', {
@@ -437,15 +618,18 @@
       return g;
     }
 
-    /* Compute the orthogonal-routing geometry for an edge:
-       - exit/entry points sit on the NEAREST edge of each bounding box
-         (not always on the right side)
-       - if the source and target are roughly aligned (same row or column)
-         we draw a straight line
-       - otherwise we draw a Manhattan L-bend (3 segments: out from
-         source, perpendicular cross, into target) — no curves
-       - returns the SVG path string and a "label segment" describing
-         the longest horizontal stretch where labels should land */
+    /* Routing geometry for one arrow.
+
+       Serpentine layout keeps almost every arrow axis-aligned, which is
+       what the BW sheets draw: a plain straight shaft with a small
+       filled head. Neighbours in a row give a horizontal shaft, the
+       wrap-around at the end of a row gives a vertical one. Only edges
+       that skip across the diagram (a byproduct feeding back in, say)
+       need the Manhattan L-bend, and for those we hand the label the
+       longest straight run so it still sits ON a shaft.
+
+       Returns { dpath, labelSeg } where labelSeg is the straight
+       stretch the reagent text is centred on. */
     _edgeGeometry(fromN, toN) {
       const s = {
         left: fromN.x, right: fromN.x + NODE_W,
@@ -459,50 +643,43 @@
       };
       const dx = t.cx - s.cx;
       const dy = t.cy - s.cy;
-      const adx = Math.abs(dx);
-      const ady = Math.abs(dy);
 
-      // Predominant axis: pick the side of the bounding box that is
-      // closest to the OTHER bounding box. Tie-break toward horizontal
-      // because synthesis schemes flow left→right.
-      const horizontalDominant = adx * NODE_H >= ady * NODE_W;
+      // Column-aligned pairs are the wrap-around arrows: force them
+      // vertical even when the boxes are tall, so the turn reads as a
+      // turn and not as a diagonal.
+      const sameColumn = Math.abs(dx) < 4;
+      const sameRow    = Math.abs(dy) < 4;
+      const horizontalDominant = sameRow ? true
+                               : sameColumn ? false
+                               : Math.abs(dx) * NODE_H >= Math.abs(dy) * NODE_W;
 
       let sExit, tEntry, dpath, labelSeg;
 
       if (horizontalDominant) {
-        // Exit on left/right side of source, enter on opposite side of target
         sExit  = dx >= 0 ? { x: s.right, y: s.cy } : { x: s.left,  y: s.cy };
         tEntry = dx >= 0 ? { x: t.left,  y: t.cy } : { x: t.right, y: t.cy };
-        if (Math.abs(sExit.y - tEntry.y) < 4) {
-          // Truly horizontal — straight line
+        if (sameRow) {
           dpath = `M ${sExit.x} ${sExit.y} L ${tEntry.x} ${tEntry.y}`;
           labelSeg = { x1: sExit.x, y1: sExit.y, x2: tEntry.x, y2: tEntry.y, dir: 'h' };
         } else {
-          // 90° bend: horizontal out, vertical cross, horizontal in
           const midX = (sExit.x + tEntry.x) / 2;
           dpath = `M ${sExit.x} ${sExit.y} L ${midX} ${sExit.y} L ${midX} ${tEntry.y} L ${tEntry.x} ${tEntry.y}`;
-          // Use the longer of the two horizontal segments for the label
           const lenA = Math.abs(midX - sExit.x);
           const lenB = Math.abs(tEntry.x - midX);
-          if (lenA >= lenB) {
-            labelSeg = { x1: sExit.x, y1: sExit.y, x2: midX, y2: sExit.y, dir: 'h' };
-          } else {
-            labelSeg = { x1: midX, y1: tEntry.y, x2: tEntry.x, y2: tEntry.y, dir: 'h' };
-          }
+          labelSeg = lenA >= lenB
+            ? { x1: sExit.x, y1: sExit.y, x2: midX,     y2: sExit.y,  dir: 'h' }
+            : { x1: midX,    y1: tEntry.y, x2: tEntry.x, y2: tEntry.y, dir: 'h' };
         }
       } else {
-        // Vertical dominant: exit top/bottom of source, enter opposite of target
         sExit  = dy >= 0 ? { x: s.cx, y: s.bottom } : { x: s.cx, y: s.top    };
         tEntry = dy >= 0 ? { x: t.cx, y: t.top    } : { x: t.cx, y: t.bottom };
-        if (Math.abs(sExit.x - tEntry.x) < 4) {
-          // Truly vertical — straight line
-          dpath = `M ${sExit.x} ${sExit.y} L ${tEntry.x} ${tEntry.y}`;
-          labelSeg = { x1: sExit.x, y1: sExit.y, x2: tEntry.x, y2: tEntry.y, dir: 'v' };
+        if (sameColumn) {
+          // Straight down (or up) the column — the serpentine turn.
+          dpath = `M ${sExit.x} ${sExit.y} L ${sExit.x} ${tEntry.y}`;
+          labelSeg = { x1: sExit.x, y1: sExit.y, x2: sExit.x, y2: tEntry.y, dir: 'v' };
         } else {
-          // 90° bend: vertical out, horizontal cross, vertical in
           const midY = (sExit.y + tEntry.y) / 2;
           dpath = `M ${sExit.x} ${sExit.y} L ${sExit.x} ${midY} L ${tEntry.x} ${midY} L ${tEntry.x} ${tEntry.y}`;
-          // The horizontal cross-segment is best for label placement
           labelSeg = { x1: sExit.x, y1: midY, x2: tEntry.x, y2: midY, dir: 'h' };
         }
       }
@@ -533,88 +710,66 @@
         'stroke-width': 14
       }));
 
-      // Place above/below labels along the chosen segment, with
-      // collision avoidance against all previously placed labels and
-      // against node bounding boxes (registry seeded in refresh()).
-      const seg = geo.labelSeg;
-      const segLen = Math.hypot(seg.x2 - seg.x1, seg.y2 - seg.y1);
-      // Place labels relative to the midpoint of the chosen segment
-      const mx = (seg.x1 + seg.x2) / 2;
-      const my = (seg.y1 + seg.y2) / 2;
-
-      if (edge.reagent_above) {
-        const pos = this._placeEdgeLabel(edge.reagent_above, mx, my, seg.dir, 'above', segLen);
-        const t = svg('text', { class: 'sg-edge-label above', x: pos.x, y: pos.y, 'text-anchor': 'middle' });
-        t.textContent = edge.reagent_above;
-        g.appendChild(t);
-      }
-      if (edge.reagent_below) {
-        const pos = this._placeEdgeLabel(edge.reagent_below, mx, my, seg.dir, 'below', segLen);
-        const t = svg('text', { class: 'sg-edge-label below', x: pos.x, y: pos.y, 'text-anchor': 'middle' });
-        t.textContent = edge.reagent_below;
-        g.appendChild(t);
-      }
+      const lab = this._labelEl(geo.labelSeg, edge);
+      if (lab) g.appendChild(lab);
 
       return g;
     }
 
-    /* Approximate label bounding box and shift away from collisions.
-       Above-labels sit ~10px over the line, below-labels ~16px under.
-       For horizontal segments we shift further along the y-axis on
-       overlap; for vertical segments we shift along the x-axis. */
-    _placeEdgeLabel(text, mx, my, dir, side, segLen) {
-      // Crude width approximation. SVG <text> measure-by-getBBox would
-      // be exact but requires a render pass — this is good enough to
-      // avoid most overlaps and keeps render deterministic.
-      const charW = 6.4;
-      const lineH = 14;
-      const w = Math.min(160, Math.max(28, text.length * charW + 4));
-      const h = lineH + 2;
+    /* Reagent text, BW-style: centred on the midpoint of the shaft and
+       sitting directly on it — reagents stacked upward from just above
+       the line, conditions stacked downward from just below it. On a
+       vertical shaft the block sits immediately to the right of the
+       arrow, vertically centred, because stacking text over a vertical
+       arrow would collide with the structures above and below it.
 
-      // Initial offset perpendicular to segment
-      const offAbove = 9;
-      const offBelow = 15;
-      let x = mx, y = my;
-      if (dir === 'h') {
-        y = my + (side === 'above' ? -offAbove : offBelow);
+       There is deliberately no collision search here. The previous
+       implementation shifted a label up to eight times looking for
+       clear space, which is what scattered reagents away from their
+       arrows; the layout now reserves a shaft long enough for the text
+       instead, so the honest place is always the right one. */
+    _labelEl(seg, edge) {
+      const m = edgeLabelMetrics(edge);
+      if (!m.above.length && !m.below.length) return null;
+
+      const mx = (seg.x1 + seg.x2) / 2;
+      const my = (seg.y1 + seg.y2) / 2;
+      const wrap = svg('g', { class: 'sg-edge-labels' });
+
+      const line = (text, cls, x, y, anchor) => {
+        const t = svg('text', {
+          class: 'sg-edge-label ' + cls,
+          x: x, y: y, 'text-anchor': anchor
+        });
+        return setChemText(t, text);
+      };
+
+      if (seg.dir === 'h') {
+        // Above: last line hugs the shaft, earlier lines stack upward.
+        m.above.forEach((txt, i) => {
+          const fromBottom = m.above.length - 1 - i;         // 0 = nearest shaft
+          const y = my - LABEL_GAP - fromBottom * LABEL_LINE_H;
+          wrap.appendChild(line(txt, 'above', mx, y, 'middle'));
+        });
+        // Below: first line hugs the shaft, later lines stack downward.
+        m.below.forEach((txt, i) => {
+          const y = my + LABEL_GAP + LABEL_LINE_H * 0.82 + i * LABEL_LINE_H;
+          wrap.appendChild(line(txt, 'below', mx, y, 'middle'));
+        });
       } else {
-        // Vertical segment: place labels to the LEFT (above) and RIGHT (below)
-        x = mx + (side === 'above' ? -(w / 2 + 8) : (w / 2 + 8));
-        y = my + 4;
+        // Vertical shaft: one block to the right, vertically centred.
+        const all = [
+          ...m.above.map(t => ({ t, cls: 'above' })),
+          ...m.below.map(t => ({ t, cls: 'below' }))
+        ];
+        const blockH = all.length * LABEL_LINE_H;
+        const x = mx + 9;
+        all.forEach((it, i) => {
+          const y = my - blockH / 2 + LABEL_LINE_H * 0.82 + i * LABEL_LINE_H;
+          wrap.appendChild(line(it.t, it.cls, x, y, 'start'));
+        });
       }
-
-      const bbox = () => ({ x: x - w / 2, y: y - lineH + 2, w, h });
-      const shiftStep = (side === 'above' ? -lineH : lineH);
-      const altShiftStep = (side === 'above' ? -w * 0.55 : w * 0.55);
-
-      // Up to 8 shift attempts: alternate perpendicular and along-segment
-      for (let attempt = 0; attempt < 8; attempt++) {
-        if (!this._collidesWithRegistry(bbox())) break;
-        if (attempt < 4) {
-          if (dir === 'h') y += shiftStep;
-          else             x += (side === 'above' ? -lineH : lineH);
-        } else {
-          // Switch to shifting along the segment direction
-          if (dir === 'h') x += altShiftStep;
-          else             y += altShiftStep;
-        }
-      }
-
-      this._labelBoxes.push(Object.assign(bbox(), { kind: 'label' }));
-      return { x, y };
-    }
-
-    _collidesWithRegistry(b) {
-      // AABB intersection check with a tiny tolerance
-      const pad = 2;
-      for (const r of this._labelBoxes) {
-        if (b.x + b.w + pad < r.x) continue;
-        if (r.x + r.w + pad < b.x) continue;
-        if (b.y + b.h + pad < r.y) continue;
-        if (r.y + r.h + pad < b.y) continue;
-        return true;
-      }
-      return false;
+      return wrap;
     }
 
     /* ─── Helpers ─────────────────────────────────────────────── */
@@ -748,6 +903,15 @@
       this.select('node', id);
     }
 
+    /* Fit the scheme into the canvas.
+
+       A serpentine scheme is wide-ish and tall, so fitting BOTH axes
+       into a fixed 480 px box shrank the structures to illegibility on
+       anything but a big monitor. In viewer mode we therefore fit the
+       WIDTH and let the canvas grow to whatever height that scale
+       needs (capped at ~78 % of the viewport, after which the reader
+       pans). Edit mode keeps the fixed-box behaviour so the admin
+       canvas doesn't jump around while you work. */
     fitToContent() {
       const nodes = this.scheme.nodes;
       if (!nodes.length) { this.viewX = 40; this.viewY = 40; this.scale = 1; this._applyView(); return; }
@@ -758,14 +922,70 @@
         maxX = Math.max(maxX, (n.x || 0) + NODE_W);
         maxY = Math.max(maxY, (n.y || 0) + NODE_H);
       });
-      const r = this.svg.getBoundingClientRect();
-      const pad = 30;
+      // Labels overhang the node boxes; give them room on every side.
+      const pad = 34;
       const wantW = maxX - minX + 2 * pad;
       const wantH = maxY - minY + 2 * pad;
-      this.scale = Math.min(r.width / wantW, r.height / wantH, 1.4);
-      this.viewX = -minX * this.scale + pad;
-      this.viewY = -minY * this.scale + pad;
+      const r = this.svg.getBoundingClientRect();
+
+      if (this.readOnly && r.width > 40) {
+        this.scale = Math.min(r.width / wantW, 1.25);
+        // Exactly as tall as the scheme needs. Capping it would hide the
+        // lower rows, and the viewer has no background pan to reach them
+        // — the reader scrolls the page instead.
+        this.svg.style.height = Math.max(220, Math.round(wantH * this.scale)) + 'px';
+      } else {
+        this.scale = Math.min(r.width / wantW, r.height / wantH, 1.4);
+      }
+      this.viewX = -minX * this.scale + pad * this.scale;
+      this.viewY = -minY * this.scale + pad * this.scale;
       this._applyView();
+    }
+
+    /* Re-flow an auto-laid-out scheme for the current canvas width.
+       Called on mount and on resize/orientation change, so the same
+       saved scheme renders as four columns on a laptop and two on a
+       phone without the author maintaining two versions. Hand-placed
+       schemes (scheme.layout === 'manual') are left alone. */
+    reflow(force) {
+      if (!this._isAutoLayout()) return false;
+      if (!this.scheme.nodes.length) return false;
+      let shaft = ARROW_MIN;
+      for (const e of this.scheme.edges) shaft = Math.max(shaft, edgeLabelMetrics(e).shaft);
+      const want = this._fitColumns(NODE_W + shaft);
+      if (!force && want === this._layoutCols) return false;
+      this.autoLayout({ columns: want });
+      this.refresh();
+      this.fitToContent();
+      return true;
+    }
+
+    /* Watch the canvas width and re-flow an auto layout when the
+       column count it can hold changes — a laptop rotating to a narrow
+       split view, or a phone turning landscape. Debounced so a drag of
+       the window edge doesn't relayout on every frame. */
+    _bindResize() {
+      let t = null;
+      // Only WIDTH matters. Height must be ignored: fitToContent() sets
+      // the canvas height itself, which would otherwise re-trigger the
+      // observer and send layout into a shrinking feedback loop.
+      this._lastW = this.container.clientWidth;
+      const run = () => {
+        clearTimeout(t);
+        t = setTimeout(() => {
+          if (!this.svg || !this.svg.isConnected) return;
+          const w = this.container.clientWidth;
+          if (Math.abs(w - this._lastW) < 24) return;
+          this._lastW = w;
+          this.reflow();
+        }, 160);
+      };
+      this._onWinResize = run;
+      window.addEventListener('resize', run);
+      if (typeof ResizeObserver === 'function') {
+        this._resizeObs = new ResizeObserver(run);
+        try { this._resizeObs.observe(this.container); } catch (_) {}
+      }
     }
 
     /* ─── Event binding ───────────────────────────────────────── */
@@ -875,7 +1095,10 @@
         return;
       }
 
-      // Background drag = pan
+      // Background drag = pan. Not in the quiz: there the scheme is
+      // laid out to fit the reader's width, so the only gesture that
+      // matters on the background is scrolling the page past it.
+      if (this.readOnly) return;
       e.preventDefault();
       this.pan = {
         pointerId: e.pointerId,
@@ -916,6 +1139,9 @@
         n.x = Math.round(w.x - this.drag.offsetX);
         n.y = Math.round(w.y - this.drag.offsetY);
         this.drag.moved = true;
+        // A hand-placed node freezes the scheme: the viewer will no
+        // longer re-flow it to the reader's screen width.
+        this.scheme.layout = 'manual';
         // Move only this node + redraw its edges (cheaper than refresh)
         const g = this.container.querySelector(`[data-node="${cssEsc(this.drag.id)}"]`);
         if (g) g.setAttribute('transform', `translate(${n.x} ${n.y})`);
@@ -998,6 +1224,11 @@
     }
 
     _onWheel(e) {
+      // A bare wheel scrolls the PAGE. Swallowing it left the reader
+      // stuck on the canvas, zooming out instead of scrolling on —
+      // badly so in the quiz, where a scheme can be taller than the
+      // window. Zoom is Ctrl/Cmd + wheel, the browser-wide convention.
+      if (!e.ctrlKey && !e.metaKey) return;
       e.preventDefault();
       const factor = Math.exp(-e.deltaY * 0.0015);
       const newScale = Math.max(0.25, Math.min(2.5, this.scale * factor));
@@ -1079,6 +1310,8 @@
 
     destroy() {
       window.removeEventListener('keydown', this._keyHandler);
+      if (this._resizeObs) { try { this._resizeObs.disconnect(); } catch (_) {} this._resizeObs = null; }
+      if (this._onWinResize) { window.removeEventListener('resize', this._onWinResize); this._onWinResize = null; }
       this.container.innerHTML = '';
     }
   }

@@ -6,8 +6,8 @@
 <meta name="theme-color" content="#c2c5a6">
 <title>OC Referenz — ÖChO</title>
 <link rel="icon" type="image/svg+xml" href="./assets/logo.svg">
-<script src="https://unpkg.com/smiles-drawer@2/dist/smiles-drawer.min.js"></script>
-<script src="./reaction-drawer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/openchemlib/dist/openchemlib-full.js"></script>
+<script src="./mol-renderer.js"></script>
 <style>
 :root {
   /* ÖChO light palette */
@@ -204,7 +204,6 @@ header{
 .rxn-title{font-size:1.6rem;font-weight:700;margin-bottom:0.25rem;line-height:1.3;color:var(--text);letter-spacing:-0.02em;}
 .rxn-subtitle{font-size:0.92rem;color:var(--muted);margin-bottom:1rem;font-style:italic;}
 
-.rxn-tags{display:flex;gap:0.3rem;flex-wrap:wrap;margin-bottom:1.5rem;}
 .tag{
   font-size:0.7rem;font-weight:600;padding:0.2rem 0.6rem;border-radius:20px;
   background:var(--surface2);color:var(--muted);border:1px solid var(--border);
@@ -219,6 +218,8 @@ header{
   box-shadow:var(--shadow-sm);
 }
 .rxn-drawing svg{display:block;max-width:100%;height:auto;}
+.struct-slot{display:flex;justify-content:center;align-items:center;width:100%;}
+.struct-slot svg{display:block;max-width:100%;height:auto;}
 .scheme-text{
   font-size:0.92rem;color:var(--text);text-align:center;
   line-height:2.2;font-family:ui-monospace,'Cascadia Code','Fira Code',monospace;white-space:pre-wrap;
@@ -368,7 +369,7 @@ header{
   </a>
   <div class="search-wrap">
     <span class="search-icon">⌕</span>
-    <input id="search" type="text" placeholder="Reaktionen, Tags suchen…" oninput="globalSearch(this.value)" autocomplete="off">
+    <input id="search" type="text" placeholder="Reaktionen suchen…" oninput="globalSearch(this.value)" autocomplete="off">
   </div>
   <a href="./quiz.html" class="nav-link" title="Quiz / Aufgaben">Quiz ↗</a>
   <a href="./export.html" class="nav-link muted" title="Exportieren (PDF/Druck)">Export</a>
@@ -553,7 +554,7 @@ function showReaction(id) {
 
   const svgId = 'rxn-svg-'+id;
   const drawingHtml = r.reaction_smiles
-    ? `<svg id="${svgId}" xmlns="http://www.w3.org/2000/svg"></svg>`
+    ? `<div id="${svgId}" class="struct-slot"></div>`
     : r.general_scheme
       ? `<div class="scheme-text">${r.general_scheme}</div>`
       : `<div class="scheme-text" style="color:var(--muted)">Keine Struktur verfügbar</div>`;
@@ -563,8 +564,6 @@ function showReaction(id) {
       <div class="detail-label">${f.label}</div>
       <div class="detail-value">${r[f.key]}</div>
     </div>`).join('');
-
-  const tagsHtml = (r.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('');
 
   const keyPointsHtml = (r.key_points||[]).length ? `
     <div class="section-head">Schlüsselpunkte</div>
@@ -584,8 +583,6 @@ function showReaction(id) {
 
       <h1 class="rxn-title">${r.name}</h1>
       ${r.subtitle ? `<div class="rxn-subtitle">${r.subtitle}</div>` : ''}
-      <div class="rxn-tags">${tagsHtml}</div>
-
       <div class="rxn-drawing">${drawingHtml}</div>
 
       ${detailsHtml ? `<div class="rxn-details">${detailsHtml}</div>` : ''}
@@ -607,10 +604,15 @@ function showReaction(id) {
   document.getElementById('main').scrollTop = 0;
 
   if (r.reaction_smiles) {
-    requestAnimationFrame(() => {
-      const svgEl = document.getElementById(svgId);
-      if (svgEl) ReactionRenderer.draw(r.reaction_smiles, svgEl, 'light', r.reagent_label||'{reagents}', r.reagent_label_below||'');
-    });
+    MolRenderer.ready().then(() => {
+      const host = document.getElementById(svgId);
+      if (!host) return;
+      MolRenderer.drawReaction(r.reaction_smiles, host, {
+        above: r.reagent_label || '',
+        below: r.reagent_label_below || '',
+        width: 220, height: 170
+      });
+    }).catch(err => console.error('MolRenderer:', err));
   }
 }
 
@@ -625,7 +627,6 @@ function globalSearch(q) {
       const hit = !s
         || r.name.toLowerCase().includes(s)
         || r.category.toLowerCase().includes(s)
-        || (r.tags||[]).some(t => t.toLowerCase().includes(s))
         || (r.subtitle||'').toLowerCase().includes(s)
         || (r.notes||'').toLowerCase().includes(s);
       link.classList.toggle('hidden', !hit);

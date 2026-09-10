@@ -6,9 +6,9 @@
 <meta name="theme-color" content="#c2c5a6">
 <title>OC Referenz — Export</title>
 <link rel="icon" type="image/svg+xml" href="./assets/logo.svg">
-<script src="https://unpkg.com/smiles-drawer@2/dist/smiles-drawer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/openchemlib/dist/openchemlib-full.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="./reaction-drawer.js"></script>
+<script src="./mol-renderer.js"></script>
 <style>
 :root{
   --bg:#faf9f5;
@@ -660,20 +660,18 @@ function redrawPreview() {
   const myToken = ++previewToken;
 
   frame.innerHTML = '';
-  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-  frame.appendChild(svg);
 
+  let svg;
   try {
-    if (typeof ReactionRenderer === 'undefined') {
-      frame.innerHTML = '<span class="preview-loading" style="color:var(--red)">ReactionRenderer nicht geladen</span>';
+    if (typeof MolRenderer === 'undefined' || !window.OCL) {
+      frame.innerHTML = '<span class="preview-loading" style="color:var(--red)">Renderer nicht geladen</span>';
       return;
     }
-    ReactionRenderer.draw(
-      r.reaction_smiles, svg, 'light',
-      r.reagent_label || '', r.reagent_label_below || '',
+    svg = MolRenderer.drawReaction(r.reaction_smiles, frame, Object.assign(
+      { above: r.reagent_label || '', below: r.reagent_label_below || '' },
       buildRendererOverrides(r)
-    );
+    ));
+    if (!svg) return;
   } catch (e) {
     if (myToken === previewToken) {
       frame.innerHTML = '<span class="preview-loading" style="color:var(--red)">Render-Fehler: ' + escapeAttr(e.message) + '</span>';
@@ -701,17 +699,16 @@ function redrawPreview() {
   }
 }
 
-/* Arrow length is now handled by reaction-drawer's _autoArrowLength
-   helper — every caller that doesn't explicitly override gets dynamic
-   sizing based on label text. We just pass compact + atom-font opts. */
+/* Renderer knobs, translated for OpenChemLib. `factorTextSize` scales
+   atom labels relative to OCL's own default of ~9 px, which is what the
+   atom-size slider used to mean for smiles-drawer. */
 function buildRendererOverrides() {
+  const cell = Math.round(120 + opts.atomFontSize * 10);
   return {
-    compact: true,
-    moleculeOpts: {
-      bondThickness: opts.bondThickness,
-      fontSizeLarge: opts.atomFontSize,
-      fontSizeSmall: opts.atomFontSize * 0.7
-    }
+    width: cell,
+    height: Math.round(cell * 0.78),
+    factorTextSize: opts.atomFontSize / 9,
+    bondLengthScale: opts.bondThickness
   };
 }
 
@@ -1110,16 +1107,15 @@ function reactionToPng(r) {
 
     const wrap = document.createElement('div');
     wrap.style.cssText = 'position:absolute;left:-9999px;top:-9999px;width:0;height:0;overflow:hidden;';
-    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
-    wrap.appendChild(svg);
     document.body.appendChild(wrap);
 
+    let svg;
     try {
-      ReactionRenderer.draw(
-        r.reaction_smiles, svg, 'light',
-        r.reagent_label || '', r.reagent_label_below || '',
+      svg = MolRenderer.drawReaction(r.reaction_smiles, wrap, Object.assign(
+        { above: r.reagent_label || '', below: r.reagent_label_below || '' },
         buildRendererOverrides(r)
-      );
+      ));
+      if (!svg) throw new Error('kein SVG');
     } catch(e) {
       document.body.removeChild(wrap);
       resolve(null);
