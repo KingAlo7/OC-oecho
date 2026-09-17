@@ -115,7 +115,21 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .stat-pill{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.6rem 1rem;font-size:0.8rem;color:var(--text-soft);}
 .stat-pill b{color:var(--accent);font-size:0.95rem;}
 
-.q-page{padding:1.75rem 2.5rem 3rem;max-width:920px;width:100%;}
+.q-wrap{padding:1.5rem 1.5rem 3rem;width:100%;}
+/* The whole task sits on ONE sheet, like the exam paper: every scheme,
+   question and hint on the same plain ground, no nested windows. */
+.q-page{padding:1.9rem 2.4rem 2.6rem;max-width:1040px;width:100%;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:6px;box-shadow:0 1px 3px rgba(60,55,40,0.06),0 8px 28px rgba(60,55,40,0.05);}
+.q-actionbar{position:sticky;top:0;z-index:15;display:flex;align-items:center;gap:0.6rem;justify-content:flex-end;margin:-0.6rem -0.8rem 0.9rem;padding:0.55rem 0.8rem;background:#fff;border-bottom:1px solid var(--border);}
+.q-actionbar .prog{display:flex;align-items:center;gap:0.5rem;font-size:0.76rem;color:var(--muted);margin-right:auto;min-width:0;}
+.q-actionbar .prog-bar{width:140px;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;flex-shrink:1;}
+.q-actionbar .prog-fill{height:100%;background:var(--accent);transition:width 0.25s;}
+.q-actionbar button{background:var(--surface);border:1px solid var(--border);color:var(--text-soft);padding:0.3rem 0.75rem;border-radius:7px;font-size:0.76rem;cursor:pointer;font-family:inherit;transition:all 0.15s;white-space:nowrap;}
+.q-actionbar button:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
+.sec-hints{margin:0.2rem 0 0.8rem;background:#fffbe8;border-left:3px solid var(--accent2);border-radius:0 6px 6px 0;padding:0.55rem 0.9rem;font-size:0.86rem;line-height:1.6;color:var(--text-soft);}
+.sec-hints-head{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent2);margin-bottom:0.2rem;}
+.sec-hints ul{list-style:none;display:flex;flex-direction:column;gap:0.15rem;}
+.sec-hints li{padding-left:1em;text-indent:-1em;}
+.sec-hints li::before{content:'• ';color:var(--accent2);font-weight:700;}
 .q-breadcrumb{font-size:0.76rem;color:var(--muted);margin-bottom:0.7rem;display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;}
 .q-breadcrumb .sep{color:var(--muted2);}
 .q-breadcrumb .cat-name{color:var(--accent);font-weight:600;}
@@ -247,12 +261,13 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 /* ── SchemeGraphEditor (viewer mode) — synthesis scheme as SVG graph,
    visually identical to admin's editor (same node sizes, curved arrows,
    layout). The reveal interaction replaces the editor's drag/edit. ─── */
-.sg-host{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow-sm);margin-bottom:1.2rem;}
-.sg-toolbar-viewer{display:flex;align-items:center;gap:0.4rem;padding:0.45rem 0.7rem;background:var(--surface2);border-bottom:1px solid var(--border);flex-wrap:wrap;}
-.sg-toolbar-viewer .sg-btn{background:var(--surface);border:1px solid var(--border);color:var(--text-soft);padding:0.32rem 0.7rem;border-radius:6px;font-size:0.76rem;cursor:pointer;font-family:inherit;font-weight:600;}
-.sg-toolbar-viewer .sg-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
-.sg-toolbar-viewer .sg-zoom-label{font-size:0.7rem;color:var(--muted);font-family:ui-monospace,monospace;padding:0 0.3rem;}
-.sg-toolbar-viewer .sg-hint{font-size:0.7rem;color:var(--muted2);margin-left:auto;font-style:italic;max-width:60%;text-align:right;}
+.sg-host{margin:0.4rem 0 1rem;}
+.sg-body{display:flex;align-items:flex-start;gap:0.4rem;}
+.sg-rail{flex:0 0 30px;display:flex;flex-direction:column;align-items:center;gap:0.25rem;position:sticky;top:3.4rem;padding-top:0.2rem;opacity:0.55;transition:opacity 0.15s;}
+.sg-host:hover .sg-rail,.sg-rail:focus-within{opacity:1;}
+.sg-rail-btn{width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:var(--surface);border:1px solid var(--border);color:var(--text-soft);border-radius:7px;font-size:0.95rem;line-height:1;cursor:pointer;font-family:inherit;padding:0;}
+.sg-rail-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
+.sg-rail .sg-zoom-label{font-size:0.6rem;color:var(--muted2);font-family:ui-monospace,monospace;}
 
 .sg-host .sg-canvas{display:block;width:100%;height:480px;background:repeating-linear-gradient(0deg,#fdfcf6 0,#fdfcf6 19px,#f3f2e8 19px,#f3f2e8 20px),repeating-linear-gradient(90deg,#fdfcf6 0,#fdfcf6 19px,#f3f2e8 19px,#f3f2e8 20px);cursor:grab;outline:none;touch-action:none;user-select:none;}
 .sg-host .sg-canvas:active{cursor:grabbing;}
@@ -260,25 +275,30 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
    touch-action MUST stay auto: any restricted value (even pan-y) makes
    Chrome swallow wheel and touch scrolling over the canvas, which left
    the reader stranded on a tall scheme. */
-.sg-readonly .sg-canvas{cursor:default;height:auto;min-height:300px;touch-action:auto;}
+.sg-readonly .sg-canvas{flex:1;min-width:0;background:transparent;cursor:default;height:auto;min-height:160px;touch-action:auto;}
 
 /* Node styling shared with admin — duplicated here so quiz works
    standalone (admin loads its own copy). */
-.sg-node{cursor:pointer;}
-.sg-node-bg{fill:#ffffff;stroke:#cfceb8;stroke-width:1.5;}
-.sg-node.given .sg-node-bg{fill:#f3f3ec;}
-.sg-node.hidden .sg-node-bg{fill:#fffbe8;stroke:#e2001a;stroke-width:2;stroke-dasharray:5 3;}
-.sg-readonly .sg-node.hidden:hover .sg-node-bg{fill:rgba(255,251,232,0.6);filter:drop-shadow(0 2px 6px rgba(226,0,26,0.25));}
-.sg-node.revealed .sg-node-bg{fill:#fff;stroke:#5a8a2a;stroke-width:1.8;}
-.sg-node-label{font:bold 12px 'Segoe UI',system-ui,sans-serif;fill:#e2001a;letter-spacing:0.02em;pointer-events:none;}
+/* Frameless structures: the cell is an invisible hit area. */
+.sg-node{cursor:default;}
+.sg-node-bg{fill:transparent;stroke:none;}
+.sg-node.hidden,.sg-node.revealed{cursor:pointer;}
+.sg-node.hidden:hover .sg-node-bg{fill:rgba(226,0,26,0.04);}
+.sg-node.revealed:hover .sg-node-bg{fill:rgba(90,138,42,0.05);}
+.sg-node-label{font:bold 13px 'Segoe UI',system-ui,sans-serif;fill:#e2001a;letter-spacing:0.02em;pointer-events:none;}
+/* caption = text printed under a compound in the Angabe */
+.sg-node-caption{font:11px 'Segoe UI',system-ui,sans-serif;fill:#3a3a35;pointer-events:none;}
 .sg-node-name{font:11px 'Segoe UI',system-ui,sans-serif;fill:#6b6a5d;pointer-events:none;}
-.sg-q{font:bold 32px 'Segoe UI',system-ui,sans-serif;color:#e2001a;letter-spacing:0;line-height:1;}
-.sg-info-badge circle{fill:#5a8a2a;stroke:#fff;stroke-width:2;}
+.sg-q{box-sizing:border-box;display:flex;align-items:center;justify-content:center;font:bold 28px 'Segoe UI',system-ui,sans-serif;color:#e2001a;line-height:1;border:1.5px dashed rgba(226,0,26,0.55);border-radius:10px;background:rgba(255,251,232,0.7);transition:background 0.12s,border-color 0.12s;}
+.sg-node.hidden:hover .sg-q{background:#fff3c4;border-color:#e2001a;}
+.sg-info-badge{cursor:pointer;}
+.sg-info-badge circle{fill:#5a8a2a;stroke:#fff;stroke-width:1.5;}
 .sg-info-badge text{font:bold 11px 'Segoe UI',system-ui,sans-serif;fill:#fff;pointer-events:none;}
 .sg-ph{font:italic 11px 'Segoe UI',system-ui,sans-serif;color:#9a9889;}
 
-.sg-edge-line{stroke:#3a3a35;stroke-width:1.8;fill:none;}
-.sg-edge-label{font:500 11px 'Segoe UI',system-ui,sans-serif;fill:#3a3a35;pointer-events:none;}
+.sg-edge-line{stroke:#3a3a35;stroke-width:1.5;fill:none;}
+.sg-junction{fill:#3a3a35;}
+.sg-edge-label{font:500 11px 'Segoe UI',system-ui,sans-serif;fill:#3a3a35;pointer-events:none;paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round;}
 .sg-edge-label.below{fill:#6b6a5d;font-size:10px;}
 .sg-edge-orphan{stroke:#b87a00;}
 
@@ -368,7 +388,13 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
   .stat-pill{padding:0.45rem 0.75rem;font-size:0.74rem;}
 
   /* Question page — reduced padding, room for bottom-sheet */
-  .q-page{padding:0.85rem 0.85rem 5rem;}
+  .q-wrap{padding:0.5rem 0.4rem 5rem;}
+  .q-page{padding:0.9rem 0.8rem 1.4rem;border-radius:4px;}
+  .q-actionbar{margin:-0.4rem -0.4rem 0.7rem;padding:0.45rem 0.5rem;gap:0.35rem;}
+  .q-actionbar .prog-bar{width:60px;}
+  .q-actionbar button{padding:0.3rem 0.5rem;font-size:0.72rem;}
+  .sg-rail{flex-basis:26px;}
+  .sg-rail-btn{width:26px;height:26px;}
   .q-title{font-size:1.25rem;line-height:1.25;}
   .q-source{font-size:0.74rem;}
   .q-intro{padding:0.75rem 0.9rem;font-size:0.86rem;line-height:1.6;border-radius:8px;}
@@ -711,112 +737,92 @@ const _quizGraphViewers = {};
 
 function renderComposedScheme(q, scheme) {
   const nodes = scheme.nodes || [];
-  const edges = scheme.edges || [];
   if (!nodes.length) {
     return `<div class="composed-scheme"><div class="scheme-empty">
       <strong>Noch keine Strukturen.</strong>
       <div class="upl-hint">Im Admin → Quiz → diese Frage öffnen → Knoten anlegen (mit MOL- oder SMILES-Daten) und mit Pfeilen verbinden.</div>
     </div></div>`;
   }
-
-  // Defensive fallback if the editor module didn't load
   if (typeof window.SchemeGraphEditor !== 'function') {
     return renderComposedSchemeLegacy(q, scheme);
   }
 
-  const hiddenCount = nodes.filter(n => !n.given).length;
   const containerId = 'sg-view-' + q.id;
-  // Info popups (one per hidden node) — same structure as before so we
-  // can reuse the existing CSS + open/close handlers.
   const infoPanels = nodes.filter(n => !n.given).map(n => {
     const slot = q.id + '-n-' + n.id;
     return `<div class="composed-info" id="info-${x(slot)}">
       <button class="composed-info-close" onclick="closeNodeInfo('${x(slot)}')">×</button>
       <div class="composed-info-head">${x(n.label || n.id)} aufgedeckt</div>
       ${n.name ? `<div class="composed-info-name">${x(n.name)}</div>` : ''}
-      ${n.explanation ? `<div class="composed-info-expl">${x(n.explanation)}</div>` : ''}
-      ${n.note ? `<div class="composed-info-expl" style="font-style:italic;color:var(--muted)">${x(n.note)}</div>` : ''}
+      ${n.explanation ? `<div class="composed-info-expl">${renderLatexLabel(n.explanation)}</div>` : ''}
+      ${n.note ? `<div class="composed-info-expl" style="font-style:italic;color:var(--muted)">${renderLatexLabel(n.note)}</div>` : ''}
       <div class="composed-info-actions">${relatedLink(n.related_reaction_id)}</div>
     </div>`;
   }).join('');
 
-  // Mount the editor right after DOM insertion
   setTimeout(() => {
     const container = document.getElementById(containerId);
     if (!container) return;
-    // Tear down any previous viewer for this question
     if (_quizGraphViewers[q.id]) { try { _quizGraphViewers[q.id].destroy(); } catch (_) {} }
     const viewer = new window.SchemeGraphEditor(container, scheme, {
       readOnly: true,
       onNodeClick: (n) => onQuizNodeClick(q.id, n)
     });
     _quizGraphViewers[q.id] = viewer;
-    // First paint: lay the scheme out for the width we actually have
-    // (four columns on a laptop, two on a phone), then fit it.
     requestAnimationFrame(() => { if (!viewer.reflow(true)) viewer.fitToContent(); });
-    // Re-run once fonts / SVG metrics have settled.
-    setTimeout(() => viewer.fitToContent(), 250);
+    // Structures arrive asynchronously; fit again once they are drawn.
+    setTimeout(() => viewer.fitToContent(), 350);
     updateQuizProgress(q.id);
   }, 0);
 
-  // Toolbar (progress, reveal-all, reset) sits above the canvas
-  const toolbar = `<div class="scheme-toolbar">
-    <div class="prog"><span id="prog-text-${x(q.id)}">0 / ${hiddenCount} aufgedeckt</span>
-      <div class="prog-bar"><div class="prog-fill" id="prog-fill-${x(q.id)}" style="width:0%"></div></div>
-    </div>
-    <button onclick="quizRevealAll('${x(q.id)}')">Alle aufdecken</button>
-    <button onclick="quizResetReveals('${x(q.id)}')">Zurücksetzen</button>
-  </div>`;
-
-  return toolbar
-    + `<div id="${containerId}" class="sg-viewer-host"></div>`
-    + infoPanels;
+  return `<div id="${containerId}" class="sg-viewer-host"></div>` + infoPanels;
 }
 
-/* Click handler for a quiz node: hidden → reveal with animation;
-   already-revealed or given → show the info popup. */
+/* Tap on a node: hidden → reveal; revealed → show its explanation. */
 window.onQuizNodeClick = function(qid, node) {
   const v = _quizGraphViewers[qid];
-  if (!v) return;
-  const isHidden = !node.given && !v.revealedIds.has(node.id);
-  if (isHidden) {
+  if (!v || node.given) return;
+  if (!v.revealedIds.has(node.id)) {
     v.setRevealed(node.id, true);
     updateQuizProgress(qid);
-    // Auto-open info popup so user gets immediate feedback
-    openNodeInfo(qid + '-n-' + node.id);
-  } else {
-    // Revealed or given — show info if we have anything to say
-    if (!node.given) openNodeInfo(qid + '-n-' + node.id);
   }
+  openNodeInfo(qid + '-n-' + node.id);
 };
 
+/* The action bar works on the whole task: every scheme section whose
+   viewer key starts with the question id. */
+function viewersOf(qid) {
+  return Object.keys(_quizGraphViewers)
+    .filter(k => k === qid || k.startsWith(qid + '__s'))
+    .map(k => _quizGraphViewers[k])
+    .filter(v => v && v.svg && v.svg.isConnected);
+}
+
 window.quizRevealAll = function(qid) {
-  const v = _quizGraphViewers[qid];
-  if (!v) return;
-  for (const n of v.scheme.nodes) {
-    if (!n.given) v.revealedIds.add(n.id);
+  for (const v of viewersOf(qid)) {
+    for (const n of v.scheme.nodes) if (!n.given) v.revealedIds.add(n.id);
+    v.refresh();
   }
-  v.refresh();
   updateQuizProgress(qid);
 };
 
 window.quizResetReveals = function(qid) {
-  const v = _quizGraphViewers[qid];
-  if (!v) return;
-  v.resetReveals();
+  for (const v of viewersOf(qid)) v.resetReveals();
   updateQuizProgress(qid);
-  // Close any open info panels
   document.querySelectorAll('.composed-info.open').forEach(el => el.classList.remove('open'));
 };
 
-function updateQuizProgress(qid) {
-  const v = _quizGraphViewers[qid];
-  if (!v) return;
-  const c = v.countHidden();
+function updateQuizProgress(anyId) {
+  const qid = String(anyId).split('__s')[0];
+  let total = 0, revealed = 0;
+  for (const v of viewersOf(qid)) {
+    const c = v.countHidden();
+    total += c.total; revealed += c.revealed;
+  }
   const txt = document.getElementById('prog-text-' + qid);
   const bar = document.getElementById('prog-fill-' + qid);
-  if (txt) txt.textContent = `${c.revealed} / ${c.total} aufgedeckt`;
-  if (bar) bar.style.width = (c.total ? (c.revealed / c.total * 100) : 0) + '%';
+  if (txt) txt.textContent = total ? `${revealed} / ${total} aufgedeckt` : 'Alle Strukturen vorgegeben';
+  if (bar) bar.style.width = (total ? (revealed / total * 100) : 100) + '%';
 }
 
 /* Legacy flex-flow renderer kept as a defensive fallback. Identical
@@ -1136,10 +1142,12 @@ window.revealMech = function(slot) {
 function renderSection(section, parentQid, idx) {
   if (!section || typeof section !== 'object') return '';
   const subQ = Object.assign({}, section, { id: parentQid + '__s' + idx });
-  const header = (section.title || section.body) ? `
+  const hints = Array.isArray(section.hints) ? section.hints.filter(Boolean) : [];
+  const header = (section.title || section.body || hints.length) ? `
     <div class="section-header">
       ${section.title ? `<h2 class="section-title">${x(section.title)}</h2>` : ''}
-      ${section.body ? `<div class="section-body">${x(section.body)}</div>` : ''}
+      ${section.body ? `<div class="section-body">${renderLatexLabel(section.body)}</div>` : ''}
+      ${hints.length ? `<div class="sec-hints"><div class="sec-hints-head">Hinweise</div><ul>${hints.map(h => `<li>${renderLatexLabel(h)}</li>`).join('')}</ul></div>` : ''}
     </div>` : '';
   let inner = '';
   switch (section.type) {
@@ -1176,19 +1184,33 @@ function showQuestion(id) {
   else if (q.type === 'mechanism')       body = renderMechanism(q);
   else body = `<div style="padding:2rem;color:var(--muted)">Unbekannter Fragentyp: ${x(q.type||'?')}</div>`;
 
+  const hasScheme = (q.sections || []).some(sec => sec.type === 'synthesis') || q.type === 'synthesis';
+  const actionBar = hasScheme ? `
+    <div class="q-actionbar">
+      <div class="prog"><span id="prog-text-${x(q.id)}">…</span>
+        <div class="prog-bar"><div class="prog-fill" id="prog-fill-${x(q.id)}" style="width:0%"></div></div>
+      </div>
+      <button onclick="quizRevealAll('${x(q.id)}')">Alle aufdecken</button>
+      <button onclick="quizResetReveals('${x(q.id)}')">Zurücksetzen</button>
+    </div>` : '';
   const hintsHtml = (q.hints && q.hints.length) ? `
-    <div class="q-hints" id="hints-block">
+    <div class="q-hints open" id="hints-block">
       <div class="q-hints-head" onclick="document.getElementById('hints-block').classList.toggle('open')">
         <span class="hh-arrow">▶</span>
         <span>Hinweise (${q.hints.length})</span>
       </div>
       <div class="q-hints-body">
-        <ul>${q.hints.map(h => `<li>${x(h)}</li>`).join('')}</ul>
+        <ul>${q.hints.map(h => `<li>${renderLatexLabel(h)}</li>`).join('')}</ul>
       </div>
     </div>` : '';
 
+  Object.keys(_quizGraphViewers).forEach(k => {
+    try { _quizGraphViewers[k].destroy(); } catch (_) {}
+    delete _quizGraphViewers[k];
+  });
   document.getElementById('main').innerHTML = `
-    <div class="q-page">
+    <div class="q-wrap"><div class="q-page">
+      ${actionBar}
       <div class="q-breadcrumb">
         <span class="cat-name">${x(q.category)}</span>
         <span class="sep">›</span>
@@ -1200,7 +1222,8 @@ function showQuestion(id) {
       ${q.intro ? `<div class="q-intro">${x(q.intro)}</div>` : ''}
       ${hintsHtml}
       ${body}
-    </div>`;
+    </div></div>`;
+  if (hasScheme) setTimeout(() => updateQuizProgress(q.id), 30);
 
   document.getElementById('main').scrollTop = 0;
 }

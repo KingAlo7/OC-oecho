@@ -8,104 +8,112 @@
  *     edges: [{ from: [nodeId...], to: nodeId, reagent_above, reagent_below }]
  *   }
  *
- * `x` and `y` are optional admin-only layout hints. The quiz renderer
- * ignores them (it lays out via edge traversal).
- *
  * UI:
- *   - SVG canvas with pan (drag empty area) and zoom (wheel)
+ *   - SVG canvas with pan (drag empty area) and zoom (Ctrl + wheel)
  *   - Drag a node by its body to reposition
  *   - Drag from a node's "→" handle (right edge) onto another node to
  *     create an edge; release outside any node to cancel
  *   - Click a node or edge to select it → fires onSelect callback
  *   - Selected node/edge highlighted in red; press Delete to remove
- *   - Toolbar buttons exposed via container chrome (added by caller)
  *
  * Modes:
- *   `opts.readOnly: true` switches to a viewer used by the quiz page.
- *   In viewer mode there is no editing UI (no handles, no drag, no
- *   edge creation, no toolbar buttons that mutate). Nodes are clickable
- *   and emit `onNodeClick(node)` so the caller can implement reveal /
- *   info-popup behaviour. The same layout + rendering pipeline is used
- *   so the quiz view is visually identical to the admin editor.
+ *   `opts.readOnly: true` switches to the quiz viewer. The viewer draws
+ *   structures WITHOUT a frame, on plain ground, the way the exam sheets
+ *   do; arrows attach to the drawn molecule rather than to an invisible
+ *   box. Zoom controls sit in a slim rail on the right. Nodes are
+ *   clickable and emit `onNodeClick(node)`.
  *
  *   `opts.revealedNodeIds: Set<string>` (viewer only) pre-marks hidden
- *   nodes as already-revealed (e.g. after refresh).
+ *   nodes as already-revealed.
+ *
+ * Arrow routing:
+ *   - one source → one target: straight shaft, or an orthogonal bend
+ *   - one source → several targets (split arrow): a short shared stub,
+ *     then one branch per target; each branch carries its own reagent
+ *     on its own final segment, so labels never stack on one spot.
+ *     If every branch has the same reagent it is written once, on the
+ *     shared shaft ("LiAlH4 → A + B").
+ *   - several sources → one target (edge.from has >1 id): branches meet
+ *     in a junction, one trunk with one arrowhead and one label.
  *
  * Callbacks:
- *   onChange()                — emitted after every mutation; caller
- *                               should call mu() to mark dirty + save.
- *   onSelectNode(node|null)   — node selected / cleared (editor mode)
- *   onSelectEdge(edge|null, idx)
- *   onRequestStructEdit(node) — caller opens Ketcher etc.
- *   onNodeClick(node)         — viewer mode: tap on a node
+ *   onChange(), onSelectNode(node|null), onSelectEdge(edge|null, idx),
+ *   onRequestStructEdit(node), onNodeClick(node)
  *
  * Public methods:
- *   refresh()         — rerender everything (e.g. after external mutation)
- *   refreshNode(id)   — rerender single node (after structure change)
- *   autoLayout()      — assign x/y via BFS-layered DAG layout
- *   addNode(opts)     — create node, returns its id
- *   focusNode(id)     — pan to a node and select it
- *   setRevealed(id,b) — viewer: mark a node as revealed/hidden
- *   resetReveals()    — viewer: re-hide every non-given node
- *   countHidden()     — viewer: returns {revealed, total} for progress
- *   destroy()         — remove listeners (call before tearing down DOM)
+ *   refresh(), refreshNode(id), autoLayout(), addNode(opts), focusNode(id),
+ *   setRevealed(id,b), resetReveals(), countHidden(), reflow(force),
+ *   fitToContent(), destroy()
  */
 (function () {
   const NS = 'http://www.w3.org/2000/svg';
   const NODE_W = 168;
   const NODE_H = 142;
   const NODE_RX = 10;
-  const GAP_X = 90;
-  const GAP_Y = 60;
   const HANDLE_R = 7;
   const ARROW_HEAD = 9;
 
   /* ── Textbook-style arrow + label metrics ───────────────────────
      Modelled on the ÖChO Bundeswettbewerb exam sheets: the reagent
-     sits centred DIRECTLY over the arrow shaft, a hair above it, and
-     the conditions sit centred directly under it. Long reagent lists
-     wrap onto stacked lines (BW writes "1. O3" / "2. (CH3)2S") rather
-     than running past the arrowhead — so the shaft is always at least
-     as long as the widest label line. */
+     sits centred directly over the arrow shaft and the conditions sit
+     centred directly under it. Long reagent lists wrap onto stacked
+     lines rather than running past the arrowhead, so the shaft is
+     always at least as long as the widest label line. */
   const LABEL_FONT_ABOVE = "500 11px 'Segoe UI', system-ui, -apple-system, sans-serif";
   const LABEL_FONT_BELOW = "500 10px 'Segoe UI', system-ui, -apple-system, sans-serif";
-  const LABEL_LINE_H   = 12.5;  // line box height for stacked label lines
+  const LABEL_LINE_H   = 15;    // conservative height of one stacked label line
   const LABEL_MAX_W    = 124;   // px — wrap a label line wider than this
   const LABEL_PAD_X    = 14;    // px of shaft that must stay clear of text
-  const LABEL_GAP      = 4;     // px between shaft and nearest text line
+  const LABEL_GAP      = 5;     // px between shaft and the text's visual edge
   const ARROW_MIN      = 74;    // px — shortest arrow we ever draw
   const ARROW_MAX      = 210;   // px — longest; beyond this we wrap harder
   const STACK_GAP      = 26;    // px between nodes stacked in one column
   const ROW_GAP        = 74;    // px of vertical run for the wrap-around arrow
 
-  /* Canvas-based text measurement. getBBox() would be exact but needs
-     the element in the DOM and a layout pass; a 2D context with the
-     same font is accurate to well under a pixel and keeps layout
-     computation synchronous and side-effect free. */
+  /* Sub/superscripts are drawn with dy shifts, so their exact overhang
+     is known and the label can be kept a FIXED distance off the shaft
+     even when the line nearest the shaft carries a subscript. */
+  const SUB_DROP       = 3.2;   // px a subscript's baseline sits below the line's
+  const SUP_RISE       = 4.4;   // px a superscript's baseline sits above it
+  const CAP_H          = 8;     // cap height of the 10–11 px label font
+  const LINE_LEAD      = 3.5;   // px between stacked label lines
+  const JUNCTION_STUB  = 16;    // px of shared shaft before a split arrow fans out
+  const VLABEL_DX      = 8;     // px between a vertical shaft and its label block
+
+  /* Viewer geometry. OCL is asked for a cropped SVG, and its reported
+     size becomes the node's visible footprint. */
+  const V_FO_X  = 4;
+  const V_FO_Y  = 4;
+  const V_FO_W  = NODE_W - 8;
+  const V_FO_H  = NODE_H - 34;
+  const V_CY    = V_FO_Y + V_FO_H / 2;   // horizontal arrows run on this line
+  const V_GAP   = 7;                     // air between molecule and arrow tip
+  const PH_SIZE = 54;                    // "?" placeholder footprint
+  const V_LABEL_H = 15;                  // label line under a structure
+  const V_NAME_H  = 13;                  // name line under the label
+
+  /* Canvas-based text measurement: synchronous and side-effect free. */
   let _measureCtx = null;
   function measureText(text, font) {
     if (!_measureCtx) {
       try { _measureCtx = document.createElement('canvas').getContext('2d'); }
       catch (_) { _measureCtx = null; }
     }
-    if (!_measureCtx) return String(text).length * 6.2;  // last-resort estimate
+    if (!_measureCtx) return String(text).length * 6.2;
     _measureCtx.font = font;
     return _measureCtx.measureText(String(text)).width;
   }
 
-  /* Split a reagent string into stacked lines. Explicit newlines win;
-     otherwise we break on the separators chemists already write
-     ("1. X; 2. Y", "A, dann B", "H2/Pd / EtOH") and greedily pack
-     lines up to LABEL_MAX_W. */
+  /* Split a reagent string into stacked lines. Explicit newlines (real
+     or the two-character "\n" some data carries) win; otherwise break on
+     the separators chemists already write and pack up to LABEL_MAX_W. */
   function wrapLabel(text, font) {
     const raw = String(text == null ? '' : text);
     if (!raw.trim()) return [];
-    const explicit = raw.split(/\n|\n/).map(s => s.trim()).filter(Boolean);
+    const explicit = raw.split(/\\n|\n/).map(s => s.trim()).filter(Boolean);
     const out = [];
     for (const chunk of explicit) {
       if (measureText(plainChemText(chunk), font) <= LABEL_MAX_W) { out.push(chunk); continue; }
-      // Break into atoms at separators, keeping the separator with the
-      // left-hand atom so "1. LiOH," still reads correctly.
       const atoms = chunk.split(/(?<=[;,])\s+|\s+\/\s+|\s+(?=dann\s)|\s+(?=\d\.\s)|\s+(?=\d\)\s)/)
                          .map(s => s.trim()).filter(Boolean);
       let line = '';
@@ -115,40 +123,57 @@
         else line = cand;
       }
       if (line) out.push(line);
-      // A single unbreakable atom can still overflow — accept it; the
-      // arrow grows to ARROW_MAX and the text is simply the long one.
     }
     return out;
   }
 
-  /* Chemists write "Cl-CO_2Me" and "(CH_3)_2S" in the data; draw them
-     with real sub/superscripts, the way the exam sheets set them.
-     Fills an existing <text> with tspans instead of plain text. */
+  const CHEM_SRC = '([_^])(?:\\{([^}]*)\\}|([A-Za-z0-9+\\-]))';
+
+  /* "CH_3CH_2MgBr" / "[Ag(NH_3)_2]^{+}" → text with real sub/superscripts.
+     Uses dy (honoured everywhere) instead of baseline-shift. */
   function setChemText(textEl, str) {
     const s = String(str == null ? '' : str);
-    const re = /([_^])(?:\{([^}]*)\}|([A-Za-z0-9+\-]))/g;
-    let last = 0, m;
+    const re = new RegExp(CHEM_SRC, 'g');
+    let last = 0, m, shift = 0;
+    const plain = (txt) => {
+      const t = svg('tspan', shift ? { dy: -shift } : {});
+      shift = 0;
+      t.textContent = txt;
+      textEl.appendChild(t);
+    };
     while ((m = re.exec(s)) !== null) {
-      if (m.index > last) textEl.appendChild(document.createTextNode(s.slice(last, m.index)));
-      const t = svg('tspan', {
-        'baseline-shift': m[1] === '_' ? 'sub' : 'super',
-        'font-size': '78%'
-      });
+      if (m.index > last) plain(s.slice(last, m.index));
+      const d = m[1] === '_' ? SUB_DROP : -SUP_RISE;
+      const t = svg('tspan', { dy: d - shift, 'font-size': '76%' });
+      shift = d;
       t.textContent = m[2] != null ? m[2] : m[3];
       textEl.appendChild(t);
       last = re.lastIndex;
     }
-    if (last < s.length) textEl.appendChild(document.createTextNode(s.slice(last)));
+    if (last < s.length) plain(s.slice(last));
     return textEl;
+  }
+
+  function chemFlags(str) {
+    const s = String(str == null ? '' : str);
+    return {
+      sub: /_(\{|[A-Za-z0-9+\-])/.test(s),
+      sup: /\^(\{|[A-Za-z0-9+\-])/.test(s)
+    };
   }
 
   /* The markup is invisible on screen, so measure what the reader sees. */
   function plainChemText(str) {
-    return String(str == null ? '' : str).replace(/[_^]\{?([^}]*)\}?/g, '$1');
+    return String(str == null ? '' : str).replace(/[_^]\{([^}]*)\}/g, '$1').replace(/[_^]/g, '');
   }
 
-  /* Full metrics for one edge's above/below labels: stacked lines,
-     the widest line, and the shaft length needed to sit under them. */
+  /* Vertical extent of one label line relative to its baseline. */
+  function lineExtent(txt) {
+    const f = chemFlags(txt);
+    return { up: CAP_H + (f.sup ? SUP_RISE : 0), down: f.sub ? SUB_DROP + 0.8 : 0 };
+  }
+
+  /* Full metrics for one edge's above/below labels. */
   function edgeLabelMetrics(edge) {
     const above = wrapLabel(edge && edge.reagent_above, LABEL_FONT_ABOVE);
     const below = wrapLabel(edge && edge.reagent_below, LABEL_FONT_BELOW);
@@ -158,11 +183,18 @@
     return {
       above, below,
       width: w,
+      blockH: (above.length + below.length) * LABEL_LINE_H,
       shaft: Math.max(ARROW_MIN, Math.min(ARROW_MAX, Math.ceil(w) + LABEL_PAD_X * 2))
     };
   }
+
+  function sameLabels(a, b) {
+    return (a.reagent_above || '').trim() === (b.reagent_above || '').trim() &&
+           (a.reagent_below || '').trim() === (b.reagent_below || '').trim();
+  }
+
   function nextLetterId(usedSet) {
-    for (let c = 65; c <= 90; c++) {  // A..Z
+    for (let c = 65; c <= 90; c++) {
       const ch = String.fromCharCode(c);
       if (!usedSet.has(ch)) return ch;
     }
@@ -181,13 +213,17 @@
     return el;
   }
 
+  const DIR = { R: [1, 0], L: [-1, 0], D: [0, 1], U: [0, -1] };
+  const isH = side => side === 'R' || side === 'L';
+
   class SchemeGraphEditor {
     constructor(container, scheme, opts) {
+      opts = opts || {};
       this.container = container;
       this.scheme = scheme || { nodes: [], edges: [] };
       this.scheme.nodes = this.scheme.nodes || [];
       this.scheme.edges = this.scheme.edges || [];
-      this.opts = opts || {};
+      this.opts = opts;
       this.readOnly = !!opts.readOnly;
       this.onChange = opts.onChange || (() => {});
       this.onSelectNode = opts.onSelectNode || (() => {});
@@ -198,15 +234,15 @@
       this.viewX = 40;
       this.viewY = 40;
       this.scale = 1;
-      this.selected = null;        // {kind:'node', id} | {kind:'edge', idx}
-      this.drag = null;            // node drag state
-      this.pan = null;             // background pan state
-      this.edgeDraft = null;       // active edge-creation state
-      this.tap = null;             // viewer-mode tap-or-pan state
-      this.pinch = null;           // 2-finger pinch state (mobile)
-      this._pointers = new Map();  // pointerId → {x, y} for multi-touch
-      // Viewer-only reveal state. Given nodes (n.given === true) are
-      // always visible; we only track non-given nodes here.
+      this.selected = null;
+      this.drag = null;
+      this.pan = null;
+      this.edgeDraft = null;
+      this.tap = null;
+      this.pinch = null;
+      this._pointers = new Map();
+      this._mb = new Map();        // viewer: nodeId → {w,h} of the drawn structure
+      this._renderGen = 0;
       this.revealedIds = new Set(opts.revealedNodeIds || []);
       this._build();
       this._ensurePositions();
@@ -220,27 +256,7 @@
     _build() {
       this.container.classList.add('sg-host');
       if (this.readOnly) this.container.classList.add('sg-readonly');
-      // Viewer mode shows a minimal toolbar (zoom + fit only). Edit
-      // mode shows the full toolbar with add/layout/zoom/hint.
-      const toolbar = this.readOnly
-        ? `<div class="sg-toolbar sg-toolbar-viewer">
-             <button class="sg-btn" data-act="fit" title="In Ansicht einpassen">↔ Anpassen</button>
-             <button class="sg-btn" data-act="zoomin" title="Zoom +">＋</button>
-             <button class="sg-btn" data-act="zoomout" title="Zoom −">−</button>
-             <span class="sg-zoom-label" id="sg-zoom-label">100 %</span>
-             <span class="sg-hint">Tippe auf einen ✱-Knoten zum Aufdecken · Hintergrund ziehen = verschieben · Strg + Mausrad = Zoom</span>
-           </div>`
-        : `<div class="sg-toolbar">
-             <button class="sg-btn" data-act="add">＋ Knoten</button>
-             <button class="sg-btn" data-act="layout">Auto-Layout</button>
-             <button class="sg-btn" data-act="fit">↔ Anpassen</button>
-             <button class="sg-btn" data-act="zoomin" title="Zoom +">＋</button>
-             <button class="sg-btn" data-act="zoomout" title="Zoom -">−</button>
-             <span class="sg-zoom-label" id="sg-zoom-label">100 %</span>
-             <span class="sg-hint">Knoten ziehen · von ⇢-Griff zu Knoten ziehen = Pfeil · Klick = auswählen · G = vorgegeben · Entf = löschen · Strg + Mausrad = Zoom</span>
-           </div>`;
-      this.container.innerHTML = toolbar + `
-        <svg class="sg-canvas" xmlns="${NS}" tabindex="0">
+      const defs = `
           <defs>
             <marker id="sg-arrow" viewBox="0 0 ${ARROW_HEAD} ${ARROW_HEAD}" refX="${ARROW_HEAD - 1}" refY="${ARROW_HEAD/2}" markerWidth="${ARROW_HEAD}" markerHeight="${ARROW_HEAD}" orient="auto-start-reverse">
               <path d="M0,0 L${ARROW_HEAD},${ARROW_HEAD/2} L0,${ARROW_HEAD} z" fill="#3a3a35"/>
@@ -248,21 +264,41 @@
             <marker id="sg-arrow-sel" viewBox="0 0 ${ARROW_HEAD} ${ARROW_HEAD}" refX="${ARROW_HEAD - 1}" refY="${ARROW_HEAD/2}" markerWidth="${ARROW_HEAD}" markerHeight="${ARROW_HEAD}" orient="auto-start-reverse">
               <path d="M0,0 L${ARROW_HEAD},${ARROW_HEAD/2} L0,${ARROW_HEAD} z" fill="#e2001a"/>
             </marker>
-          </defs>
-          <g class="sg-viewport"></g>
-        </svg>`;
+          </defs>`;
+      const canvas = `<svg class="sg-canvas" xmlns="${NS}" tabindex="0">${defs}<g class="sg-viewport"></g></svg>`;
+
+      if (this.readOnly) {
+        // Viewer: canvas on plain ground, zoom rail on the right.
+        this.container.innerHTML = `
+          <div class="sg-body">
+            ${canvas}
+            <div class="sg-rail sg-toolbar" role="toolbar" aria-label="Ansicht">
+              <button class="sg-rail-btn" data-act="zoomin" title="Vergrößern" aria-label="Vergrößern">＋</button>
+              <span class="sg-zoom-label" title="Zoom (Strg + Mausrad)">100%</span>
+              <button class="sg-rail-btn" data-act="zoomout" title="Verkleinern" aria-label="Verkleinern">−</button>
+              <button class="sg-rail-btn" data-act="fit" title="Auf Breite einpassen" aria-label="Einpassen">⤢</button>
+            </div>
+          </div>`;
+      } else {
+        this.container.innerHTML = `
+          <div class="sg-toolbar">
+            <button class="sg-btn" data-act="add">＋ Knoten</button>
+            <button class="sg-btn" data-act="layout">Auto-Layout</button>
+            <button class="sg-btn" data-act="fit">↔ Anpassen</button>
+            <button class="sg-btn" data-act="zoomin" title="Zoom +">＋</button>
+            <button class="sg-btn" data-act="zoomout" title="Zoom -">−</button>
+            <span class="sg-zoom-label">100 %</span>
+            <span class="sg-hint">Knoten ziehen · von ⇢-Griff zu Knoten ziehen = Pfeil · Klick = auswählen · G = vorgegeben · Entf = löschen · Strg + Mausrad = Zoom</span>
+          </div>` + canvas;
+      }
       this.svg = this.container.querySelector('.sg-canvas');
       this.viewport = this.svg.querySelector('.sg-viewport');
-      this.zoomLabel = this.container.querySelector('#sg-zoom-label');
+      this.zoomLabel = this.container.querySelector('.sg-zoom-label');
       this.toolbar = this.container.querySelector('.sg-toolbar');
     }
 
     /* ─── Layout ──────────────────────────────────────────────── */
 
-    /* Positions are considered machine-owned unless the author has
-       dragged a node (which stamps scheme.layout = 'manual'). That lets
-       the quiz viewer re-flow an auto layout to the reader's screen
-       width while never touching a hand-placed scheme. */
     _isAutoLayout() {
       return this.scheme.layout !== 'manual';
     }
@@ -272,9 +308,6 @@
       if (missingAny || this._isAutoLayout()) this.autoLayout();
     }
 
-    /* How many structure columns fit across the canvas at 100 %.
-       Desktop admin lands on 4-5, a phone on 2 — the same numbers the
-       BW sheets use when a scheme has to fit a printed page. */
     _fitColumns(pitch) {
       const avail = (this.svg && this.svg.clientWidth) || this.container.clientWidth || 0;
       if (!avail) return 4;
@@ -282,33 +315,43 @@
       return Math.max(2, Math.min(5, Math.floor((usable + pitch - NODE_W) / pitch)));
     }
 
-    /* ── Serpentine (boustrophedon) layout ───────────────────────────
-       The straight-row layout this replaces put an N-step synthesis on
-       one 3000 px line — unreadable on a phone and clipped in print.
-       The BW exam sheets instead snake the scheme: a row runs left to
-       right, a short arrow drops to the next row, that row runs right
-       to left, and so on. This reproduces that.
+    /* Column pitch: the widest label plus room for split/merge junctions. */
+    _pitch() {
+      let shaft = ARROW_MIN;
+      for (const e of this.scheme.edges) shaft = Math.max(shaft, edgeLabelMetrics(e).shaft);
+      const outDeg = {};
+      let junction = false;
+      for (const e of this.scheme.edges) {
+        const f = e.from || [];
+        if (f.length > 1) junction = true;
+        if (f.length === 1) outDeg[f[0]] = (outDeg[f[0]] || 0) + 1;
+      }
+      if (Object.values(outDeg).some(d => d > 1)) junction = true;
+      return NODE_W + shaft + (junction ? JUNCTION_STUB + 8 : 0);
+    }
 
+    /* Row gap: tall enough that a vertical wrap-around arrow can carry
+       its label block beside it without the block reaching the rows
+       above or below. */
+    _rowGap() {
+      let h = 0;
+      for (const e of this.scheme.edges) h = Math.max(h, edgeLabelMetrics(e).blockH);
+      return Math.max(ROW_GAP, h + 34);
+    }
+
+    /* ── Serpentine (boustrophedon) layout ───────────────────────────
          A ──→ B ──→ C ──→ D
                            │
          H ←── G ←── F ←── E
          │
          I ──→ J ──→ …
-
-       Nodes that share a topological layer (two reactants converging on
-       one product) stack vertically inside a single column instead of
-       consuming two serpentine slots.
-
-       `opts.columns` forces a column count; otherwise it is derived
-       from the canvas width, so the very same call produces a wide
-       desktop layout and a narrow phone layout. */
+       Nodes sharing a topological layer stack inside one column. */
     autoLayout(opts) {
       opts = opts || {};
       const nodes = this.scheme.nodes;
       const edges = this.scheme.edges;
       if (!nodes.length) return;
 
-      /* ── 1. Topological layering ─────────────────────────────── */
       const ids = new Set(nodes.map(n => n.id));
       const incoming = {}, outgoing = {};
       ids.forEach(id => { incoming[id] = []; outgoing[id] = []; });
@@ -340,13 +383,7 @@
       let maxL = Math.max(0, ...Object.values(layer));
       [...remaining].sort().forEach(id => { layer[id] = ++maxL; });
 
-      /* A node with no incoming edge is a starting material or a
-         side reagent. Left at layer 0 it would sit at the far left of
-         the scheme with a long wire running across the whole diagram
-         to wherever it is actually used — the arrow then crosses other
-         arrows and its label lands on top of theirs. The exam sheets
-         instead draw a reagent right beside the step it feeds, so pull
-         each source down to just before its earliest consumer. */
+      // Pull side reagents down to just before their first consumer.
       for (const n of nodes) {
         if (incoming[n.id].length || !outgoing[n.id].length) continue;
         const earliest = Math.min(...outgoing[n.id].map(t => layer[t]));
@@ -355,7 +392,6 @@
       const floor = Math.min(...Object.values(layer));
       if (floor) for (const id of Object.keys(layer)) layer[id] -= floor;
 
-      /* ── 2. Group into columns, one per layer ────────────────── */
       const byLayer = new Map();
       nodes.forEach(n => {
         const l = layer[n.id] || 0;
@@ -365,38 +401,47 @@
       const columns = [...byLayer.keys()].sort((a, b) => a - b)
         .map(l => byLayer.get(l).sort((a, b) => nodes.indexOf(a) - nodes.indexOf(b)));
 
-      /* ── 3. Column pitch wide enough for the longest reagent ─── */
-      let shaft = ARROW_MIN;
-      for (const e of edges) shaft = Math.max(shaft, edgeLabelMetrics(e).shaft);
-      const pitch = NODE_W + shaft;
-
+      const pitch = this._pitch();
+      const rowGap = this._rowGap();
       const cols = Math.max(1, opts.columns || this.layoutColumns || this._fitColumns(pitch));
 
-      /* ── 4. Snake the columns into rows ──────────────────────── */
+      // A layer with several compounds normally stacks in one cell. At
+      // the start of a new row, though, it is entered from ABOVE by the
+      // wrap-around arrow, and a stacked cell would force the arrow to
+      // the lower compound straight through the upper one. There the
+      // compounds are spread across separate cells instead.
       const rows = [];
-      for (let i = 0; i < columns.length; i += cols) rows.push(columns.slice(i, i + cols));
+      let row = [];
+      for (const group of columns) {
+        if (row.length === cols) { rows.push(row); row = []; }
+        const atRowStart = row.length === 0 && rows.length > 0;
+        const cells = (atRowStart && group.length > 1) ? group.map(n => [n]) : [group];
+        for (const cell of cells) {
+          if (row.length === cols) { rows.push(row); row = []; }
+          row.push(cell);
+        }
+      }
+      if (row.length) rows.push(row);
 
       let y = 0;
+      this._rowOf = new Map();
       rows.forEach((row, r) => {
         const tallest = Math.max(...row.map(c => c.length));
         const rowH = tallest * NODE_H + (tallest - 1) * STACK_GAP;
         row.forEach((group, c) => {
-          // Odd rows run right-to-left, so the reader's eye continues
-          // from where the previous row ended instead of jumping back.
           const slot = (r % 2 === 0) ? c : (cols - 1 - c);
           const x = slot * pitch;
           const stackH = group.length * NODE_H + (group.length - 1) * STACK_GAP;
           const y0 = y + (rowH - stackH) / 2;
           group.forEach((n, k) => {
+            this._rowOf.set(n.id, r);
             n.x = x;
             n.y = y0 + k * (NODE_H + STACK_GAP);
           });
         });
-        y += rowH + ROW_GAP;
+        y += rowH + rowGap;
       });
 
-      // Left-align the whole diagram at x = 0 even when the last row is
-      // short and runs right-to-left.
       const minX = Math.min(...nodes.map(n => n.x));
       if (minX) nodes.forEach(n => { n.x -= minX; });
 
@@ -407,63 +452,23 @@
     /* ─── Render ──────────────────────────────────────────────── */
 
     refresh() {
-      // Clear viewport
       while (this.viewport.firstChild) this.viewport.removeChild(this.viewport.firstChild);
       this._applyView();
-
-      // Edges layer first, so arrows are drawn behind the structures.
-      const edgesG = svg('g', { class: 'sg-edges' });
-      this.viewport.appendChild(edgesG);
-
-      this.scheme.edges.forEach((e, idx) => {
-        const fromIds = e.from || [];
-        const toNode = this._nodeById(e.to);
-        if (!toNode) return;
-        // For multi-input edges, draw one line per source converging on the target
-        fromIds.forEach(fid => {
-          const fn = this._nodeById(fid);
-          if (!fn) return;
-          edgesG.appendChild(this._edgeEl(fn, toNode, e, idx, fid));
-        });
-        if (fromIds.length === 0) {
-          // Orphan edge with no source — render dashed stub from above for visibility
-          const stub = svg('line', {
-            class: 'sg-edge-line sg-edge-orphan',
-            x1: toNode.x + NODE_W / 2, y1: toNode.y - 40,
-            x2: toNode.x + NODE_W / 2, y2: toNode.y,
-            'data-idx': idx, 'stroke-dasharray': '4 3'
-          });
-          edgesG.appendChild(stub);
-        }
-      });
-
-      // Nodes layer
       const nodesG = svg('g', { class: 'sg-nodes' });
       this.viewport.appendChild(nodesG);
-      this.scheme.nodes.forEach(n => {
-        nodesG.appendChild(this._nodeEl(n));
-      });
+      this.scheme.nodes.forEach(n => nodesG.appendChild(this._nodeEl(n)));
+      this._drawEdges();
       this._renderStructures();
-      this._fitIfEmpty();
-    }
-
-    _fitIfEmpty() {
-      // If the canvas hasn't been sized yet, sensible default
-      if (this.svg.clientWidth < 50) {
-        // wait one tick then refresh once for proper size
-        requestAnimationFrame(() => this._applyView());
-      }
+      if (this.svg.clientWidth < 50) requestAnimationFrame(() => this._applyView());
     }
 
     _renderStructures() {
-      // Inject molecule SVGs via MolRenderer if available.
-      // Foreign object holds an HTML div that MolRenderer fills.
       if (typeof window.MolRenderer === 'undefined') return;
+      const gen = ++this._renderGen;
       window.MolRenderer.ready().then(() => {
+        if (gen !== this._renderGen) return;
         for (const n of this.scheme.nodes) {
-          // In viewer mode: skip rendering structure for nodes that
-          // haven't been revealed yet (the "?" placeholder stays).
-          if (this.readOnly && !this._isVisible(n)) continue;
+          if (this.readOnly && !this._isVisible(n)) { this._mb.delete(n.id); continue; }
           const host = this.container.querySelector(`[data-struct-host="${cssEsc(n.id)}"]`);
           if (!host) continue;
           host.innerHTML = '';
@@ -472,17 +477,30 @@
             continue;
           }
           try {
-            if (n.mol)         window.MolRenderer.drawMol(n.mol, host, { width: NODE_W - 24, height: NODE_H - 60 });
-            else if (n.smiles) window.MolRenderer.drawSmiles(n.smiles, host, { width: NODE_W - 24, height: NODE_H - 60 });
+            const o = this.readOnly
+              ? { width: V_FO_W, height: V_FO_H, autoCrop: true, autoCropMargin: 2 }
+              : { width: NODE_W - 24, height: NODE_H - 60 };
+            const el = n.mol ? window.MolRenderer.drawMol(n.mol, host, o)
+                             : window.MolRenderer.drawSmiles(n.smiles, host, o);
+            if (this.readOnly && el && el.getAttribute) {
+              const w = Math.min(V_FO_W, parseFloat(el.getAttribute('width')) || PH_SIZE);
+              const h = Math.min(V_FO_H, parseFloat(el.getAttribute('height')) || PH_SIZE);
+              el.style.width = w + 'px';
+              el.style.height = h + 'px';
+              this._mb.set(n.id, { w, h });
+            }
           } catch (e) {
             host.innerHTML = '<div class="sg-err">⚠ Render</div>';
           }
+          if (this.readOnly) this._placeNodeText(n);
+        }
+        if (this.readOnly) {
+          this._drawEdges();
+          if (this._fitted) this._syncViewerHeight();
         }
       });
     }
 
-    /* Viewer helpers. A node is visible when it's `given` or has been
-       revealed by the user. Edit mode always treats nodes as visible. */
     _isVisible(n) {
       if (!this.readOnly) return true;
       return n.given || this.revealedIds.has(n.id);
@@ -514,259 +532,668 @@
       if (!n) return;
       const g = this.container.querySelector(`[data-node="${cssEsc(id)}"]`);
       if (!g) return this.refresh();
-      const fresh = this._nodeEl(n);
-      g.replaceWith(fresh);
+      if (this.readOnly && this._isHidden(n)) this._mb.delete(id);
+      g.replaceWith(this._nodeEl(n));
+      this._drawEdges();
       this._renderStructures();
     }
 
     _nodeEl(n) {
-      // Visual state: given (default) / hidden (viewer + not revealed) /
-      // revealed (viewer + revealed). Edit mode never marks nodes as
-      // "hidden" — admin always sees structures.
+      return this.readOnly ? this._viewerNodeEl(n) : this._editorNodeEl(n);
+    }
+
+    /* Viewer node: no frame. A transparent hit area keeps the whole cell
+       tappable; the structure (or a small "?" tile) sits in the middle
+       and the label is set directly under it. */
+    _viewerNodeEl(n) {
       let stateCls;
-      if (this.readOnly) {
-        if (n.given)                       stateCls = 'given';
-        else if (this.revealedIds.has(n.id)) stateCls = 'revealed';
-        else                                 stateCls = 'hidden';
-      } else {
-        stateCls = n.given ? 'given' : 'hidden';
+      if (n.given)                         stateCls = 'given';
+      else if (this.revealedIds.has(n.id)) stateCls = 'revealed';
+      else                                 stateCls = 'hidden';
+
+      const g = svg('g', {
+        class: 'sg-node ' + stateCls,
+        transform: `translate(${n.x || 0} ${n.y || 0})`,
+        'data-node': n.id
+      });
+      g.appendChild(svg('rect', {
+        class: 'sg-node-bg', x: 0, y: 0, width: NODE_W, height: NODE_H, rx: NODE_RX, ry: NODE_RX
+      }));
+
+      const fo = svg('foreignObject', { x: V_FO_X, y: V_FO_Y, width: V_FO_W, height: V_FO_H });
+      const div = document.createElement('div');
+      div.className = 'sg-struct-host';
+      div.setAttribute('data-struct-host', n.id);
+      div.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;';
+      if (this._isHidden(n)) {
+        div.innerHTML = `<div class="sg-q" style="width:${PH_SIZE}px;height:${PH_SIZE}px">?</div>`;
+      } else if (!(n.mol || n.smiles)) {
+        div.innerHTML = '<div class="sg-ph">(leer)</div>';
+      }
+      fo.appendChild(div);
+      g.appendChild(fo);
+
+      const label = svg('text', { class: 'sg-node-label', x: NODE_W / 2, 'text-anchor': 'middle' });
+      label.textContent = n.label != null ? n.label : (n.id || '?');
+      g.appendChild(label);
+
+      if (n.name && !this._isHidden(n)) {
+        const name = svg('text', { class: 'sg-node-name', x: NODE_W / 2, 'text-anchor': 'middle' });
+        name.textContent = n.name.length > 30 ? n.name.slice(0, 28) + '…' : n.name;
+        g.appendChild(name);
+      }
+      // A caption is part of the Angabe (e.g. a sum formula printed under
+      // an unknown compound), so it shows even while the node is hidden.
+      if (n.caption) {
+        const cap = svg('text', { class: 'sg-node-caption', x: NODE_W / 2, 'text-anchor': 'middle' });
+        setChemText(cap, n.caption);
+        g.appendChild(cap);
       }
 
+      if (this.revealedIds.has(n.id) && !n.given) {
+        const ib = svg('g', { class: 'sg-info-badge' });
+        ib.appendChild(svg('circle', { cx: 0, cy: 0, r: 8 }));
+        const t = svg('text', { x: 0, y: 3.5, 'text-anchor': 'middle' });
+        t.textContent = 'i';
+        ib.appendChild(t);
+        g.appendChild(ib);
+      }
+      this._placeNodeText(n, g);
+      return g;
+    }
+
+    _footprint(n) {
+      if (this._isHidden(n)) return { w: PH_SIZE, h: PH_SIZE };
+      return this._mb.get(n.id) || { w: PH_SIZE, h: PH_SIZE };
+    }
+    _textBlockH(n) {
+      return V_LABEL_H + (n.name && !this._isHidden(n) ? V_NAME_H : 0) + (n.caption ? V_NAME_H + 2 : 0);
+    }
+
+    _placeNodeText(n, g) {
+      g = g || this.container.querySelector(`[data-node="${cssEsc(n.id)}"]`);
+      if (!g) return;
+      const m = this._footprint(n);
+      const bottom = V_CY + m.h / 2;
+      const label = g.querySelector('.sg-node-label');
+      const name = g.querySelector('.sg-node-name');
+      if (label) label.setAttribute('y', bottom + 13);
+      if (name) name.setAttribute('y', bottom + 13 + V_NAME_H);
+      const cap = g.querySelector('.sg-node-caption');
+      if (cap) cap.setAttribute('y', bottom + 13 + V_NAME_H * (name ? 2 : 1) + 1);
+      const ib = g.querySelector('.sg-info-badge');
+      if (ib) {
+        const bx = Math.min(NODE_W - 9, NODE_W / 2 + m.w / 2 + 4);
+        const by = Math.max(9, V_CY - m.h / 2 - 2);
+        ib.setAttribute('transform', `translate(${bx} ${by})`);
+      }
+    }
+
+    _editorNodeEl(n) {
+      const stateCls = n.given ? 'given' : 'hidden';
       const g = svg('g', {
         class: 'sg-node ' + stateCls + (this._isSelected('node', n.id) ? ' selected' : ''),
         transform: `translate(${n.x || 0} ${n.y || 0})`,
         'data-node': n.id
       });
-
       g.appendChild(svg('rect', {
-        class: 'sg-node-bg',
-        x: 0, y: 0, width: NODE_W, height: NODE_H, rx: NODE_RX, ry: NODE_RX
+        class: 'sg-node-bg', x: 0, y: 0, width: NODE_W, height: NODE_H, rx: NODE_RX, ry: NODE_RX
       }));
-
-      // Structure host via foreignObject. In viewer mode a hidden node
-      // shows a "?" placeholder instead of the structure.
-      const fo = svg('foreignObject', {
-        x: 12, y: 8, width: NODE_W - 24, height: NODE_H - 60
-      });
+      const fo = svg('foreignObject', { x: 12, y: 8, width: NODE_W - 24, height: NODE_H - 60 });
       const div = document.createElement('div');
       div.className = 'sg-struct-host';
       div.setAttribute('data-struct-host', n.id);
       div.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fff;border-radius:4px;';
-      if (this._isHidden(n)) {
-        div.innerHTML = '<div class="sg-q">?</div>';
-      } else if (!(n.mol || n.smiles)) {
-        div.innerHTML = '<div class="sg-ph">(leer)</div>';
-      } else {
-        div.innerHTML = '';  // MolRenderer will fill this in _renderStructures
-      }
+      if (!(n.mol || n.smiles)) div.innerHTML = '<div class="sg-ph">(leer)</div>';
       fo.appendChild(div);
       g.appendChild(fo);
 
       const labelText = svg('text', { class: 'sg-node-label', x: 12, y: NODE_H - 38 });
       labelText.textContent = n.label || n.id || '?';
       g.appendChild(labelText);
-
-      // In viewer mode: show name on revealed/given nodes (informative)
-      // and hide it on hidden ones (would spoil the puzzle).
-      if (n.name && !this._isHidden(n)) {
+      if (n.caption) {
+        const capText = svg('text', { class: 'sg-node-name', x: NODE_W - 12, y: NODE_H - 38, 'text-anchor': 'end' });
+        setChemText(capText, n.caption);
+        g.appendChild(capText);
+      }
+      if (n.name) {
         const nameText = svg('text', { class: 'sg-node-name', x: 12, y: NODE_H - 20 });
         nameText.textContent = n.name.length > 26 ? n.name.slice(0, 24) + '…' : n.name;
         g.appendChild(nameText);
       }
-
-      // Edit mode: say plainly whether this structure is handed to the
-      // student or is one they have to work out — the difference is
-      // otherwise only a subtle change of fill.
-      if (!this.readOnly && n.given) {
+      if (n.given) {
         const gv = svg('text', { class: 'sg-node-given', x: 12, y: 15 });
         gv.textContent = '✓ vorgegeben';
         g.appendChild(gv);
       }
-
-      // Edit mode only: drag-to-create-edge handle + degree badge
-      if (!this.readOnly) {
-        const handle = svg('circle', {
-          class: 'sg-handle sg-handle-out',
-          cx: NODE_W, cy: NODE_H / 2, r: HANDLE_R,
-          'data-handle': 'out', 'data-node': n.id
-        });
-        g.appendChild(handle);
-
-        const deg = this._degreeOf(n.id);
-        if (deg.in || deg.out) {
-          const badge = svg('text', {
-            class: 'sg-node-deg',
-            x: NODE_W - 6, y: 14,
-            'text-anchor': 'end'
-          });
-          badge.textContent = `↘${deg.in} ↗${deg.out}`;
-          g.appendChild(badge);
-        }
-      } else {
-        // Viewer: small 'i' badge on revealed nodes — affordance to
-        // signal "tap me for explanation"
-        if (this.revealedIds.has(n.id)) {
-          const ib = svg('g', { class: 'sg-info-badge' });
-          ib.appendChild(svg('circle', { cx: NODE_W - 12, cy: 12, r: 9 }));
-          const t = svg('text', { x: NODE_W - 12, y: 15, 'text-anchor': 'middle' });
-          t.textContent = 'i';
-          ib.appendChild(t);
-          g.appendChild(ib);
-        }
+      g.appendChild(svg('circle', {
+        class: 'sg-handle sg-handle-out',
+        cx: NODE_W, cy: NODE_H / 2, r: HANDLE_R,
+        'data-handle': 'out', 'data-node': n.id
+      }));
+      const deg = this._degreeOf(n.id);
+      if (deg.in || deg.out) {
+        const badge = svg('text', { class: 'sg-node-deg', x: NODE_W - 6, y: 14, 'text-anchor': 'end' });
+        badge.textContent = `↘${deg.in} ↗${deg.out}`;
+        g.appendChild(badge);
       }
-
       return g;
     }
 
-    /* Routing geometry for one arrow.
+    /* ─── Arrow routing ───────────────────────────────────────── */
 
-       Serpentine layout keeps almost every arrow axis-aligned, which is
-       what the BW sheets draw: a plain straight shaft with a small
-       filled head. Neighbours in a row give a horizontal shaft, the
-       wrap-around at the end of a row gives a vertical one. Only edges
-       that skip across the diagram (a byproduct feeding back in, say)
-       need the Manhattan L-bend, and for those we hand the label the
-       longest straight run so it still sits ON a shaft.
-
-       Returns { dpath, labelSeg } where labelSeg is the straight
-       stretch the reagent text is centred on. */
-    _edgeGeometry(fromN, toN) {
-      const s = {
-        left: fromN.x, right: fromN.x + NODE_W,
-        top:  fromN.y, bottom: fromN.y + NODE_H,
-        cx:   fromN.x + NODE_W / 2, cy: fromN.y + NODE_H / 2
-      };
-      const t = {
-        left: toN.x, right: toN.x + NODE_W,
-        top:  toN.y, bottom: toN.y + NODE_H,
-        cx:   toN.x + NODE_W / 2, cy: toN.y + NODE_H / 2
-      };
-      const dx = t.cx - s.cx;
-      const dy = t.cy - s.cy;
-
-      // Column-aligned pairs are the wrap-around arrows: force them
-      // vertical even when the boxes are tall, so the turn reads as a
-      // turn and not as a diagonal.
-      const sameColumn = Math.abs(dx) < 4;
-      const sameRow    = Math.abs(dy) < 4;
-      const horizontalDominant = sameRow ? true
-                               : sameColumn ? false
-                               : Math.abs(dx) * NODE_H >= Math.abs(dy) * NODE_W;
-
-      let sExit, tEntry, dpath, labelSeg;
-
-      if (horizontalDominant) {
-        sExit  = dx >= 0 ? { x: s.right, y: s.cy } : { x: s.left,  y: s.cy };
-        tEntry = dx >= 0 ? { x: t.left,  y: t.cy } : { x: t.right, y: t.cy };
-        if (sameRow) {
-          dpath = `M ${sExit.x} ${sExit.y} L ${tEntry.x} ${tEntry.y}`;
-          labelSeg = { x1: sExit.x, y1: sExit.y, x2: tEntry.x, y2: tEntry.y, dir: 'h' };
-        } else {
-          const midX = (sExit.x + tEntry.x) / 2;
-          dpath = `M ${sExit.x} ${sExit.y} L ${midX} ${sExit.y} L ${midX} ${tEntry.y} L ${tEntry.x} ${tEntry.y}`;
-          const lenA = Math.abs(midX - sExit.x);
-          const lenB = Math.abs(tEntry.x - midX);
-          labelSeg = lenA >= lenB
-            ? { x1: sExit.x, y1: sExit.y, x2: midX,     y2: sExit.y,  dir: 'h' }
-            : { x1: midX,    y1: tEntry.y, x2: tEntry.x, y2: tEntry.y, dir: 'h' };
-        }
-      } else {
-        sExit  = dy >= 0 ? { x: s.cx, y: s.bottom } : { x: s.cx, y: s.top    };
-        tEntry = dy >= 0 ? { x: t.cx, y: t.top    } : { x: t.cx, y: t.bottom };
-        if (sameColumn) {
-          // Straight down (or up) the column — the serpentine turn.
-          dpath = `M ${sExit.x} ${sExit.y} L ${sExit.x} ${tEntry.y}`;
-          labelSeg = { x1: sExit.x, y1: sExit.y, x2: sExit.x, y2: tEntry.y, dir: 'v' };
-        } else {
-          const midY = (sExit.y + tEntry.y) / 2;
-          dpath = `M ${sExit.x} ${sExit.y} L ${sExit.x} ${midY} L ${tEntry.x} ${midY} L ${tEntry.x} ${tEntry.y}`;
-          labelSeg = { x1: sExit.x, y1: midY, x2: tEntry.x, y2: midY, dir: 'h' };
-        }
+    /* World-space footprint a route must stay clear of. `cy` is the line
+       horizontal arrows run on; `b` includes the label under the
+       structure, so a downward arrow starts below the letter. */
+    _box(n) {
+      if (!this.readOnly) {
+        return { id: n.id, l: n.x, r: n.x + NODE_W, t: n.y, b: n.y + NODE_H,
+                 cx: n.x + NODE_W / 2, cy: n.y + NODE_H / 2 };
       }
-      return { sExit, tEntry, dpath, labelSeg };
+      const m = this._footprint(n);
+      const cx = n.x + NODE_W / 2;
+      const cy = n.y + V_CY;
+      return {
+        id: n.id,
+        l: cx - m.w / 2 - V_GAP,
+        r: cx + m.w / 2 + V_GAP,
+        t: cy - m.h / 2 - V_GAP,
+        b: cy + m.h / 2 + this._textBlockH(n) + 2,
+        cx, cy
+      };
     }
 
-    _edgeEl(fromN, toN, edge, idx, fromId) {
-      const geo = this._edgeGeometry(fromN, toN);
+    /* Which side of `s` an arrow towards `t` leaves by (= travel direction). */
+    _side(s, t) {
+      const dx = t.cx - s.cx, dy = t.cy - s.cy;
+      // In an auto layout the row is known: an arrow to another row of
+      // the serpentine always leaves vertically, so it never doubles back
+      // over the arrows of its own row.
+      const rows = this._isAutoLayout() && this._rowOf;
+      if (rows && rows.has(s.id) && rows.has(t.id)) {
+        const same = rows.get(s.id) === rows.get(t.id);
+        if (!same || Math.abs(dx) < 4) return dy >= 0 ? 'D' : 'U';
+        return dx >= 0 ? 'R' : 'L';
+      }
+      if (Math.abs(dy) < 4) return dx >= 0 ? 'R' : 'L';
+      if (Math.abs(dx) < 4) return dy >= 0 ? 'D' : 'U';
+      const horiz = Math.abs(dx) * NODE_H >= Math.abs(dy) * NODE_W;
+      return horiz ? (dx >= 0 ? 'R' : 'L') : (dy >= 0 ? 'D' : 'U');
+    }
+    _exit(b, side) {
+      return side === 'R' ? { x: b.r, y: b.cy } : side === 'L' ? { x: b.l, y: b.cy }
+           : side === 'D' ? { x: b.cx, y: b.b } : { x: b.cx, y: b.t };
+    }
+    _entry(b, side) {
+      return side === 'R' ? { x: b.l, y: b.cy } : side === 'L' ? { x: b.r, y: b.cy }
+           : side === 'D' ? { x: b.cx, y: b.t } : { x: b.cx, y: b.b };
+    }
 
-      const g = svg('g', {
+    _drawEdges() {
+      const old = this.viewport.querySelector('.sg-edges');
+      const layer = svg('g', { class: 'sg-edges' });
+      this._routeAll(layer);
+      if (old) old.replaceWith(layer);
+      else this.viewport.insertBefore(layer, this.viewport.firstChild);
+    }
+    // Kept for callers of the old name.
+    _redrawEdgesTouching() { this._drawEdges(); }
+
+    _routeAll(layer) {
+      const E = this.scheme.edges;
+      const done = new Set();
+      // Label placement avoids every structure footprint and every label
+      // already set. Candidates are always positions on the arrow's OWN
+      // segments, so a label never drifts away from its arrow.
+      this._obstacles = this.scheme.nodes.map(n => {
+        const b = this._box(n);
+        return { id: n.id, x: b.l, y: b.t, w: b.r - b.l, h: b.b - b.t };
+      });
+      this._placed = [];
+
+      const valid = (e) => (e.from || []).length === 1 && this._nodeById(e.from[0]) && this._nodeById(e.to);
+
+      // 1. Split arrows: one source, several targets on the same side.
+      const outBy = new Map();
+      E.forEach((e, i) => {
+        if (!valid(e)) return;
+        if (!outBy.has(e.from[0])) outBy.set(e.from[0], []);
+        outBy.get(e.from[0]).push(i);
+      });
+      for (const [sid, list] of outBy) {
+        if (list.length < 2) continue;
+        const s = this._box(this._nodeById(sid));
+        const bySide = {};
+        for (const i of list) {
+          const side = this._side(s, this._box(this._nodeById(E[i].to)));
+          (bySide[side] = bySide[side] || []).push(i);
+        }
+        for (const side in bySide) {
+          const idxs = bySide[side];
+          if (idxs.length < 2) continue;
+          this._drawFanOut(layer, sid, side, idxs);
+          idxs.forEach(i => done.add(i));
+        }
+      }
+
+      // 2. Separate arrows that end at the same compound from the same
+      //    side: they share the last stretch instead of overlapping on it.
+      const inBy = new Map();
+      E.forEach((e, i) => {
+        if (done.has(i) || !valid(e)) return;
+        const s = this._box(this._nodeById(e.from[0]));
+        const t = this._box(this._nodeById(e.to));
+        const key = e.to + '|' + this._side(s, t);
+        if (!inBy.has(key)) inBy.set(key, []);
+        inBy.get(key).push(i);
+      });
+      for (const [key, idxs] of inBy) {
+        if (idxs.length < 2) continue;
+        this._drawMergeIn(layer, key.split('|')[1], idxs);
+        idxs.forEach(i => done.add(i));
+      }
+
+      // 3. Everything else.
+      E.forEach((e, i) => {
+        if (done.has(i)) return;
+        const t = this._nodeById(e.to);
+        if (!t) return;
+        const f = (e.from || []).filter(id => this._nodeById(id));
+        if (!f.length) {
+          const b = this._box(t);
+          const g = this._edgeGroup(i, '');
+          this._addPath(g, `M ${b.cx} ${b.t - 40} L ${b.cx} ${b.t}`, i, true, 'sg-edge-orphan');
+          layer.appendChild(g);
+          return;
+        }
+        if (f.length === 1) this._drawSingle(layer, i, f[0]);
+        else this._drawFanIn(layer, i, f);
+      });
+    }
+
+    _edgeGroup(idx, fromId) {
+      return svg('g', {
         class: 'sg-edge' + (this._isSelected('edge', idx) ? ' selected' : ''),
         'data-edge-idx': idx, 'data-edge-from': fromId
       });
-
-      g.appendChild(svg('path', {
-        class: 'sg-edge-line',
-        d: geo.dpath,
-        fill: 'none',
-        'marker-end': this._isSelected('edge', idx) ? 'url(#sg-arrow-sel)' : 'url(#sg-arrow)'
-      }));
-
-      // Wider invisible hit-area for easier clicking on the polyline
-      g.appendChild(svg('path', {
-        class: 'sg-edge-hit',
-        d: geo.dpath,
-        fill: 'none',
-        stroke: 'transparent',
-        'stroke-width': 14
-      }));
-
-      const lab = this._labelEl(geo.labelSeg, edge);
-      if (lab) g.appendChild(lab);
-
-      return g;
     }
 
-    /* Reagent text, BW-style: centred on the midpoint of the shaft and
-       sitting directly on it — reagents stacked upward from just above
-       the line, conditions stacked downward from just below it. On a
-       vertical shaft the block sits immediately to the right of the
-       arrow, vertically centred, because stacking text over a vertical
-       arrow would collide with the structures above and below it.
+    _addPath(g, d, idx, head, extraCls) {
+      const attrs = { class: 'sg-edge-line' + (extraCls ? ' ' + extraCls : ''), d, fill: 'none' };
+      if (head) attrs['marker-end'] = this._isSelected('edge', idx) ? 'url(#sg-arrow-sel)' : 'url(#sg-arrow)';
+      g.appendChild(svg('path', attrs));
+      if (!this.readOnly) {
+        g.appendChild(svg('path', { class: 'sg-edge-hit', d, fill: 'none', stroke: 'transparent', 'stroke-width': 14 }));
+      }
+    }
 
-       There is deliberately no collision search here. The previous
-       implementation shifted a label up to eight times looking for
-       clear space, which is what scattered reagents away from their
-       arrows; the layout now reserves a shaft long enough for the text
-       instead, so the honest place is always the right one. */
-    _labelEl(seg, edge) {
+    _pathD(pts) {
+      return pts.map((p, k) => (k ? 'L ' : 'M ') + r1(p.x) + ' ' + r1(p.y)).join(' ');
+    }
+
+    /* The straight pieces of a polyline, longest first, as label seats. */
+    _segsOf(pts) {
+      const out = [];
+      for (let k = 1; k < pts.length; k++) {
+        const a = pts[k - 1], b = pts[k];
+        const dir = Math.abs(a.y - b.y) < 0.5 ? 'h' : 'v';
+        const len = Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+        if (len < 1) continue;
+        out.push({ x1: a.x, y1: a.y, x2: b.x, y2: b.y, dir, len });
+      }
+      return out.sort((s, t) => t.len - s.len);
+    }
+
+    /* Does a polyline run through any structure other than its ends? */
+    _hits(pts, skip) {
+      let n = 0;
+      for (const o of this._obstacles || []) {
+        if (skip.includes(o.id)) continue;
+        for (let k = 1; k < pts.length; k++) {
+          const a = pts[k - 1], b = pts[k];
+          const x1 = Math.min(a.x, b.x), x2 = Math.max(a.x, b.x);
+          const y1 = Math.min(a.y, b.y), y2 = Math.max(a.y, b.y);
+          if (x2 > o.x + 2 && x1 < o.x + o.w - 2 && y2 > o.y + 2 && y1 < o.y + o.h - 2) { n++; break; }
+        }
+      }
+      return n;
+    }
+
+    /* A vertical run blocked by a compound stacked in the same column
+       leaves sideways, drops in the gap next to the stack and enters the
+       target from above/below. */
+    _detours(s, t, side, pts, skip) {
+      if (isH(side) || !this._hits(pts, skip)) return pts;
+      const down = side === 'D';
+      const q = this._entry(t, side);
+      const stack = (this._obstacles || []).filter(o => !skip.includes(o.id) &&
+        o.x < s.r && o.x + o.w > s.l);
+      const right = Math.max(s.r, ...stack.map(o => o.x + o.w)) + 14;
+      const left  = Math.min(s.l, ...stack.map(o => o.x)) - 14;
+      const yEnd = down ? q.y - 16 : q.y + 16;
+      const opts = [
+        [{ x: s.r, y: s.cy }, { x: right, y: s.cy }, { x: right, y: yEnd }, { x: q.x, y: yEnd }, q],
+        [{ x: s.l, y: s.cy }, { x: left, y: s.cy }, { x: left, y: yEnd }, { x: q.x, y: yEnd }, q]
+      ];
+      // Prefer the side facing the target.
+      if (t.cx < s.cx) opts.reverse();
+      for (const o of opts) if (!this._hits(o, skip)) return o;
+      return pts;
+    }
+
+    /* Orthogonal route from p to q that avoids other structures.
+       ps / qs are the travel directions at the ends ('R','L','U','D') or
+       null when that end may be approached either way (a junction).
+       Candidates put the bends into the gaps next to structures; the
+       first one that crosses nothing wins, otherwise the least bad. */
+    _route(p, ps, q, qs, skip) {
+      const obs = (this._obstacles || []).filter(o => !skip.includes(o.id));
+      const mx = (p.x + q.x) / 2, my = (p.y + q.y) / 2;
+      const xs = new Set([mx]), ys = new Set([my]);
+      for (const o of obs) { xs.add(o.x - 12); xs.add(o.x + o.w + 12); ys.add(o.y - 12); ys.add(o.y + o.h + 12); }
+      const X = [...xs].sort((a, b) => Math.abs(a - mx) - Math.abs(b - mx));
+      const Y = [...ys].sort((a, b) => Math.abs(a - my) - Math.abs(b - my));
+      const sgn = (s) => (s === 'R' || s === 'D') ? 1 : -1;
+      const hS = ps == null || isH(ps), vS = ps == null || !isH(ps);
+      const hE = qs == null || isH(qs), vE = qs == null || !isH(qs);
+      const okX0 = (x) => ps == null || !isH(ps) || (x - p.x) * sgn(ps) >= 8;
+      const okY0 = (y) => ps == null || isH(ps) || (y - p.y) * sgn(ps) >= 8;
+      const okX1 = (x) => qs == null || !isH(qs) || (q.x - x) * sgn(qs) >= 8;
+      const okY1 = (y) => qs == null || isH(qs) || (q.y - y) * sgn(qs) >= 8;
+      const tries = [];
+      if (Math.abs(p.y - q.y) < 1 && hS && hE) tries.push([p, q]);
+      if (Math.abs(p.x - q.x) < 1 && vS && vE) tries.push([p, q]);
+      if (hS && hE) for (const x of X) if (okX0(x) && okX1(x)) tries.push([p, { x, y: p.y }, { x, y: q.y }, q]);
+      if (vS && vE) for (const y of Y) if (okY0(y) && okY1(y)) tries.push([p, { x: p.x, y }, { x: q.x, y }, q]);
+      if (hS && vE && okX0(q.x) && okY1(p.y)) tries.push([p, { x: q.x, y: p.y }, q]);
+      if (vS && hE && okY0(q.y) && okX1(p.x)) tries.push([p, { x: p.x, y: q.y }, q]);
+      const x1 = ps && isH(ps) ? p.x + sgn(ps) * 14 : p.x;
+      const y1 = ps && !isH(ps) ? p.y + sgn(ps) * 14 : p.y;
+      const x2 = qs && isH(qs) ? q.x - sgn(qs) * 14 : q.x;
+      const y2 = qs && !isH(qs) ? q.y - sgn(qs) * 14 : q.y;
+      if (hS && hE) for (const y of Y) tries.push([p, { x: x1, y: p.y }, { x: x1, y }, { x: x2, y }, { x: x2, y: q.y }, q]);
+      if (vS && vE) for (const x of X) tries.push([p, { x: p.x, y: y1 }, { x, y: y1 }, { x, y: y2 }, { x: q.x, y: y2 }, q]);
+      if (hS && vE) for (const y of Y) tries.push([p, { x: x1, y: p.y }, { x: x1, y }, { x: q.x, y }, q]);
+      if (vS && hE) for (const x of X) tries.push([p, { x: p.x, y: y1 }, { x, y: y1 }, { x, y: q.y }, q]);
+      let best = null, bestHits = Infinity;
+      for (const t of tries) {
+        const h = this._hits(t, skip);
+        if (h === 0) return t;
+        if (h < bestHits) { best = t; bestHits = h; }
+      }
+      return best || [p, q];
+    }
+
+    /* One source, one target. */
+    _drawSingle(layer, idx, fromId) {
+      const e = this.scheme.edges[idx];
+      const s = this._box(this._nodeById(fromId));
+      const t = this._box(this._nodeById(e.to));
+      const side = this._side(s, t);
+      const p = this._exit(s, side);
+      const q = this._entry(t, side);
+      let pts;
+      if (isH(side)) {
+        if (Math.abs(p.y - q.y) < 1) pts = [p, { x: q.x, y: p.y }];
+        else {
+          const mx = (p.x + q.x) / 2;
+          pts = [p, { x: mx, y: p.y }, { x: mx, y: q.y }, q];
+        }
+      } else {
+        if (Math.abs(p.x - q.x) < 1) pts = [p, { x: p.x, y: q.y }];
+        else {
+          const my = (p.y + q.y) / 2;
+          pts = [p, { x: p.x, y: my }, { x: q.x, y: my }, q];
+        }
+      }
+      const skip = [fromId, e.to];
+      if (this._hits(pts, skip)) pts = this._route(p, side, q, side, skip);
+      pts = this._detours(s, t, side, pts, skip);
+      const g = this._edgeGroup(idx, fromId);
+      this._addPath(g, this._pathD(pts), idx, true);
+      const lab = this._placeLabel(this._segsOf(pts), e);
+      if (lab) g.appendChild(lab);
+      layer.appendChild(g);
+    }
+
+    /* One source, several targets on the same side: shared stub, then a
+       branch per target. Distinct reagents go on each branch; identical
+       reagents are written once on a lengthened shared shaft. */
+    _drawFanOut(layer, fromId, side, idxs) {
+      const E = this.scheme.edges;
+      const s = this._box(this._nodeById(fromId));
+      const [dx, dy] = DIR[side];
+      const p = this._exit(s, side);
+      const shared = idxs.every(i => sameLabels(E[i], E[idxs[0]]));
+      const m0 = edgeLabelMetrics(E[idxs[0]]);
+      const targets = idxs.map(i => this._box(this._nodeById(E[i].to)));
+
+      const room = Math.min(...targets.map(t => {
+        const q = this._entry(t, side);
+        return isH(side) ? Math.abs(q.x - p.x) : Math.abs(q.y - p.y);
+      }));
+      let stub = JUNCTION_STUB;
+      if (shared && (m0.above.length || m0.below.length)) {
+        stub = Math.max(stub, Math.min(room - 14, isH(side) ? m0.shaft : m0.blockH + 16));
+      }
+      stub = Math.max(8, Math.min(stub, room - 12));
+      const J = { x: p.x + dx * stub, y: p.y + dy * stub };
+
+      const trunk = this._edgeGroup(idxs[0], fromId);
+      this._addPath(trunk, this._pathD([p, J]), idxs[0], false);
+      layer.appendChild(trunk);
+
+      const branchPts = idxs.map((i, k) => {
+        const q = this._entry(targets[k], side);
+        const skip = [fromId, E[i].to];
+        const base = isH(side)
+          ? (Math.abs(q.y - J.y) < 1 ? [J, q] : [J, { x: J.x, y: q.y }, q])
+          : (Math.abs(q.x - J.x) < 1 ? [J, q] : [J, { x: q.x, y: J.y }, q]);
+        return this._hits(base, skip) ? this._route(J, side, q, side, skip) : base;
+      });
+      idxs.forEach((i, k) => {
+        const g = this._edgeGroup(i, fromId);
+        this._addPath(g, this._pathD(branchPts[k]), i, true);
+        if (!shared) {
+          // The last run of a branch belongs to that branch alone.
+          const segs = this._segsOf(branchPts[k]);
+          const last = segs.find(sg => sg.x2 === branchPts[k][branchPts[k].length - 1].x && sg.y2 === branchPts[k][branchPts[k].length - 1].y);
+          const lab = this._placeLabel(last ? [last, ...segs.filter(sg => sg !== last && sg.dir !== last.dir)] : segs, E[i]);
+          if (lab) g.appendChild(lab);
+        }
+        layer.appendChild(g);
+      });
+      if (shared) {
+        const lab = this._placeLabel([{ x1: p.x, y1: p.y, x2: J.x, y2: J.y, dir: isH(side) ? 'h' : 'v' }], E[idxs[0]]);
+        if (lab) trunk.appendChild(lab);
+      }
+    }
+
+    /* Several separate arrows into one compound from the same side: each
+       keeps its own first run (and its own label), all meet in a short
+       shared stub that carries one arrowhead. */
+    _drawMergeIn(layer, side, idxs) {
+      const E = this.scheme.edges;
+      const t = this._box(this._nodeById(E[idxs[0]].to));
+      const [dx, dy] = DIR[side];
+      const q = this._entry(t, side);
+      const srcs = idxs.map(i => this._box(this._nodeById(E[i].from[0])));
+      const room = Math.min(...srcs.map(s => {
+        const p = this._exit(s, side);
+        return isH(side) ? Math.abs(q.x - p.x) : Math.abs(q.y - p.y);
+      }));
+      const stub = Math.max(8, Math.min(JUNCTION_STUB, room / 3));
+      const J = { x: q.x - dx * stub, y: q.y - dy * stub };
+      idxs.forEach((i, k) => {
+        const p = this._exit(srcs[k], side);
+        let pts;
+        if (isH(side)) pts = Math.abs(p.y - J.y) < 1 ? [p, J] : [p, { x: J.x, y: p.y }, J];
+        else           pts = Math.abs(p.x - J.x) < 1 ? [p, J] : [p, { x: p.x, y: J.y }, J];
+        const mskip = [E[i].from[0], E[i].to];
+        if (this._hits(pts, mskip)) pts = this._route(p, side, J, side, mskip);
+        const g = this._edgeGroup(i, E[i].from[0]);
+        this._addPath(g, this._pathD(pts), i, false);
+        const lab = this._placeLabel(this._segsOf(pts), E[i]);
+        if (lab) g.appendChild(lab);
+        layer.appendChild(g);
+      });
+      const tg = this._edgeGroup(idxs[0], '');
+      this._addPath(tg, this._pathD([J, q]), idxs[0], true);
+      tg.appendChild(svg('circle', { class: 'sg-junction', cx: r1(J.x), cy: r1(J.y), r: 1.6 }));
+      layer.appendChild(tg);
+    }
+
+    /* Several sources, one target: branches meet at a junction, a single
+       trunk carries the arrowhead and the (single) label. */
+    _drawFanIn(layer, idx, fromIds) {
+      const e = this.scheme.edges[idx];
+      const t = this._box(this._nodeById(e.to));
+      const srcs = fromIds.map(id => this._box(this._nodeById(id)));
+      const avg = {
+        cx: srcs.reduce((a, b) => a + b.cx, 0) / srcs.length,
+        cy: srcs.reduce((a, b) => a + b.cy, 0) / srcs.length
+      };
+      let side = this._side(avg, t);
+      const rows = this._isAutoLayout() && this._rowOf;
+      if (rows && rows.has(t.id) && srcs.every(b => rows.has(b.id) && rows.get(b.id) !== rows.get(t.id))) {
+        side = avg.cy <= t.cy ? 'D' : 'U';
+      }
+      const [dx, dy] = DIR[side];
+      const q = this._entry(t, side);
+      const m = edgeLabelMetrics(e);
+
+      const room = Math.min(...srcs.map(s => {
+        const p = this._exit(s, side);
+        return isH(side) ? Math.abs(q.x - p.x) : Math.abs(q.y - p.y);
+      }));
+      let trunkLen = isH(side) ? m.shaft : Math.max(30, m.blockH + 16);
+      trunkLen = Math.max(18, Math.min(trunkLen, room - JUNCTION_STUB));
+      const J = { x: q.x - dx * trunkLen, y: q.y - dy * trunkLen };
+
+      const g = this._edgeGroup(idx, fromIds.join(','));
+      const branchSegs = [];
+      srcs.forEach((s, k) => {
+        const p = this._exit(s, side);
+        let pts;
+        if (isH(side)) pts = Math.abs(p.y - J.y) < 1 ? [p, J] : [p, { x: J.x, y: p.y }, J];
+        else           pts = Math.abs(p.x - J.x) < 1 ? [p, J] : [p, { x: p.x, y: J.y }, J];
+        const fskip = [fromIds[k], e.to];
+        if (this._hits(pts, fskip)) {
+          // A source on another side of the target: let it leave by its own best side.
+          const own = this._side(s, t);
+          pts = this._route(this._exit(s, own), own, J, null, fskip);
+        }
+        this._addPath(g, this._pathD(pts), idx, false);
+        branchSegs.push(...this._segsOf(pts));
+      });
+      this._addPath(g, this._pathD([J, q]), idx, true);
+      if (srcs.length > 1) g.appendChild(svg('circle', { class: 'sg-junction', cx: r1(J.x), cy: r1(J.y), r: 1.6 }));
+      const trunk = { x1: J.x, y1: J.y, x2: q.x, y2: q.y, dir: isH(side) ? 'h' : 'v' };
+      const lab = this._placeLabel([trunk, ...branchSegs.filter(sg => sg.dir === trunk.dir)], e);
+      if (lab) g.appendChild(lab);
+      layer.appendChild(g);
+    }
+
+    /* Vertical extents of the above/below blocks of a label. */
+    _labelExtents(m) {
+      const up = m.above.map(lineExtent), dn = m.below.map(lineExtent);
+      const sum = (arr, lead) => arr.reduce((a, x) => a + x.up + x.down, 0) + lead * Math.max(0, arr.length - 1);
+      return { hAbove: sum(up, LINE_LEAD), hBelow: sum(dn, LINE_LEAD + 2), hAll: sum(up.concat(dn), LINE_LEAD) };
+    }
+
+    _labelBox(seg, mode, m, ext) {
+      const mx = (seg.x1 + seg.x2) / 2, my = (seg.y1 + seg.y2) / 2, w = m.width;
+      if (mode === 'h') {
+        const top = m.above.length ? my - LABEL_GAP - ext.hAbove : my;
+        const bot = m.below.length ? my + LABEL_GAP + ext.hBelow : my;
+        return { x: mx - w / 2, y: top, w, h: bot - top };
+      }
+      const x = mode === 'vr' ? mx + VLABEL_DX : mx - VLABEL_DX - w;
+      return { x, y: my - ext.hAll / 2, w, h: ext.hAll };
+    }
+
+    /* Pick the first seat on the arrow that collides with nothing; if
+       every seat collides, take the one with the least overlap. */
+    _placeLabel(segs, edge) {
       const m = edgeLabelMetrics(edge);
       if (!m.above.length && !m.below.length) return null;
+      const ext = this._labelExtents(m);
+      const cands = [];
+      segs.forEach((sg, k) => {
+        if (sg.dir === 'h') cands.push({ sg, mode: 'h', pref: k * 2 });
+        else { cands.push({ sg, mode: 'vr', pref: k * 2 }); cands.push({ sg, mode: 'vl', pref: k * 2 + 1 }); }
+      });
+      const overlap = (a, b) => {
+        const w = Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x);
+        const h = Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y);
+        return (w > 1 && h > 1) ? w * h : 0;
+      };
+      let best = null;
+      for (const c of cands) {
+        const bb = this._labelBox(c.sg, c.mode, m, ext);
+        let score = 0;
+        for (const o of this._obstacles || []) score += overlap(bb, o);
+        for (const o of this._placed || []) score += overlap(bb, o) * 2;
+        const len = Math.abs(c.sg.x2 - c.sg.x1) + Math.abs(c.sg.y2 - c.sg.y1);
+        // A horizontal seat shorter than the text overhangs the shaft end.
+        if (c.mode === 'h' && len < m.width + 6) score += (m.width + 6 - len) * 4;
+        if (c.mode !== 'h' && len < ext.hAll + 6) score += (ext.hAll + 6 - len) * 4;
+        score += c.pref * 0.01;
+        c.bb = bb; c.score = score;
+        if (!best || score < best.score) best = c;
+        if (score < 1) break;
+      }
+      if (this._placed) this._placed.push(best.bb);
+      return this._labelEl(best.sg, edge, best.mode);
+    }
 
+    /* Reagent text, BW-style. On a horizontal shaft the reagents stack
+       upward and the conditions downward, each kept a FIXED distance
+       from the shaft measured to the text's visual edge — a subscript
+       on the line nearest the shaft lifts that line instead of touching
+       the arrow. Beside a vertical shaft the block is vertically
+       centred, to the right ('vr') or left ('vl'). */
+    _labelEl(seg, edge, mode) {
+      const m = edgeLabelMetrics(edge);
+      if (!m.above.length && !m.below.length) return null;
+      mode = mode || (seg.dir === 'h' ? 'h' : 'vr');
       const mx = (seg.x1 + seg.x2) / 2;
       const my = (seg.y1 + seg.y2) / 2;
       const wrap = svg('g', { class: 'sg-edge-labels' });
-
-      const line = (text, cls, x, y, anchor) => {
-        const t = svg('text', {
-          class: 'sg-edge-label ' + cls,
-          x: x, y: y, 'text-anchor': anchor
-        });
-        return setChemText(t, text);
+      const put = (text, cls, x, y, anchor) => {
+        const t = svg('text', { class: 'sg-edge-label ' + cls, x: r1(x), y: r1(y), 'text-anchor': anchor });
+        wrap.appendChild(setChemText(t, text));
       };
 
-      if (seg.dir === 'h') {
-        // Above: last line hugs the shaft, earlier lines stack upward.
-        m.above.forEach((txt, i) => {
-          const fromBottom = m.above.length - 1 - i;         // 0 = nearest shaft
-          const y = my - LABEL_GAP - fromBottom * LABEL_LINE_H;
-          wrap.appendChild(line(txt, 'above', mx, y, 'middle'));
-        });
-        // Below: first line hugs the shaft, later lines stack downward.
-        m.below.forEach((txt, i) => {
-          const y = my + LABEL_GAP + LABEL_LINE_H * 0.82 + i * LABEL_LINE_H;
-          wrap.appendChild(line(txt, 'below', mx, y, 'middle'));
-        });
+      if (mode === 'h') {
+        let cursor = my - LABEL_GAP;
+        for (let i = m.above.length - 1; i >= 0; i--) {
+          const ex = lineExtent(m.above[i]);
+          const base = cursor - ex.down;
+          put(m.above[i], 'above', mx, base, 'middle');
+          cursor = base - ex.up - LINE_LEAD;
+        }
+        cursor = my + LABEL_GAP;
+        for (const txt of m.below) {
+          const ex = lineExtent(txt);
+          const base = cursor + ex.up;
+          put(txt, 'below', mx, base, 'middle');
+          cursor = base + ex.down + LINE_LEAD + 2;
+        }
       } else {
-        // Vertical shaft: one block to the right, vertically centred.
         const all = [
           ...m.above.map(t => ({ t, cls: 'above' })),
           ...m.below.map(t => ({ t, cls: 'below' }))
         ];
-        const blockH = all.length * LABEL_LINE_H;
-        const x = mx + 9;
-        all.forEach((it, i) => {
-          const y = my - blockH / 2 + LABEL_LINE_H * 0.82 + i * LABEL_LINE_H;
-          wrap.appendChild(line(it.t, it.cls, x, y, 'start'));
+        const ext = all.map(it => lineExtent(it.t));
+        const blockH = ext.reduce((a, x) => a + x.up + x.down, 0) + LINE_LEAD * (all.length - 1);
+        const x = mode === 'vl' ? mx - VLABEL_DX : mx + VLABEL_DX;
+        const anchor = mode === 'vl' ? 'end' : 'start';
+        let cursor = my - blockH / 2;
+        all.forEach((it, k) => {
+          const base = cursor + ext[k].up;
+          put(it.t, it.cls, x, base, anchor);
+          cursor = base + ext[k].down + LINE_LEAD;
         });
       }
       return wrap;
@@ -790,7 +1217,9 @@
     _applyView() {
       this.viewport.setAttribute('transform',
         `translate(${this.viewX} ${this.viewY}) scale(${this.scale})`);
-      if (this.zoomLabel) this.zoomLabel.textContent = Math.round(this.scale * 100) + ' %';
+      if (this.zoomLabel) {
+        this.zoomLabel.textContent = Math.round(this.scale * 100) + (this.readOnly ? '%' : ' %');
+      }
     }
     _eventToWorld(ev) {
       const r = this.svg.getBoundingClientRect();
@@ -822,7 +1251,6 @@
       const idx = this.scheme.nodes.findIndex(n => n.id === id);
       if (idx < 0) return;
       this.scheme.nodes.splice(idx, 1);
-      // Drop edges referencing this node
       this.scheme.edges = this.scheme.edges.filter(e => {
         if (e.to === id) return false;
         e.from = (e.from || []).filter(f => f !== id);
@@ -850,7 +1278,6 @@
 
     createEdge(fromId, toId) {
       if (!fromId || !toId || fromId === toId) return false;
-      // If an edge with the same to and overlapping from exists, append fromId rather than duplicate
       const exact = this.scheme.edges.findIndex(e => e.to === toId && (e.from || []).length === 1 && e.from[0] === fromId);
       if (exact >= 0) return false;
       this.scheme.edges.push({ from: [fromId], to: toId, reagent_above: '', reagent_below: '' });
@@ -864,8 +1291,7 @@
       const n = this._nodeById(id);
       if (!n) return;
       Object.assign(n, patch);
-      // If structure changed, rerender only that node
-      if ('mol' in patch || 'smiles' in patch || 'name' in patch || 'given' in patch || 'label' in patch) {
+      if ('mol' in patch || 'smiles' in patch || 'name' in patch || 'caption' in patch || 'given' in patch || 'label' in patch) {
         this.refreshNode(id);
       }
       this.onChange();
@@ -903,18 +1329,15 @@
       this.select('node', id);
     }
 
-    /* Fit the scheme into the canvas.
-
-       A serpentine scheme is wide-ish and tall, so fitting BOTH axes
-       into a fixed 480 px box shrank the structures to illegibility on
-       anything but a big monitor. In viewer mode we therefore fit the
-       WIDTH and let the canvas grow to whatever height that scale
-       needs (capped at ~78 % of the viewport, after which the reader
-       pans). Edit mode keeps the fixed-box behaviour so the admin
-       canvas doesn't jump around while you work. */
-    fitToContent() {
+    /* Content bounds in world space: nodes plus every label and arrow,
+       so a reagent written beside the last column is never clipped. */
+    _contentBBox() {
+      let bb = null;
+      try { bb = this.viewport.getBBox(); } catch (_) { bb = null; }
+      if (bb && bb.width > 0 && bb.height > 0) {
+        return { x: bb.x, y: bb.y, w: bb.width, h: bb.height };
+      }
       const nodes = this.scheme.nodes;
-      if (!nodes.length) { this.viewX = 40; this.viewY = 40; this.scale = 1; this._applyView(); return; }
       let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
       nodes.forEach(n => {
         minX = Math.min(minX, n.x || 0);
@@ -922,37 +1345,47 @@
         maxX = Math.max(maxX, (n.x || 0) + NODE_W);
         maxY = Math.max(maxY, (n.y || 0) + NODE_H);
       });
-      // Labels overhang the node boxes; give them room on every side.
-      const pad = 34;
-      const wantW = maxX - minX + 2 * pad;
-      const wantH = maxY - minY + 2 * pad;
+      return { x: minX, y: minY, w: maxX - minX, h: maxY - minY };
+    }
+
+    /* Viewer: fit the WIDTH and let the canvas grow to the height that
+       scale needs; the reader scrolls the page. Editor: fit both axes. */
+    fitToContent() {
+      const nodes = this.scheme.nodes;
+      if (!nodes.length) { this.viewX = 40; this.viewY = 40; this.scale = 1; this._applyView(); return; }
+      const bb = this._contentBBox();
+      const pad = this.readOnly ? 12 : 34;
+      const wantW = bb.w + 2 * pad;
+      const wantH = bb.h + 2 * pad;
       const r = this.svg.getBoundingClientRect();
 
       if (this.readOnly && r.width > 40) {
-        this.scale = Math.min(r.width / wantW, 1.25);
-        // Exactly as tall as the scheme needs. Capping it would hide the
-        // lower rows, and the viewer has no background pan to reach them
-        // — the reader scrolls the page instead.
-        this.svg.style.height = Math.max(220, Math.round(wantH * this.scale)) + 'px';
+        this.scale = Math.min(r.width / wantW, 1.15);
+        // Centre a narrow scheme instead of hugging the left margin.
+        const spare = Math.max(0, r.width - wantW * this.scale);
+        this.viewX = -bb.x * this.scale + pad * this.scale + spare / 2;
       } else {
         this.scale = Math.min(r.width / wantW, r.height / wantH, 1.4);
+        this.viewX = -bb.x * this.scale + pad * this.scale;
       }
-      this.viewX = -minX * this.scale + pad * this.scale;
-      this.viewY = -minY * this.scale + pad * this.scale;
+      this.viewY = -bb.y * this.scale + pad * this.scale;
+      this._fitted = true;
       this._applyView();
+      if (this.readOnly) this._syncViewerHeight();
     }
 
-    /* Re-flow an auto-laid-out scheme for the current canvas width.
-       Called on mount and on resize/orientation change, so the same
-       saved scheme renders as four columns on a laptop and two on a
-       phone without the author maintaining two versions. Hand-placed
-       schemes (scheme.layout === 'manual') are left alone. */
+    /* Viewer canvas is exactly as tall as the scheme at the current zoom. */
+    _syncViewerHeight() {
+      if (!this.readOnly) return;
+      const bb = this._contentBBox();
+      const bottom = (bb.y + bb.h) * this.scale + this.viewY + 12 * this.scale;
+      this.svg.style.height = Math.max(160, Math.round(bottom)) + 'px';
+    }
+
     reflow(force) {
       if (!this._isAutoLayout()) return false;
       if (!this.scheme.nodes.length) return false;
-      let shaft = ARROW_MIN;
-      for (const e of this.scheme.edges) shaft = Math.max(shaft, edgeLabelMetrics(e).shaft);
-      const want = this._fitColumns(NODE_W + shaft);
+      const want = this._fitColumns(this._pitch());
       if (!force && want === this._layoutCols) return false;
       this.autoLayout({ columns: want });
       this.refresh();
@@ -960,15 +1393,8 @@
       return true;
     }
 
-    /* Watch the canvas width and re-flow an auto layout when the
-       column count it can hold changes — a laptop rotating to a narrow
-       split view, or a phone turning landscape. Debounced so a drag of
-       the window edge doesn't relayout on every frame. */
     _bindResize() {
       let t = null;
-      // Only WIDTH matters. Height must be ignored: fitToContent() sets
-      // the canvas height itself, which would otherwise re-trigger the
-      // observer and send layout into a shrinking feedback loop.
       this._lastW = this.container.clientWidth;
       const run = () => {
         clearTimeout(t);
@@ -977,7 +1403,7 @@
           const w = this.container.clientWidth;
           if (Math.abs(w - this._lastW) < 24) return;
           this._lastW = w;
-          this.reflow();
+          if (!this.reflow() && this.readOnly) this.fitToContent();
         }, 160);
       };
       this._onWinResize = run;
@@ -990,8 +1416,19 @@
 
     /* ─── Event binding ───────────────────────────────────────── */
 
+    _zoomBy(f) {
+      const r = this.svg.getBoundingClientRect();
+      const cx = this.readOnly ? 0 : r.width / 2;
+      const cy = this.readOnly ? 0 : r.height / 2;
+      const ns = Math.max(0.25, Math.min(2.5, this.scale * f));
+      this.viewX = cx - (cx - this.viewX) * (ns / this.scale);
+      this.viewY = cy - (cy - this.viewY) * (ns / this.scale);
+      this.scale = ns;
+      this._applyView();
+      this._syncViewerHeight();
+    }
+
     _bindEvents() {
-      // Toolbar
       this.toolbar.addEventListener('click', ev => {
         const b = ev.target.closest('[data-act]');
         if (!b) return;
@@ -999,28 +1436,25 @@
         if (act === 'add'    && !this.readOnly) this.addNode({ x: -this.viewX / this.scale + 60, y: -this.viewY / this.scale + 60 });
         if (act === 'layout' && !this.readOnly) { this.autoLayout(); this.refresh(); this.fitToContent(); this.onChange(); }
         if (act === 'fit')      this.fitToContent();
-        if (act === 'zoomin')   { this.scale = Math.min(2.5, this.scale * 1.2); this._applyView(); }
-        if (act === 'zoomout')  { this.scale = Math.max(0.25, this.scale / 1.2); this._applyView(); }
+        if (act === 'zoomin')   this._zoomBy(1.2);
+        if (act === 'zoomout')  this._zoomBy(1 / 1.2);
       });
 
-      // Pointer events
       this.svg.addEventListener('pointerdown', e => this._onPointerDown(e));
       this.svg.addEventListener('pointermove', e => this._onPointerMove(e));
       this.svg.addEventListener('pointerup',   e => this._onPointerUp(e));
       this.svg.addEventListener('pointercancel', e => this._onPointerUp(e));
-      // Wheel zoom (around mouse position)
       this.svg.addEventListener('wheel', e => this._onWheel(e), { passive: false });
-      // Click on edge to select
       this.svg.addEventListener('click', e => this._onClick(e));
-      // Double-click on node to open structure editor
       this.svg.addEventListener('dblclick', e => {
+        if (this.readOnly) return;
         const nodeEl = e.target.closest('.sg-node');
         if (!nodeEl) return;
         const n = this._nodeById(nodeEl.dataset.node);
         if (n) this.onRequestStructEdit(n);
       });
-      // Keyboard delete
       this._keyHandler = e => {
+        if (this.readOnly) return;
         if ((e.key === 'Delete' || e.key === 'Backspace') && this.selected && document.activeElement === this.svg) {
           if (this.selected.kind === 'node') this.deleteNode(this.selected.id);
           else                                this.deleteEdge(this.selected.idx);
@@ -1034,23 +1468,19 @@
       const handleEl = e.target.closest('.sg-handle-out');
       const nodeEl = e.target.closest('.sg-node');
       const edgeEl = e.target.closest('.sg-edge');
-      this.svg.focus();
+      if (!this.readOnly) this.svg.focus();
 
-      // Track every active pointer for multi-touch gestures
       this._pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
-      // 2-finger pinch: cancel any single-pointer gesture and switch to pinch mode
       if (this._pointers.size >= 2) {
         this.drag = null;
         this.edgeDraft = null;
         this.tap = null;
         this.pan = null;
         this.pinch = this._initPinchState();
-        // Don't preventDefault on the 2nd pointer — let SVG capture both
         try { this.svg.setPointerCapture(e.pointerId); } catch (_) {}
         return;
       }
 
-      // Edit-only: handle-drag starts an edge
       if (handleEl && !this.readOnly) {
         e.preventDefault();
         const fromId = handleEl.dataset.node;
@@ -1064,22 +1494,21 @@
       }
 
       if (nodeEl) {
-        e.preventDefault();
         const id = nodeEl.dataset.node;
         const n = this._nodeById(id);
         if (this.readOnly) {
-          // Viewer: track as a potential tap. If the pointer moves
-          // beyond a small threshold we let the gesture become a pan
-          // instead, so swipes on touch devices keep working.
+          // Tap reveals; a mouse drag pans a zoomed-in scheme. Touch keeps
+          // its native scrolling, so no capture and no preventDefault.
           this.tap = {
-            id, pointerId: e.pointerId,
+            id, pointerId: e.pointerId, touch: e.pointerType === 'touch',
             startX: e.clientX, startY: e.clientY,
             startVX: this.viewX, startVY: this.viewY,
             moved: false
           };
-          this.svg.setPointerCapture(e.pointerId);
+          if (!this.tap.touch) { try { this.svg.setPointerCapture(e.pointerId); } catch (_) {} }
           return;
         }
+        e.preventDefault();
         const w = this._eventToWorld(e);
         this.drag = {
           id, pointerId: e.pointerId,
@@ -1090,14 +1519,7 @@
         return;
       }
 
-      if (edgeEl) {
-        // selection handled in click
-        return;
-      }
-
-      // Background drag = pan. Not in the quiz: there the scheme is
-      // laid out to fit the reader's width, so the only gesture that
-      // matters on the background is scrolling the page past it.
+      if (edgeEl) return;
       if (this.readOnly) return;
       e.preventDefault();
       this.pan = {
@@ -1110,25 +1532,23 @@
     }
 
     _onPointerMove(e) {
-      // Keep pointer registry up to date (used by pinch state)
       if (this._pointers.has(e.pointerId)) {
         this._pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
       }
-      // Pinch: 2-finger pan + zoom
       if (this.pinch && this._pointers.size >= 2) {
         this._applyPinch();
         return;
       }
-      // Viewer tap → upgrade to pan once finger/cursor moves
       if (this.tap && e.pointerId === this.tap.pointerId) {
         const dx = e.clientX - this.tap.startX;
         const dy = e.clientY - this.tap.startY;
         if (Math.abs(dx) + Math.abs(dy) > 6) {
           this.tap.moved = true;
-          // morph into a pan from this point on
-          this.viewX = this.tap.startVX + dx;
-          this.viewY = this.tap.startVY + dy;
-          this._applyView();
+          if (!this.tap.touch) {
+            this.viewX = this.tap.startVX + dx;
+            this.viewY = this.tap.startVY + dy;
+            this._applyView();
+          }
         }
         return;
       }
@@ -1139,13 +1559,10 @@
         n.x = Math.round(w.x - this.drag.offsetX);
         n.y = Math.round(w.y - this.drag.offsetY);
         this.drag.moved = true;
-        // A hand-placed node freezes the scheme: the viewer will no
-        // longer re-flow it to the reader's screen width.
         this.scheme.layout = 'manual';
-        // Move only this node + redraw its edges (cheaper than refresh)
         const g = this.container.querySelector(`[data-node="${cssEsc(this.drag.id)}"]`);
         if (g) g.setAttribute('transform', `translate(${n.x} ${n.y})`);
-        this._redrawEdgesTouching(this.drag.id);
+        this._drawEdges();
         return;
       }
       if (this.edgeDraft) {
@@ -1165,21 +1582,18 @@
     }
 
     _onPointerUp(e) {
-      // Remove from active pointer registry
       this._pointers.delete(e.pointerId);
-      // End pinch when we drop below 2 fingers
       if (this.pinch && this._pointers.size < 2) {
         this.pinch = null;
         try { this.svg.releasePointerCapture(e.pointerId); } catch (_) {}
         return;
       }
-      // Viewer tap finalize: if it didn't morph into a pan, fire onNodeClick
       if (this.tap && e.pointerId === this.tap.pointerId) {
         const wasMoved = this.tap.moved;
         const id = this.tap.id;
         this.tap = null;
         try { this.svg.releasePointerCapture(e.pointerId); } catch (_) {}
-        if (!wasMoved) {
+        if (!wasMoved && e.type === 'pointerup') {
           const n = this._nodeById(id);
           if (n) this.onNodeClick(n);
         }
@@ -1189,11 +1603,8 @@
         const wasMoved = this.drag.moved;
         const id = this.drag.id;
         this.drag = null;
-        if (wasMoved) {
-          this.onChange();
-        } else {
-          this.select('node', id);
-        }
+        if (wasMoved) this.onChange();
+        else this.select('node', id);
         try { this.svg.releasePointerCapture(e.pointerId); } catch (_) {}
         return;
       }
@@ -1204,9 +1615,8 @@
           const toId = nodeEl.dataset.node;
           if (toId !== this.edgeDraft.fromId) this.createEdge(this.edgeDraft.fromId, toId);
           else this.refresh();
-        } else {
-          // Cancel — clean up draft line
-          if (this.edgeDraft.line.parentNode) this.edgeDraft.line.parentNode.removeChild(this.edgeDraft.line);
+        } else if (this.edgeDraft.line.parentNode) {
+          this.edgeDraft.line.parentNode.removeChild(this.edgeDraft.line);
         }
         this.edgeDraft = null;
         try { this.svg.releasePointerCapture(e.pointerId); } catch (_) {}
@@ -1215,19 +1625,13 @@
       if (this.pan && e.pointerId === this.pan.pointerId) {
         const wasMoved = this.pan.moved;
         this.pan = null;
-        if (!wasMoved) {
-          // background tap = deselect
-          this.select(null);
-        }
+        if (!wasMoved) this.select(null);
         try { this.svg.releasePointerCapture(e.pointerId); } catch (_) {}
       }
     }
 
+    /* A bare wheel scrolls the page; Ctrl/Cmd + wheel zooms. */
     _onWheel(e) {
-      // A bare wheel scrolls the PAGE. Swallowing it left the reader
-      // stuck on the canvas, zooming out instead of scrolling on —
-      // badly so in the quiz, where a scheme can be taller than the
-      // window. Zoom is Ctrl/Cmd + wheel, the browser-wide convention.
       if (!e.ctrlKey && !e.metaKey) return;
       e.preventDefault();
       const factor = Math.exp(-e.deltaY * 0.0015);
@@ -1235,15 +1639,16 @@
       const r = this.svg.getBoundingClientRect();
       const cx = e.clientX - r.left;
       const cy = e.clientY - r.top;
-      // Zoom around cursor: viewport coords stay anchored at (cx, cy)
       this.viewX = cx - (cx - this.viewX) * (newScale / this.scale);
       this.viewY = cy - (cy - this.viewY) * (newScale / this.scale);
       this.scale = newScale;
       this._applyView();
+      this._syncViewerHeight();
     }
 
     _onClick(e) {
-      if (this.drag || this.edgeDraft || this.pinch) return; // suppress click after gesture
+      if (this.readOnly) return;
+      if (this.drag || this.edgeDraft || this.pinch) return;
       const edgeEl = e.target.closest('.sg-edge');
       if (edgeEl) {
         e.stopPropagation();
@@ -1279,45 +1684,29 @@
       const curMidY = (pts[0].y + pts[1].y) / 2;
       const factor = curDist / this.pinch.startDist;
       const newScale = Math.max(0.25, Math.min(2.5, this.pinch.startScale * factor));
-
       const r = this.svg.getBoundingClientRect();
-      // World point under the initial midpoint should stay under the
-      // current midpoint while we change scale.
       const wx0 = (this.pinch.startMidX - r.left - this.pinch.startViewX) / this.pinch.startScale;
       const wy0 = (this.pinch.startMidY - r.top  - this.pinch.startViewY) / this.pinch.startScale;
       this.scale = newScale;
       this.viewX = (curMidX - r.left) - wx0 * newScale;
       this.viewY = (curMidY - r.top)  - wy0 * newScale;
       this._applyView();
-    }
-
-    _redrawEdgesTouching(nodeId) {
-      // Replace the edges layer entirely (cheap relative to a full refresh).
-      const oldG = this.container.querySelector('.sg-edges');
-      const fresh = svg('g', { class: 'sg-edges' });
-      this.scheme.edges.forEach((e, idx) => {
-        const fromIds = e.from || [];
-        const toN = this._nodeById(e.to);
-        if (!toN) return;
-        fromIds.forEach(fid => {
-          const fn = this._nodeById(fid);
-          if (!fn) return;
-          fresh.appendChild(this._edgeEl(fn, toN, e, idx, fid));
-        });
-      });
-      if (oldG && oldG.parentNode) oldG.parentNode.replaceChild(fresh, oldG);
+      this._syncViewerHeight();
     }
 
     destroy() {
       window.removeEventListener('keydown', this._keyHandler);
       if (this._resizeObs) { try { this._resizeObs.disconnect(); } catch (_) {} this._resizeObs = null; }
       if (this._onWinResize) { window.removeEventListener('resize', this._onWinResize); this._onWinResize = null; }
+      this._renderGen++;
       this.container.innerHTML = '';
     }
   }
 
+  function r1(v) { return Math.round(v * 10) / 10; }
+
   function cssEsc(s) {
-    return String(s || '').replace(/(["\\\\\.\#\:\[\]\(\)\,\>\+\~\*\=\^\$\|\!\?])/g, '\\$1');
+    return String(s || '').replace(/(["\\\.\#\:\[\]\(\)\,\>\+\~\*\=\^\$\|\!\?])/g, '\\$1');
   }
 
   window.SchemeGraphEditor = SchemeGraphEditor;

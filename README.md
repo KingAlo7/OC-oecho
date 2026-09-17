@@ -22,11 +22,13 @@ Jede Frage ist eine **Aufgabe aus Abschnitten** (`type: "composed"`) — so wie 
 
 | Abschnitts-Typ | Beschreibung |
 |---|---|
-| `synthesis` | Mehrstufiges Schema aus Strukturen + beschrifteten Pfeilen, im Serpentinen-Layout der BW-Angaben. Vorgegebene Strukturen sind sofort sichtbar, gesuchte werden per Klick aufgedeckt. |
+| `synthesis` | Mehrstufiges Schema aus Strukturen + beschrifteten Pfeilen, im Serpentinen-Layout der BW-Angaben. Strukturen stehen ohne Rahmen auf dem Blatt; vorgegebene sind sofort sichtbar, gesuchte werden per Klick aufgedeckt. Verzweigte Pfeile (ein Edukt → mehrere Produkte, mehrere Edukte → ein Produkt) laufen über gemeinsame Pfeilstücke; Beschriftungen weichen Strukturen und anderen Beschriftungen aus, bleiben aber immer am eigenen Pfeil. |
 | `multiple_choice` | 2–4 Antwortmöglichkeiten mit Strukturen, Klick-Grading. Z. B. Markownikow vs. Anti-Markownikow. |
 | `short_answer` | Freitext-Frage mit Musterlösung. Z. B. SN1- vs. SN2-Faktoren. |
 | `mechanism` | Schrittweise Mechanismus-Aufdeckung. Z. B. basenkatalysierte Aldol-Addition: Enolat → Alkoxid → Aldol. |
 | `intro` | Reiner Fließtext zwischen zwei Schema-Teilen. |
+
+Die ganze Aufgabe steht auf **einem Blatt**: eine Fortschrittsleiste oben (Aufdecken/Zurücksetzen für alle Schemata), Zoom-Knöpfe rechts neben jedem Schema, Hinweise aus der Angabe direkt über dem jeweiligen Abschnitt.
 
 ### Admin (`admin.html`)
 - Tab **Reaktionen** — Editor für `data/reactions.json`; „✎ Struktur zeichnen (Ketcher)" öffnet denselben Editor wie im Quiz und schreibt das Reaktions-SMILES zurück
@@ -34,7 +36,9 @@ Jede Frage ist eine **Aufgabe aus Abschnitten** (`type: "composed"`) — so wie 
   - Abschnitts-Reiter (`＋ Abschnitt` → Typ aus der Liste wählen)
   - Graph-Editor mit Ketcher pro Struktur, OCR-Button und OCL-Live-Preview
   - Kanten-Editor mit `from[]`, `to`, Reagenz-Beschriftung über/unter dem Pfeil
-  - **Vorgegeben / Gesucht** je Knoten — Schalter im Detailpanel oder Taste <kbd>G</kbd>
+  - **Vorgegeben / Gesucht** je Knoten — Schalter im Detailpanel oder Taste <kbd>G</kbd>; **✓ Ausgangsstoffe vorgeben** markiert alle Strukturen ohne eingehenden Pfeil
+  - Pro Knoten: Beschriftung (leer = keine), Name (erst nach dem Aufdecken sichtbar) und **Angabe-Text unter der Struktur** (`caption`, immer sichtbar, z. B. Summenformel)
+  - Pro Abschnitt: **Angabe-Text & Hinweise** (`body`, `hints`)
   - **Auto-Layout** ordnet das Schema im Serpentinen-Muster der BW-Angaben an
   - „Layout neu" pro Knoten (RDKit-CoordGen für textbuchgenaue 2D-Koordinaten)
 - Tab **Commit** — Push-to-`main` via GitHub REST API mit PAT (im Browser-`localStorage`)
@@ -78,7 +82,8 @@ OC-oecho/
 │   └── questions.json      ← Quizfragen
 │
 ├── tools/
-│   └── ocr.py              ← Python-Sidecar: Bild → MOL via DECIMER/OSRA/MolScribe
+│   ├── ocr.py              ← Python-Sidecar: Bild → MOL via DECIMER/OSRA/MolScribe
+│   └── source-audit-2026*.js ← Abgleich aller Aufgaben mit den Original-Angaben (BW 39–52, LW 43–52)
 │
 ├── vendor/
 │   └── ketcher/standalone/ ← Ketcher 3.12 Build (committed, ~26 MB)
@@ -196,6 +201,10 @@ Array von Fragenobjekten. Jede Frage hat `type: "composed"` und ein Array `secti
 ```
 
 - `given: true` → Struktur ist von Anfang an sichtbar (wie in der BW-Angabe gezeichnet)
+- `label` → Buchstabe unter der Struktur; `""` blendet ihn aus (z. B. für ungelabelte Edukte)
+- `name` → wird erst nach dem Aufdecken gezeigt (bei vorgegebenen sofort)
+- `caption` → Text, den die Angabe unter die Verbindung schreibt (Summenformel, „R-Form“, Name); immer sichtbar, LaTeX-Syntax erlaubt
+- Abschnitt-Felder `body` (Angabe-Text) und `hints` (Array, „Hinweise“ der Angabe) werden über dem Abschnitt angezeigt
 - `given: false` → Struktur ist mit „?" überdeckt, Klick deckt auf
 - `mol` (bevorzugt) wird vor `smiles` gerendert — enthält die optimierten Koordinaten
 - `x`/`y` sind Layout-Hinweise. Fehlt `"layout": "manual"` am Schema, rechnet der Viewer das

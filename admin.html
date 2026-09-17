@@ -339,6 +339,14 @@ select.fi option{background:var(--surface);color:var(--text);}
 .sec-tab-add:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
 .sec-body{padding:0.85rem 0;}
 .sec-meta{display:flex;gap:0.5rem;margin-bottom:0.7rem;}
+.sec-angabe{margin:0 0 0.7rem;border:1px solid var(--border);border-radius:6px;padding:0.45rem 0.7rem;background:var(--surface2);}
+.sec-angabe summary{cursor:pointer;font-size:0.76rem;font-weight:600;color:var(--muted);}
+.sec-angabe textarea{width:100%;font-family:inherit;font-size:0.84rem;padding:0.4rem 0.6rem;border:1px solid var(--border);border-radius:5px;resize:vertical;}
+.sec-angabe .field{margin-top:0.45rem;}
+.sec-angabe label{display:block;font-size:0.7rem;font-weight:600;color:var(--muted);margin-bottom:0.2rem;}
+.sec-scheme-actions{display:flex;gap:0.4rem;justify-content:flex-end;margin-bottom:0.45rem;}
+.sec-scheme-actions button{font-size:0.76rem;padding:0.3rem 0.7rem;border:1px solid var(--border);border-radius:6px;background:var(--surface);cursor:pointer;color:var(--text-soft);}
+.sec-scheme-actions button:hover{border-color:var(--accent);color:var(--accent);}
 .sec-meta input{flex:1;font-size:0.86rem;padding:0.4rem 0.7rem;border:1px solid var(--border);border-radius:6px;font-family:inherit;}
 .sec-meta input:focus{outline:none;border-color:var(--accent);}
 
@@ -1179,6 +1187,15 @@ function renderNodeDetail(n, key, editor) {
     </div>
     <div class="field"><label>ID / Label</label>
       <input id="nd-id" value="${x(n.id||'')}" oninput="__patchSelectedNode('${x(key)}','id', this.value)"></div>
+    <div class="row2">
+      <div class="field"><label>Beschriftung (unter der Struktur)</label>
+        <input id="nd-label" value="${x(n.label||'')}" placeholder="z. B. A" oninput="__patchSelectedNode('${x(key)}','label', this.value)"></div>
+      <div class="field"><label>Name (nur sichtbar wenn vorgegeben/aufgedeckt)</label>
+        <input id="nd-name" value="${x(n.name||'')}" placeholder="z. B. Tropinon" oninput="__patchSelectedNode('${x(key)}','name', this.value)"></div>
+    </div>
+    <div class="field"><label>Angabe-Text unter der Struktur (immer sichtbar, z. B. Summenformel)</label>
+      <input id="nd-caption" value="${x(n.caption||'')}" placeholder="z. B. C_14H_23NO_3" oninput="__patchSelectedNode('${x(key)}','caption', this.value)">
+    </div>
     <div class="field"><label>Im Quiz</label>
       <div class="given-toggle">
         <button class="${n.given?'':'active'}" onclick="__setNodeGiven('${x(key)}','${x(n.id)}', false)">? Gesucht</button>
@@ -1492,6 +1509,23 @@ window.removeComposedSection = function(i) {
   mu();
 };
 
+/* The exam sheet always draws the starting material. Mark every node
+   without an incoming arrow as given (only nodes that carry a
+   structure — an empty placeholder stays sought). */
+window.markStartingGiven = function(secIdx) {
+  const ed = _composedSectionEditors[secIdx];
+  if (!ed) return;
+  const targets = new Set(ed.scheme.edges.map(e => e.to));
+  let n = 0;
+  for (const node of ed.scheme.nodes) {
+    if (targets.has(node.id) || node.given || !(node.mol || node.smiles)) continue;
+    node.given = true; n++;
+  }
+  ed.refresh();
+  mu();
+  toast(n ? n + ' Ausgangsstoff(e) als vorgegeben markiert' : 'Alle Ausgangsstoffe sind bereits vorgegeben');
+};
+
 function renderActiveComposedSection() {
   const body = document.getElementById('sec-body');
   if (!body) return;
@@ -1499,13 +1533,25 @@ function renderActiveComposedSection() {
   if (!sec) { body.innerHTML = ''; return; }
 
   // Section-meta strip (title input applies to all section types)
+  const si = _composedActiveSec;
   const metaHtml = `
     <div class="sec-meta">
-      <input id="sec-title" placeholder="Abschnitts-Titel (optional)" value="${x(sec.title||'')}" oninput="_composedSections[${_composedActiveSec}].title = this.value; renderComposedSecTabs(); mu()">
-    </div>`;
+      <input id="sec-title" placeholder="Abschnitts-Titel (optional)" value="${x(sec.title||'')}" oninput="_composedSections[${si}].title = this.value; renderComposedSecTabs(); mu()">
+    </div>` +
+    (sec.type === 'intro' ? '' : `
+    <details class="sec-angabe"${(sec.body || (sec.hints||[]).length) ? ' open' : ''}>
+      <summary>Angabe-Text &amp; Hinweise dieses Abschnitts</summary>
+      <div class="field"><label>Angabe-Text (über dem Abschnitt)</label>
+        <textarea rows="3" oninput="_composedSections[${si}].body = this.value; mu()">${x(sec.body||'')}</textarea></div>
+      <div class="field"><label>Hinweise aus der Angabe (einer pro Zeile)</label>
+        <textarea rows="3" oninput="_composedSections[${si}].hints = this.value.split('\\n').map(t => t.trim()).filter(Boolean); mu()">${x((sec.hints||[]).join('\n'))}</textarea></div>
+    </details>`);
 
   if (sec.type === 'synthesis') {
     body.innerHTML = metaHtml + `
+      <div class="sec-scheme-actions">
+        <button onclick="markStartingGiven(${_composedActiveSec})" title="Alle Strukturen ohne eingehenden Pfeil als vorgegeben markieren — so wie die Angabe den Ausgangsstoff zeigt">✓ Ausgangsstoffe vorgeben</button>
+      </div>
       <div id="sg-container-sec${_composedActiveSec}"></div>
       <div id="sg-detail-sec${_composedActiveSec}" class="sg-detail">
         <div class="sg-detail-empty">Klick auf einen Knoten oder Pfeil zum Bearbeiten.</div>
@@ -2462,7 +2508,9 @@ function _serializeScheme(scheme) {
   // re-flow the scheme to the reader's screen width.
   if (scheme.layout === 'manual') out.layout = 'manual';
   out.nodes = (scheme.nodes || []).map(n => {
-    const o = { id: n.id || '', label: n.label || n.id || '', given: !!n.given };
+    const o = { id: n.id || '', label: n.label != null ? n.label : (n.id || ''), given: !!n.given };
+    if (n.name)        o.name = n.name;
+    if (n.caption)     o.caption = n.caption;
     if (n.mol)         o.mol = n.mol;
     if (n.smiles)      o.smiles = n.smiles;
     if (n.explanation) o.explanation = n.explanation;
@@ -2486,6 +2534,8 @@ function _serializeSection(sec) {
   const o = { type: sec.type };
   if (sec.title) o.title = sec.title;
   if (sec.body)  o.body  = sec.body;
+  const hints = (sec.hints || []).map(h => String(h).trim()).filter(Boolean);
+  if (hints.length) o.hints = hints;
   if (sec.type === 'synthesis') {
     o.scheme = _serializeScheme(sec.scheme || {});
   } else if (sec.type === 'multiple_choice') {
