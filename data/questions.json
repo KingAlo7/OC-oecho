@@ -6,7 +6,7 @@
     "type": "composed",
     "difficulty": "D",
     "source": "ÖChO Bundeswettbewerb 2022 (BW 48), Aufgabe 2 B — nach Stork, G. et al. J. Am. Chem. Soc. 1951, 73, 4501.",
-    "intro": "Cantharidin ist ein Terpenoid, das Käfer je nach Spezies als Wehrsekret oder Sexuallockpheromon absondern. Heute weiß man, dass es ein starkes Gift ist. In diesem Beispiel wird die von Stork 1951 veröffentlichte Synthese von Cantharidin genauer betrachtet (Stork, G.; van Tamelen, E. E.; Friedman, L. J.; Burgstahler, A. W. J. Am. Chem. Soc. 1951, 73, 4501).",
+    "intro": "Cantharidin ist ein Terpenoid, das Käfer je nach Spezies als Wehrsekret oder Sexuallockpheromon absondern. Heute weiß man, dass es ein starkes Gift ist, auch wenn ihm eine Wirkung als Aphrodisiakum nachgesagt wird. Dies soll Kriegsberichten zufolge schon Napoleons Truppen in Ägypten zum Verhängnis geworden sein. In diesem Beispiel wird die von Stork 1951 veröffentlichte Synthese von Cantharidin genauer betrachtet (Stork, G.; van Tamelen, E. E.; Friedman, L. J.; Burgstahler, A. W. J. Am. Chem. Soc. 1951, 73, 4501).",
     "sections": [
       {
         "type": "synthesis",
@@ -380,7 +380,7 @@
     "type": "composed",
     "difficulty": "C",
     "source": "ÖChO Landeswettbewerb 2024 (LW 50), Problem D.2",
-    "intro": "K.-o.-Tropfen — Nomenklatur, Isomerie & organische Synthese. Das folgende Reaktionsschema zeigt die Synthese von Rohypnol (Flunitrazepam).",
+    "intro": "K.-o.-Tropfen — Nomenklatur, Isomerie & organische Synthese. Als K.-o.-Tropfen werden sedierend wirkende Substanzen bezeichnet, die, in Getränke oder Drogen gemischt, Menschen betäuben. Einige solcher Substanzen werden besser therapeutisch als Schlaf- oder Beruhigungsmittel benutzt. Das folgende Reaktionsschema zeigt die Synthese von Rohypnol.",
     "sections": [
       {
         "type": "synthesis",
@@ -583,7 +583,7 @@
       {
         "type": "multiple_choice",
         "title": "Reaktionsmechanismus der Bildung von A (i)",
-        "prompt": "Nach welchem Mechanismus läuft die Bildung des 2-Fluorbenzylbromids (A) aus 2-Fluortoluol ab?",
+        "prompt": "Nach welchem Reaktionsmechanismus läuft die Bildung von A ab?",
         "choices": [
           {
             "id": "a",
@@ -611,8 +611,8 @@
       },
       {
         "type": "short_answer",
-        "title": "Welche Reagenzien führen von I zu Rohypnol?",
-        "prompt": "Zwei aufeinanderfolgende Schritte sind nötig, um aus I das fertige Rohypnol zu erhalten. Welche?",
+        "title": "Von I zu Rohypnol (j)",
+        "prompt": "Welche Reagenzien sind notwendig, um aus I Rohypnol zu synthetisieren?",
         "expected_answer": "1. HNO_3/H_2SO_4 — elektrophile aromatische Nitrierung in 7-Position. 2. CH_3I (oder ein anderes Methylhalogenid) — N-Methylierung am Amid-N. Ergebnis: 7-Nitro-1-methyl-Benzodiazepinon = Flunitrazepam."
       },
       {
@@ -629,7 +629,7 @@
     "name": "Tazaroten (Aknecreme) — LW 2023",
     "difficulty": "C",
     "source": "ÖChO Landeswettbewerb 2023 (LW 49), Problem E",
-    "intro": "Gegen Schuppenflechte oder Akne kann Tazaroten (Zorac®, Tazorac®) als Creme verschrieben werden (0,05 % m/m, inaktive Vorstufe des Wirkstoffs). In dieser Aufgabe geht es um die Synthese von Tazaroten ausgehend von 2-Chlor-5-methylpyridin. Im Reaktionsschema sind nicht alle Nebenprodukte (z. B. H_2O, HCl) angegeben.",
+    "intro": "Gegen Schuppenflechte oder Akne kann Tazaroten (Handelsnamen Zorac® oder Tazorac®) als Creme verschrieben werden. Die Creme enthält üblicherweise 0,05 % (m/m) Tazaroten, der inaktiven Vorstufe des Wirkstoffes. In dieser Aufgabe geht es um die Synthese von Tazaroten ausgehend von 2-Chlor-5-methylpyridin. Im Reaktionsschema sind nicht alle Nebenprodukte (z. B. H_2O, HCl) angegeben.",
     "sections": [
       {
         "type": "synthesis",
@@ -853,7 +853,7 @@
             }
           ]
         },
-        "body": "Das Zielmolekül Tazaroten ist in der Angabe abgebildet; I und B werden gekuppelt."
+        "body": "Abschließend bildet I mit Butyl-Lithium das Anion J^-, welches in einer palladiumkatalysierten Reaktion mit B zum Zielprodukt reagiert."
       },
       {
         "type": "short_answer",
@@ -869,8 +869,8 @@
       },
       {
         "type": "multiple_choice",
-        "title": "Mechanismus F → G",
-        "prompt": "Nach welchem Mechanismus läuft die Reaktion F + C → G?",
+        "title": "Mechanismus F → G (c)",
+        "prompt": "Geben Sie den Reaktionsmechanismus der Reaktion F → G an.",
         "choices": [
           {
             "id": "a",
@@ -905,7 +905,7 @@
     "name": "Terpene und Phenylpropanoide: Elemicin — LW 2022",
     "difficulty": "B",
     "source": "ÖChO Landeswettbewerb 2022 (LW 48), Problem E",
-    "intro": "In dieser Aufgabe geht es um Terpene und Phenylpropanoide. Terpene sind aus Isopreneinheiten (Isopren = 2-Methylbuta-1,3-dien) aufgebaut. Phenylpropanoide leiten sich vom Phenylpropan (IUPAC: Propylbenzen) ab.",
+    "intro": "In dieser Aufgabe geht es um Terpene und Phenylpropanoide. Terpene sind aus Isopreneinheiten (Isopren = 2-Methylbuta-1,3-dien) aufgebaut. Sie können in acyclische und cyclische (mit unterschiedlich vielen Ringen) Terpene eingeteilt werden. Manche Terpene sind Kohlenwasserstoffe, andere sind funktionalisiert. Phenylpropanoide sind Verbindungen, die sich vom Phenylpropan (IUPAC: Propylbenzen) ableiten.",
     "sections": [
       {
         "type": "synthesis",
@@ -1286,7 +1286,7 @@
     "name": "Sildenafil (Viagra) — LW 2025",
     "difficulty": "D",
     "source": "ÖChO Landeswettbewerb 2025 (LW 51), Problem E.2",
-    "intro": "Der Arzneistoff Sildenafil (ursprünglich gegen Herzbeschwerden entwickelt) erlangte große Bekanntheit, als er 1998 von Pfizer als „Viagra\" bei erektiler Dysfunktion auf den Markt kam. Tipp: Lassen Sie sich von den großen Strukturen nicht abschrecken — die Reaktionen sind Ihnen vermutlich wohlbekannt.",
+    "intro": "Der Arzneistoff Sildenafil (ursprünglich gegen Herzbeschwerden entwickelt, aber diesbezüglich wirkungslos) erlangte große Bekanntheit, als er 1998 von Pfizer (USA) unter „Viagra\" als Abhilfe bei erektiler Dysfunktion auf den Markt kam. Tipp: Lassen Sie sich bei diesem Reaktionsschema nicht von den großen Strukturen abschrecken. Die Reaktionen sind Ihnen vermutlich wohlbekannt!",
     "sections": [
       {
         "type": "synthesis",
@@ -1573,7 +1573,7 @@
           ]
         },
         "hints": [
-          "Er bringt 100 g 1-Brom-2-phenylethen mit 150 g heißer KOH bei 200 °C zur Reaktion. Nach Aufarbeitung erhält er 37,0 g der Verbindung X, welche laut Elementaranalyse 94,08 % C, aber kein Heteroatom enthält."
+          "Er bringt 100 g 1-Brom-2-phenylethen mit 150 g heißer KOH bei 200 °C zur Reaktion. Die entstehende gelbliche Flüssigkeit wird kontinuierlich abdestilliert. Nach Aufarbeitung erhält Justus 37,0 g der Verbindung X, welche laut Elementaranalyse 94,08 % C, aber kein Heteroatom enthält."
         ]
       },
       {
@@ -1831,9 +1831,9 @@
             }
           ]
         },
-        "body": "Justus beschließt, 1-Brom-2-phenylethen selbst zu synthetisieren. Ausgangsmaterial ist die Zimtsäure (3-Phenylpropensäure).",
+        "body": "Justus möchte die erste Synthese (Teil E.1) optimieren, besitzt aber kein Ausgangsmaterial mehr. Er beschließt also, 1-Brom-2-phenylethen selbst zu synthetisieren, auch weil die Verbindung sehr angenehm nach Hyazinthen riecht. Ausgangsmaterial für seine Synthese ist die Zimtsäure (3-Phenylpropensäure).",
         "hints": [
-          "Käufliche Zimtsäure ist (E)-3-Phenylpropensäure. Wird diese mit Br_2 umgesetzt, sind theoretisch 4 Additionsprodukte möglich."
+          "Justus stellt fest, dass sein Produkt K ein Gemisch ist. Käufliche Zimtsäure ist (E)-3-Phenylpropensäure (trans-3-Phenylpropensäure). Wird diese mit Br_2 umgesetzt, sind theoretisch 4 Additionsprodukte möglich."
         ]
       },
       {
@@ -1901,8 +1901,8 @@
       },
       {
         "type": "multiple_choice",
-        "title": "Mechanismus Benzol → D und Styrol → G",
-        "prompt": "Welche Mechanismen liegen den Bildungen von Brombenzol (Benzol → D) und 1,2-Dibrom-1-phenylethan (Styrol → G) zugrunde?",
+        "title": "Mechanismen Benzen → D und Styren → G (f)",
+        "prompt": "Nach welchen Mechanismen verlaufen die Reaktionen Benzen → D und Styren → G?",
         "choices": [
           {
             "id": "a",
@@ -1939,10 +1939,10 @@
   {
     "id": "lw42-2015-phellandral",
     "category": "Mehrstufige Synthesen",
-    "name": "(−)-Phellandral aus Benzol — LW 2015",
+    "name": "(−)-Phellandral — LW 2016",
     "difficulty": "C",
-    "source": "ÖChO Landeswettbewerb 2015 (LW 42), Problem F",
-    "intro": "Klassische 11-stufige Synthese des natürlichen Aromastoffes (−)-Phellandral aus Benzol. Über Friedel-Crafts-Alkylierung, Sulfonierung mit anschließender Phenol-Bildung, Ringhydrierung, Oxidation, Cyanhydrin-Bildung, Acetylierung mit Eliminierung, Hydrolyse und schließlich Rosenmund-Reduktion entsteht ein chiraler α,β-ungesättigter Aldehyd (Summenformel C_{10}H_{16}O).",
+    "source": "ÖChO Landeswettbewerb 2016 (LW 42)",
+    "intro": "(−)-Phellandral ist ein Terpen des Eukalyptusöls. Es wird durch Tollens-Reagenz (ammoniakalische Silbernitratlösung) zur (−)-Phellandrensäure oxidiert, die unter Aufnahme von nur 1 mol Wasserstoff in Dihydrophellandrensäure übergeht. Um die Struktur von Phellandral zu bestimmen, wurde eine Totalsynthese durchgeführt.",
     "sections": [
       {
         "type": "synthesis",
@@ -1970,21 +1970,24 @@
               "given": false,
               "smiles": "OS(=O)(=O)c1ccc(C(C)C)cc1",
               "explanation": "Sulfonierung des Aromaten (SO_3/H_2SO_4 — SE). Der Iso-propyl-Rest dirigiert para.",
-              "related_reaction_id": "arom-sulfonierung"
+              "related_reaction_id": "arom-sulfonierung",
+              "caption": "C_9H_12O_3S"
             },
             {
               "id": "C",
               "label": "C",
               "given": false,
               "smiles": "Oc1ccc(C(C)C)cc1",
-              "explanation": "Alkalischmelze: Verschmelzen mit NaOH ergibt das Phenolat, nach Ansäuerung das Phenol (SN: -SO_3 → -OH)."
+              "explanation": "Alkalischmelze: Verschmelzen mit NaOH ergibt das Phenolat, nach Ansäuerung das Phenol (SN: -SO_3 → -OH).",
+              "caption": "C_9H_12O"
             },
             {
               "id": "D",
               "label": "D",
               "given": false,
               "smiles": "OC1CCC(C(C)C)CC1",
-              "explanation": "Katalytische Vollhydrierung des Aromaten (H_2/Kat., Reduktion)."
+              "explanation": "Katalytische Vollhydrierung des Aromaten (H_2/Kat., Reduktion).",
+              "caption": "C_9H_16O"
             },
             {
               "id": "E",
@@ -1998,7 +2001,8 @@
               "label": "F",
               "given": false,
               "smiles": "OC1(C#N)CCC(C(C)C)CC1",
-              "explanation": "Nukleophile Addition von HCN ans Keton — Cyanhydrin-Bildung (A_N)."
+              "explanation": "Nukleophile Addition von HCN ans Keton — Cyanhydrin-Bildung (A_N).",
+              "caption": "C_10H_17NO"
             },
             {
               "id": "G",
@@ -2006,7 +2010,8 @@
               "given": false,
               "smiles": "CC(=O)OC1(C#N)CCC(C(C)C)CC1",
               "note": "Hier tritt das Stereozentrum am C1 zum ersten Mal auf — F→G ist nicht stereoselektiv, zwei Enantiomere entstehen.",
-              "explanation": "Acetylierung der tertiären OH-Gruppe (Essigsäureanhydrid)."
+              "explanation": "Acetylierung der tertiären OH-Gruppe (Essigsäureanhydrid).",
+              "caption": "C_12H_19NO_2"
             },
             {
               "id": "H",
@@ -2021,14 +2026,16 @@
               "label": "I",
               "given": false,
               "smiles": "OC(=O)C1=CCC(C(C)C)CC1",
-              "explanation": "Hydrolyse des Nitrils zur Carbonsäure (H_2SO_4 / H_2O, Hy)."
+              "explanation": "Hydrolyse des Nitrils zur Carbonsäure (H_2SO_4 / H_2O, Hy).",
+              "caption": "C_10H_16O_2"
             },
             {
               "id": "J",
               "label": "J",
               "given": false,
               "smiles": "ClC(=O)C1=CCC(C(C)C)CC1",
-              "explanation": "SOCl_2 wandelt Carbonsäure in das Säurechlorid um."
+              "explanation": "SOCl_2 wandelt Carbonsäure in das Säurechlorid um.",
+              "caption": "C_10H_15ClO"
             },
             {
               "id": "K",
@@ -2036,7 +2043,8 @@
               "given": false,
               "smiles": "O=CC1=CC[C@@H](C(C)C)CC1",
               "note": "Natürliches (−)-Phellandral hat S-Konfiguration am chiralen C4.",
-              "explanation": "Rosenmund-Reduktion (H_2/Pd-BaSO_4, Chinolin-S) reduziert das Säurechlorid selektiv zum Aldehyd."
+              "explanation": "Rosenmund-Reduktion (H_2/Pd-BaSO_4, Chinolin-S) reduziert das Säurechlorid selektiv zum Aldehyd.",
+              "caption": "Phellandral"
             }
           ],
           "edges": [
@@ -2045,44 +2053,43 @@
                 "Bz"
               ],
               "to": "A",
-              "reagent_above": "(CH_3)_2CHOH / H_2SO_4",
-              "reagent_below": "oder Propen/AlCl_3"
+              "reagent_above": "AlCl_3"
             },
             {
               "from": [
                 "A"
               ],
               "to": "B",
-              "reagent_above": "H_2SO_4 (konz.)"
+              "reagent_above": "H_2SO_4, SO_3"
             },
             {
               "from": [
                 "B"
               ],
               "to": "C",
-              "reagent_above": "1. NaOH (Schmelze)",
-              "reagent_below": "2. H^+"
+              "reagent_above": "KOH",
+              "reagent_below": "Schmelze"
             },
             {
               "from": [
                 "C"
               ],
               "to": "D",
-              "reagent_above": "H_2 / Kat."
+              "reagent_above": "3 Äqu. H_2/Ni"
             },
             {
               "from": [
                 "D"
               ],
               "to": "E",
-              "reagent_above": "Cr_2O_7^{2-} / H^+"
+              "reagent_above": "K_2Cr_2O_7/H_2SO_4"
             },
             {
               "from": [
                 "E"
               ],
               "to": "F",
-              "reagent_above": "HCN"
+              "reagent_above": "KCN, H^+"
             },
             {
               "from": [
@@ -2096,15 +2103,15 @@
                 "G"
               ],
               "to": "H",
-              "reagent_above": "Δ",
-              "reagent_below": "-CH_3COOH"
+              "reagent_above": "thermische Eliminierung",
+              "reagent_below": "- CH_3COOH"
             },
             {
               "from": [
                 "H"
               ],
               "to": "I",
-              "reagent_above": "H_2O / H_2SO_4"
+              "reagent_above": "H_2SO_4, H_2O"
             },
             {
               "from": [
@@ -2118,21 +2125,29 @@
                 "J"
               ],
               "to": "K",
-              "reagent_above": "H_2 / Pd-BaSO_4"
+              "reagent_above": "H_2/Pd/BaSO_4"
             }
           ]
-        }
+        },
+        "hints": [
+          "Die Elementaranalyse von Phellandral liefert folgende Werte: 78,95 % C, 10,50 % H, der Rest ist Sauerstoff. Die Molmasse liegt unter 200 g/mol.",
+          "Alle Strukturen sind monocyclisch.",
+          "B ist das sterisch weniger gehinderte Produkt (das andere Konstitutionsisomere wird nicht weiter verwendet).",
+          "C gibt mit Fe^{3+}-Ionen eine Farbreaktion.",
+          "E reagiert mit 2,4-Dinitrophenylhydrazin.",
+          "I heißt mit dem Trivialnamen Phellandrensäure."
+        ]
       },
       {
         "type": "short_answer",
-        "title": "Erster Stereoschritt",
-        "prompt": "In welchem Syntheseschritt entsteht das erste chirale Zentrum, und welcher mechanistische Grund verhindert eine Stereoselektivität?",
+        "title": "Erstes chirales Zentrum (6)",
+        "prompt": "In welchem Syntheseschritt tritt die Chiralität zum ersten Mal auf?",
         "expected_answer": "Im Schritt G→H bzw. genauer: in F→G entsteht das stereogene C1 (das tertiäre C-Atom mit OH/CN/CH_2/CH_2). Da das Edukt F achiral und das Reagenz Ac_2O ohne Chiralitätsinformation ist, läuft die Acetylierung beider Enantiotopen-Flächen gleich schnell ab — beide Enantiomere von G (und damit später beide Enantiomere von Phellandral) entstehen im 1:1-Verhältnis. Die Trennung in (−)- und (+)-Phellandral erfordert eine zusätzliche Racematspaltung."
       },
       {
         "type": "multiple_choice",
-        "title": "Stereochemie I → Diastereomere",
-        "prompt": "Welche Beziehung haben die beiden Stereoisomere von 4-Isopropylcyclohexan-1-carbonsäure (cis vs trans Anordnung an C1 und C4)?",
+        "title": "Hydrierung der Phellandrensäure (9)",
+        "prompt": "Die katalytische Hydrierung von (−)-Phellandrensäure liefert ein Gemisch aus 2 optisch inaktiven Isomeren. In welchem stereochemischen Verhältnis stehen die beiden Isomeren?",
         "choices": [
           {
             "id": "a",
@@ -2146,7 +2161,7 @@
           },
           {
             "id": "c",
-            "label": "Diastereomere (cis/trans-Isomere)",
+            "label": "Diastereomere",
             "correct": true
           },
           {
@@ -2166,7 +2181,7 @@
     "name": "Papaverin — LW 2017",
     "difficulty": "C",
     "source": "ÖChO Landeswettbewerb 2017 (LW 43), Problem E",
-    "intro": "Papaverin ist ein Alkaloid des Isochinolin-Typs und besitzt eine direkte krampflösende Wirkung auf die glatte Muskulatur. Es ist u. a. im Milchsaft des Schlafmohns enthalten. Nach der Strukturaufklärung durch G. Goldschmiedt folgte 1908 die erste Totalsynthese durch Pictet und Gams. Wir betrachten eine Synthese ausgehend von Vanillin.",
+    "intro": "Papaverin ist ein Alkaloid des Isochinolin-Typs und besitzt eine direkte krampflösende Wirkung auf die glatte Muskulatur. Es wird z. B. in der Herzchirurgie angewendet. Papaverin ist u. a. im Milchsaft des Schlafmohns enthalten. Nachdem der Österreicher G. Goldschmiedt die Strukturaufklärung durchgeführt hatte, folgte 1908 die erste Totalsynthese durch Pictet und Gams. Wir wollen eine Synthese des Papaverins ausgehend von Vanillin betrachten.",
     "sections": [
       {
         "type": "synthesis",
@@ -2700,7 +2715,7 @@
     "name": "Merrilacton A — BW 2024",
     "difficulty": "D",
     "source": "ÖChO Bundeswettbewerb 2024 (BW 50), Aufgabe 2 B",
-    "intro": "Merrilacton — ein Naturstoff gegen neurodegenerative Erkrankungen. Die Synthese beginnt mit einer Diels-Alder-Reaktion.",
+    "intro": "Von natürlichen Wirkstoffen gegen neurodegenerative Erkrankungen: Merrilacton.",
     "sections": [
       {
         "type": "synthesis",
@@ -2733,33 +2748,35 @@
               "label": "B",
               "given": false,
               "smiles": "C[C@@]1(C(=O)O)CC=C[C@H](O[Si](C)(C)C(C)(C)C)[C@]1(C)C(=O)OC",
-              "caption": "C_17H_30O_5Si",
+              "caption": "C_17H_30O_4Si",
               "explanation": "NaOMe/MeOH öffnet das Anhydrid → Halbester (C17H30O6Si). Da das Anhydrid nicht symmetrisch ist, entstehen B und B′ als Konstitutionsisomere.",
-              "note": "Methanolyse des Anhydrids → cis-Halbester. B und B′ unterscheiden sich nur in der Konstitution (welche Carbonsäure noch frei ist) → Konstitutionsisomere."
+              "note": "Die Angabe nennt C_17H_30O_4Si; aus der Struktur ergibt sich ein O-Atom mehr."
             },
             {
               "id": "B2",
               "label": "B´",
               "given": false,
               "smiles": "C[C@@]1(C(=O)OC)CC=C[C@H](O[Si](C)(C)C(C)(C)C)[C@]1(C)C(=O)O",
-              "caption": "C_17H_30O_5Si",
-              "explanation": "Methanolyse des Anhydrids an der anderen Carbonylgruppe → Konstitutionsisomer zu B."
+              "caption": "C_17H_30O_4Si",
+              "explanation": "Methanolyse des Anhydrids an der anderen Carbonylgruppe → Konstitutionsisomer zu B.",
+              "note": "Die Angabe nennt C_17H_30O_4Si; aus der Struktur ergibt sich ein O-Atom mehr."
             },
             {
               "id": "C",
               "label": "C",
               "given": false,
               "smiles": "C[C@@]1(C(=O)OC(=O)OC)CC=C[C@H](O[Si](C)(C)C(C)(C)C)[C@]1(C)C(=O)OC",
-              "caption": "C_19H_32O_7Si",
+              "caption": "C_19H_32O_6Si",
               "explanation": "Methylchloroformiat (Cl-CO2Me) acyliert die freie Carbonsäure → gemischtes Anhydrid (Carbonat).",
-              "note": "C19H32O8Si."
+              "note": "Die Angabe nennt C_19H_32O_6Si; aus der Struktur ergibt sich ein O-Atom mehr."
             },
             {
               "id": "C2",
               "label": "C´",
               "given": false,
               "smiles": "C[C@@]1(C(=O)OC)CC=C[C@H](O[Si](C)(C)C(C)(C)C)[C@]1(C)C(=O)OC(=O)OC",
-              "caption": "C_19H_32O_7Si"
+              "caption": "C_19H_32O_6Si",
+              "note": "Die Angabe nennt C_19H_32O_6Si; aus der Struktur ergibt sich ein O-Atom mehr."
             },
             {
               "id": "L0",
@@ -2951,7 +2968,7 @@
     "name": "Vitamin E — Seitenketten-Synthese (BW 2024)",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2024 (BW 50), Aufgabe 2 C",
-    "intro": "Vitamin E — auch gegen neurodegenerative Erkrankungen. Zwei Wege führen zu den Bausteinen D und D´.",
+    "intro": "Vitamin E — auch gegen neurodegenerative Erkrankungen.",
     "sections": [
       {
         "type": "synthesis",
@@ -3108,8 +3125,8 @@
       },
       {
         "type": "multiple_choice",
-        "title": "Tosylat vs Hydroxid",
-        "prompt": "Welche Aussagen zur Tosylat-Abgangsgruppe (OTs^-) treffen zu?",
+        "title": "Tosylat (2.8)",
+        "prompt": "Im Edukt liegt die Alkoholgruppe als Tosylat verestert vor. Welche Aussagen treffen zu?",
         "choices": [
           {
             "id": "a",
@@ -3118,7 +3135,7 @@
           },
           {
             "id": "b",
-            "label": "OH^- ist im Vergleich zu TsO^- weniger reaktiv (Nukleophil)",
+            "label": "OH^- ist im Vergleich zu TsO^- weniger reaktiv",
             "correct": false
           },
           {
@@ -3329,7 +3346,7 @@
       },
       {
         "type": "multiple_choice",
-        "title": "Funktion von DCC",
+        "title": "Funktion von DCC (2.11)",
         "prompt": "Welche Aufgabe hat das Reagenz DCC (Dicyclohexylcarbodiimid)?",
         "choices": [
           {
@@ -3367,8 +3384,8 @@
       },
       {
         "type": "multiple_choice",
-        "title": "Mechanismus B → C",
-        "prompt": "Nach welchem Reaktionsmechanismus verläuft die Reaktion von B nach C (Spaltung des Phthalimid-Rests durch NaOH)?",
+        "title": "Mechanismus B → C (2.13)",
+        "prompt": "Benennen Sie den Mechanismus der Reaktion von B nach C.",
         "choices": [
           {
             "id": "a",
@@ -3408,7 +3425,7 @@
     "name": "Sapropterin (BH4-Analogon) — BW 2025",
     "difficulty": "D",
     "source": "ÖChO Bundeswettbewerb 2025 (BW 51), Aufgabe 4 B",
-    "intro": "Sapropterin ist ein synthetisches Analogon von Tetrahydrobiopterin, einem wichtigen Co-Faktor für Enzyme, die Phenylalanin abbauen. Es wird zur Behandlung bestimmter Formen der Phenylketonurie (PKU) eingesetzt.",
+    "intro": "Sapropterin ist ein synthetisches Analogon von Tetrahydrobiopterin, einem wichtigen Co-Faktor für Enzyme, die Phenylalanin abbauen. Es wird zur Behandlung bestimmter Formen der Phenylketonurie (PKU) eingesetzt, bei denen eine Restaktivität der Phenylalaninhydroxylase vorhanden ist. Durch die Einnahme können der Phenylalaninspiegel im Blut gesenkt und die Diätanforderungen für PKU-Patienten möglicherweise erleichtert werden.",
     "sections": [
       {
         "type": "synthesis",
@@ -3863,7 +3880,7 @@
     "name": "Phenylketonurie — Stoffwechselpfade von Phenylalanin (BW 2025)",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2025 (BW 51), Aufgabe 4 A",
-    "intro": "Phenylketonurie (PKU) ist eine erbliche Stoffwechselstörung, die die Verarbeitung der Aminosäure Phenylalanin A beeinträchtigt. Ohne Behandlung akkumuliert diese im Körper und kann schwere neurologische Schäden verursachen. Hier einige Stoffwechselpfade.",
+    "intro": "Phenylketonurie (PKU) ist eine erbliche Stoffwechselstörung, die die Verarbeitung der Aminosäure Phenylalanin A beeinträchtigt. Ohne Behandlung akkumuliert diese im Körper und kann schwere neurologische Schäden verursachen. Durch frühes Screening und eine gezielte Diät lässt sich die Erkrankung jedoch effektiv kontrollieren, sodass Betroffene ein weitgehend normales Leben führen können. Hier einige Stoffwechselpfade.",
     "sections": [
       {
         "type": "synthesis",
@@ -4207,7 +4224,7 @@
               ],
               "to": "A",
               "reagent_above": "ATP",
-              "reagent_below": "(+ B = ADP)"
+              "reagent_below": "+ B"
             },
             {
               "from": [
@@ -4229,11 +4246,11 @@
               ],
               "to": "M",
               "reagent_above": "Acetyl-CoA",
-              "reagent_below": "(+ E = Biotin-Enzym)"
+              "reagent_below": "+ E"
             }
           ]
         },
-        "body": "Glg. 1: Hydrogencarbonat + ATP → A + B. Glg. 2: Biotin-Enzym + A → C + D; + Acetyl-CoA → Malonyl-CoA + E.",
+        "body": "Glg. 1: Hydrogencarbonat + ATP → A + B. Glg. 2: Biotin-Enzym + A → C + D; C + D + Acetyl-CoA → Malonyl-CoA + E.",
         "hints": [
           "Abkürzungen: AC = Acetyl-CoA-Carboxylase, ER = Enoyl-ACP-Reduktase, HD = 3-Hydroxyacyl-ACP-Dehydratase, KS = β-Ketoacyl-ACP-Synthase, KR = β-Ketoacyl-ACP-Reduktase."
         ]
@@ -4316,10 +4333,7 @@
             }
           ]
         },
-        "body": "Die Kreise ○ stehen für die jeweils nötigen Enzyme (Abkürzungen oben). Die FS-Synthase ist hier als S-Thioester-Modell (SNAC) gezeichnet.",
-        "hints": [
-          "Beim ersten Schritt (KS) wird CO_2 abgespalten."
-        ]
+        "body": "Die Kreise ○ stehen für die jeweils nötigen Enzyme (Abkürzungen oben), „± Y\" für die Nebenprodukte."
       },
       {
         "type": "short_answer",
@@ -4329,12 +4343,12 @@
       },
       {
         "type": "multiple_choice",
-        "title": "Funktionelle Gruppen im FS-Schema",
-        "prompt": "Wie heißen die beiden funktionellen Gruppen am Enzym-Komplex bzw. CoA, die im FS-Biosynthese-Schema markiert sind?",
+        "title": "Markierte funktionelle Gruppen (5.3)",
+        "prompt": "Benennen Sie die beiden funktionellen Gruppen, welche im FS-Schema mit einem * gekennzeichnet sind.",
         "choices": [
           {
             "id": "a",
-            "label": "-SH (Thiol) und R-CO-S-CoA (Thioester)",
+            "label": "Thiol (-SH) und Thioester (R-CO-S-R′)",
             "correct": true
           },
           {
@@ -4370,7 +4384,7 @@
     "name": "Methylorange (Azokupplung) — BW 2023",
     "difficulty": "B",
     "source": "Ergänzungsaufgabe — im BW 2023 (BW 49) kommt Methylorange nur als Titrationsindikator in Aufgabe 1 vor, nicht als Synthese.",
-    "intro": "Methylorange ist ein Azofarbstoff, hergestellt durch Azokupplung: Sulfanilsäure wird mit NaNO_2/HCl diazotiert; das resultierende Aryldiazonium-Salz greift N,N-Dimethylanilin elektrophil para zur Aminogruppe an.",
+    "intro": "Methylorange ist ein Azofarbstoff.",
     "sections": [
       {
         "type": "synthesis",
@@ -4431,7 +4445,7 @@
       {
         "type": "multiple_choice",
         "title": "Reaktionstyp",
-        "prompt": "Welcher Reaktionstyp liegt der Kupplung Diazonium + N,N-Dimethylanilin zu Methylorange zugrunde?",
+        "prompt": "Welcher Reaktionstyp liegt der Bildung von Methylorange aus D und B zugrunde?",
         "choices": [
           {
             "id": "a",
@@ -4575,14 +4589,14 @@
       },
       {
         "type": "short_answer",
-        "title": "Mechanismus A → B",
-        "prompt": "Skizzieren Sie den Mechanismus der Friedel-Crafts-Acylierung A → B mit Essigsäureanhydrid und HF (Lewis-Säure-Katalyse).",
+        "title": "Mechanismus A → B (7.4)",
+        "prompt": "Schreiben Sie einen detaillierten Reaktionsmechanismus für die Reaktion A → B auf.",
         "expected_answer": "1) HF protoniert ein Anhydrid-O → Acyloxocarbenium-Ion + Acetat. 2) Das Acylium-Kation (CH_3-CO^+) greift den elektronenreichen Aromaten elektrophil an (Wheland-Intermediat). 3) Re-Aromatisierung durch Verlust eines H^+ aus dem Sigma-Komplex → Aryl-methylketon B. Acetat fängt den abgespaltenen H^+ als Essigsäure ab."
       },
       {
         "type": "short_answer",
         "title": "Wirksames Enantiomer (7.5)",
-        "prompt": "Ibuprofen wird als Racemat eingesetzt; pharmakologisch wirksam ist nur das S-Isomer. Zeichnen Sie die Konfiguration der wirksamen Form.",
+        "prompt": "Ibuprofen wird als Racemat eingesetzt. Pharmakologisch wirksam ist nur das S-Isomer. Das R-Isomer wird allerdings im Körper durch eine Isomerase in die wirksame Form umgewandelt. Zeichnen Sie die Konfiguration der pharmakologisch wirksamen Form.",
         "expected_answer": "(S)-2-[4-(2-Methylpropyl)phenyl]propansäure — SMILES: C[C@H](C(=O)O)c1ccc(CC(C)C)cc1"
       }
     ],
@@ -4854,11 +4868,11 @@
   {
     "id": "bw48-2022-butanon-reaktionen",
     "category": "Mehrstufige Synthesen",
-    "name": "Zehn Reaktionen eines Ketons — BW 2022",
+    "name": "Einige Reaktionen aus der organischen Chemie — BW 2022",
     "type": "composed",
     "difficulty": "B",
     "source": "ÖChO Bundeswettbewerb 2022 (BW 48), Aufgabe 2 A",
-    "intro": "Aus dem Edukt Butan-2-on (Methylethylketon) gehen 10 verschiedene organische Transformationen aus. Klassische Reaktionen: Oxim-Bildung, Beckmann-Umlagerung, Baeyer-Villiger-Oxidation, Aminolyse, Reduktion zum Alkohol, säurekatalysierte Eliminierung, Markovnikow-HCl-Addition, SeO_2-α-Oxidation, Wittig-Reaktion, Grignard-Addition.",
+    "intro": "Organische Chemie bei den alten Römern.",
     "sections": [
       {
         "type": "synthesis",
@@ -5045,8 +5059,8 @@
       },
       {
         "type": "multiple_choice",
-        "title": "Mechanismus der Oxim-Bildung",
-        "prompt": "Welcher Reaktionsmechanismus liegt der Bildung des Oxims A aus Butan-2-on + Hydroxylamin zugrunde?",
+        "title": "Mechanismus von Reaktion 1 (2.3)",
+        "prompt": "Welcher Reaktionsmechanismus liegt Reaktion 1 zugrunde?",
         "choices": [
           {
             "id": "a",
@@ -5213,7 +5227,7 @@
   {
     "id": "bw48-2022-lysergsaeure-myers-allen",
     "category": "Mehrstufige Synthesen",
-    "name": "Lysergsäure — Myers-Allen-Synthese (BW 2022)",
+    "name": "Lysergsäure — Synthese des Allens G (BW 2022)",
     "difficulty": "D",
     "source": "ÖChO Bundeswettbewerb 2022 (BW 48), Aufgabe 4 B",
     "intro": "Die erste Totalsynthese (racemischer) Lysergsäure gelang Woodward bereits 1956. 2011 veröffentlichten Fujii und Ohno eine enantioselektive Synthese mit einer Palladium-katalysierten Domino-Cyclisierung als Schlüsselschritt. Ausgangsmaterial dieses Schlüsselschritts ist das chirale Allen G, das mithilfe der 1996 von Myers entwickelten Methode aus dem Propargylalkohol E hergestellt werden kann.",
@@ -5272,7 +5286,10 @@
               "id": "Ee",
               "label": "E",
               "given": true,
-              "smiles": "Brc1cccc2c1c(CC(O)C#CC8CN(S(=O)(=O)c9ccc(C)cc9)C(c7ccccc7)OC8)cn2S(=O)(=O)c9ccc(C)cc9"
+              "smiles": "Brc1cccc2c1c(CC(O)C#CC8CN(S(=O)(=O)c9ccc(C)cc9)C(c7ccccc7)OC8)cn2S(=O)(=O)c9ccc(C)cc9",
+              "alias": {
+                "0": "X"
+              }
             },
             {
               "id": "F",
@@ -5309,7 +5326,7 @@
           ]
         },
         "hints": [
-          "X = Halogen (hier als Br gezeichnet); TsOH = Me-Ph-SO_3H; DEAD = Diethylazodicarboxylat (EtOCO)_2N_2."
+          "X = Halogen; TsOH = Me-Ph-SO_3H; DEAD = Diethylazodicarboxylat (EtOCO)_2N_2."
         ]
       },
       {
@@ -5324,31 +5341,31 @@
   {
     "id": "bw48-2022-self-splicing-thioester",
     "category": "Mechanismen",
-    "name": "Self-Splicing — Thioester-Intermediat (BW 2022)",
+    "name": "Self-Splicing bei Proteinen — BW 2022",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2022 (BW 48), Aufgabe 2 C",
-    "intro": "In der nativen chemischen Ligation (NCL, Dawson 1994) bzw. beim Protein-Self-Splicing wandert die Acyl-Gruppe vom Carbonsäureamid auf das SH eines benachbarten Cys-Restes (intramolekulare Umlagerung). Das so entstandene Thioester-Intermediat ist reaktiver als das Amid und ermöglicht die kovalente Verknüpfung zweier Peptidfragmente.",
+    "intro": "Protein „self-splicing\" wurde 1990 erstmalig entdeckt. Dabei werden Thioester-Intermediate A gebildet. Es wird heutzutage auch in der Peptidsynthese verwendet.",
     "sections": [
       {
         "type": "mechanism",
-        "title": "Amid → Thioester-Umlagerung",
-        "prompt": "In der eingekreisten Amidbindung des Edukts greift die SH-Gruppe des Cys-Restes nukleophil den Carbonyl-C an; das tetraedrische Intermediat kollabiert unter Spaltung der C-N-Bindung; das Amin wird frei. Resultat: Thioester R-CO-S-CH_2- + freies α-NH_2.",
+        "title": "Bildung des Thioester-Intermediats A (2.13)",
+        "prompt": "Schreiben Sie die Struktur von A auf und deuten Sie den Verlauf des Mechanismus an.",
         "mech_steps": [
           {
             "name": "Edukt",
-            "prompt": "Peptidkette mit Cys-SH neben Amidbindung.",
+            "prompt": "Edukt",
             "smiles": "O=C(NC(CS)C(=O)N)CC",
             "explanation": "Die SH-Gruppe des Cys-Restseite liegt räumlich nah am Amid-Carbonyl."
           },
           {
             "name": "Tetraedrisches Intermediat",
-            "prompt": "Nach SH-Angriff auf Carbonyl-C:",
+            "prompt": "Zwischenstufe",
             "smiles": "[O-]C(SC(C(=O)N)NC(C)=O)CC",
             "explanation": "Das S greift nucleophil das Carbonyl-C an; sp^2 → sp^3."
           },
           {
             "name": "Produkt A (Thioester)",
-            "prompt": "C-N-Spaltung, NH_2 frei:",
+            "prompt": "Produkt A",
             "smiles": "O=C(SCC(N)C(=O)N)CC",
             "explanation": "Der Thioester R-CO-S- ist labiler als das Amid und reagiert in der nächsten Stufe mit einem zweiten Peptidfragment (das ein N-terminales Cys trägt)."
           }
@@ -5443,8 +5460,8 @@
       },
       {
         "type": "multiple_choice",
-        "title": "Funktion von AlCl_3",
-        "prompt": "Warum wird Aluminiumchlorid für die Friedel-Crafts-Alkylierung als Katalysator benötigt?",
+        "title": "Funktion von AlCl_3 (2.3)",
+        "prompt": "Nennen Sie den Grund, warum Aluminiumchlorid für die Reaktion 3 als Katalysator verwendet wird.",
         "choices": [
           {
             "id": "a",
@@ -5609,8 +5626,8 @@
       },
       {
         "type": "short_answer",
-        "title": "Reagenz d für die Wittig-Reaktion",
-        "prompt": "Welche zwei Reagenzien sind für den Wittig-Schritt D → E gemeinsam erforderlich?",
+        "title": "Reagenzien d (2.5)",
+        "prompt": "Schreiben Sie die beiden Reagenzien für d auf.",
         "expected_answer": "(CH_3)_2CH-CHO und KO^tBu (Base zur Ylid-Bildung)."
       },
       {
@@ -5789,8 +5806,8 @@
       },
       {
         "type": "short_answer",
-        "title": "Acideste H in H",
-        "prompt": "Welche H-Atome in der offenkettigen Verbindung H sind die acidesten, und warum?",
+        "title": "Acideste H-Atome in H (2.9)",
+        "prompt": "Kennzeichnen Sie in der Struktur von H die acidesten H-Atome.",
         "expected_answer": "Die α-H-Atome zum Aldehyd-Carbonyl. Sie werden bei Deprotonierung mesomeriestabilisiert: das Enolat-Carbanion ist über C=C/C-C^- Resonanz mit der Carbonyl-Gruppe in Konjugation. pK_a ≈ 17 für gewöhnliche α-Aldehyd-Protonen vs ≈25 für nicht-aktivierte Alkyl-Protonen."
       }
     ]
@@ -5948,7 +5965,7 @@
       {
         "type": "multiple_choice",
         "title": "Funktion der Mesyl-Gruppe (5.5)",
-        "prompt": "Warum wird die OH-Gruppe in der Conicein-Synthese in ein Mesylat überführt?",
+        "prompt": "Nennen Sie den Grund, warum die Mesylgruppe in die Struktur von A eingeführt wurde.",
         "choices": [
           {
             "id": "a",
@@ -5961,7 +5978,7 @@
           },
           {
             "id": "c",
-            "label": "Damit OMs^- in der E2-Eliminierung eine bessere Abgangsgruppe ist als OH^-",
+            "label": "Damit bei der späteren Eliminierung eine bessere Abgangsgruppe als OH^- vorliegt",
             "correct": true
           },
           {
@@ -5973,8 +5990,8 @@
       },
       {
         "type": "short_answer",
-        "title": "Pericyclische Schlüssel-Schritte",
-        "prompt": "Welche zwei perizyklische Reaktionstypen verbinden D → E → F? Benennen Sie sie konkret (Woodward-Hoffmann).",
+        "title": "Reaktionstyp E → F (5.3)",
+        "prompt": "Benennen Sie den Reaktionstyp der Bildung von F aus E möglichst detailliert. Wie heißt diese Namensreaktion?",
         "expected_answer": "D → E: 4π-elektrocyclische Ringöffnung des Cyclobuten-artigen Azets, thermisch konrotatorisch (Woodward-Hoffmann). E → F: intramolekulare [4+2]-Cycloaddition (Hetero-Diels-Alder), thermisch suprafacial/suprafacial — das 1-Aza-Dien reagiert mit dem terminalen Alken als Dienophil."
       }
     ]
@@ -6208,8 +6225,8 @@
       },
       {
         "type": "short_answer",
-        "title": "Lösungsmittel-Wahl für die Wittig (5.9)",
-        "prompt": "Welches Lösungsmittel ist für die Wittig-Reaktion geeignet und warum?",
+        "title": "Lösungsmittel für Reaktion 2 (5.9)",
+        "prompt": "Schlagen Sie ein geeignetes und ein nicht geeignetes Lösungsmittel für Reaktion 2 vor.",
         "expected_answer": "Geeignet: THF (aprotisch, koordiniert das Li-Gegenion, zerstört das Ylid nicht). Ungeeignet: EtOH (protisch — protoniert das Ylid und macht es unreaktiv)."
       }
     ]
@@ -6438,21 +6455,9 @@
         ]
       },
       {
-        "type": "short_answer",
-        "title": "Stork-Enamin (Schritt 1)",
-        "prompt": "Was passiert beim Schritt Butanal + Pyrrolidin → A? Welche Reaktionsklasse? Welche E/Z-Geometrie?",
-        "expected_answer": "Stork-Enamin-Bildung: das sekundäre Amin Pyrrolidin reagiert mit dem Aldehyd Butanal unter Wasserabspaltung zum Enamin (R_2N-CR'=CR''H statt zum Iminium). Es entstehen E- und Z-Isomere (das E-Isomer ist meist bevorzugt). Das Enamin dient als nukleophiles Äquivalent für die α-C-Alkylierung des Aldehyds — vorteilhaft gegenüber Enolat, da basische Bedingungen vermieden werden."
-      },
-      {
-        "type": "short_answer",
-        "title": "Robinson-Annelierung (Schritt D + HOAc/T)",
-        "prompt": "Wie funktioniert die Robinson-Anellierung im Schritt D → E? Welcher Sechs-Ring entsteht?",
-        "expected_answer": "Michael-Addition des Stork-Enamins an einen α,β-ungesättigten Methylvinylketon-Akzeptor, gefolgt von intramolekularer Aldolkondensation (–H_2O) unter HOAc/Wärme → α,β-ungesättigtes Cyclohexenon. Liefert das ABC-Ringsystem von Aspidospermin."
-      },
-      {
         "type": "multiple_choice",
         "title": "Bildung von K aus J (5.12)",
-        "prompt": "Nach welchem Mechanismus erfolgt die Bildung von K (Hydrazon-Vorläufer) aus dem Keton J + 2-Methoxyphenylhydrazin Z?",
+        "prompt": "Benennen Sie den Mechanismus, nach dem die Bildung von K aus J erfolgt.",
         "choices": [
           {
             "id": "a",
@@ -6493,7 +6498,7 @@
     "type": "composed",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2020 (BW 46), Aufgabe 5 D",
-    "intro": "Prostaglandine sind Derivate des Eicosans und wirken im tierischen und menschlichen Organismus als Gewebshormone. Hier geht es um die Synthese eines speziellen Prostaglandin-Fragments (Corey, E. J.; Ensley, H. E. J. Am. Chem. Soc. 1975, 97, 6908).",
+    "intro": "Prostaglandine sind Derivate des Eicosans und wirken im tierischen und menschlichen Organismus als Gewebshormone. Sie spielen etwa bei einer Entzündungsreaktion, einer Form der unspezifischen Immunabwehr, eine bedeutsame Rolle. In dieser Aufgabe geht es um die Synthese eines speziellen Prostaglandin-Fragments (Corey, E. J.; Ensley, H. E. J. Am. Chem. Soc. 1975, 97, 6908).",
     "sections": [
       {
         "type": "synthesis",
@@ -6567,7 +6572,7 @@
             }
           ]
         },
-        "body": "Das Iodlacton C wird in mehreren Stufen zum Prostaglandin weiter umgesetzt.",
+        "body": "C wird in mehreren Stufen zum Prostaglandin weiter umgesetzt.",
         "hints": [
           "Bn: Benzyl"
         ]
@@ -6575,27 +6580,27 @@
       {
         "type": "multiple_choice",
         "title": "Funktion von NaHCO_3 (5.15)",
-        "prompt": "Welche Rolle spielt NaHCO_3 in der Iodolactonisierung B → C?",
+        "prompt": "Nennen Sie die Funktion von NaHCO_3 in der Reaktion, die zur Bildung von C führt.",
         "choices": [
           {
             "id": "a",
-            "label": "Es wirkt als Base und deprotoniert die -COOH-Funktion zum Carboxylat-Nukleophil",
+            "label": "Base",
             "correct": true
           },
           {
             "id": "b",
-            "label": "Es reduziert Iod zu Iodid"
+            "label": "Reduktionsmittel"
           },
           {
             "id": "c",
-            "label": "Es bildet den Iodonium-Ring"
+            "label": "Oxidationsmittel"
           },
           {
             "id": "d",
-            "label": "Es ist ein Lösungsmittel"
+            "label": "Lösungsmittel"
           }
         ],
-        "explanation": "NaHCO_3 ist eine milde Base — gerade stark genug, um die Carbonsäure (pK_a ≈ 4-5) zu deprotonieren, aber zu schwach, um andere Funktionalitäten zu beeinflussen. Das Carboxylat ist ein deutlich besseres Nukleophil als die Säure und greift das Iodonium-Ion intramolekular an → Lactonbildung."
+        "explanation": "NaHCO_3 deprotoniert die Carbonsäure; das Carboxylat öffnet als Nukleophil das cyclische Iodonium-Ion (Iodlactonisierung)."
       },
       {
         "type": "short_answer",
@@ -6608,7 +6613,7 @@
   {
     "id": "bw46-2020-pericyclic-da",
     "category": "Pericyclische Reaktionen",
-    "name": "Diels-Alder mit Fumarsäure & photochem. [4+2] — BW 2020",
+    "name": "Zum organischen Abschluss wird es rein pericyclisch — BW 2020",
     "type": "composed",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2020 (BW 46), Aufgabe 5 E",
@@ -6616,7 +6621,7 @@
     "sections": [
       {
         "type": "synthesis",
-        "title": "5.18: Fumarsäure + Diene",
+        "title": "5.18",
         "scheme": {
           "nodes": [
             {
@@ -6672,7 +6677,7 @@
       },
       {
         "type": "synthesis",
-        "title": "5.19: Photoenol, Elektrocyclisierung und Diels-Alder",
+        "title": "5.19",
         "scheme": {
           "nodes": [
             {
@@ -6768,12 +6773,6 @@
           }
         ],
         "explanation": "Die konzertierte [4+2]-Cycloaddition ist suprafacial/suprafacial — alle vier neuen σ-Bindungen werden gleichzeitig auf derselben Seite des Diens bzw. Dienophils gebildet. Folglich wird die Stereochemie beider Edukte ins Produkt übernommen (cis-Prinzip). Endo ist meist kinetisch (nicht thermodynamisch) bevorzugt."
-      },
-      {
-        "type": "short_answer",
-        "title": "kon- vs. dis-rotatorisch",
-        "prompt": "Erklären Sie kurz mit Woodward-Hoffmann, warum der 4π-elektrocyclische Ringschluss des Photo-Enols thermisch konrotatorisch, photochemisch aber disrotatorisch verläuft.",
-        "expected_answer": "Bei 4π-Elektrocyclisierungen entscheidet die Symmetrie des HOMO. Thermisch ist das HOMO ψ_2 (antisymmetrisch) — der konrotatorische Schluss bringt die beiden p-Orbitale phasengleich überein. Photochemisch wird ein Elektron in ψ_3 (symmetrisch) angeregt — der disrotatorische Schluss ist nun phasengleich. Die beiden Mechanismen liefern stereochemisch komplementäre Produkte (cis vs trans-Anordnung der terminalen Substituenten)."
       }
     ]
   },
@@ -6784,7 +6783,7 @@
     "type": "composed",
     "difficulty": "D",
     "source": "ÖChO Bundeswettbewerb 2019 (BW 45), Aufgabe 2 A",
-    "intro": "Phytohormone sind pflanzeneigene organische Verbindungen, die als primäre Botenstoffe Wachstum und Entwicklung der Pflanzen steuern und koordinieren. Abscisinsäure (ABA, von engl. abscisic acid) ist ein Phytohormon mit hemmender Wirkung und zählt zu den monocyclischen Sesquiterpenen. Ausgangssubstanzen der Synthese sind 4-Methylpent-3-en-2-on (Verbindung B) und Verbindung A, deren Struktur aus dem ^1H- und ^{13}C-NMR-Spektrum ermittelt werden kann.",
+    "intro": "Phytohormone sind pflanzeneigene organische Verbindungen, die als primäre Botenstoffe Wachstum und Entwicklung der Pflanzen steuern und koordinieren. Abscisinsäure ist ein Phytohormon mit hemmender Wirkung. International gebräuchlich ist die Abkürzung ABA vom Englischen abscisic acid. Chemisch zählt sie zu den monocyclischen Sesquiterpenen. Diesen liegen drei Isopreneinheiten zugrunde. Mit mehr als 3000 Vertretern stellen die Sesquiterpene die größte Untergruppe der Terpene dar. Im Gegensatz zu vielen anderen Phytohormonen handelt es sich bei Abscisinsäure um einen Einzelstoff und nicht um eine Stoffgruppe. Ausgangssubstanzen der Synthese sind 4-Methylpent-3-en-2-on (Verbindung B) und Verbindung A, deren Struktur aus dem ^1H- und ^{13}C-NMR-Spektrum ermittelt werden kann.",
     "sections": [
       {
         "type": "synthesis",
@@ -6958,8 +6957,7 @@
           "C und D sind Stellungsisomere (C_12H_18O_3), es bilden sich jeweils Carbocyclen mit 6 C-Atomen im Ring.",
           "G hat im IR-Spektrum eine Bande bei 1730 cm^{-1}.",
           "G → H: Es bildet sich ein zusätzlicher Heterocyclus mit 6 Ringatomen.",
-          "J: Elementaranalyse: C: 68,16 %; H: 7,63 %; O: 24,21 % (w/w).",
-          "Abkürzungen: DIBAL-H = Diisobutylaluminiumhydrid, mCPBA = meta-Chlorperbenzoesäure."
+          "J: Elementaranalyse: C: 68,16 %; H: 7,63 %; O: 24,21 % (w/w)."
         ]
       },
       {
@@ -7049,8 +7047,8 @@
       },
       {
         "type": "multiple_choice",
-        "title": "Funktion der Ketal-Schutzgruppe (Aufgabe 2.6)",
-        "prompt": "Welche zwei Reaktionen werden durch die Ketal-Schutzgruppe von E nach F im weiteren Reaktionsverlauf verhindert?",
+        "title": "Schutzgruppe E → F (2.6)",
+        "prompt": "Von E nach F wird eine weitverbreitete Schutzgruppe eingeführt. Welche konkrete Reaktion verhindert diese Schutzgruppe im folgenden Reaktionsverlauf?",
         "choices": [
           {
             "id": "a",
@@ -7075,14 +7073,14 @@
       },
       {
         "type": "short_answer",
-        "title": "IR-Verschiebung der drei E-Isomeren (Aufgabe 2.9-2.10)",
-        "prompt": "Warum absorbiert das α,β-ungesättigte Keton-Isomer von E bei niedrigerer Wellenzahl (1680 cm^{-1}) als das nicht-konjugierte (1715 cm^{-1})? Welche elektronischen Effekte erklären den Aldehyd bei 1730 cm^{-1}?",
+        "title": "IR-Daten von E, E´ und E´´ (2.9, 2.10)",
+        "prompt": "Für E und zwei seiner Isomere (E´ und E´´) sind IR-Banden für C–O–C- und C=O-Valenzschwingungen gegeben: 1050–1250, 1680, 1715 und 1730 cm^{-1}. Ordnen Sie den verursachenden Gruppen die Wellenzahlen zu und erklären Sie, auf welchen Effekten die unterschiedlichen Absorptionen im Bereich von 1700 cm^{-1} beruhen.",
         "expected_answer": "Konjugation (+M-Effekt) verschiebt C=O-Banden zu NIEDRIGEREN Wellenzahlen, da die π-Konjugation die effektive C=O-Bindungsordnung absenkt (weniger Doppelbindungscharakter → kleinere Kraftkonstante). Der Aldehyd absorbiert bei 1730 cm^{-1} höher, weil ihm im Vergleich zum Keton ein zweiter +I-stabilisierender Alkylrest fehlt — der Carbonyl-C ist somit elektrophiler und die C=O-Bindung etwas stärker (höhere Wellenzahl). Eine konjugationsbedingte Bandenverschiebung erfolgt durch den +M-Effekt zu niedrigeren Wellenzahlen (nicht zu höheren)."
       },
       {
         "type": "multiple_choice",
-        "title": "Stereodeskriptoren von ABA",
-        "prompt": "Wie viele Stereoisomere besitzt Abscisinsäure (gegeben die Konstitution mit drei stereogenen Elementen: ein C-Zentrum + zwei Doppelbindungen)?",
+        "title": "Anzahl der Stereoisomere (2.15)",
+        "prompt": "Wie viele stereoisomere Moleküle mit der Konstitution von Abscisinsäure gibt es?",
         "choices": [
           {
             "id": "a",
@@ -7118,7 +7116,7 @@
     "name": "Twistan-Synthese — Käfig-Kohlenwasserstoff (BW 2019)",
     "type": "composed",
     "source": "ÖChO Bundeswettbewerb 2019 (BW 45), Aufgabe 2 B",
-    "intro": "Twistan gehört zu den polycyclischen Verbindungen. Der verdrillte Kohlenwasserstoff Twistan heißt systematisch Tricyclo[4.4.0.0^{3,8}]decan. Die Teilschritte der Synthese sind im folgenden Schema dargestellt.",
+    "intro": "Twistan gehört zu den polycyclischen Verbindungen, einer Verbindungsklasse, bei der die Kohlenstoffatome in mehreren Ringen angeordnet sind. Der wunderschön verdrillte Kohlenwasserstoff Twistan heißt systematisch Tricyclo[4.4.0.0^{3,8}]decan. Die Teilschritte der Synthese sind in der folgenden Abbildung dargestellt.",
     "sections": [
       {
         "type": "synthesis",
@@ -7298,7 +7296,7 @@
       {
         "type": "multiple_choice",
         "title": "Funktion von NaH im Schritt H → I (Aufgabe 2.30)",
-        "prompt": "Welche Funktion hat NaH bei der intramolekularen Alkylierung H → I?",
+        "prompt": "Welche Funktion hat NaH im Schritt H → I?",
         "choices": [
           {
             "id": "a",
@@ -7310,15 +7308,23 @@
           },
           {
             "id": "c",
-            "label": "Base — deprotoniert α-CH zum Keton, das gebildete Enolat verdrängt OMs^-",
-            "correct": true
+            "label": "Säure"
           },
           {
             "id": "d",
+            "label": "Base",
+            "correct": true
+          },
+          {
+            "id": "e",
             "label": "Schutzgruppe"
+          },
+          {
+            "id": "f",
+            "label": "Katalysator"
           }
         ],
-        "explanation": "NaH ist eine starke, nicht-nukleophile Base (pK_a-H_2 ≈ 35). Es deprotoniert das acide α-CH zur Ketogruppe → Enolat-Carbanion → intramolekulare S_N2-Substitution am Mesyl-tragenden C → neuer C-C-Bindung schließt den dritten Ring des Twistanon-Gerüsts."
+        "explanation": "NaH deprotoniert das α-C-Atom zum Keton; das Enolat verdrängt intramolekular die Mesylat-Abgangsgruppe."
       },
       {
         "type": "short_answer",
@@ -7329,27 +7335,27 @@
       {
         "type": "multiple_choice",
         "title": "Erster Schritt der Reaktion b (2.29)",
-        "prompt": "Welcher elementare Reaktionsschritt steht am Beginn der Wolff-Kishner-Reduktion?",
+        "prompt": "Welcher Mechanismus liegt dem ersten Schritt der Namensreaktion von I nach Twistan (Reagenz b) zugrunde?",
         "choices": [
           {
             "id": "a",
-            "label": "A_N — Hydrazin addiert nukleophil an den Carbonyl-C → Hydrazon",
+            "label": "A_N",
             "correct": true
           },
           {
             "id": "b",
-            "label": "S_N2 am α-Kohlenstoff"
+            "label": "S_N2"
           },
           {
             "id": "c",
-            "label": "Elektrocyclische Ringöffnung"
+            "label": "Elektrocyclische Reaktion"
           },
           {
             "id": "d",
             "label": "Radikalische Addition"
           }
         ],
-        "explanation": "Schritt 1 ist klassische Carbonyl-Kondensation (A_N + –H_2O): H_2N-NH_2 addiert ans Keton, Halbaminal, dann Wasserabspaltung → Hydrazon (C=N-NH_2). Anschließend isomerisiert KOH zum Diazo, Wärme treibt N_2-Eliminierung → Carbanion → Protonierung → CH_2."
+        "explanation": "Wolff-Kishner-Reduktion: Hydrazin addiert zuerst nukleophil (A_N) an den Carbonyl-C; unter Wasserabspaltung entsteht das Hydrazon."
       }
     ],
     "difficulty": "D"
@@ -7720,7 +7726,7 @@
       {
         "type": "multiple_choice",
         "title": "Mechanismus P(OBn)_3 + Z → C (3.7)",
-        "prompt": "Nach welchem Mechanismus reagiert P(OBn)_3 mit Bromessigsäure?",
+        "prompt": "Nach welchem Reaktionsmechanismus verläuft die Reaktion von P(OBn)_3 + Z nach C (im 1. Schritt)?",
         "choices": [
           {
             "id": "a",
@@ -7745,16 +7751,16 @@
       {
         "type": "multiple_choice",
         "title": "Bildung von D aus A (3.12)",
-        "prompt": "Warum wird das Catechol von A vor der weiteren Synthese als MOM-Ether geschützt?",
+        "prompt": "Begründen Sie, warum der Schritt A → D im Reaktionsschema notwendig ist.",
         "choices": [
           {
             "id": "a",
-            "label": "Damit die Phenole nicht oxidiert werden (zu Chinonen)",
+            "label": "Damit die Phenol-Gruppen nicht oxidiert werden",
             "correct": true
           },
           {
             "id": "b",
-            "label": "Damit die Phenole nicht mit Säurechloriden verestern (im Schritt H → I)",
+            "label": "Damit die Phenol-Gruppen im Schritt H → I nicht mit dem Säurechlorid reagieren",
             "correct": true
           },
           {
@@ -7763,7 +7769,7 @@
           },
           {
             "id": "d",
-            "label": "Damit die Aldol-Reaktion stereoselektiv wird"
+            "label": "Damit die Reaktion D → E stereoselektiv wird"
           }
         ],
         "explanation": "Beide korrekten Antworten: Catechole sind extrem leicht oxidierbar zu o-Chinonen (insbesondere unter basischen oder oxidierenden Bedingungen) — MOM verhindert das. Außerdem würden die Phenole mit Säurechloriden veresternd reagieren und die selektive Esterbildung am späteren Carbonsäure-Zentrum verhindern."
@@ -7771,7 +7777,7 @@
       {
         "type": "short_answer",
         "title": "Isomerisierung F → F´ (3.9)",
-        "prompt": "Wie kann F (E-Kaffeesäure) zu F' (Z-Form) isomerisieren? Welcher Mechanismus liegt zugrunde?",
+        "prompt": "Formulieren Sie einen Mechanismus für die Isomerisierung von F nach F´ und schlagen Sie Reaktionsbedingungen vor.",
         "expected_answer": "Photochemisch (UV): Anregung des konjugierten π-Systems verbreitert die C=C-Bindung durch Population des π*-Orbitals → die π-Bindungsordnung wird kurzzeitig 0 → freie Rotation um die ehemalige Doppelbindung. Geht das System in den Grundzustand zurück, kann es in der Z-Form „eingefangen\" werden. Mechanistisch über ein elektronisch angeregtes Singulett/Triplett-Diradikal-Zwischenprodukt."
       },
       {
@@ -8092,7 +8098,7 @@
       {
         "type": "multiple_choice",
         "title": "Ringschluss H → I (3.15)",
-        "prompt": "Welcher Namensreaktion folgt der Ringschluss H → I (Bildung des Sieben-Rings im Colchicin-Skelett)?",
+        "prompt": "Welche Namensreaktion liegt dem Schritt von H nach I (Cyclisierungsschritt) zugrunde?",
         "choices": [
           {
             "id": "a",
@@ -8122,12 +8128,6 @@
         "title": "Chiralität von Colchicin (3.16-3.17)",
         "prompt": "Welche Formen der Chiralität besitzt Colchicin und welche Stereodeskriptoren werden verwendet?",
         "expected_answer": "Colchicin besitzt EIN Stereozentrum (sp^3-C mit -NHAc-Substituent) UND eine AXIALE CHIRALITÄT (Atropisomerie: der Tropolon-Ring und der Trimethoxyaryl-Ring sind so verbrückt, dass die Rotation um die zwischen ihnen liegende C-C-Achse gehindert ist). Stereodeskriptoren: (aR, S). Das (aR) gibt die axiale Konfiguration an, (S) das klassische sp^3-Stereozentrum."
-      },
-      {
-        "type": "short_answer",
-        "title": "Disproportionierung als roter Faden",
-        "prompt": "In der Sequenz N → O wird CO_2 unter Erhitzen abgespalten. Welcher klassische Reaktionstyp liegt vor?",
-        "expected_answer": "Decarboxylierung eines β-Ketoesters / β-Carbonsäure-Carboxyls (Krapcho-artig oder klassisch). Bei H_3O^+ und Erhitzen entsteht aus der β-Ketosäure zunächst die freie Säure, die unter Wärme via cyclischen 6-Ring-Übergangszustand (Enol/CO_2-Abspaltung) decarboxyliert → Keton + CO_2."
       }
     ],
     "type": "composed"
@@ -8135,15 +8135,15 @@
   {
     "id": "bw43-2017-atropin",
     "category": "Mehrstufige Synthesen",
-    "name": "Atropin — Tropin + Tropasäure (BW 2017)",
+    "name": "Atropin — BW 2017",
     "type": "composed",
     "difficulty": "D",
     "source": "ÖChO Bundeswettbewerb 2017 (BW 43), Aufgabe 1 A",
-    "intro": "Tropan-Alkaloide sind Derivate des Tropans, eines bicyclischen Amins mit dem IUPAC-Namen 8-Methyl-8-aza-bicyclo[3.2.1]octan. Sie werden von Pflanzen, vor allem Nachtschattengewächsen, zum Schutz vor Fressfeinden gebildet. Im ersten Aufgabenteil wird die Synthese von Atropin, dem Gift der Tollkirsche, behandelt.",
+    "intro": "In dieser Aufgabe geht es um Tropan-Alkaloide, Derivate des Tropans, einem bicyclischen Amin mit dem IUPAC-Namen 8-Methyl-8-aza-bicyclo[3.2.1]octan. Diese Tropan-Alkaloide werden von Pflanzen, vor allem Nachtschattengewächsen, zum Schutz vor Fressfeinden gebildet. Tropan-Derivate haben auch pharmazeutische Bedeutung erlangt. Daher beschäftigt sich die Wissenschaft schon seit rund 100 Jahren mit verschiedenen Synthesen dieser Alkaloide. Im ersten Aufgabenteil wird die Synthese von Atropin, dem Gift der Tollkirsche, behandelt.",
     "sections": [
       {
         "type": "synthesis",
-        "title": "Weg 1: vom Nitron über C und D",
+        "title": "Weg 1: über C und D",
         "scheme": {
           "nodes": [
             {
@@ -8217,7 +8217,11 @@
               "reagent_above": "LiAlH_4"
             }
           ]
-        }
+        },
+        "hints": [
+          "Substanz E trägt den Namen Ethyl-2-Brom-2-phenylethanoat.",
+          "A und B sind Stereoisomere."
+        ]
       },
       {
         "type": "synthesis",
@@ -8368,7 +8372,7 @@
       },
       {
         "type": "synthesis",
-        "title": "Veresterung zu Atropin (I)",
+        "title": "H + A oder B → I",
         "scheme": {
           "nodes": [
             {
@@ -8407,8 +8411,8 @@
       },
       {
         "type": "multiple_choice",
-        "title": "Mechanismus F → G (Aufgabe 1.2)",
-        "prompt": "Welcher Reaktionsmechanismus liegt der Bildung von G aus F (Grignard + Formaldehyd) zugrunde?",
+        "title": "Reaktionstyp F → G (1.2)",
+        "prompt": "Welcher Reaktionstyp liegt der Reaktion von F zu G zugrunde?",
         "choices": [
           {
             "id": "a",
@@ -8433,7 +8437,7 @@
       {
         "type": "multiple_choice",
         "title": "Reaktionstyp der Bildung von C (1.4)",
-        "prompt": "Wie wird die Bildung von C aus dem Nitron klassifiziert?",
+        "prompt": "Welcher Reaktionstyp liegt der Bildung von C zugrunde? (möglichst detailliert)",
         "choices": [
           {
             "id": "a",
@@ -8457,14 +8461,14 @@
       },
       {
         "type": "short_answer",
-        "title": "Diastereomerie A vs B (Aufgabe 1.3)",
-        "prompt": "In welchem stereochemischen Verhältnis stehen A (Tropin) und B (Ψ-Tropin) zueinander?",
+        "title": "Stereochemisches Verhältnis von A und B (1.3)",
+        "prompt": "Geben Sie an, in welchem stereochemischen Verhältnis A und B zueinander stehen.",
         "expected_answer": "Sie sind Diastereomere (Exo-Endo-Isomere). Konkret unterscheiden sie sich in der Stereochemie der OH-Gruppe am 3-C des Tropan-Gerüsts: A = endo-OH (Tropin), B = exo-OH (Ψ-Tropin). Da das Tropan-Gerüst chiral, aber spiegelsymmetrisch ist, ist jedes Isomer für sich achiral (es gibt eine interne Spiegelebene)."
       },
       {
         "type": "short_answer",
-        "title": "Molekül X",
-        "prompt": "Schreiben Sie die chemische Formel von X auf (Veresterung H + A → I).",
+        "title": "Molekül X (1.1)",
+        "prompt": "Schreiben Sie die chemische Formel von X auf.",
         "expected_answer": "X = H_2O"
       }
     ],
@@ -8479,7 +8483,7 @@
     "name": "Ferruginin — Tropan-Alkaloid (BW 2017)",
     "type": "composed",
     "source": "ÖChO Bundeswettbewerb 2017 (BW 43), Aufgabe 1 B",
-    "intro": "Synthese des Tropan-Alkaloids Ferruginin (8-Methyl-8-azabicyclo[3.2.1]oct-2-en-3-yl-methylketon) aus Cyclopentanon. 12 Stufen: Baeyer-Villiger-Ringerweiterung (A → B, δ-Valerolacton), Mesyl-Aktivierung + α-Alkylierung an Prolin-Enolat (C → D), Hydrogenolyse / Benzyl-Schutz, Oxidation zur Ketosäure, Decarboxylierung mit (COCl)_2 / Δ zum Cbz-Tropan-Keton, OsO_4/NaIO_4-Dihydroxylierung-Spaltung, TMSI-Cbz-Entfernung zu Ferruginin (C_9H_{13}NO), N-Methylierung via Eschweiler-Clarke.",
+    "intro": "In dieser Aufgabe geht es um Tropan-Alkaloide, Derivate des Tropans, einem bicyclischen Amin mit dem IUPAC-Namen 8-Methyl-8-aza-bicyclo[3.2.1]octan. Diese Tropan-Alkaloide werden von Pflanzen, vor allem Nachtschattengewächsen, zum Schutz vor Fressfeinden gebildet. Tropan-Derivate haben auch pharmazeutische Bedeutung erlangt. Daher beschäftigt sich die Wissenschaft schon seit rund 100 Jahren mit verschiedenen Synthesen dieser Alkaloide. Im zweiten Teil geht es um Ferruginin, einen Agonisten nikotinischer Acetylcholinrezeptoren.",
     "sections": [
       {
         "type": "synthesis",
@@ -8696,7 +8700,6 @@
             }
           ]
         },
-        "body": "Im zweiten Teil geht es um Ferruginin, einen Agonisten nikotinischer Acetylcholinrezeptoren.",
         "hints": [
           "Die Substanz A trägt den IUPAC-Namen 2-Methylcyclopentanon.",
           "Die Reaktion C → D führt zu einem reaktiven Intermediat.",
@@ -8708,8 +8711,8 @@
       },
       {
         "type": "multiple_choice",
-        "title": "Baeyer-Villiger A → B",
-        "prompt": "Welche Verschiebung wird bei der Baeyer-Villiger-Oxidation zwischen Carbonyl-C und α-C eingeschoben?",
+        "title": "Reaktion A → B",
+        "prompt": "Was wird bei der Reaktion A → B mit m-CPBA zwischen Carbonyl-C und α-C eingeschoben?",
         "choices": [
           {
             "id": "a",
@@ -8733,12 +8736,6 @@
       },
       {
         "type": "short_answer",
-        "title": "OsO_4 + NaIO_4 als Spaltsequenz (BC2 → H → I)",
-        "prompt": "Wie wirken OsO_4 und NaIO_4 zusammen, um eine C=C-Doppelbindung in zwei Carbonyl-Gruppen umzuwandeln?",
-        "expected_answer": "OsO_4 reagiert konzertiert mit der Doppelbindung in einer [3+2]-Cycloaddition → cyclisches Os(VI)-Diester → Hydrolyse → cis-Diol (syn-Dihydroxylierung). NaIO_4 spaltet anschließend das vicinale Diol oxidativ via cyclisches Periodester-Intermediat → zwei Carbonyl-Verbindungen (Aldehyd/Keton). Aus einer terminalen =CH_2-Gruppe entsteht so Formaldehyd (X) + ein Methylketon. Die Gesamtsequenz ist das katalytische Äquivalent einer milden Ozonolyse."
-      },
-      {
-        "type": "short_answer",
         "title": "Molekül X",
         "prompt": "Welches Molekül X wird im Schritt H → I abgespalten?",
         "expected_answer": "X = Methanal (Formaldehyd), H_2C=O, M = 30,03 g/mol."
@@ -8749,11 +8746,11 @@
   {
     "id": "bw42-2016-prontosil",
     "category": "Mehrstufige Synthesen",
-    "name": "Prontosil (erstes Sulfonamid) — BW 2016",
+    "name": "Prontosil — BW 2016",
     "type": "composed",
     "difficulty": "B",
     "source": "ÖChO Bundeswettbewerb 2016 (BW 42), Aufgabe 1 A",
-    "intro": "Prontosil — der erste klinisch eingesetzte Sulfonamid-Antibiotikum (G. Domagk, 1932, Nobelpreis 1939). Die Synthese kombiniert Chlorsulfonierung (Acetanilid → B), Aminierung (B → C), Hydrolyse (C → D = Sulfanilamid), Diazotierung (D → E) und Azokupplung mit Benzol-1,3-diamin (→ F = Prontosil).",
+    "intro": "Die österreichische Sandoz GmbH mit ihrem Werk in Tirol ist der größte Hersteller von Antibiotika und der einzige bedeutende Produzent von Penicillin in der westlichen Welt. Die Firma deckt etwa zwei Drittel der weltweiten Produktion an Penicillin V ab, dem säurestabilen Penicillin, das 1951 von zwei Kundler Wissenschaftlern entdeckt worden ist. Dieses Penicillin V sowie drei weitere Antibiotika geben in dieser Aufgabe einen kleinen Einblick in Synthesewege der organischen Chemie.",
     "sections": [
       {
         "type": "synthesis",
@@ -8860,8 +8857,8 @@
       },
       {
         "type": "multiple_choice",
-        "title": "Warum kein Benzol als Kupplungspartner? (1.2)",
-        "prompt": "Warum funktioniert die Azokupplung E → F nur mit Benzol-1,3-diamin und nicht mit reinem Benzol?",
+        "title": "Benzen statt Benzen-1,3-diamin (1.2)",
+        "prompt": "Warum funktioniert Schritt E → F nicht, wenn anstelle von Benzen-1,3-diamin Benzen verwendet wird?",
         "choices": [
           {
             "id": "a",
@@ -8885,8 +8882,8 @@
       },
       {
         "type": "short_answer",
-        "title": "Stereoisomerie der Azo-Verbindung F (1.3)",
-        "prompt": "Welche Art von Stereoisomerie tritt bei Prontosil (F) auf?",
+        "title": "Stereoisomerie von F (1.3)",
+        "prompt": "Welche Art der Stereoisomerie kann bei F auftreten?",
         "expected_answer": "Diastereomerie: E/Z-Isomerie an der N=N-Doppelbindung — die zwei aromatischen Reste können trans (E) oder cis (Z) zueinander angeordnet sein. Die E-Form ist deutlich stabiler (sterisch entlastet) und thermodynamisch bevorzugt — UV-Licht kann die Z-Form anregen."
       }
     ]
@@ -8898,7 +8895,7 @@
     "type": "composed",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2016 (BW 42), Aufgabe 1 B",
-    "intro": "Synthese von Chloramphenicol — einem klassischen Breitspektrum-Antibiotikum. Schlüsselschritte: Doppelte Henry-Reaktion (Benzaldehyd + 2 Nitromethan-Formaldehyd) → 2-Nitro-1-phenyl-propan-1,3-diol (B) → katalytische Reduktion zum Amino-Diol (C, 2R,3R-Konfiguration) → para-Nitrierung (D → E) → Acylierung mit Dichloressigsäure-Anhydrid.",
+    "intro": "Die österreichische Sandoz GmbH mit ihrem Werk in Tirol ist der größte Hersteller von Antibiotika und der einzige bedeutende Produzent von Penicillin in der westlichen Welt. Die Firma deckt etwa zwei Drittel der weltweiten Produktion an Penicillin V ab, dem säurestabilen Penicillin, das 1951 von zwei Kundler Wissenschaftlern entdeckt worden ist. Dieses Penicillin V sowie drei weitere Antibiotika geben in dieser Aufgabe einen kleinen Einblick in Synthesewege der organischen Chemie.",
     "sections": [
       {
         "type": "synthesis",
@@ -8993,7 +8990,7 @@
       {
         "type": "multiple_choice",
         "title": "Reaktionsmechanismus A → B (1.5)",
-        "prompt": "Nach welchem Mechanismus läuft die Henry-Reaktion (A → B) ab?",
+        "prompt": "Nach welchem Reaktionsmechanismus läuft die Reaktion A → B ab?",
         "choices": [
           {
             "id": "a",
@@ -9018,7 +9015,7 @@
       {
         "type": "multiple_choice",
         "title": "Reaktionsmechanismus D → E (1.5)",
-        "prompt": "Nach welchem Mechanismus läuft die Nitrierung am Aromaten (D → E) ab?",
+        "prompt": "Nach welchem Reaktionsmechanismus läuft die Reaktion D → E ab?",
         "choices": [
           {
             "id": "a",
@@ -9051,11 +9048,11 @@
   {
     "id": "bw42-2016-trimethoprim",
     "category": "Mehrstufige Synthesen",
-    "name": "Trimethoprim-Baustein — BW 2016",
+    "name": "Trimethoprim — BW 2016",
     "type": "composed",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2016 (BW 42), Aufgabe 1 C",
-    "intro": "Synthese eines Schlüssel-Bausteins für Trimethoprim (Dihydrofolat-Reduktase-Inhibitor). Gallolyl-Säurechlorid → Methylester → -aldehyd → 3,4,5-Trimethoxy-Derivat → α-Cyano-β-(3,4,5-Trimethoxyphenyl)-acrylsäureethylester via Knoevenagel-artige Kondensation.",
+    "intro": "Die österreichische Sandoz GmbH mit ihrem Werk in Tirol ist der größte Hersteller von Antibiotika und der einzige bedeutende Produzent von Penicillin in der westlichen Welt. Die Firma deckt etwa zwei Drittel der weltweiten Produktion an Penicillin V ab, dem säurestabilen Penicillin, das 1951 von zwei Kundler Wissenschaftlern entdeckt worden ist. Dieses Penicillin V sowie drei weitere Antibiotika geben in dieser Aufgabe einen kleinen Einblick in Synthesewege der organischen Chemie.",
     "sections": [
       {
         "type": "synthesis",
@@ -9177,8 +9174,8 @@
       },
       {
         "type": "short_answer",
-        "title": "Mesomerie des protonierten Guanidins (1.8)",
-        "prompt": "Warum ist Guanidin so basisch (pK_b ≈ 0,4)? Welche elektronischen Effekte stabilisieren das protonierte Guanidinium-Ion?",
+        "title": "Basizität von Guanidin (1.8)",
+        "prompt": "Guanidin (Reagenz der letzten Reaktion) ist überraschend basisch (pK_B = 0,35). Welcher Effekt ist dafür im protonierten Guanidin verantwortlich? Zeigen Sie das mit mindestens zwei Strukturen.",
         "expected_answer": "Mesomerie (M-Effekt): Im Guanidinium-Kation (H_2N)_3C^+ ist die positive Ladung gleichmäßig über alle drei NH_2-Stickstoff-Atome delokalisiert — drei äquivalente mesomere Grenzstrukturen mit C=N^+(H_2). Diese symmetrische Delokalisierung über drei Heteroatome stabilisiert das Kation außerordentlich → Guanidin ist nach OH^- die stärkste neutrale Base in der organischen Chemie."
       }
     ]
@@ -9186,10 +9183,10 @@
   {
     "id": "bw42-2016-penicillin-v",
     "category": "Mehrstufige Synthesen",
-    "name": "Penicillin V — β-Lactam-Ringschluss (BW 2016)",
+    "name": "Penicillin V — BW 2016",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2016 (BW 42), Aufgabe 1 D",
-    "intro": "Schlüsselschritt der Penicillin-Synthese: Schließung des β-Lactam-Vier-Rings aus einem offenen Vorläufer A (Phenoxyacetyl-Cys-Val-Tripeptid-Analog mit freier Aminogruppe und Carbonsäure) mittels Carbodiimid-aktivierter intramolekularer Amidbildung → Penicillin V (B).",
+    "intro": "Die österreichische Sandoz GmbH mit ihrem Werk in Tirol ist der größte Hersteller von Antibiotika und der einzige bedeutende Produzent von Penicillin in der westlichen Welt. Die Firma deckt etwa zwei Drittel der weltweiten Produktion an Penicillin V ab, dem säurestabilen Penicillin, das 1951 von zwei Kundler Wissenschaftlern entdeckt worden ist. Dieses Penicillin V sowie drei weitere Antibiotika geben in dieser Aufgabe einen kleinen Einblick in Synthesewege der organischen Chemie.",
     "sections": [
       {
         "type": "synthesis",
@@ -9244,8 +9241,8 @@
       },
       {
         "type": "multiple_choice",
-        "title": "Funktionelle Gruppe im β-Lactam (1.11)",
-        "prompt": "Welche spezielle funktionelle Gruppe wird beim Schritt A → B gebildet?",
+        "title": "Funktionelle Gruppe (1.11)",
+        "prompt": "Schreiben Sie den Namen der in der Reaktion A → B gebildeten speziellen funktionellen Gruppe auf.",
         "choices": [
           {
             "id": "a",
@@ -9272,8 +9269,8 @@
       },
       {
         "type": "short_answer",
-        "title": "Rolle des Carbodiimids (1.10)",
-        "prompt": "Warum benötigt der Ringschluss A → B ein Carbodiimid (R-N=C=N-R)? Was passiert mechanistisch?",
+        "title": "Mechanismus A → B (1.10)",
+        "prompt": "Formulieren Sie den Mechanismus der Reaktion von A nach B (nur die beteiligten Molekülteile, Rest = R).",
         "expected_answer": "Eine freie Carbonsäure ist kein gutes Elektrophil — direkt mit einem Amin würde sie nur ein nicht-reaktives Salz bilden. Das Carbodiimid wird zunächst von der deprotonierten Carbonsäure (RCOO^-) addiert → O-Acylisoharnstoff (R-C(=O)-O-C(=NR)-NHR), in dem die Carboxylat-Position jetzt eine ausgezeichnete Abgangsgruppe (Harnstoff-Derivat) trägt. Anschließend greift das Amin den Carbonyl-C an (Acyl-Substitution) → Amid + Harnstoff (R-NH-C(=O)-NH-R). Bei intramolekularer Reaktion entsteht der β-Lactam-Ring."
       }
     ],
@@ -9286,7 +9283,7 @@
     "type": "composed",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2013 (BW 39), Aufgabe 5 C",
-    "intro": "(+)-Grandisol ist das Sexualpheromon des männlichen Baumwollkapselkäfers und ein Cyclobutan-Terpen. Die Aufgabe stellt zwei Strategien für den Vierring gegenüber: die klassische Route der 1970er Jahre schließt ihn durch eine intramolekulare Alkylierung eines Nitril-Carbanions an einem Epoxid, die zweite über eine photochemische [2+2]-Cycloaddition.",
+    "intro": "Ebenso zur Substanzklasse der Terpene gehört das Grandisol, ein Cyclobutanderivat, an dem einige Strategien zur Synthese des Cyclobutan-Systems studiert wurden. (+)-Grandisol ist das Sexualpheromon des männlichen Baumwollkapselkäfers. Dieser Käfer verursacht jährlich große Schäden z. B. an der amerikanischen Baumwollernte.",
     "sections": [
       {
         "type": "synthesis",
@@ -9449,7 +9446,7 @@
       },
       {
         "type": "synthesis",
-        "title": "Route 2: Vierring über [2+2]-Photocycloaddition",
+        "title": "Route 2: eine andere Strategie",
         "scheme": {
           "nodes": [
             {
@@ -9550,8 +9547,8 @@
       },
       {
         "type": "short_answer",
-        "title": "Stereochemischer Ausgang von Route 1",
-        "prompt": "Welches Material entsteht am Ende von Route 1 — reines (+)-Grandisol, ein Racemat oder ein Diastereomerengemisch? Begründen Sie.",
+        "title": "Stereochemischer Ausgang von Route 1 (5.11)",
+        "prompt": "Welche Behauptung(en) treffen auf das Produkt von Route 1 zu? Es entsteht reines (+)-Grandisol / optisch inaktives Material / ein Racemat / ein Diastereomerengemisch. Begründen Sie.",
         "expected_answer": "Es entsteht ein Racemat und damit optisch inaktives Material. Kein Schritt der Sequenz ist enantioselektiv: der Ringschluss C → D erzeugt die beiden Stereozentren zwar mit definierter relativer Konfiguration (cis), aber ohne Vorzugsseite, also beide Enantiomere zu gleichen Teilen."
       }
     ]
@@ -9571,7 +9568,7 @@
     "sections": [
       {
         "type": "synthesis",
-        "title": "Synthese-Schema",
+        "title": "D. Synthese von Kaffee",
         "scheme": {
           "nodes": [
             {
@@ -9674,11 +9671,15 @@
               "reagent_below": "NaH"
             }
           ]
-        }
+        },
+        "hints": [
+          "A enthält 6 C-Atome.",
+          "Bei der Umwandlung von D nach E entsteht ein weiterer Heterocyclus, es findet ein Ringschluss statt."
+        ]
       },
       {
         "type": "short_answer",
-        "title": "Mechanismen",
+        "title": "Mechanismen (2.11)",
         "prompt": "Nennen Sie die Reaktionsmechanismen für 1) Uracil → A und 2) D → E.",
         "expected_answer": "1) Uracil → A: SN2 — NaOCH3 deprotoniert die NH-Gruppen, das entstehende Amid-Anion greift das Methyliodid nucleophil an.\n2) D → E: Reduktion der Nitro- zur Aminogruppe, danach nucleophile Addition des Amins an den Carbonyl-Kohlenstoff des Formamids (AN) mit anschließender Eliminierung von Wasser — also eine Kondensation zum Imidazolring."
       },
@@ -9697,7 +9698,6 @@
     "type": "composed",
     "difficulty": "D",
     "source": "ÖChO Bundeswettbewerb 2021 (BW 47), Aufgabe 5 B",
-    "intro": "Der Schlüsselschritt zum Indol-Alkaloid Yuehchukene ist eine Nazarov-Cyclisierung: das kreuzkonjugierte Divinylketon aus einem Indol-3-yl-Rest und einem Cyclohexadien schließt thermisch — und damit konrotatorisch — zum Cyclopentanon-Ring.",
     "hints": [
       "Die Cyclisierung verläuft thermisch und daher konrotatorisch."
     ],
@@ -9742,7 +9742,10 @@
               "to": "Y"
             }
           ]
-        }
+        },
+        "hints": [
+          "Die Cyclisierung verläuft thermisch und daher konrotatorisch."
+        ]
       }
     ]
   },
@@ -9834,11 +9837,11 @@
             }
           ]
         },
-        "body": "Die hier gezeigte Synthese startet mit einer Di-Oxo-Verbindung. Das Triquinan-Diendion steht thermisch (Δ) mit einem Stereoisomer im Gleichgewicht."
+        "body": "Die hier gezeigte Synthese startet mit einer Di-Oxo-Verbindung."
       },
       {
         "type": "synthesis",
-        "title": "Weg 2: Radikalkaskade",
+        "title": "Weg 2",
         "scheme": {
           "nodes": [
             {
@@ -9889,8 +9892,8 @@
       },
       {
         "type": "short_answer",
-        "title": "Mechanismus der Radikalkaskade",
-        "prompt": "Skizzieren Sie den Mechanismus der Umwandlung des iodierten Alkenins in Hirsuten.",
+        "title": "Mechanismus zu Hirsuten",
+        "prompt": "Skizzieren Sie den Mechanismus der Umwandlung der gegebenen Iodverbindung mit Bu_3SnH/AIBN in Hirsuten.",
         "expected_answer": "AIBN zerfällt thermisch in zwei 2-Cyanopropyl-Radikale, die von Bu3SnH ein H abstrahieren; das entstehende Bu3Sn-Radikal abstrahiert das Iod und erzeugt ein primäres Alkylradikal. Dieses addiert 5-exo-trig an die Cyclopenten-Doppelbindung (zweiter Fünfring). Das dabei gebildete tertiäre Radikal addiert 5-exo-dig an das terminale Alkin (dritter Fünfring). Das resultierende Vinylradikal abstrahiert schließlich H von Bu3SnH — Hirsuten mit exocyclischer Methylengruppe, und das Bu3Sn-Radikal startet die Kette neu."
       }
     ]
@@ -10163,7 +10166,7 @@
     "type": "composed",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2026 (BW 52), Aufgabe 4 C",
-    "intro": "Monosaccharide spielen im Stoffwechsel eine bedeutsame Rolle, ob in der Photosynthese, in der Glycolyse, bei der Gluconeogenese oder bei der Speicherung als osmotisch inaktives Glykogen. Pflanzen (und auch die süßen Meerschweinchen) nutzen Teile des vorliegenden Stoffwechselweges für die Ascorbinsäure-Biosynthese oder zur Produktion von Xylit.",
+    "intro": "Monosaccharide spielen im Stoffwechsel eine bedeutsame Rolle, ob in der Photosynthese (eigentlich die beste „Carbon Capture-Reaktion\"), in der Glycolyse, bei der Gluconeogenese oder bei der Speicherung als osmotisch inaktives Glykogen, womit die Leber den Blutzucker regulieren kann. Pflanzen (und auch die süßen Meerschweinchen) nutzen Teile des vorliegenden Stoffwechselweges für die Ascorbinsäure-Biosynthese oder zur Produktion von Xylit.",
     "sections": [
       {
         "type": "synthesis",
@@ -10307,7 +10310,7 @@
     "type": "composed",
     "difficulty": "D",
     "source": "ÖChO Bundeswettbewerb 2026 (BW 52), Aufgabe 4 D",
-    "intro": "Totalsynthese von (+)-Adrenosteron (ein Hormonzeugsl) — von der Wieland-Miescher-Ketonbildung über eine intramolekulare Diels-Alder-Reaktion zum Steroidgerüst.",
+    "intro": "Totalsynthese von (+)-Adrenosteron. (Info: Adrenosteron isch so ein Hormonzeugsl.)",
     "sections": [
       {
         "type": "synthesis",
@@ -10553,7 +10556,7 @@
       {
         "type": "short_answer",
         "title": "Aussagen zu (+)-Adrenosteron (4.13)",
-        "prompt": "Richtig oder falsch? (a) Das + steht für die Konfiguration R. (b) Das + kann mit einem Polarimeter bestimmt werden. (c) (+)- und (−)-Adrenosteron sind Diastereomere. (d) Eine äquimolare Mischung von (+)- und (−)-Adrenosteron ist ein Racemat. (e) (+)- und (−)-Adrenosteron haben unterschiedliche Siedepunkte.",
+        "prompt": "Richtig oder falsch? (a) Das + in „(+)-Adrenosteron\" steht für die Konfiguration R. (b) Dieses „+\" kann mit einem Polarimeter bestimmt werden. (c) (+)- und (−)-Adrenosteron sind Diastereomere. (d) Eine äquimolare Mischung von (+)- und (−)-Adrenosteron ist ein Racemat. (e) (+)- und (−)-Adrenosteron haben unterschiedliche Siedepunkte. (f) (+)- und (−)-Adrenosteron haben als Steroidhormone die gleiche Wirkung bei der Rückresorption von Wasser aus dem Primärharn. (g) (+) bedeutet eine positive Wirkung auf den menschlichen Körper.",
         "expected_answer": "(a) F, (b) R, (c) F (Enantiomere), (d) R, (e) F"
       }
     ]
@@ -10651,7 +10654,7 @@
     "type": "composed",
     "difficulty": "B",
     "source": "ÖChO Landeswettbewerb 2026 (LW 52), Probleme D, E, F",
-    "intro": "Opioide werden in der Medizin zur Behandlung starker und stärkster Schmerzen eingesetzt. Dazu zwei weitere Wirkstoffsynthesen: das Lokalanästhetikum Benzocain und das Antihistaminikum Diphenhydramin.",
+    "intro": "Schon um 4000 v. Chr. nutzten Sumerer und Ägypter das aus Schlafmohn gewonnene Opium zu Rausch- und Betäubungszwecken. Im Lauf der Zeit wurden daraus „Opioide\" entwickelt. Sie werden in der Medizin zur Behandlung starker und stärkster Schmerzen eingesetzt. Dazu zwei weitere Wirkstoffsynthesen: das Lokalanästhetikum Benzocain und das Antihistaminikum Diphenhydramin.",
     "sections": [
       {
         "type": "synthesis",
@@ -10976,7 +10979,7 @@
             }
           ]
         },
-        "body": "Diphenhydramin C ist ein antihistaminischer Wirkstoff (Allergien, Schlafstörungen, Übelkeit) und gehört zur Gruppe der Ethanolamine. Zwei Synthesewege werden beleuchtet.",
+        "body": "Diphenhydramin C ist ein antihistaminischer Wirkstoff, der zur Behandlung von Allergien, Schlafstörungen und Übelkeit eingesetzt wird. Chemisch gehört es zur Gruppe der Ethanolamine und wirkt vor allem durch Blockade der Histamin-H-Rezeptoren im Körper. In diesem Beispiel werden zwei Synthesewege des Wirkstoffes beleuchtet.",
         "hints": [
           "^1H-NMR von Diphenhydramin C: δ ≈ 7,3 ppm (10H, a); 5,35 ppm (1H, b); 3,55 ppm (2H, c); 2,8 ppm (6H, d); 2,55 ppm (2H, e)."
         ]
@@ -11027,16 +11030,9 @@
               "id": "PB1",
               "label": "",
               "given": false,
-              "smiles": "Br[C@@H](c1ccccc1)[C@@H](Br)c1ccccc1",
+              "smiles": "Br[C@@H](c1ccccc1)[C@@H](Br)c1ccccc1.Br[C@H](c1ccccc1)[C@H](Br)c1ccccc1",
               "name": "(S,S)",
               "explanation": "anti-Addition an (Z)-Stilben → Enantiomerenpaar (R,R)/(S,S)."
-            },
-            {
-              "id": "PB2",
-              "label": "",
-              "given": false,
-              "smiles": "Br[C@H](c1ccccc1)[C@H](Br)c1ccccc1",
-              "name": "(R,R)"
             },
             {
               "id": "C",
@@ -11048,16 +11044,9 @@
               "id": "PC1",
               "label": "",
               "given": false,
-              "smiles": "BrC[C@](C)(Br)[C@H](C)c1ccccc1",
+              "smiles": "BrC[C@](C)(Br)[C@H](C)c1ccccc1.BrC[C@@](C)(Br)[C@H](C)c1ccccc1",
               "name": "Diastereomer 1",
               "explanation": "Das Bromonium-Ion bildet sich von beiden Seiten; das bestehende Stereozentrum bleibt → Diastereomere."
-            },
-            {
-              "id": "PC2",
-              "label": "",
-              "given": false,
-              "smiles": "BrC[C@@](C)(Br)[C@H](C)c1ccccc1",
-              "name": "Diastereomer 2"
             }
           ],
           "edges": [
@@ -11077,23 +11066,9 @@
             },
             {
               "from": [
-                "B"
-              ],
-              "to": "PB2",
-              "reagent_above": "Br_2"
-            },
-            {
-              "from": [
                 "C"
               ],
               "to": "PC1",
-              "reagent_above": "Br_2"
-            },
-            {
-              "from": [
-                "C"
-              ],
-              "to": "PC2",
               "reagent_above": "Br_2"
             }
           ]

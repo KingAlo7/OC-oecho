@@ -22,7 +22,7 @@ Jede Frage ist eine **Aufgabe aus Abschnitten** (`type: "composed"`) — so wie 
 
 | Abschnitts-Typ | Beschreibung |
 |---|---|
-| `synthesis` | Mehrstufiges Schema aus Strukturen + beschrifteten Pfeilen, im Serpentinen-Layout der BW-Angaben. Strukturen stehen ohne Rahmen auf dem Blatt; vorgegebene sind sofort sichtbar, gesuchte werden per Klick aufgedeckt. Verzweigte Pfeile (ein Edukt → mehrere Produkte, mehrere Edukte → ein Produkt) laufen über gemeinsame Pfeilstücke; Beschriftungen weichen Strukturen und anderen Beschriftungen aus, bleiben aber immer am eigenen Pfeil. |
+| `synthesis` | Mehrstufiges Schema aus Strukturen + beschrifteten Pfeilen, angeordnet wie in den BW-Angaben (siehe *Schema-Layout*). Strukturen stehen ohne Rahmen auf dem Blatt; vorgegebene sind sofort sichtbar, gesuchte zeigen ihren Buchstaben und werden per Klick aufgedeckt (der Buchstabe steht dann mittig unter der Struktur). Beschriftungen weichen Strukturen, anderen Beschriftungen und fremden Pfeilen aus, bleiben aber immer am eigenen Pfeil. |
 | `multiple_choice` | 2–4 Antwortmöglichkeiten mit Strukturen, Klick-Grading. Z. B. Markownikow vs. Anti-Markownikow. |
 | `short_answer` | Freitext-Frage mit Musterlösung. Z. B. SN1- vs. SN2-Faktoren. |
 | `mechanism` | Schrittweise Mechanismus-Aufdeckung. Z. B. basenkatalysierte Aldol-Addition: Enolat → Alkoxid → Aldol. |
@@ -39,7 +39,7 @@ Die ganze Aufgabe steht auf **einem Blatt**: eine Fortschrittsleiste oben (Aufde
   - **Vorgegeben / Gesucht** je Knoten — Schalter im Detailpanel oder Taste <kbd>G</kbd>; **✓ Ausgangsstoffe vorgeben** markiert alle Strukturen ohne eingehenden Pfeil
   - Pro Knoten: Beschriftung (leer = keine), Name (erst nach dem Aufdecken sichtbar) und **Angabe-Text unter der Struktur** (`caption`, immer sichtbar, z. B. Summenformel)
   - Pro Abschnitt: **Angabe-Text & Hinweise** (`body`, `hints`)
-  - **Auto-Layout** ordnet das Schema im Serpentinen-Muster der BW-Angaben an
+  - **Auto-Layout** ordnet das Schema nach Reaktionen an (siehe *Schema-Layout*)
   - „Layout neu" pro Knoten (RDKit-CoordGen für textbuchgenaue 2D-Koordinaten)
 - Tab **Commit** — Push-to-`main` via GitHub REST API mit PAT (im Browser-`localStorage`)
 
@@ -71,7 +71,7 @@ OC-oecho/
 ├── export.html             ← Druckansicht
 ├── admin.html              ← Admin-Bereich (Reaktionen + Quiz + Commit)
 ├── mol-renderer.js         ← OpenChemLib-Wrapper (MOL/SMILES/Reaktion → SVG)
-├── scheme-graph-editor.js  ← SVG-Schema-Editor + Quiz-Viewer (Serpentinen-Layout)
+├── scheme-graph-editor.js  ← SVG-Schema-Editor + Quiz-Viewer (Reaktions-Layout, Pfeil-Routing)
 ├── rdkit-helper.js         ← Lazy-Loader für RDKit-JS (Admin-Layout-Optimierung)
 ├── server.js               ← Express-Server + /api/questions + /api/ocr
 ├── package.json
@@ -204,13 +204,28 @@ Array von Fragenobjekten. Jede Frage hat `type: "composed"` und ein Array `secti
 - `label` → Buchstabe unter der Struktur; `""` blendet ihn aus (z. B. für ungelabelte Edukte)
 - `name` → wird erst nach dem Aufdecken gezeigt (bei vorgegebenen sofort)
 - `caption` → Text, den die Angabe unter die Verbindung schreibt (Summenformel, „R-Form“, Name); immer sichtbar, LaTeX-Syntax erlaubt
+- `alias` → `{ "0": "X" }` zeigt am Atom 0 (Reihenfolge im SMILES) „X“ statt des Elementsymbols, wenn die Angabe ein allgemeines Symbol zeichnet
 - Abschnitt-Felder `body` (Angabe-Text) und `hints` (Array, „Hinweise“ der Angabe) werden über dem Abschnitt angezeigt
-- `given: false` → Struktur ist mit „?" überdeckt, Klick deckt auf
+- `given: false` → an Stelle der Struktur steht ihr Buchstabe (bzw. „?“ bei leerem `label`), Klick deckt auf
 - `mol` (bevorzugt) wird vor `smiles` gerendert — enthält die optimierten Koordinaten
 - `x`/`y` sind Layout-Hinweise. Fehlt `"layout": "manual"` am Schema, rechnet der Viewer das
-  Serpentinen-Layout für die Bildschirmbreite des Lesers neu (4–5 Spalten am Laptop, 2 am Handy).
+  Layout für die Bildschirmbreite des Lesers neu (so viele Spalten, wie ohne starkes Verkleinern passen; 2 am Handy).
   Sobald jemand im Admin einen Knoten zieht, wird `"layout": "manual"` gesetzt und die
   Positionen bleiben unangetastet.
+
+**Schema-Layout.** Pfeile mit denselben Edukten und derselben Beschriftung bilden eine Reaktion
+(„A + W → B + X“); gleich beschriftete Pfeile von einem Edukt ebenso („C → E + d“). Pro Reaktion gibt es ein
+Haupt-Edukt (längster Weg davor) und ein Haupt-Produkt (längster Weg danach):
+
+- Die Hauptkette läuft geradeaus; am Rand der Bildschirmbreite biegt sie nach unten ab und läuft zurück.
+- Ein Co-Edukt steht über dem Pfeil und mündet in ihn, ein Co-Produkt steht darunter und zweigt ab.
+  Drei oder mehr Edukte stehen untereinander und laufen in einer Klammer zusammen; an senkrechten
+  Pfeilen stehen Co-Edukte/-Produkte links und rechts.
+- Nebenreaktionen zweigen als Gabel ab (gemeinsames Pfeilstück, eigene Spitze) oder gehen nach unten,
+  oben oder zurück — je nachdem, was frei ist und näher an den Folgeverbindungen liegt.
+- Eine Verbindung, die über mehrere Wege entsteht, sitzt am längsten Weg; kürzere Wege münden als
+  eigene Pfeile ein. Pfeile, die nicht in dieses Raster passen, werden um Strukturen herum geführt
+  und meiden bestehende Pfeile.
 
 **Abschnitt `type: "multiple_choice"`** — Strukturen oder Text-Antworten:
 

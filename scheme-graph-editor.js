@@ -26,15 +26,18 @@
  *   `opts.revealedNodeIds: Set<string>` (viewer only) pre-marks hidden
  *   nodes as already-revealed.
  *
- * Arrow routing:
- *   - one source → one target: straight shaft, or an orthogonal bend
- *   - one source → several targets (split arrow): a short shared stub,
- *     then one branch per target; each branch carries its own reagent
- *     on its own final segment, so labels never stack on one spot.
- *     If every branch has the same reagent it is written once, on the
- *     shared shaft ("LiAlH4 → A + B").
- *   - several sources → one target (edge.from has >1 id): branches meet
- *     in a junction, one trunk with one arrowhead and one label.
+ * Layout and arrows (auto layout, see planLayout):
+ *   - edges are grouped into reactions; the main chain runs straight on
+ *     and turns down at the width limit
+ *   - co-reactants sit above the arrow and join it, co-products below;
+ *     side reactions fork off the shaft or leave down / up / back
+ *   - arrows that don't fit the grid are routed around structures and
+ *     away from existing arrows
+ *   - reagent text is placed last and avoids structures, other text and
+ *     other arrows, always on its own arrow
+ * With "layout": "manual" (a node was dragged in the editor) the older
+ * free routing is used: split arrows share a stub, several sources meet
+ * in a junction.
  *
  * Callbacks:
  *   onChange(), onSelectNode(node|null), onSelectEdge(edge|null, idx),
@@ -68,7 +71,6 @@
   const ARROW_MIN      = 74;    // px — shortest arrow we ever draw
   const ARROW_MAX      = 210;   // px — longest; beyond this we wrap harder
   const STACK_GAP      = 26;    // px between nodes stacked in one column
-  const ROW_GAP        = 74;    // px of vertical run for the wrap-around arrow
 
   /* Sub/superscripts are drawn with dy shifts, so their exact overhang
      is known and the label can be kept a FIXED distance off the shaft
@@ -79,6 +81,9 @@
   const LINE_LEAD      = 3.5;   // px between stacked label lines
   const JUNCTION_STUB  = 16;    // px of shared shaft before a split arrow fans out
   const VLABEL_DX      = 8;     // px between a vertical shaft and its label block
+  const JUNCTION_OFF   = 30;    // px from a gap's start to the point where things join
+  const GAP_EMPTY      = 40;
+  const MIN_FIT        = 0.72;  // don't pick a grid that needs shrinking below this    // px between compound columns with no arrow between them
 
   /* Viewer geometry. OCL is asked for a cropped SVG, and its reported
      size becomes the node's visible footprint. */
@@ -181,7 +186,7 @@
     const wb = Math.max(0, ...below.map(l => measureText(plainChemText(l), LABEL_FONT_BELOW)));
     const w  = Math.max(wa, wb);
     return {
-      above, below,
+      above, below, edge,
       width: w,
       blockH: (above.length + below.length) * LABEL_LINE_H,
       shaft: Math.max(ARROW_MIN, Math.min(ARROW_MAX, Math.ceil(w) + LABEL_PAD_X * 2))
@@ -215,6 +220,480 @@
 
   const DIR = { R: [1, 0], L: [-1, 0], D: [0, 1], U: [0, -1] };
   const isH = side => side === 'R' || side === 'L';
+
+  /* ── Reaction layout planner ─────────────────────────────────────
+     Edges are grouped into reactions (edges with the same several
+     sources and the same reagents are ONE reaction "A + W → B + X").
+     Every reaction gets a main reactant, a main product, co-reactants
+     and co-products, and is laid out the way exam sheets draw it:
+       - the main chain runs straight on; at the width limit it turns
+         down and continues in the opposite direction
+       - a co-reactant sits above the arrow and joins it; a co-product
+         sits below and leaves it; three or more reactants stack in a
+         column and meet in a bracket
+       - a side reaction forks off the shaft (shared stub, bus, own
+         arrowhead), or leaves downwards / upwards / backwards —
+         whichever is free and cheapest
+     Positions are grid cells (h, r) in half-column units: compounds of
+     the chain on even h, co-reactants/co-products in the odd arrow gaps.
+     Returns { pos: Map(id → {h, r, jdir}), items: [...] }. */
+  function planLayout(nodes, edges, cols) {
+    const ids = new Set(nodes.map(n => n.id));
+    const order = new Map(nodes.map((n, i) => [n.id, i]));
+    const trim = s => String(s == null ? '' : s).trim();
+
+    const rxs = [];
+    const multi = new Map();
+    edges.forEach((e, i) => {
+      if (!ids.has(e.to)) return;
+      const from = [...new Set((e.from || []).filter(id => ids.has(id) && id !== e.to))];
+      if (!from.length) return;
+      let rx = null;
+      const lab = trim(e.reagent_above) + '#' + trim(e.reagent_below);
+      if (from.length > 1 || lab !== '#') {
+        const key = [...from].sort().join('|') + '#' + lab;
+        rx = multi.get(key);
+        if (!rx) { rx = { srcs: from, prods: [], edges: [] }; multi.set(key, rx); }
+      } else rx = { srcs: from, prods: [], edges: [] };
+      if (!rx.edges.length) { rx.idx = rxs.length; rxs.push(rx); }
+      if (!rx.prods.includes(e.to)) rx.prods.push(e.to);
+      rx.edges.push(i);
+    });
+
+    const prodBy = new Map(), consBy = new Map();
+    ids.forEach(id => { prodBy.set(id, []); consBy.set(id, []); });
+    for (const rx of rxs) {
+      rx.prods.forEach(p => prodBy.get(p).push(rx));
+      rx.srcs.forEach(s => consBy.get(s).push(rx));
+    }
+    const memo = fn => {
+      const m = new Map(), busy = new Set();
+      const f = id => {
+        if (m.has(id)) return m.get(id);
+        if (busy.has(id)) return 0;
+        busy.add(id);
+        const v = fn(id, f);
+        busy.delete(id);
+        m.set(id, v);
+        return v;
+      };
+      return f;
+    };
+    const down = memo((id, f) => {
+      let d = 0;
+      for (const rx of consBy.get(id)) for (const p of rx.prods) d = Math.max(d, 1 + f(p));
+      return d;
+    });
+    const up = memo((id, f) => {
+      let d = 0;
+      for (const rx of prodBy.get(id)) for (const s of rx.srcs) d = Math.max(d, 1 + f(s));
+      return d;
+    });
+    const best = (list, key) => list.reduce((a, b) => {
+      const ka = key(a), kb = key(b);
+      for (let i = 0; i < ka.length; i++) if (ka[i] !== kb[i]) return kb[i] > ka[i] ? b : a;
+      return a;
+    });
+    for (const rx of rxs) {
+      rx.main = best(rx.srcs, s => [up(s), consBy.get(s).length, -order.get(s)]);
+      rx.prod = best(rx.prods, p => [down(p), -order.get(p)]);
+    }
+
+    /* ── grid state ── */
+    const cell = new Map();
+    const pos = new Map();
+    const laid = new Set();
+    const items = [];
+    const K = (h, r) => h + ',' + r;
+    const odd = h => (h & 1) === 1;
+    let minH = Infinity, maxH = -Infinity, maxR = -Infinity;
+    const span = 2 * (Math.max(2, cols) - 1);
+    const inSpan = h => !pos.size || Math.max(maxH, h) - Math.min(minH, h) <= span;
+    const canPut = (h, r) => {
+      if (cell.has(K(h, r))) return false;
+      if (odd(h)) return cell.get(K(h - 1, r)) !== 'N' && cell.get(K(h + 1, r)) !== 'N';
+      return true;
+    };
+    const passOk = (h, r, owner) => {
+      const v = cell.get(K(h, r));
+      return v == null || v === 'R' || (owner != null && v === 'A:' + owner);
+    };
+    const put = (id, h, r, jdir) => {
+      pos.set(id, { h, r, jdir: jdir || 1 });
+      cell.set(K(h, r), 'N');
+      if (odd(h)) for (const d of [-1, 1]) if (!cell.has(K(h + d, r))) cell.set(K(h + d, r), 'R');
+      minH = Math.min(minH, h); maxH = Math.max(maxH, h); maxR = Math.max(maxR, r);
+    };
+    const mark = (h, r, v) => {
+      const cur = cell.get(K(h, r));
+      if (cur == null || cur === 'R') cell.set(K(h, r), v);
+    };
+
+    /* Co-nodes still to be placed, split by direction. */
+    const coOf = (rx) => ({
+      ins: rx.srcs.filter(s => s !== rx.main),
+      outs: rx.prods.filter(p => p !== rx.prod)
+    });
+
+    /* Assign co-nodes to slots; returns { co, extra } or null if a
+       required cell is taken by another assignment. */
+    const slotCo = (rx, slots, inPref, outPref) => {
+      const { ins, outs } = coOf(rx);
+      const used = new Set(), co = [], extra = [];
+      let wide = 0;
+      const take = (id, dir, prefs) => {
+        if (pos.has(id)) { extra.push({ id, dir }); return; }
+        // Within the width if possible; a slightly wider scheme still
+        // beats a co-reactant parked far away.
+        for (const strict of [true, false]) {
+          for (const s of prefs) {
+            const c = slots[s];
+            if (used.has(s) || !c || !canPut(c[0], c[1]) || (strict && !inSpan(c[0]))) continue;
+            if (c[2] && !c[2].every(p => passOk(p[0], p[1]))) continue;
+            used.add(s);
+            if (!strict) wide++;
+            co.push({ id, dir, slot: s, h: c[0], r: c[1], via: c[2] || [] });
+            return;
+          }
+        }
+        extra.push({ id, dir });
+      };
+      ins.forEach(id => take(id, 'in', inPref));
+      outs.forEach(id => take(id, 'out', outPref));
+      return { co, extra, wide };
+    };
+
+    /* Straight horizontal reaction. `fromProd` anchors on an already
+       placed product (used when laying a feed chain backwards). */
+    function tryH(rx, dx, fromProd) {
+      let mh, mr, th, tr;
+      if (fromProd) { const p = pos.get(rx.prod); th = p.h; tr = p.r; mh = th - 2 * dx; mr = tr; if (!canPut(mh, mr)) return null; }
+      else { const m = pos.get(rx.main); mh = m.h; mr = m.r; th = mh + 2 * dx; tr = mr; if (!canPut(th, tr)) return null; }
+      const g = mh + dx;
+      if (!passOk(g, mr)) return null;
+      const { ins } = coOf(rx);
+      if (ins.filter(id => !pos.has(id)).length >= 2) return tryStack(rx, dx, fromProd);
+      const s = slotCo(rx, { up: [g, mr - 1], dn: [g, mr + 1] }, ['up', 'dn'], ['dn', 'up']);
+      return { type: 'h', rx, dx, gap: g, row: mr, mh, mr, th, tr, fromProd, ...s,
+               cost: s.extra.filter(x => !pos.has(x.id)).length * 3 + s.wide };
+    }
+
+    /* Three or more reactants: stacked in one column, bracket into J. */
+    function tryStack(rx, dx, fromProd) {
+      const { ins } = coOf(rx);
+      const stack = ins.filter(id => !pos.has(id));
+      for (const sy of [1, -1]) {
+        let mh, mr, th;
+        if (fromProd) { const p = pos.get(rx.prod); th = p.h; mr = p.r; mh = th - 2 * dx; if (!canPut(mh, mr)) continue; }
+        else { const m = pos.get(rx.main); mh = m.h; mr = m.r; th = mh + 2 * dx; if (!canPut(th, mr)) continue; }
+        const g = mh + dx;
+        let ok = passOk(g, mr);
+        for (let i = 1; ok && i <= stack.length; i++) ok = canPut(mh, mr + sy * i) && passOk(g, mr + sy * i);
+        if (!ok) continue;
+        const co = stack.map((id, i) => ({ id, dir: 'in', slot: 'stack', h: mh, r: mr + sy * (i + 1), via: [] }));
+        const rest = { ...rx, srcs: [rx.main, ...ins.filter(id => pos.has(id))] };
+        const s = slotCo(rest, { up: [g, mr - sy] }, [], ['up']);
+        return { type: 'stack', rx, dx, sy, gap: g, row: mr, mh, mr, th, tr: mr, fromProd,
+                 co: co.concat(s.co), extra: s.extra, cost: 0.5 };
+      }
+      return null;
+    }
+
+    /* Vertical reaction over k rows; co-nodes sit left/right of the
+       shaft in the row just before the target. */
+    function tryV(rx, dy, k, fromProd) {
+      const { ins, outs } = coOf(rx);
+      const needJ = ins.concat(outs).some(id => !pos.has(id));
+      if (needJ && k < 2) return null;
+      let mh, mr, tr;
+      if (fromProd) { const p = pos.get(rx.prod); mh = p.h; tr = p.r; mr = tr - dy * k; if (!canPut(mh, mr)) return null; }
+      else { const m = pos.get(rx.main); mh = m.h; mr = m.r; tr = mr + dy * k; if (!canPut(mh, tr)) return null; }
+      for (let i = 1; i < k; i++) if (!passOk(mh, mr + dy * i)) return null;
+      const jRow = tr - dy;
+      const mk = (h, r) => [h, r, [[h + (h < mh ? 1 : -1), r]]];
+      let s = slotCo(rx, { l: mk(mh - 2, jRow), r: mk(mh + 2, jRow) }, ['l', 'r'], ['r', 'l']);
+      const want = ins.concat(outs).filter(id => !pos.has(id)).length;
+      const score = x => (want - x.co.length) * 3 + x.wide;
+      if (score(s) > 0 && k >= 1 + want) {
+        // One co-node per row, all on the side that stays within the width.
+        for (const side of [-1, 1]) {
+          const slots = {};
+          const names = [];
+          for (let i = 0; i < want; i++) { names.push('t' + i); slots['t' + i] = mk(mh + 2 * side, mr + dy * (k - want + i)); }
+          const t = slotCo(rx, slots, names, names);
+          if (score(t) < score(s)) s = t;
+        }
+      }
+      return { type: 'v', rx, dy, k, jRow, mh, mr, th: mh, tr, fromProd, ...s,
+               cost: s.extra.filter(x => !pos.has(x.id)).length * 3 + s.wide };
+    }
+
+    /* Fork: shared stub from the main reactant, bus sideways to the
+       target row, own final run and arrowhead. */
+    function tryF(rx, dx, sy, k) {
+      const { ins, outs } = coOf(rx);
+      if (ins.length || outs.length) return null;
+      const m = pos.get(rx.main);
+      const g = m.h + dx, th = m.h + 2 * dx, tr = m.r + sy * k;
+      if (!canPut(th, tr)) return null;
+      for (let i = 0; i <= k; i++) if (!passOk(g, m.r + sy * i, rx.main)) return null;
+      return { type: 'fork', rx, dx, sy, k, gap: g, row: m.r, mh: m.h, mr: m.r, th, tr, co: [], extra: [], cost: 0 };
+    }
+
+    function commit(it) {
+      const rx = it.rx;
+      laid.add(rx.idx);
+      if (it.fromProd) put(rx.main, it.mh, it.mr, it.dx);
+      else put(rx.prod, it.th, it.tr, it.dx || 1);
+      if (it.type === 'h') {
+        mark(it.gap, it.row, (it.co.length || it.extra.length ? 'X:' : 'A:') + rx.main);
+      } else if (it.type === 'stack') {
+        for (let i = 0; i <= it.co.filter(c => c.slot === 'stack').length; i++) mark(it.gap, it.row + it.sy * i, 'X:' + rx.main);
+      } else if (it.type === 'fork') {
+        for (let i = 0; i <= it.k; i++) mark(it.gap, it.row + it.sy * i, 'A:' + rx.main);
+      } else if (it.type === 'v') {
+        for (let i = 1; i < it.k; i++) mark(it.mh, it.mr + it.dy * i, 'A:' + rx.main);
+      }
+      for (const x of it.extra) if (!pos.has(x.id) && !near.has(x.id)) near.set(x.id, { h: it.th, r: it.tr });
+      for (const c of it.co) {
+        put(c.id, c.h, c.r, it.dx || 1);
+        c.via.forEach(p => mark(p[0], p[1], 'X:' + rx.main));
+      }
+      items.push(it);
+    }
+
+    // A compound made by several reactions is placed by the one on the
+    // longest path; shorter routes into it are drawn as merging arrows.
+    const owns = rx => prodBy.get(rx.prod).every(o => o === rx || pos.has(o.main) || laid.has(o.idx) || up(o.main) <= up(rx.main));
+    const open = id => rxs.filter(rx => rx.main === id && !laid.has(rx.idx) && !pos.has(rx.prod) && owns(rx));
+    const pickMainFor = id => {
+      const l = rxs.filter(rx => rx.main === id && !laid.has(rx.idx));
+      return l.length ? best(l, rx => [down(rx.prod), -rx.idx]) : null;
+    };
+    const pickMain = id => {
+      const l = open(id);
+      return l.length ? best(l, rx => [down(rx.prod), -rx.idx]) : null;
+    };
+
+    /* Feed chains of co-reactants are laid backwards from the co-node. */
+    function layUpstream(id, flow) {
+      for (const rx of prodBy.get(id)) {
+        if (laid.has(rx.idx) || rx.prod !== id || pos.has(rx.main)) continue;
+        // A compound made from something already drawn is a branch of
+        // that compound, not a feed of this one.
+        if (prodBy.get(rx.main).some(p => p.srcs.some(x => pos.has(x)))) continue;
+        const cands = [];
+        const add = (c, it) => { if (it) cands.push([c + it.cost, it]); };
+        const p = pos.get(id);
+        const over = h => (inSpan(h) ? 0 : 4);
+        add(over(p.h - 2 * flow), tryH(rx, flow, true));
+        for (let k = 1; k <= 3; k++) { add(1 + k, tryV(rx, 1, k, true)); add(1.2 + k, tryV(rx, -1, k, true)); }
+        add(2.5 + over(p.h + 2 * flow), tryH(rx, -flow, true));
+        if (!cands.length) continue;
+        cands.sort((a, b) => a[0] - b[0]);
+        const it = cands[0][1];
+        commit(it);
+        afterCommit(it, it.dx || flow);
+        layUpstream(rx.main, it.dx || flow);
+        pending.push([rx.main, it.dx || flow]);
+      }
+    }
+    const pending = [];
+    const near = new Map();   // co-node without a slot → where its reaction ended up
+    function afterCommit(it, flow) {
+      for (const c of it.co) if (c.dir === 'in') layUpstream(c.id, flow);
+      for (const c of it.co) if (c.dir === 'out' || c.slot === 'stack') pending.push([c.id, flow]);
+    }
+
+    function placeBranch(rx, flow) {
+      if (laid.has(rx.idx) || pos.has(rx.prod)) return;
+      const m = pos.get(rx.main);
+      const cands = [];
+      // Stay close to compounds this branch leads into, and never on the
+      // far side of the source's own row from them.
+      const pull = it => {
+        let c = 0;
+        for (const nx of consBy.get(rx.prod)) {
+          const P = pos.get(nx.prod);
+          if (!P || nx.prod === rx.main) continue;
+          c += Math.abs(it.tr - P.r) * 0.6 + Math.abs(it.th - P.h) * 0.15;
+          if ((it.tr - m.r) * (P.r - m.r) < 0) c += 2;
+          // Compounds in the way of the later arrow (along the row, then up/down).
+          const h0 = Math.min(it.th, P.h), h1 = Math.max(it.th, P.h);
+          for (let h = h0 + 1; h < h1; h++) if (cell.get(K(h, it.tr)) === 'N') c += 1.5;
+          const r0 = Math.min(it.tr, P.r), r1 = Math.max(it.tr, P.r);
+          for (let r = r0 + 1; r < r1; r++) if (cell.get(K(P.h, r)) === 'N') c += 1.5;
+        }
+        return c;
+      };
+      const add = (c, f, it) => { if (it) cands.push([c + it.cost + pull(it), f, it]); };
+      const fwd = inSpan(m.h + 2 * flow), back = inSpan(m.h - 2 * flow);
+      if (fwd) add(0, flow, tryH(rx, flow));
+      for (let k = 1; k <= 6; k++) {
+        if (fwd) {
+          add(1 + (k - 1) * 0.9, flow, tryF(rx, flow, 1, k));
+          add(1.15 + (k - 1) * 0.9, flow, tryF(rx, flow, -1, k));
+        }
+        add(1.3 + (k - 1), flow, tryV(rx, 1, k));
+        add(1.5 + (k - 1), flow, tryV(rx, -1, k));
+      }
+      if (back) {
+        add(1.7, -flow, tryH(rx, -flow));
+        for (let k = 1; k <= 3; k++) {
+          add(2.2 + (k - 1) * 0.9, -flow, tryF(rx, -flow, 1, k));
+          add(2.3 + (k - 1) * 0.9, -flow, tryF(rx, -flow, -1, k));
+        }
+      }
+      if (!cands.length) {
+        // Nowhere tidy: nearest free cell, routed freely.
+        for (let d = 1; d < 40; d++) {
+          for (const [dh, dr] of [[0, d], [2 * flow, d], [-2 * flow, d], [0, -d], [2 * d * flow, 0]]) {
+            const h = m.h + dh, r = m.r + dr;
+            if (odd(h) || !canPut(h, r) || !inSpan(h)) continue;
+            const it = { type: 'free', rx, mh: m.h, mr: m.r, th: h, tr: r, co: [],
+                         extra: coOf(rx).ins.concat(coOf(rx).outs).map(id => ({ id, dir: rx.srcs.includes(id) ? 'in' : 'out' })) };
+            commit(it);
+            layChain(rx.prod, flow);
+            return;
+          }
+        }
+        return;
+      }
+      cands.sort((a, b) => a[0] - b[0]);
+      const [, f, it] = cands[0];
+      commit(it);
+      afterCommit(it, f);
+      layChain(rx.prod, f);
+    }
+
+    function layChain(start, flow) {
+      const seg = [start];
+      let cur = start, turn = null;
+      for (;;) {
+        const rx = pickMain(cur);
+        if (!rx) break;
+        let it = inSpan(pos.get(cur).h + 2 * flow) ? tryH(rx, flow) : null;
+        if (it && it.cost > 0) {
+          // No room above/below the arrow here: step down a level instead,
+          // with the co-reactants beside the vertical arrow.
+          for (let k = 2; k <= 4; k++) {
+            const t = tryV(rx, 1, k);
+            if (t && !t.cost) { it = t; break; }
+          }
+        }
+        if (!it) { turn = rx; break; }
+        commit(it);
+        afterCommit(it, flow);
+        cur = rx.prod;
+        seg.push(cur);
+      }
+      // Keep the column under the turning compound free for the turn.
+      const lane = [];
+      if (turn) {
+        const m = pos.get(cur);
+        for (let i = 1; i <= 24; i++) {
+          const k = K(m.h, m.r + i);
+          if (!cell.has(k)) { cell.set(k, 'T'); lane.push(k); }
+        }
+      }
+      for (const id of seg) {
+        for (const rx of open(id)) if (rx !== turn) placeBranch(rx, flow);
+        layUpstream(id, flow);
+      }
+      while (pending.length) {
+        const [id, f] = pending.shift();
+        for (const rx of open(id)) placeBranch(rx, f);
+      }
+      lane.forEach(k => { if (cell.get(k) === 'T') cell.delete(k); });
+      if (turn && !laid.has(turn.idx) && !pos.has(turn.prod)) {
+        const m = pos.get(cur);
+        let it = null;
+        // Leave a spare row when the next reaction needs a slot above.
+        const nextRx = pickMainFor(turn.prod);
+        const spare = nextRx && coOf(nextRx).ins.concat(coOf(nextRx).outs).filter(id => !pos.has(id)).length >= 2 ? 1 : 0;
+        for (let k = Math.max(1, maxR - m.r + 1 + spare); k <= maxR - m.r + 8; k++) {
+          const t = tryV(turn, 1, k);
+          if (t && (!it || t.cost < it.cost)) it = t;
+          if (it && !it.cost) break;
+        }
+        if (it) {
+          commit(it);
+          afterCommit(it, flow);
+          layChain(turn.prod, -flow);
+        } else {
+          // Blocked: wrap like text onto a new row.
+          const e0 = minH - (odd(minH) ? 1 : 0);
+          const e1 = maxH + (odd(maxH) ? 1 : 0);
+          const it2 = { type: 'wrap', rx: turn, mh: m.h, mr: m.r, th: flow > 0 ? e0 : e1, tr: maxR + 1,
+                        co: [], extra: coOf(turn).ins.concat(coOf(turn).outs).map(id => ({ id, dir: turn.srcs.includes(id) ? 'in' : 'out' })) };
+          laid.add(turn.idx);
+          put(turn.prod, it2.th, it2.tr, flow);
+          items.push(it2);
+          for (const x of it2.extra) if (!pos.has(x.id) && !near.has(x.id)) near.set(x.id, { h: it2.th, r: it2.tr });
+          layChain(turn.prod, flow);
+        }
+      }
+    }
+
+    /* Chains start at the compound with the longest way ahead; a root
+       that only ever joins another reaction is placed with it. */
+    const starts = nodes.map(n => n.id)
+      .filter(id => !prodBy.get(id).length && rxs.some(rx => rx.main === id))
+      .sort((a, b) => down(b) - down(a) || order.get(a) - order.get(b));
+    const fresh = () => (pos.size ? maxR + 2 : 0);
+    for (const id of starts) {
+      if (pos.has(id)) continue;
+      for (const rx of consBy.get(id)) if (pos.has(rx.prod)) layUpstream(rx.prod, pos.get(rx.prod).jdir || 1);
+      if (pos.has(id)) continue;
+      put(id, pos.size ? minH : 0, fresh());
+      layChain(id, 1);
+    }
+    // Whatever is left (cycles, isolated compounds, co-nodes without a
+    // free slot). Loose compounds line up in one row.
+    let loose = null;
+    for (;;) {
+      const left = nodes.find(n => !pos.has(n.id));
+      if (!left) break;
+      const e0 = Number.isFinite(minH) ? minH - (odd(minH) ? 1 : 0) : 0;
+      const alone = !open(left.id).length;
+      const at = near.get(left.id);
+      let spot = null;
+      if (at) {
+        // Nearest free cell next to its reaction: same row first.
+        for (let d = 1; d < 12 && !spot; d++) {
+          for (const [dh, dr] of [[-2 * d, 0], [2 * d, 0], [0, d], [-2, d], [2, d], [0, -d]]) {
+            const h = at.h + dh, r = at.r + dr;
+            if (!odd(h) && canPut(h, r) && inSpan(h)) { spot = { h, r }; break; }
+          }
+        }
+      }
+      if (spot) put(left.id, spot.h, spot.r);
+      else if (alone && loose && inSpan(loose.h + 2) && canPut(loose.h + 2, loose.r)) put(left.id, loose.h + 2, loose.r);
+      else put(left.id, e0, fresh());
+      loose = alone ? pos.get(left.id) : null;
+      layChain(left.id, 1);
+    }
+
+    // Drop rows that hold no compound; arrows through them just shorten.
+    const used = [...new Set([...pos.values()].map(p => p.r))].sort((a, b) => a - b);
+    const rowMap = new Map(used.map((r, i) => [r, i]));
+    const remap = r => {
+      if (rowMap.has(r)) return rowMap.get(r);
+      let i = 0;
+      while (i < used.length && used[i] < r) i++;
+      return i - 0.5;
+    };
+    for (const p of pos.values()) p.r = rowMap.get(p.r);
+    for (const it of items) {
+      it.row = remap(it.row); it.mr = remap(it.mr); it.tr = remap(it.tr);
+      if (it.jRow != null) it.jRow = remap(it.jRow);
+    }
+    const h0 = Math.min(...[...pos.values()].map(p => p.h));
+    const hShift = h0 - (odd(h0) ? 1 : 0);
+    for (const p of pos.values()) p.h -= hShift;
+    for (const it of items) { it.mh -= hShift; it.th -= hShift; if (it.gap != null) it.gap -= hShift; }
+    return { pos, items, rows: used.length, laidEdges: new Set(items.flatMap(it => it.rx.edges)) };
+  }
 
   class SchemeGraphEditor {
     constructor(container, scheme, opts) {
@@ -308,145 +787,100 @@
       if (missingAny || this._isAutoLayout()) this.autoLayout();
     }
 
-    _fitColumns(pitch) {
-      const avail = (this.svg && this.svg.clientWidth) || this.container.clientWidth || 0;
-      if (!avail) return 4;
-      const usable = Math.max(NODE_W, avail - 48);
-      return Math.max(2, Math.min(5, Math.floor((usable + pitch - NODE_W) / pitch)));
-    }
-
-    /* Column pitch: the widest label plus room for split/merge junctions. */
-    _pitch() {
-      let shaft = ARROW_MIN;
-      for (const e of this.scheme.edges) shaft = Math.max(shaft, edgeLabelMetrics(e).shaft);
-      const outDeg = {};
-      let junction = false;
-      for (const e of this.scheme.edges) {
-        const f = e.from || [];
-        if (f.length > 1) junction = true;
-        if (f.length === 1) outDeg[f[0]] = (outDeg[f[0]] || 0) + 1;
-      }
-      if (Object.values(outDeg).some(d => d > 1)) junction = true;
-      return NODE_W + shaft + (junction ? JUNCTION_STUB + 8 : 0);
-    }
-
-    /* Row gap: tall enough that a vertical wrap-around arrow can carry
-       its label block beside it without the block reaching the rows
-       above or below. */
-    _rowGap() {
-      let h = 0;
-      for (const e of this.scheme.edges) h = Math.max(h, edgeLabelMetrics(e).blockH);
-      return Math.max(ROW_GAP, h + 34);
-    }
-
-    /* ── Serpentine (boustrophedon) layout ───────────────────────────
-         A ──→ B ──→ C ──→ D
-                           │
-         H ←── G ←── F ←── E
-         │
-         I ──→ J ──→ …
-       Nodes sharing a topological layer stack inside one column. */
+    /* ── Reaction layout ──────────────────────────────────────────────
+       planLayout() decides the grid; this turns it into pixels. Arrow
+       gaps are as wide as their reagent text needs (plus the junction
+       stub where something joins or forks); row gaps grow where a
+       vertical arrow carries text. */
     autoLayout(opts) {
       opts = opts || {};
       const nodes = this.scheme.nodes;
-      const edges = this.scheme.edges;
+      const E = this.scheme.edges;
       if (!nodes.length) return;
+      const cols = Math.max(2, opts.columns || this.layoutColumns || this._bestCols());
+      const plan = planLayout(nodes, E, cols);
+      const { pos, items } = plan;
 
-      const ids = new Set(nodes.map(n => n.id));
-      const incoming = {}, outgoing = {};
-      ids.forEach(id => { incoming[id] = []; outgoing[id] = []; });
-      for (const e of edges) {
-        if (!ids.has(e.to)) continue;
-        for (const fid of (e.from || [])) {
-          if (!ids.has(fid)) continue;
-          incoming[e.to].push(fid);
-          outgoing[fid].push(e.to);
+      const forkKeys = new Set(items.filter(it => it.type === 'fork').map(it => it.rx.main + '|' + it.gap));
+      const hasJ = it => it.type === 'fork' || it.type === 'stack' || it.co.length > 0 || it.extra.length > 0 ||
+                         forkKeys.has(it.rx.main + '|' + it.gap);
+      let maxHx = 0;
+      for (const p of pos.values()) maxHx = Math.max(maxHx, p.h);
+      const gapW = new Map();
+      for (const it of items) {
+        if (it.type !== 'h' && it.type !== 'fork' && it.type !== 'stack') continue;
+        const m = edgeLabelMetrics(E[it.rx.edges[0]]);
+        const w = m.shaft + (hasJ(it) ? JUNCTION_OFF + 6 : 0);
+        gapW.set(it.gap, Math.max(gapW.get(it.gap) || 0, w));
+      }
+      const colX = [];
+      let x = 0;
+      for (let h = 0; h <= maxHx + 1; h++) {
+        colX[h] = x;
+        if (h % 2 === 0) x += NODE_W;
+        else {
+          if (!gapW.has(h)) gapW.set(h, GAP_EMPTY);
+          x += gapW.get(h);
         }
       }
+      const jOff = g => Math.min(JUNCTION_OFF, (g % 2 ? gapW.get(g) : NODE_W) / 2);
+      const jx = (g, dir) => {
+        const w = g % 2 ? gapW.get(g) : NODE_W;
+        return dir < 0 ? colX[g] + w - jOff(g) : colX[g] + jOff(g);
+      };
 
-      const layer = {};
-      const remaining = new Set(ids);
-      const queue = nodes.filter(n => incoming[n.id].length === 0).map(n => n.id);
-      queue.forEach(id => { layer[id] = 0; });
-      while (queue.length) {
-        const id = queue.shift();
-        if (!remaining.has(id)) continue;
-        remaining.delete(id);
-        for (const tid of outgoing[id]) {
-          if (!remaining.has(tid)) continue;
-          if (incoming[tid].every(pid => layer[pid] != null)) {
-            layer[tid] = Math.max(...incoming[tid].map(pid => layer[pid])) + 1;
-            queue.push(tid);
-          }
-        }
+      const nRows = plan.rows;
+      const rowGap = new Array(Math.max(0, nRows)).fill(STACK_GAP + 8);
+      for (const it of items) {
+        if (it.type !== 'v') continue;
+        const m = edgeLabelMetrics(E[it.rx.edges[0]]);
+        if (!m.blockH) continue;
+        const gi = it.dy > 0 ? it.tr - 1 : it.tr;
+        if (gi >= 0 && gi < rowGap.length) rowGap[gi] = Math.max(rowGap[gi], m.blockH + 26);
       }
-      let maxL = Math.max(0, ...Object.values(layer));
-      [...remaining].sort().forEach(id => { layer[id] = ++maxL; });
-
-      // Pull side reagents down to just before their first consumer.
-      for (const n of nodes) {
-        if (incoming[n.id].length || !outgoing[n.id].length) continue;
-        const earliest = Math.min(...outgoing[n.id].map(t => layer[t]));
-        if (earliest - 1 > layer[n.id]) layer[n.id] = earliest - 1;
-      }
-      const floor = Math.min(...Object.values(layer));
-      if (floor) for (const id of Object.keys(layer)) layer[id] -= floor;
-
-      const byLayer = new Map();
-      nodes.forEach(n => {
-        const l = layer[n.id] || 0;
-        if (!byLayer.has(l)) byLayer.set(l, []);
-        byLayer.get(l).push(n);
-      });
-      const columns = [...byLayer.keys()].sort((a, b) => a - b)
-        .map(l => byLayer.get(l).sort((a, b) => nodes.indexOf(a) - nodes.indexOf(b)));
-
-      const pitch = this._pitch();
-      const rowGap = this._rowGap();
-      const cols = Math.max(1, opts.columns || this.layoutColumns || this._fitColumns(pitch));
-
-      // A layer with several compounds normally stacks in one cell. At
-      // the start of a new row, though, it is entered from ABOVE by the
-      // wrap-around arrow, and a stacked cell would force the arrow to
-      // the lower compound straight through the upper one. There the
-      // compounds are spread across separate cells instead.
-      const rows = [];
-      let row = [];
-      for (const group of columns) {
-        if (row.length === cols) { rows.push(row); row = []; }
-        const atRowStart = row.length === 0 && rows.length > 0;
-        const cells = (atRowStart && group.length > 1) ? group.map(n => [n]) : [group];
-        for (const cell of cells) {
-          if (row.length === cols) { rows.push(row); row = []; }
-          row.push(cell);
-        }
-      }
-      if (row.length) rows.push(row);
-
+      const rowY = [];
       let y = 0;
+      for (let r = 0; r < nRows; r++) { rowY[r] = y; y += NODE_H + rowGap[r]; }
+
+      const xOf = p => p.h % 2 ? jx(p.h, p.jdir) - NODE_W / 2 : colX[p.h];
+      if (opts.dry) {
+        const xs = [...pos.values()].map(xOf);
+        return Math.max(...xs) + NODE_W - Math.min(...xs);
+      }
       this._rowOf = new Map();
-      rows.forEach((row, r) => {
-        const tallest = Math.max(...row.map(c => c.length));
-        const rowH = tallest * NODE_H + (tallest - 1) * STACK_GAP;
-        row.forEach((group, c) => {
-          const slot = (r % 2 === 0) ? c : (cols - 1 - c);
-          const x = slot * pitch;
-          const stackH = group.length * NODE_H + (group.length - 1) * STACK_GAP;
-          const y0 = y + (rowH - stackH) / 2;
-          group.forEach((n, k) => {
-            this._rowOf.set(n.id, r);
-            n.x = x;
-            n.y = y0 + k * (NODE_H + STACK_GAP);
-          });
-        });
-        y += rowH + rowGap;
-      });
-
-      const minX = Math.min(...nodes.map(n => n.x));
-      if (minX) nodes.forEach(n => { n.x -= minX; });
-
+      for (const n of nodes) {
+        const p = pos.get(n.id);
+        if (!p) continue;
+        n.x = xOf(p);
+        n.y = rowY[p.r];
+        this._rowOf.set(n.id, p.r);
+      }
+      for (const it of items) {
+        it.hasJ = hasJ(it);
+        if (it.gap != null) it.jx = jx(it.gap, it.dx || 1);
+      }
+      plan.sig = this._planSig();
+      this._plan = plan;
       this.scheme.layout = 'auto';
       this._layoutCols = cols;
+    }
+
+    /* The widest grid that still reads at a comfortable zoom. */
+    _bestCols() {
+      const avail = ((this.svg && this.svg.clientWidth) || this.container.clientWidth || 0) - 30;
+      if (avail <= 0) return 4;
+      for (let c = 6; c > 2; c--) {
+        if (this.autoLayout({ columns: c, dry: true }) * MIN_FIT <= avail) return c;
+      }
+      return 2;
+    }
+
+    /* Anything that changes grouping or indices invalidates the plan. */
+    _planSig() {
+      return JSON.stringify([
+        this.scheme.nodes.map(n => n.id),
+        this.scheme.edges.map(e => [e.from, e.to, (e.reagent_above || '').trim(), (e.reagent_below || '').trim()])
+      ]);
     }
 
     /* ─── Render ──────────────────────────────────────────────── */
@@ -480,6 +914,7 @@
             const o = this.readOnly
               ? { width: V_FO_W, height: V_FO_H, autoCrop: true, autoCropMargin: 2 }
               : { width: NODE_W - 24, height: NODE_H - 60 };
+            if (n.alias) o.alias = n.alias;
             const el = n.mol ? window.MolRenderer.drawMol(n.mol, host, o)
                              : window.MolRenderer.drawSmiles(n.smiles, host, o);
             if (this.readOnly && el && el.getAttribute) {
@@ -565,17 +1000,23 @@
       div.className = 'sg-struct-host';
       div.setAttribute('data-struct-host', n.id);
       div.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;';
+      const letter = n.label != null ? String(n.label) : String(n.id || '');
       if (this._isHidden(n)) {
-        div.innerHTML = `<div class="sg-q" style="width:${PH_SIZE}px;height:${PH_SIZE}px">?</div>`;
+        const t = this._tileSize(n);
+        div.innerHTML = `<div class="sg-q" style="width:${t.w}px;height:${t.h}px;font-size:${t.fs}px">${chemHtml(letter.trim() || '?')}</div>`;
       } else if (!(n.mol || n.smiles)) {
         div.innerHTML = '<div class="sg-ph">(leer)</div>';
       }
       fo.appendChild(div);
       g.appendChild(fo);
 
-      const label = svg('text', { class: 'sg-node-label', x: NODE_W / 2, 'text-anchor': 'middle' });
-      label.textContent = n.label != null ? n.label : (n.id || '?');
-      g.appendChild(label);
+      // The letter goes under the structure once it is shown; while the
+      // compound is hidden the tile itself carries the letter.
+      if (!this._isHidden(n) && letter.trim()) {
+        const label = svg('text', { class: 'sg-node-label', x: NODE_W / 2, 'text-anchor': 'middle' });
+        setChemText(label, letter);
+        g.appendChild(label);
+      }
 
       if (n.name && !this._isHidden(n)) {
         const name = svg('text', { class: 'sg-node-name', x: NODE_W / 2, 'text-anchor': 'middle' });
@@ -602,12 +1043,20 @@
       return g;
     }
 
+    _tileSize(n) {
+      const txt = plainChemText(n.label != null ? n.label : n.id).trim() || '?';
+      const fs = txt.length <= 2 ? 26 : txt.length <= 4 ? 19 : 13;
+      const w = Math.max(PH_SIZE, Math.min(V_FO_W, Math.ceil(measureText(txt, `bold ${fs}px 'Segoe UI', sans-serif`)) + 18));
+      return { w, h: PH_SIZE, fs };
+    }
     _footprint(n) {
-      if (this._isHidden(n)) return { w: PH_SIZE, h: PH_SIZE };
+      if (this._isHidden(n)) { const t = this._tileSize(n); return { w: t.w, h: t.h }; }
       return this._mb.get(n.id) || { w: PH_SIZE, h: PH_SIZE };
     }
     _textBlockH(n) {
-      return V_LABEL_H + (n.name && !this._isHidden(n) ? V_NAME_H : 0) + (n.caption ? V_NAME_H + 2 : 0);
+      const hidden = this._isHidden(n);
+      const hasLabel = !hidden && String(n.label != null ? n.label : n.id || '').trim();
+      return (hasLabel ? V_LABEL_H : 2) + (n.name && !hidden ? V_NAME_H : 0) + (n.caption ? V_NAME_H + 2 : 0);
     }
 
     _placeNodeText(n, g) {
@@ -617,10 +1066,11 @@
       const bottom = V_CY + m.h / 2;
       const label = g.querySelector('.sg-node-label');
       const name = g.querySelector('.sg-node-name');
-      if (label) label.setAttribute('y', bottom + 13);
-      if (name) name.setAttribute('y', bottom + 13 + V_NAME_H);
+      let yy = bottom + (label ? 13 : 0);
+      if (label) label.setAttribute('y', yy);
+      if (name) { yy += V_NAME_H; name.setAttribute('y', yy); }
       const cap = g.querySelector('.sg-node-caption');
-      if (cap) cap.setAttribute('y', bottom + 13 + V_NAME_H * (name ? 2 : 1) + 1);
+      if (cap) cap.setAttribute('y', yy + V_NAME_H + 1);
       const ib = g.querySelector('.sg-info-badge');
       if (ib) {
         const bx = Math.min(NODE_W - 9, NODE_W / 2 + m.w / 2 + 4);
@@ -706,9 +1156,9 @@
     /* Which side of `s` an arrow towards `t` leaves by (= travel direction). */
     _side(s, t) {
       const dx = t.cx - s.cx, dy = t.cy - s.cy;
-      // In an auto layout the row is known: an arrow to another row of
-      // the serpentine always leaves vertically, so it never doubles back
-      // over the arrows of its own row.
+      // In an auto layout the row is known: an arrow to another row
+      // always leaves vertically, so it never doubles back over the
+      // arrows of its own row.
       const rows = this._isAutoLayout() && this._rowOf;
       if (rows && rows.has(s.id) && rows.has(t.id)) {
         const same = rows.get(s.id) === rows.get(t.id);
@@ -750,13 +1200,17 @@
         return { id: n.id, x: b.l, y: b.t, w: b.r - b.l, h: b.b - b.t };
       });
       this._placed = [];
+      this._lines = [];
+      this._labelJobs = [];
 
-      const valid = (e) => (e.from || []).length === 1 && this._nodeById(e.from[0]) && this._nodeById(e.to);
+      const usePlan = this._plan && this._isAutoLayout() && this._plan.sig === this._planSig();
+      const planned = usePlan ? this._drawPlan(layer) : new Set();
+      const valid = (e, i) => !planned.has(i) && (e.from || []).length === 1 && this._nodeById(e.from[0]) && this._nodeById(e.to);
 
       // 1. Split arrows: one source, several targets on the same side.
       const outBy = new Map();
       E.forEach((e, i) => {
-        if (!valid(e)) return;
+        if (!valid(e, i)) return;
         if (!outBy.has(e.from[0])) outBy.set(e.from[0], []);
         outBy.get(e.from[0]).push(i);
       });
@@ -780,7 +1234,7 @@
       //    side: they share the last stretch instead of overlapping on it.
       const inBy = new Map();
       E.forEach((e, i) => {
-        if (done.has(i) || !valid(e)) return;
+        if (done.has(i) || !valid(e, i)) return;
         const s = this._box(this._nodeById(e.from[0]));
         const t = this._box(this._nodeById(e.to));
         const key = e.to + '|' + this._side(s, t);
@@ -795,7 +1249,7 @@
 
       // 3. Everything else.
       E.forEach((e, i) => {
-        if (done.has(i)) return;
+        if (done.has(i) || planned.has(i)) return;
         const t = this._nodeById(e.to);
         if (!t) return;
         const f = (e.from || []).filter(id => this._nodeById(id));
@@ -809,6 +1263,114 @@
         if (f.length === 1) this._drawSingle(layer, i, f[0]);
         else this._drawFanIn(layer, i, f);
       });
+      this._flushLabels();
+    }
+
+    /* Draw the reactions exactly as planned. Returns the edge indices
+       it drew; everything else falls back to free routing. */
+    _drawPlan(layer) {
+      const E = this.scheme.edges;
+      const drawn = new Set();
+      for (const it of this._plan.items) {
+        const mainN = this._nodeById(it.rx.main), prodN = this._nodeById(it.rx.prod);
+        if (!mainN || !prodN) continue;
+        const e = E[it.rx.edges[0]];
+        const A = this._box(mainN), B = this._box(prodN);
+        const g = this._edgeGroup(it.rx.edges[0], it.rx.srcs.join(','));
+        const skip = [it.rx.main, it.rx.prod];
+        const seats = [];
+        let J = null;
+        const joins = [];
+
+        if (it.type === 'h' || it.type === 'fork' || it.type === 'stack') {
+          const side = it.dx > 0 ? 'R' : 'L';
+          const p = this._exit(A, side), q = this._entry(B, side);
+          if (it.hasJ) J = { x: it.jx, y: p.y };
+          if (it.type === 'fork') {
+            const pts = [p, J, { x: J.x, y: q.y }, q];
+            this._addPath(g, this._pathD(pts), it.rx.edges[0], true);
+            seats.push(...this._segsOf(pts.slice(2)), ...this._segsOf(pts.slice(1, 3)));
+            joins.push(J);
+          } else if (J) {
+            this._addPath(g, this._pathD([p, J]), it.rx.edges[0], false);
+            const tail = Math.abs(J.y - q.y) < 1 ? [J, q] : [J, { x: (J.x + q.x) / 2, y: J.y }, { x: (J.x + q.x) / 2, y: q.y }, q];
+            this._addPath(g, this._pathD(tail), it.rx.edges[0], true);
+            seats.push(...this._segsOf(tail), ...this._segsOf([p, J]));
+          } else {
+            const pts = Math.abs(p.y - q.y) < 1 ? [p, q]
+              : [p, { x: (p.x + q.x) / 2, y: p.y }, { x: (p.x + q.x) / 2, y: q.y }, q];
+            this._addPath(g, this._pathD(pts), it.rx.edges[0], true);
+            seats.push(...this._segsOf(pts));
+          }
+          for (const c of it.co) {
+            const cn = this._nodeById(c.id);
+            if (!cn) continue;
+            const C = this._box(cn);
+            let pts;
+            if (c.slot === 'stack') {
+              const s = this._exit(C, side);
+              pts = [s, { x: J.x, y: s.y }, J];
+            } else {
+              const above = C.cy < J.y;
+              pts = [{ x: J.x, y: above ? C.b : C.t }, J];
+              if (Math.abs(C.cx - J.x) > 1) pts.unshift({ x: C.cx, y: pts[0].y });
+            }
+            if (c.dir === 'out') pts.reverse();
+            this._addPath(g, this._pathD(pts), it.rx.edges[0], c.dir === 'out');
+          }
+          if (J && it.type !== 'fork' && (it.co.length || it.extra.length)) joins.push(J);
+        } else if (it.type === 'v') {
+          const side = it.dy > 0 ? 'D' : 'U';
+          const p = this._exit(A, side), q = this._entry(B, side);
+          const pts = Math.abs(p.x - q.x) < 1 ? [p, q]
+            : [p, { x: p.x, y: (p.y + q.y) / 2 }, { x: q.x, y: (p.y + q.y) / 2 }, q];
+          this._addPath(g, this._pathD(pts), it.rx.edges[0], true);
+          let last = null;
+          for (const c of it.co) {
+            const cn = this._nodeById(c.id);
+            if (!cn) continue;
+            const C = this._box(cn);
+            const Jc = { x: p.x, y: C.cy };
+            const edge = C.cx < p.x ? { x: C.r, y: C.cy } : { x: C.l, y: C.cy };
+            const cp = c.dir === 'out' ? [Jc, edge] : [edge, Jc];
+            this._addPath(g, this._pathD(cp), it.rx.edges[0], c.dir === 'out');
+            joins.push(Jc);
+            if (!last || (Jc.y - last.y) * it.dy > 0) last = Jc;
+          }
+          if (it.extra.length) J = { x: p.x, y: p.y + (q.y - p.y) * 0.4 };
+          if (last) seats.push({ x1: last.x, y1: last.y, x2: q.x, y2: q.y, dir: 'v', len: Math.abs(q.y - last.y) });
+          seats.push(...this._segsOf(pts));
+        } else {
+          // 'wrap' / 'free': placed wherever there was room.
+          const side = it.type === 'wrap' ? 'D' : this._side(A, B);
+          const p = this._exit(A, side), q = this._entry(B, side);
+          const pts = this._route(p, side, q, side, skip);
+          this._addPath(g, this._pathD(pts), it.rx.edges[0], true);
+          seats.push(...this._segsOf(pts));
+          if (it.extra.length) {
+            const segs = this._segsOf(pts);
+            const s0 = segs[0];
+            J = { x: (s0.x1 + s0.x2) / 2, y: (s0.y1 + s0.y2) / 2 };
+          }
+        }
+
+        // Co-reactants/co-products that live elsewhere join freely.
+        for (const x of it.extra) {
+          const xn = this._nodeById(x.id);
+          if (!xn || !J) continue;
+          const X = this._box(xn);
+          const P = { cx: J.x, cy: J.y, point: true };
+          const xs = [x.id, it.rx.main, it.rx.prod];
+          const pts = (x.dir === 'out' ? this._bestRoute(P, X, xs, null) : this._bestRoute(X, P, xs, null)).pts;
+          this._addPath(g, this._pathD(pts), it.rx.edges[0], x.dir === 'out');
+          joins.push(J);
+        }
+        for (const j of joins) g.appendChild(svg('circle', { class: 'sg-junction', cx: r1(j.x), cy: r1(j.y), r: 1.6 }));
+        this._placeLabel(seats, e, g);
+        layer.appendChild(g);
+        it.rx.edges.forEach(i => drawn.add(i));
+      }
+      return drawn;
     }
 
     _edgeGroup(idx, fromId) {
@@ -820,6 +1382,12 @@
 
     _addPath(g, d, idx, head, extraCls) {
       const attrs = { class: 'sg-edge-line' + (extraCls ? ' ' + extraCls : ''), d, fill: 'none' };
+      if (this._lines) {
+        const v = String(d).match(/-?\d+(?:\.\d+)?/g) || [];
+        for (let k = 2; k + 1 < v.length; k += 2) {
+          this._lines.push({ x1: +v[k - 2], y1: +v[k - 1], x2: +v[k], y2: +v[k + 1] });
+        }
+      }
       if (head) attrs['marker-end'] = this._isSelected('edge', idx) ? 'url(#sg-arrow-sel)' : 'url(#sg-arrow)';
       g.appendChild(svg('path', attrs));
       if (!this.readOnly) {
@@ -848,12 +1416,14 @@
     _hits(pts, skip) {
       let n = 0;
       for (const o of this._obstacles || []) {
-        if (skip.includes(o.id)) continue;
+        // The arrow's own ends sit on their boundary; only going INTO
+        // them counts.
+        const m = skip.includes(o.id) ? 5 : 2;
         for (let k = 1; k < pts.length; k++) {
           const a = pts[k - 1], b = pts[k];
           const x1 = Math.min(a.x, b.x), x2 = Math.max(a.x, b.x);
           const y1 = Math.min(a.y, b.y), y2 = Math.max(a.y, b.y);
-          if (x2 > o.x + 2 && x1 < o.x + o.w - 2 && y2 > o.y + 2 && y1 < o.y + o.h - 2) { n++; break; }
+          if (x2 > o.x + m && x1 < o.x + o.w - m && y2 > o.y + m && y1 < o.y + o.h - m) { n++; break; }
         }
       }
       return n;
@@ -886,11 +1456,15 @@
        null when that end may be approached either way (a junction).
        Candidates put the bends into the gaps next to structures; the
        first one that crosses nothing wins, otherwise the least bad. */
-    _route(p, ps, q, qs, skip) {
+    _route(p, ps, q, qs, skip, clear, all) {
       const obs = (this._obstacles || []).filter(o => !skip.includes(o.id));
       const mx = (p.x + q.x) / 2, my = (p.y + q.y) / 2;
       const xs = new Set([mx]), ys = new Set([my]);
-      for (const o of obs) { xs.add(o.x - 12); xs.add(o.x + o.w + 12); ys.add(o.y - 12); ys.add(o.y + o.h + 12); }
+      for (const o of obs) {
+        xs.add(o.x - 12); xs.add(o.x + o.w + 12); ys.add(o.y - 12); ys.add(o.y + o.h + 12);
+        // Further out, so a label fits between the run and the structure.
+        if (clear) { ys.add(o.y - 12 - clear); ys.add(o.y + o.h + 12 + clear); }
+      }
       const X = [...xs].sort((a, b) => Math.abs(a - mx) - Math.abs(b - mx));
       const Y = [...ys].sort((a, b) => Math.abs(a - my) - Math.abs(b - my));
       const sgn = (s) => (s === 'R' || s === 'D') ? 1 : -1;
@@ -913,15 +1487,70 @@
       const y2 = qs && !isH(qs) ? q.y - sgn(qs) * 14 : q.y;
       if (hS && hE) for (const y of Y) tries.push([p, { x: x1, y: p.y }, { x: x1, y }, { x: x2, y }, { x: x2, y: q.y }, q]);
       if (vS && vE) for (const x of X) tries.push([p, { x: p.x, y: y1 }, { x, y: y1 }, { x, y: y2 }, { x: q.x, y: y2 }, q]);
-      if (hS && vE) for (const y of Y) tries.push([p, { x: x1, y: p.y }, { x: x1, y }, { x: q.x, y }, q]);
-      if (vS && hE) for (const x of X) tries.push([p, { x: p.x, y: y1 }, { x, y: y1 }, { x, y: q.y }, q]);
+      if (hS && vE) for (const y of Y) if (okY1(y)) tries.push([p, { x: x1, y: p.y }, { x: x1, y }, { x: q.x, y }, q]);
+      if (vS && hE) for (const x of X) if (okX1(x)) tries.push([p, { x: p.x, y: y1 }, { x, y: y1 }, { x, y: q.y }, q]);
       let best = null, bestHits = Infinity;
+      if (all) {
+        const ok = [];
+        for (const t of tries) if (!this._hits(t, skip) && ok.push(t) >= 16) break;
+        if (ok.length) return ok;
+      }
       for (const t of tries) {
         const h = this._hits(t, skip);
-        if (h === 0) return t;
+        if (h === 0) return all ? [t] : t;
         if (h < bestHits) { best = t; bestHits = h; }
       }
-      return best || [p, q];
+      return all ? [best || [p, q]] : (best || [p, q]);
+    }
+
+    /* Free route between two compounds that the plan did not place side
+       by side: tries leaving along the arrow direction or sideways and
+       entering from the facing side, keeps the one that crosses nothing,
+       bends least and leaves room for the text. */
+    _bestRoute(s, t, skip, m) {
+      const hs = t.cx >= s.cx ? 'R' : 'L', vs = t.cy >= s.cy ? 'D' : 'U';
+      const sameRow = Math.abs(t.cy - s.cy) < 4, sameCol = Math.abs(t.cx - s.cx) < 4;
+      // Either end may be a bare point (a junction): no side to choose.
+      const sides = ['R', 'L', 'D', 'U'];
+      const natural = d => d === (sameCol ? vs : hs) || (!sameRow && d === vs) || (sameRow && (d === 'D' || d === 'U'));
+      const opts = [];
+      for (const ps of s.point ? [null] : sides) {
+        for (const qs of t.point ? [null] : sides) {
+          if (ps && qs && sameRow && ps === qs && ps !== hs) continue;
+          const bias = (ps && !natural(ps) ? 30 : 0) + (qs && !natural(qs) ? 30 : 0);
+          opts.push([ps, qs, bias]);
+        }
+      }
+      const labelled = m && (m.above.length || m.below.length);
+      // Running on top of an existing line reads as one arrow: avoid.
+      const onTop = (a, b) => (this._lines || []).some(l => {
+        if (Math.abs(a.y - b.y) < 0.5) {
+          return Math.abs(l.y1 - l.y2) < 0.5 && Math.abs(l.y1 - a.y) < 3 &&
+            Math.min(Math.max(l.x1, l.x2), Math.max(a.x, b.x)) - Math.max(Math.min(l.x1, l.x2), Math.min(a.x, b.x)) > 2;
+        }
+        return Math.abs(l.x1 - l.x2) < 0.5 && Math.abs(l.x1 - a.x) < 3 &&
+          Math.min(Math.max(l.y1, l.y2), Math.max(a.y, b.y)) - Math.max(Math.min(l.y1, l.y2), Math.min(a.y, b.y)) > 2;
+      });
+      let best = null;
+      for (const [ps, qs, bias] of opts) {
+        const p = ps ? this._exit(s, ps) : { x: s.cx, y: s.cy };
+        const q = qs ? this._entry(t, qs) : { x: t.cx, y: t.cy };
+        for (const pts of this._route(p, ps, q, qs, skip, m ? m.blockH : 0, true)) {
+          let score = bias + this._hits(pts, skip) * 1000 + (pts.length - 2) * 25;
+          if (labelled) score += Math.min(800, this._pickSeat(this._segsOf(pts), m.edge, true) * 0.3);
+          let len = 0, longest = 0;
+          for (let k = 1; k < pts.length; k++) {
+            const d = Math.abs(pts[k].x - pts[k - 1].x) + Math.abs(pts[k].y - pts[k - 1].y);
+            len += d;
+            if (Math.abs(pts[k].y - pts[k - 1].y) < 0.5) longest = Math.max(longest, d);
+            if (onTop(pts[k - 1], pts[k])) score += 200;
+          }
+          score += len * 0.05;
+          if (labelled && longest < m.width + 12) score += 40;
+          if (!best || score < best.score) best = { pts, score };
+        }
+      }
+      return best;
     }
 
     /* One source, one target. */
@@ -929,6 +1558,14 @@
       const e = this.scheme.edges[idx];
       const s = this._box(this._nodeById(fromId));
       const t = this._box(this._nodeById(e.to));
+      if (this._plan && this._isAutoLayout()) {
+        const b = this._bestRoute(s, t, [fromId, e.to], edgeLabelMetrics(e));
+        const g = this._edgeGroup(idx, fromId);
+        this._addPath(g, this._pathD(b.pts), idx, true);
+        this._placeLabel(this._segsOf(b.pts), e, g);
+        layer.appendChild(g);
+        return;
+      }
       const side = this._side(s, t);
       const p = this._exit(s, side);
       const q = this._entry(t, side);
@@ -951,8 +1588,7 @@
       pts = this._detours(s, t, side, pts, skip);
       const g = this._edgeGroup(idx, fromId);
       this._addPath(g, this._pathD(pts), idx, true);
-      const lab = this._placeLabel(this._segsOf(pts), e);
-      if (lab) g.appendChild(lab);
+      this._placeLabel(this._segsOf(pts), e, g);
       layer.appendChild(g);
     }
 
@@ -998,14 +1634,12 @@
           // The last run of a branch belongs to that branch alone.
           const segs = this._segsOf(branchPts[k]);
           const last = segs.find(sg => sg.x2 === branchPts[k][branchPts[k].length - 1].x && sg.y2 === branchPts[k][branchPts[k].length - 1].y);
-          const lab = this._placeLabel(last ? [last, ...segs.filter(sg => sg !== last && sg.dir !== last.dir)] : segs, E[i]);
-          if (lab) g.appendChild(lab);
+          this._placeLabel(last ? [last, ...segs.filter(sg => sg !== last && sg.dir !== last.dir)] : segs, E[i], g);
         }
         layer.appendChild(g);
       });
       if (shared) {
-        const lab = this._placeLabel([{ x1: p.x, y1: p.y, x2: J.x, y2: J.y, dir: isH(side) ? 'h' : 'v' }], E[idxs[0]]);
-        if (lab) trunk.appendChild(lab);
+        this._placeLabel([{ x1: p.x, y1: p.y, x2: J.x, y2: J.y, dir: isH(side) ? 'h' : 'v' }], E[idxs[0]], trunk);
       }
     }
 
@@ -1033,8 +1667,7 @@
         if (this._hits(pts, mskip)) pts = this._route(p, side, J, side, mskip);
         const g = this._edgeGroup(i, E[i].from[0]);
         this._addPath(g, this._pathD(pts), i, false);
-        const lab = this._placeLabel(this._segsOf(pts), E[i]);
-        if (lab) g.appendChild(lab);
+        this._placeLabel(this._segsOf(pts), E[i], g);
         layer.appendChild(g);
       });
       const tg = this._edgeGroup(idxs[0], '');
@@ -1089,8 +1722,7 @@
       this._addPath(g, this._pathD([J, q]), idx, true);
       if (srcs.length > 1) g.appendChild(svg('circle', { class: 'sg-junction', cx: r1(J.x), cy: r1(J.y), r: 1.6 }));
       const trunk = { x1: J.x, y1: J.y, x2: q.x, y2: q.y, dir: isH(side) ? 'h' : 'v' };
-      const lab = this._placeLabel([trunk, ...branchSegs.filter(sg => sg.dir === trunk.dir)], e);
-      if (lab) g.appendChild(lab);
+      this._placeLabel([trunk, ...branchSegs.filter(sg => sg.dir === trunk.dir)], e, g);
       layer.appendChild(g);
     }
 
@@ -1112,9 +1744,27 @@
       return { x, y: my - ext.hAll / 2, w, h: ext.hAll };
     }
 
+    /* Labels are placed after every line is drawn, so a label can
+       avoid other arrows as well as structures and earlier labels. */
+    _placeLabel(segs, edge, g) {
+      const m = edgeLabelMetrics(edge);
+      if (!m.above.length && !m.below.length || !segs.length) return null;
+      if (this._labelJobs && g) { this._labelJobs.push({ segs, edge, g }); return null; }
+      return this._pickSeat(segs, edge);
+    }
+
+    _flushLabels() {
+      const jobs = this._labelJobs || [];
+      this._labelJobs = null;
+      for (const j of jobs) {
+        const el = this._pickSeat(j.segs, j.edge);
+        if (el) j.g.appendChild(el);
+      }
+    }
+
     /* Pick the first seat on the arrow that collides with nothing; if
        every seat collides, take the one with the least overlap. */
-    _placeLabel(segs, edge) {
+    _pickSeat(segs, edge, dry) {
       const m = edgeLabelMetrics(edge);
       if (!m.above.length && !m.below.length) return null;
       const ext = this._labelExtents(m);
@@ -1122,6 +1772,21 @@
       segs.forEach((sg, k) => {
         if (sg.dir === 'h') cands.push({ sg, mode: 'h', pref: k * 2 });
         else { cands.push({ sg, mode: 'vr', pref: k * 2 }); cands.push({ sg, mode: 'vl', pref: k * 2 + 1 }); }
+      });
+      // If the middle of a run is blocked, the text may slide along it.
+      segs.forEach((sg, k) => {
+        const h = sg.dir === 'h';
+        const need = (h ? m.width : ext.hAll) + 12;
+        const a0 = h ? Math.min(sg.x1, sg.x2) : Math.min(sg.y1, sg.y2);
+        const len = Math.abs(sg.x2 - sg.x1) + Math.abs(sg.y2 - sg.y1);
+        if (len - need < 16) return;
+        for (const f of [0.25, 0.75, 0, 1]) {
+          const b0 = a0 + (len - need) * f;
+          const sub = h ? { x1: b0, x2: b0 + need, y1: sg.y1, y2: sg.y2, dir: 'h' }
+                        : { x1: sg.x1, x2: sg.x2, y1: b0, y2: b0 + need, dir: 'v' };
+          if (h) cands.push({ sg: sub, mode: 'h', pref: k * 2 + 4 });
+          else { cands.push({ sg: sub, mode: 'vr', pref: k * 2 + 4 }); cands.push({ sg: sub, mode: 'vl', pref: k * 2 + 5 }); }
+        }
       });
       const overlap = (a, b) => {
         const w = Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x);
@@ -1132,8 +1797,16 @@
       for (const c of cands) {
         const bb = this._labelBox(c.sg, c.mode, m, ext);
         let score = 0;
-        for (const o of this._obstacles || []) score += overlap(bb, o);
+        const pad = { x: bb.x - 3, y: bb.y - 3, w: bb.w + 6, h: bb.h + 6 };
+        for (const o of this._obstacles || []) score += overlap(pad, o);
         for (const o of this._placed || []) score += overlap(bb, o) * 2;
+        for (const l of this._lines || []) {
+          // The shaft the text is written on runs between its two halves.
+          if (c.mode === 'h' && Math.abs(l.y1 - l.y2) < 0.5 && Math.abs(l.y1 - c.sg.y1) < 1) continue;
+          const x1 = Math.min(l.x1, l.x2), x2 = Math.max(l.x1, l.x2);
+          const y1 = Math.min(l.y1, l.y2), y2 = Math.max(l.y1, l.y2);
+          if (x2 > bb.x + 1 && x1 < bb.x + bb.w - 1 && y2 > bb.y + 1 && y1 < bb.y + bb.h - 1) score += 600;
+        }
         const len = Math.abs(c.sg.x2 - c.sg.x1) + Math.abs(c.sg.y2 - c.sg.y1);
         // A horizontal seat shorter than the text overhangs the shaft end.
         if (c.mode === 'h' && len < m.width + 6) score += (m.width + 6 - len) * 4;
@@ -1143,6 +1816,7 @@
         if (!best || score < best.score) best = c;
         if (score < 1) break;
       }
+      if (dry) return best.score;
       if (this._placed) this._placed.push(best.bb);
       return this._labelEl(best.sg, edge, best.mode);
     }
@@ -1385,7 +2059,7 @@
     reflow(force) {
       if (!this._isAutoLayout()) return false;
       if (!this.scheme.nodes.length) return false;
-      const want = this._fitColumns(this._pitch());
+      const want = this.layoutColumns || this._bestCols();
       if (!force && want === this._layoutCols) return false;
       this.autoLayout({ columns: want });
       this.refresh();
@@ -1705,9 +2379,17 @@
 
   function r1(v) { return Math.round(v * 10) / 10; }
 
+  /* "D^-" / "H_2" for an HTML tile. */
+  function chemHtml(str) {
+    const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    return esc(str).replace(new RegExp(CHEM_SRC, 'g'), (m, k, a, b) =>
+      (k === '_' ? '<sub>' : '<sup>') + (a != null ? a : b) + (k === '_' ? '</sub>' : '</sup>'));
+  }
+
   function cssEsc(s) {
     return String(s || '').replace(/(["\\\.\#\:\[\]\(\)\,\>\+\~\*\=\^\$\|\!\?])/g, '\\$1');
   }
 
+  SchemeGraphEditor.planLayout = planLayout;
   window.SchemeGraphEditor = SchemeGraphEditor;
 })();

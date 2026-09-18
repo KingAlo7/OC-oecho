@@ -105,6 +105,15 @@ const MolRenderer = (() => {
     return el.firstChild;
   }
 
+  /* opts.alias = { atomIndex: 'X' } shows a generic label ("X", "R")
+     in place of the element symbol, as an Angabe draws it. */
+  function _applyAlias(m, o) {
+    if (!o.alias) return;
+    for (const k of Object.keys(o.alias)) {
+      try { m.setAtomCustomLabel(Number(k), String(o.alias[k])); } catch (_) {}
+    }
+  }
+
   /**
    * Render a MOL file into a target element.
    * @param {string} mol  MOL V2000/V3000 text
@@ -116,6 +125,7 @@ const MolRenderer = (() => {
     const o = Object.assign({}, DEFAULTS, opts || {});
     try {
       const m = window.OCL.Molecule.fromMolfile(mol);
+      _applyAlias(m, o);
       const svg = m.toSVG(o.width, o.height, undefined, o);
       return _injectSvg(target, svg);
     } catch (err) {
@@ -134,6 +144,7 @@ const MolRenderer = (() => {
     const o = Object.assign({}, DEFAULTS, opts || {});
     try {
       const m = window.OCL.Molecule.fromSmiles(smiles);
+      _applyAlias(m, o);
       const svg = m.toSVG(o.width, o.height, undefined, o);
       return _injectSvg(target, svg);
     } catch (err) {
