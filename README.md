@@ -2,7 +2,11 @@
 
 Interaktives Nachschlagewerk für organische Chemie auf IChO-Niveau, mit Quiz-Modus für mehrstufige Synthesen, Mechanismen und Regioselektivität. Schwerpunkt sind die Organik-Aufgaben der ÖChO-Bundeswettbewerbe. Gerendert wird durchgehend mit OpenChemLib, gezeichnet mit Ketcher, Layout-Optimierung über RDKit-JS.
 
-> **Hinweis:** Die Reaktionsreferenz (`data/reactions.json`) ist derzeit leer — der Datenbestand wird neu aufgebaut. Der Browser und der Admin-Editor funktionieren unverändert; neue Einträge werden mit Ketcher gezeichnet.
+> **Reaktionsbibliothek:** `data/reactions.json` wird von `tools/build-reaction-library.js` erzeugt und enthält 88 Reaktionen in 11 Kategorien — alle Namensreaktionen und alle klar unterscheidbaren unbenannten Reaktionstypen, die in den Quizzes (ÖChO LW/BW 2013–2026) vorkommen. Jeder Eintrag zeigt die **allgemeinste Form** mit R₁, R₂, Ar, X, Nu, E; `substituents` sagt, wofür die Platzhalter stehen, `seen_in` nennt die Angaben, in denen die Reaktion auftaucht. Neu bauen mit:
+>
+> ```bash
+> node tools/build-reaction-library.js
+> ```
 
 **Live:** https://kingalo7.github.io/OC-oecho/
 
@@ -31,7 +35,7 @@ Jede Frage ist eine **Aufgabe aus Abschnitten** (`type: "composed"`) — so wie 
 Die ganze Aufgabe steht auf **einem Blatt**: eine Fortschrittsleiste oben (Aufdecken/Zurücksetzen für alle Schemata), Zoom-Knöpfe rechts neben jedem Schema, Hinweise aus der Angabe direkt über dem jeweiligen Abschnitt.
 
 ### Admin (`admin.html`)
-- Tab **Reaktionen** — Editor für `data/reactions.json`; „✎ Struktur zeichnen (Ketcher)" öffnet denselben Editor wie im Quiz und schreibt das Reaktions-SMILES zurück
+- Tab **Reaktionen** — Editor für `data/reactions.json`. Das Reaktionsschema wird **WYSIWYG** bearbeitet: Reaktanten-Boxen links, Produkt-Boxen rechts, dazwischen ein Pfeil, dessen beide Textfelder direkt `reagent_label` / `reagent_label_below` sind. Klick auf eine Box öffnet Ketcher für genau diese Komponente; „＋“ fügt eine weitere hinzu. Gespeichert wird als RXN-Datei, die Geometrie bleibt 1:1 erhalten
 - Tab **Quiz** — Editor für `data/questions.json`:
   - Abschnitts-Reiter (`＋ Abschnitt` → Typ aus der Liste wählen)
   - Graph-Editor mit Ketcher pro Struktur, OCR-Button und OCL-Live-Preview
@@ -159,12 +163,40 @@ Array von Reaktionsobjekten, gerendert via OpenChemLib. Pflichtfelder: `id`, `ca
 | `category` | `string` | Seitenleistengruppe |
 | `name` | `string` | Anzeigename |
 | `difficulty` | `'A'\|'B'\|'C'\|'D'` | Schwierigkeitsstufe (Filter) |
-| `reaction_smiles` | `string` | `Reaktanten>Reagenz>Produkte`-SMILES |
+| `reaktionstyp` | `string` | `SN1`, `E2`, `AN`… |
+| `transformation` | `string` | Kurzformel der Umsetzung (`R-X → R-OH`) |
+| `reaction_rxn` | `string` | **Zeichnung.** RXN-V2000-Datei aus Ketcher — ein `$MOL`-Block je Komponente, mit den exakt gezeichneten Koordinaten |
+| `reaction_smiles` | `string` | Abgeleiteter Such-/Dedup-Schlüssel. Koordinatenfrei, wird **nicht** gerendert, solange `reaction_rxn` vorhanden ist |
 | `reagent_label` | `string` | LaTeX-Syntax über Pfeil (`H_2SO_4`, `[Ag(NH_3)_2]^{1+}`) |
 | `reagent_label_below` | `string` | LaTeX-Syntax unter Pfeil |
 | `conditions` | `string` | Reaktionsbedingungen |
+| `stereochemistry` | `string` | Stereochemischer Ausgang |
 | `key_points` | `string[]` | Mechanismusstichpunkte |
-| `notes` | `string` | Erweiterter Kontext |
+
+#### Zeichenkonvention der Bibliothek
+
+Damit sich Einträge vergleichen lassen, ist die Orientierung überall dieselbe:
+
+| Regel | |
+|---|---|
+| Hauptkette | waagrecht, Zickzack, links → rechts, erster Schritt nach oben |
+| Generischer Rest (R₁, Ar) | am **linken** Ende |
+| Reagierendes Zentrum | am **rechten** Ende |
+| C=O | zeigt **nach oben** |
+| Sechsringe | **Knoten oben und unten**, senkrechte Bindungen an den Flanken |
+| Substituent am Ring | verlässt den Ring **radial** (auf dem Strahl Mittelpunkt → Ecke) |
+| C≡C, C≡N, Diazonium | **180°**, kollinear mit dem Nachbaratom |
+| Drei-Ringe (Epoxid) | Winkel 60° **relativ zur C–C-Bindung**, nicht zur Seite |
+| Produkt | übernimmt die Koordinaten des Edukts, wo sich das Gerüst nicht ändert |
+
+`tools/build-reaction-library.js` **prüft das beim Bauen** und bricht ab, wenn eine Bindungslänge abweicht, ein sp-Zentrum nicht linear ist, ein Dreiring nicht gleichseitig ist, ein Atom keine Bindung hat oder zwei Atome übereinanderliegen.
+
+> **Warum RXN und nicht SMILES?** SMILES ist koordinatenfrei — beim Rendern muss
+> OpenChemLib ein Layout *erfinden*, und das ist immer der ideale 120°-Zickzack.
+> Die RXN-Datei trägt pro Atom ein (x,y), also bleibt ein bewusst schräg
+> gezeichneter Winkel schräg. Jede Komponente wird mit `autoCrop` gerendert;
+> OCL deckelt die Bindungslänge bei 24 px, sodass alle Komponenten einer
+> Reaktion automatisch im selben Maßstab stehen.
 
 ### `data/questions.json` — Quizfragen
 

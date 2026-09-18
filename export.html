@@ -6,6 +6,13 @@
 <meta name="theme-color" content="#c2c5a6">
 <title>OC Referenz — Export</title>
 <link rel="icon" type="image/svg+xml" href="./assets/logo.svg">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="OC Referenz">
+<script src="./pwa.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/openchemlib/dist/openchemlib-full.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="./mol-renderer.js"></script>
@@ -243,7 +250,6 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
         <div class="check-btn on" data-key="inclDrawings">Strukturen</div>
         <div class="check-btn on" data-key="inclDetails">Detailtabelle</div>
         <div class="check-btn on" data-key="inclKeyPoints">Schlüsselpunkte</div>
-        <div class="check-btn on" data-key="inclNotes">Notizen</div>
         <div class="check-btn" data-key="inclTOC">Inhaltsverzeichnis</div>
       </div>
     </div>
@@ -416,7 +422,6 @@ const DEFAULTS = {
   inclDrawings:      true,
   inclDetails:       true,
   inclKeyPoints:     true,
-  inclNotes:         true,
   inclTOC:           false,
   layout:            'single',
   fontPt:            11,
@@ -446,6 +451,7 @@ const SLIDERS = [
 ];
 
 const DETAIL_FIELDS = [
+  {key:'substituents',    label:'Substituenten'},
   {key:'conditions',      label:'Bedingungen'},
   {key:'substrate_scope', label:'Substratumfang'},
   {key:'nucleophile',     label:'Nukleophil'},
@@ -454,7 +460,7 @@ const DETAIL_FIELDS = [
   {key:'mechanism',       label:'Mechanismus'},
   {key:'stereochemistry', label:'Stereochemie'},
   {key:'kinetics',        label:'Kinetik'},
-  {key:'solvent',         label:'Lösungsmittel'},
+  {key:'seen_in',         label:'Vorkommen im Quiz'},
 ];
 
 /* ════════════════════════════════════════════════════════════════
@@ -608,9 +614,9 @@ function initPreview() {
     sel.innerHTML = '<option value="">Keine Reaktionen verfügbar</option>';
     return;
   }
-  const withSmi = reactions.filter(r => r.reaction_smiles);
+  const withSmi = reactions.filter(r => MolRenderer.rxnSource(r));
   if (!withSmi.length) {
-    sel.innerHTML = '<option value="">Keine SMILES verfügbar</option>';
+    sel.innerHTML = '<option value="">Keine Zeichnungen verfügbar</option>';
     return;
   }
   withSmi.sort((a, b) => (a.category + a.name).localeCompare(b.category + b.name));
@@ -651,8 +657,9 @@ function redrawPreview() {
     return;
   }
   const r = reactions.find(x => x.id === sel.value);
-  if (!r || !r.reaction_smiles) {
-    frame.innerHTML = '<span class="preview-loading">Keine SMILES verfügbar</span>';
+  const drawing = r && MolRenderer.rxnSource(r);
+  if (!drawing) {
+    frame.innerHTML = '<span class="preview-loading">Keine Zeichnung verfügbar</span>';
     if (dimsEl) dimsEl.textContent = '—';
     return;
   }
@@ -667,7 +674,7 @@ function redrawPreview() {
       frame.innerHTML = '<span class="preview-loading" style="color:var(--red)">Renderer nicht geladen</span>';
       return;
     }
-    svg = MolRenderer.drawReaction(r.reaction_smiles, frame, Object.assign(
+    svg = MolRenderer.drawReaction(drawing, frame, Object.assign(
       { above: r.reagent_label || '', below: r.reagent_label_below || '' },
       buildRendererOverrides(r)
     ));
@@ -865,7 +872,7 @@ function transformationFor(r) {
 }
 
 function smilesScheme(r) {
-  if (!r.reaction_smiles) return r.general_scheme || '';
+  if (!r.reaction_smiles) return '';
   const parts = r.reaction_smiles.split('>');
   const reactants = (parts[0]||'').split('.').join(' + ');
   const products  = (parts[2]||'').split('.').join(' + ');
@@ -883,12 +890,10 @@ function reactionBlock(r, withImage) {
     : '';
 
   let drawingTex = '';
-  if (withImage && r.reaction_smiles) {
+  if (withImage && MolRenderer.rxnSource(r)) {
     drawingTex = '\\adjustbox{max width=\\linewidth}{\\includegraphics[scale=\\rxnimgscale]{img/' + r.id + '.png}}';
-  } else if (r.reaction_smiles) {
+  } else {
     drawingTex = smilesScheme(r);
-  } else if (r.general_scheme) {
-    drawingTex = '{\\small\\texttt{' + esc(r.general_scheme) + '}}';
   }
 
   const kpItems = (opts.inclKeyPoints && r.key_points && r.key_points.length)
@@ -964,12 +969,7 @@ function reactionBlock(r, withImage) {
       '\n\\bottomrule\n\\end{tabular}}';
   }
 
-  let notes = '';
-  if (opts.inclNotes && r.notes) {
-    notes = '\n\\begin{tcolorbox}[notebox]\n\\small\\textbf{Notizen:}\\enspace ' + esc(r.notes) + '\n\\end{tcolorbox}';
-  }
-
-  return '\n' + header + '\n' + subtitle + bodyTex + table + notes + '\n';
+  return '\n' + header + '\n' + subtitle + bodyTex + table + '\n';
 }
 
 function buildLatex(selectedReactions, withImages) {
@@ -1103,7 +1103,8 @@ body + '\n' +
 
 function reactionToPng(r) {
   return new Promise(resolve => {
-    if (!r.reaction_smiles) { resolve(null); return; }
+    const drawing = MolRenderer.rxnSource(r);
+    if (!drawing) { resolve(null); return; }
 
     const wrap = document.createElement('div');
     wrap.style.cssText = 'position:absolute;left:-9999px;top:-9999px;width:0;height:0;overflow:hidden;';
@@ -1111,7 +1112,7 @@ function reactionToPng(r) {
 
     let svg;
     try {
-      svg = MolRenderer.drawReaction(r.reaction_smiles, wrap, Object.assign(
+      svg = MolRenderer.drawReaction(drawing, wrap, Object.assign(
         { above: r.reagent_label || '', below: r.reagent_label_below || '' },
         buildRendererOverrides(r)
       ));
@@ -1202,7 +1203,7 @@ async function doExport() {
 
   for (const r of selected) {
     setProgress((done/selected.length)*80, 'Rendert: ' + r.name);
-    if (r.reaction_smiles && opts.inclDrawings) {
+    if (MolRenderer.rxnSource(r) && opts.inclDrawings) {
       const result = await reactionToPng(r);
       if (result) {
         img.file(r.id+'.png', result.data, {base64:true});

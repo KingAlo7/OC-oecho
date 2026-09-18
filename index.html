@@ -6,6 +6,13 @@
 <meta name="theme-color" content="#c2c5a6">
 <title>OC Referenz — ÖChO</title>
 <link rel="icon" type="image/svg+xml" href="./assets/logo.svg">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="OC Referenz">
+<script src="./pwa.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/openchemlib/dist/openchemlib-full.js"></script>
 <script src="./mol-renderer.js"></script>
 <style>
@@ -525,6 +532,7 @@ function openCategory(cat) {
 }
 
 const DETAIL_FIELDS = [
+  {key:'substituents',    label:'Substituenten'},
   {key:'conditions',      label:'Bedingungen'},
   {key:'substrate_scope', label:'Substratumfang'},
   {key:'nucleophile',     label:'Nukleophil'},
@@ -533,7 +541,7 @@ const DETAIL_FIELDS = [
   {key:'mechanism',       label:'Mechanismus'},
   {key:'stereochemistry', label:'Stereochemie'},
   {key:'kinetics',        label:'Kinetik'},
-  {key:'solvent',         label:'Lösungsmittel'},
+  {key:'seen_in',         label:'Vorkommen im Quiz'},
 ];
 
 function showReaction(id) {
@@ -553,11 +561,10 @@ function showReaction(id) {
   const next = catItems[idx+1] || null;
 
   const svgId = 'rxn-svg-'+id;
-  const drawingHtml = r.reaction_smiles
+  const drawing = MolRenderer.rxnSource(r);
+  const drawingHtml = drawing
     ? `<div id="${svgId}" class="struct-slot"></div>`
-    : r.general_scheme
-      ? `<div class="scheme-text">${r.general_scheme}</div>`
-      : `<div class="scheme-text" style="color:var(--muted)">Keine Struktur verfügbar</div>`;
+    : `<div class="scheme-text" style="color:var(--muted)">Keine Struktur verfügbar</div>`;
 
   const detailsHtml = DETAIL_FIELDS.filter(f => r[f.key]).map(f => `
     <div class="detail-row">
@@ -568,10 +575,6 @@ function showReaction(id) {
   const keyPointsHtml = (r.key_points||[]).length ? `
     <div class="section-head">Schlüsselpunkte</div>
     <ul class="key-points">${(r.key_points).map(p=>`<li>${p}</li>`).join('')}</ul>` : '';
-
-  const notesHtml = r.notes ? `
-    <div class="section-head">Notizen</div>
-    <div class="notes-block">${r.notes}</div>` : '';
 
   document.getElementById('main').innerHTML = `
     <div class="rxn-page">
@@ -588,7 +591,6 @@ function showReaction(id) {
       ${detailsHtml ? `<div class="rxn-details">${detailsHtml}</div>` : ''}
 
       ${keyPointsHtml}
-      ${notesHtml}
 
       <div class="rxn-nav">
         <button class="nav-btn" onclick="${prev?`showReaction('${prev.id}')`:'void 0'}" ${prev?'':'disabled'}>
@@ -603,14 +605,13 @@ function showReaction(id) {
 
   document.getElementById('main').scrollTop = 0;
 
-  if (r.reaction_smiles) {
+  if (drawing) {
     MolRenderer.ready().then(() => {
       const host = document.getElementById(svgId);
       if (!host) return;
-      MolRenderer.drawReaction(r.reaction_smiles, host, {
+      MolRenderer.drawReaction(drawing, host, {
         above: r.reagent_label || '',
-        below: r.reagent_label_below || '',
-        width: 220, height: 170
+        below: r.reagent_label_below || ''
       });
     }).catch(err => console.error('MolRenderer:', err));
   }
@@ -628,7 +629,8 @@ function globalSearch(q) {
         || r.name.toLowerCase().includes(s)
         || r.category.toLowerCase().includes(s)
         || (r.subtitle||'').toLowerCase().includes(s)
-        || (r.notes||'').toLowerCase().includes(s);
+        || (r.transformation||'').toLowerCase().includes(s)
+        || (r.key_points||[]).join(' ').toLowerCase().includes(s);
       link.classList.toggle('hidden', !hit);
       if (hit) any = true;
     });

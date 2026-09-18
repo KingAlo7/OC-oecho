@@ -6,6 +6,13 @@
 <meta name="theme-color" content="#c2c5a6">
 <title>OC Referenz — Admin</title>
 <link rel="icon" type="image/svg+xml" href="./assets/logo.svg">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="OC Referenz">
+<script src="./pwa.js" defer></script>
 
 <script src="https://cdn.jsdelivr.net/npm/openchemlib/dist/openchemlib-full.js"></script>
 <script src="./mol-renderer.js"></script>
@@ -147,6 +154,31 @@ select.fi option{background:var(--surface);color:var(--text);}
 
 .smi-prev{background:#fff;border:1px solid var(--border);border-radius:8px;padding:1rem;min-height:100px;display:flex;align-items:center;justify-content:center;margin-top:0.5rem;overflow-x:auto;box-shadow:var(--shadow-sm);}
 .smi-ph{font-size:0.8rem;color:var(--muted2);font-style:italic;}
+/* ── WYSIWYG reaction row ──────────────────────────────────────────
+   Reactants and products sit either side of a live arrow whose two
+   text fields ARE the reagent labels, so the editor looks like the
+   thing it produces. */
+.rxn-wys{background:#fff;border:1px solid var(--border);border-radius:8px;padding:0.9rem 0.8rem;box-shadow:var(--shadow-sm);overflow-x:auto;}
+.rxn-row{display:flex;align-items:center;gap:0.45rem;min-height:132px;width:max-content;min-width:100%;justify-content:center;}
+.rxn-side{display:flex;align-items:center;gap:0.45rem;}
+.rxn-box{position:relative;width:150px;height:118px;border:1px dashed var(--border);border-radius:8px;background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .15s,background .15s;padding:4px;}
+.rxn-box:hover{border-color:var(--accent);background:var(--accent-soft);}
+.rxn-box.empty{border-style:dashed;}
+.rxn-box.filled{border-style:solid;background:#fff;}
+.rxn-box svg{max-width:100%;max-height:110px;height:auto;}
+.rxn-box-ph{font-size:0.74rem;color:var(--muted2);text-align:center;line-height:1.35;pointer-events:none;padding:0 0.4rem;}
+.rxn-box-del{position:absolute;top:3px;right:3px;width:19px;height:19px;border:none;border-radius:50%;background:var(--surface2);color:var(--muted);font-size:0.8rem;line-height:1;cursor:pointer;display:none;align-items:center;justify-content:center;padding:0;}
+.rxn-box:hover .rxn-box-del{display:flex;}
+.rxn-box-del:hover{background:var(--accent);color:#fff;}
+.rxn-plus{font-size:1.15rem;color:var(--muted);user-select:none;}
+.rxn-add{width:26px;height:26px;border-radius:50%;border:1px dashed var(--border);background:var(--surface);color:var(--muted);font-size:0.9rem;line-height:1;cursor:pointer;padding:0;flex:none;}
+.rxn-add:hover{border-color:var(--accent);color:var(--accent);border-style:solid;}
+.rxn-arrow-col{display:flex;flex-direction:column;align-items:center;gap:2px;flex:none;padding:0 0.2rem;}
+.rxn-arrow-col input{width:168px;text-align:center;background:var(--surface);color:var(--text);border:1px solid transparent;border-radius:6px;padding:0.24rem 0.4rem;font-size:0.78rem;font-family:inherit;}
+.rxn-arrow-col input:hover{border-color:var(--border);}
+.rxn-arrow-col input:focus{outline:none;background:#fff;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+.rxn-arrow-col input.below{font-size:0.74rem;color:var(--muted);}
+.rxn-shaft{width:172px;height:11px;flex:none;}
 
 .act-bar{display:flex;gap:0.5rem;padding:1.2rem 0 0;border-top:1px solid var(--border);margin-top:1rem;flex-wrap:wrap;}
 .btn{padding:0.5rem 1.1rem;border-radius:8px;border:none;cursor:pointer;font-size:0.86rem;font-weight:600;transition:all 0.15s;font-family:inherit;}
@@ -671,39 +703,29 @@ function buildForm(r) {
   </div>
 
   <div class="fsec">
-    <div class="fsec-title">Struktur</div>
-    <div class="field"><label>Reaktions-SMILES <small style="color:var(--muted2)">Reaktanten&gt;Reagenz&gt;Produkte</small></label>
-      <input class="fi" id="f-smi" value="${x(r.reaction_smiles||'')}" placeholder="CC(C)(C)Br&gt;H2O&gt;CC(C)(C)OH" oninput="mu();schedP()">
-      <button class="bxs sec" style="margin-top:0.4rem" onclick="openReactionStructEditor()">✎ Struktur zeichnen (Ketcher)</button>
-    </div>
-    <div class="smi-prev" id="smi-prev"><div class="smi-ph">SMILES oben eingeben zur Vorschau</div></div>
-    <div class="row2" style="margin-top:0.75rem">
-      <div class="field"><label>Reagenzbeschriftung <small style="color:var(--muted2)">(über Pfeil — LaTeX: <code>H_2SO_4</code>, <code>[Ag(NH_3)_2]^{1+}</code>)</small></label>
-        <input class="fi" id="f-rl" value="${x(r.reagent_label||'')}" placeholder="H_2SO_4 / Δ" oninput="mu();schedP()"></div>
-      <div class="field"><label>Beschriftung unter Pfeil <small style="color:var(--muted2)">(optional)</small></label>
-        <input class="fi" id="f-rlb" value="${x(r.reagent_label_below||'')}" placeholder="Δ / 80 °C" oninput="mu();schedP()"></div>
-    </div>
-    <div class="field" style="margin-top:0.75rem"><label>Allgemeines Schema <small style="color:var(--muted2)">(Textfallback)</small></label>
-      <input class="fi" id="f-gs" value="${x(r.general_scheme||'')}" placeholder="R-X → R-OH" oninput="mu()"></div>
+    <div class="fsec-title">Reaktionsschema</div>
+    <!-- Authored component by component in Ketcher and stored as an RXN
+         file, which carries the exact coordinates that were drawn. The
+         SMILES is a derived search key only, so neither is edited as text. -->
+    <input type="hidden" id="f-rxn" value="${x(r.reaction_rxn||'')}">
+    <input type="hidden" id="f-smi" value="${x(r.reaction_smiles||'')}">
+    <div class="rxn-wys" id="rxn-wys"></div>
+    <div class="helper-text" style="margin-top:0.5rem">Klick auf ein Feld öffnet Ketcher für diese eine Struktur. „＋“ fügt einen weiteren Reaktanten bzw. ein weiteres Produkt hinzu. Die Beschriftungen am Pfeil verstehen LaTeX-Indizes: <code>H_2SO_4</code>, <code>[Ag(NH_3)_2]^{1+}</code>.</div>
+    <div class="smi-prev" id="smi-prev" style="margin-top:0.7rem"></div>
   </div>
 
   <div class="fsec">
     <div class="fsec-title">Bedingungen &amp; Umfang</div>
     <div class="field"><label>Bedingungen</label><textarea class="fi" id="f-cond" oninput="mu()">${x(r.conditions||'')}</textarea></div>
-    <div class="row2">
-      <div class="field"><label>Stereochemie</label><input class="fi" id="f-stereo" value="${x(r.stereochemistry||'')}" oninput="mu()"></div>
-      <div class="field"><label>Lösungsmittel</label><input class="fi" id="f-solv" value="${x(r.solvent||'')}" oninput="mu()"></div>
-    </div>
+    <div class="field"><label>Stereochemie</label><input class="fi" id="f-stereo" value="${x(r.stereochemistry||'')}" oninput="mu()"></div>
   </div>
 
   <div class="fsec">
-    <div class="fsec-title">Schlüsselpunkte &amp; Notizen</div>
+    <div class="fsec-title">Schlüsselpunkte</div>
     <div class="kp-list" id="kp-list">${(r.key_points||[]).map((p,i)=>`
       <div class="kp-row"><input value="${x(p)}" oninput="mu()"><button class="kp-del" onclick="rmKP(${i})">×</button></div>`).join('')}
     </div>
     <button class="bxs sec" onclick="addKP()">＋ Schlüsselpunkt</button>
-    <div class="field" style="margin-top:0.9rem"><label>Notizen / Synthesekontext</label>
-      <textarea class="fi" id="f-notes" style="min-height:84px" oninput="mu()">${x(r.notes||'')}</textarea></div>
   </div>
 
   <div class="act-bar">
@@ -713,7 +735,9 @@ function buildForm(r) {
   </div>
   <div class="helper-text">„Übernehmen" speichert lokal im Browser. Im Server-Modus wird zusätzlich data/reactions.json geschrieben. Zur dauerhaften Veröffentlichung auf GitHub Pages: <strong>Commit &amp; Push</strong> Tab.</div>`;
 
-  if (r.reaction_smiles) drawP(r.reaction_smiles, r.reagent_label, r.reagent_label_below);
+  _rxnLabelCache = { above: r.reagent_label || '', below: r.reagent_label_below || '' };
+  initRxnEditor(r);
+  drawP(MolRenderer.rxnSource(r), r.reagent_label, r.reagent_label_below);
 }
 
 function catToggle(sel) {
@@ -733,21 +757,25 @@ function addKP() { const l=document.getElementById('kp-list'); const i=l.childre
 function rmKP(i) { document.getElementById('kp-list').children[i]?.remove(); mu(); }
 function getKPs() { return [...document.querySelectorAll('#kp-list input')].map(i=>i.value.trim()).filter(Boolean); }
 
-let pt; function schedP(){clearTimeout(pt);pt=setTimeout(()=>{const s=document.getElementById('f-smi')?.value?.trim();const l=document.getElementById('f-rl')?.value?.trim();const lb=document.getElementById('f-rlb')?.value?.trim();if(s)drawP(s,l,lb);else{const b=document.getElementById('smi-prev');if(b)b.innerHTML='<div class="smi-ph">SMILES oben eingeben zur Vorschau</div>';}},500);}
+let pt; function schedP(){clearTimeout(pt);pt=setTimeout(()=>{const src=(document.getElementById('f-rxn')?.value||document.getElementById('f-smi')?.value||'').trim();const l=document.getElementById('f-rl')?.value?.trim();const lb=document.getElementById('f-rlb')?.value?.trim();drawP(src,l,lb);},400);}
 /* Preview a reaction (or a lone structure) with the same OpenChemLib
    renderer the quiz uses, so what you see here is what a student sees. */
-function drawP(smiles, label, labelBelow) {
+function drawP(src, label, labelBelow) {
   const b = document.getElementById('smi-prev');
   if (!b) return;
+  src = (src || '').trim();
+  if (!src) { b.innerHTML = '<div class="smi-ph">Noch keine Zeichnung — „Struktur zeichnen“ öffnet Ketcher</div>'; return; }
   b.innerHTML = '<div class="smi-ph">Rendern…</div>';
   MolRenderer.ready().then(() => {
     const host = document.getElementById('smi-prev');
     if (!host) return;
-    if (smiles.includes('>') || label || labelBelow) {
-      MolRenderer.drawReaction(smiles.includes('>') ? smiles : smiles + '>>', host,
+    if (MolRenderer.isRxn(src)) {
+      MolRenderer.drawReaction(src, host, { above: label, below: labelBelow });
+    } else if (src.includes('>') || label || labelBelow) {
+      MolRenderer.drawReaction(src.includes('>') ? src : src + '>>', host,
         { above: label, below: labelBelow, width: 190, height: 150 });
     } else {
-      MolRenderer.drawAuto(smiles, host, { width: 240, height: 180 });
+      MolRenderer.drawAuto(src, host, { width: 240, height: 180 });
     }
   }).catch(e => { b.innerHTML = '<div class="smi-ph">Renderer nicht verfügbar</div>'; console.error(e); });
 }
@@ -757,10 +785,10 @@ function collect() {
   r.id=g('f-id'); r.category=getCat(); r.name=g('f-name');
   s('difficulty',g('f-diff'));
   s('reaktionstyp',g('f-rtyp')); s('transformation',g('f-trans'));
-  s('reaction_smiles',g('f-smi')); s('reagent_label',g('f-rl')); s('reagent_label_below',g('f-rlb')); s('general_scheme',g('f-gs'));
-  s('conditions',g('f-cond')); s('stereochemistry',g('f-stereo')); s('solvent',g('f-solv'));
+  s('reaction_rxn',g('f-rxn')); s('reaction_smiles',g('f-smi'));
+  s('reagent_label',g('f-rl')); s('reagent_label_below',g('f-rlb'));
+  s('conditions',g('f-cond')); s('stereochemistry',g('f-stereo'));
   const kps=getKPs(); if(kps.length) r.key_points=kps;
-  s('notes',g('f-notes'));
   return r;
 }
 
@@ -2025,6 +2053,188 @@ window.removeEdgeFrom = function(i, j) {
 };
 
 /* ── Ketcher iframe editor ─────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════════
+ * WYSIWYG reaction editor
+ *
+ * The panel mirrors the finished drawing: reactant boxes, a live arrow
+ * carrying the two reagent-label fields, then product boxes. Each box
+ * holds ONE component as a MOL file, so the (x,y) Ketcher produced for
+ * every atom survives untouched — that is what makes a deliberately
+ * skewed angle stay skewed instead of being re-idealised to 120°.
+ *
+ * On save the components are stitched into a single RXN V2000 file
+ * (`reaction_rxn`), which is what index/export/preview render.
+ * ════════════════════════════════════════════════════════════════ */
+
+/* The label inputs live inside the re-rendered row, so their values are
+   cached here to survive a re-render triggered while typing. */
+let _rxnLabelCache = { above: '', below: '' };
+
+/* { reactants: [molfile], products: [molfile] } for the open record. */
+let _rxnComp = { reactants: [], products: [] };
+
+/* Split an RXN V2000 back into its component MOL blocks. The counts line
+   is the 5th line of the header ("  2  1"); everything after is one
+   $MOL block per component, reactants first. */
+function parseRxnComponents(rxn) {
+  const out = { reactants: [], products: [] };
+  if (!rxn || !/^\s*\$RXN/.test(rxn)) return out;
+  const head = rxn.split('$MOL');
+  const counts = (head[0].trim().split(/\r?\n/).pop() || '').trim().split(/\s+/).map(Number);
+  const nR = Number.isFinite(counts[0]) ? counts[0] : 0;
+  const blocks = head.slice(1).map(b => b.replace(/^\r?\n/, '').replace(/\s+$/, ''));
+  blocks.forEach((b, i) => { if (b) (i < nR ? out.reactants : out.products).push(b); });
+  return out;
+}
+
+/* Ketcher hands back a well-formed MOL even for an empty canvas; line 4
+   is the counts line, whose first field is the atom count. */
+function molHasAtoms(mol) {
+  if (!mol || mol.indexOf('M  END') === -1) return false;
+  const counts = (String(mol).split(/\r?\n/)[3] || '').trim().split(/\s+/);
+  return Number(counts[0]) > 0;
+}
+
+const _pad3 = n => String(n).padStart(3, ' ');
+
+/* Stitch the components back into one RXN V2000 file. */
+function buildRxnFile(comp) {
+  const all = comp.reactants.concat(comp.products);
+  if (!all.length) return '';
+  return '$RXN\n\n  OC-oecho\n\n' +
+    _pad3(comp.reactants.length) + _pad3(comp.products.length) + '\n' +
+    all.map(m => '$MOL\n' + m.replace(/\s+$/, '')).join('\n') + '\n';
+}
+
+/* Reaction SMILES, derived for search/dedup only — never rendered, since
+   it carries no coordinates. */
+function deriveRxnSmiles(comp) {
+  if (!window.OCL) return '';
+  const side = list => list.map(m => {
+    try { return window.OCL.Molecule.fromMolfile(m).toSmiles(); } catch (e) { return ''; }
+  }).filter(Boolean).join('.');
+  const l = side(comp.reactants), r = side(comp.products);
+  return (l || r) ? l + '>>' + r : '';
+}
+
+/* Push the current components into the hidden fields the form collects. */
+function syncRxnFields() {
+  const fRxn = document.getElementById('f-rxn');
+  const fSmi = document.getElementById('f-smi');
+  if (!fRxn) return;
+  fRxn.value = buildRxnFile(_rxnComp);
+  if (fSmi) fSmi.value = deriveRxnSmiles(_rxnComp);
+  mu();
+  schedP();
+}
+
+function initRxnEditor(r) {
+  _rxnComp = parseRxnComponents(r && r.reaction_rxn);
+  renderRxnEditor();
+}
+
+function renderRxnEditor() {
+  const host = document.getElementById('rxn-wys');
+  if (!host) return;
+  // A cancelled "new component" leaves a hole; an empty component means nothing.
+  _rxnComp.reactants = _rxnComp.reactants.filter(Boolean);
+  _rxnComp.products  = _rxnComp.products.filter(Boolean);
+
+  const side = (name) => {
+    const list = _rxnComp[name];
+    let h = '<div class="rxn-side">';
+    if (!list.length) {
+      h += box(name, -1, '');
+    } else {
+      list.forEach((m, i) => {
+        if (i) h += '<span class="rxn-plus">+</span>';
+        h += box(name, i, m);
+      });
+    }
+    h += '<button class="rxn-add" title="Weitere Struktur" onclick="addRxnComponent(\'' + name + '\')">＋</button>';
+    return h + '</div>';
+  };
+
+  const box = (name, i, mol) => {
+    const id = 'rxnbox-' + name + '-' + i;
+    const filled = !!mol;
+    const label = name === 'reactants' ? 'Reaktant' : 'Produkt';
+    return '<div class="rxn-box ' + (filled ? 'filled' : 'empty') + '" id="' + id + '"' +
+      ' title="Klick: in Ketcher zeichnen"' +
+      ' onclick="editRxnComponent(\'' + name + '\',' + i + ')">' +
+      (filled
+        ? '<button class="rxn-box-del" title="Entfernen" onclick="event.stopPropagation();removeRxnComponent(\'' + name + '\',' + i + ')">×</button>'
+        : '') +
+      (filled ? '' : '<div class="rxn-box-ph">＋ ' + label + '<br>zeichnen</div>') +
+      '</div>';
+  };
+
+  const rl  = document.getElementById('f-rl');
+  const rlb = document.getElementById('f-rlb');
+  const above = rl ? rl.value : (_rxnLabelCache.above || '');
+  const below = rlb ? rlb.value : (_rxnLabelCache.below || '');
+
+  host.innerHTML =
+    '<div class="rxn-row">' +
+      side('reactants') +
+      '<div class="rxn-arrow-col">' +
+        '<input class="fi" id="f-rl" value="' + x(above) + '" placeholder="Reagenzien, z. B. H_2SO_4" ' +
+          'oninput="_rxnLabelCache.above=this.value;mu();schedP()">' +
+        '<svg class="rxn-shaft" viewBox="0 0 172 11" xmlns="http://www.w3.org/2000/svg">' +
+          '<line x1="2" y1="5.5" x2="162" y2="5.5" stroke="#3a3a35" stroke-width="1.6"/>' +
+          '<path d="M161,1.3 L169,5.5 L161,9.7 z" fill="#3a3a35"/></svg>' +
+        '<input class="fi below" id="f-rlb" value="' + x(below) + '" placeholder="Bedingungen, z. B. Δ / 80 °C" ' +
+          'oninput="_rxnLabelCache.below=this.value;mu();schedP()">' +
+      '</div>' +
+      side('products') +
+    '</div>';
+
+  // Draw each filled box from its MOL, so the boxes show the real geometry.
+  MolRenderer.ready().then(() => {
+    for (const name of ['reactants', 'products']) {
+      _rxnComp[name].forEach((m, i) => {
+        const el = document.getElementById('rxnbox-' + name + '-' + i);
+        if (!el || !m) return;
+        const slot = document.createElement('div');
+        el.appendChild(slot);
+        MolRenderer.drawMol(m, slot, { width: 600, height: 460, autoCrop: true, autoCropMargin: 3 });
+      });
+    }
+  }).catch(e => console.error('rxn editor render:', e));
+}
+
+/* Opens Ketcher on a slot one past the end. Nothing is added unless the
+   editor actually commits a structure, so cancelling leaves no empty box. */
+window.addRxnComponent = function(side) {
+  editRxnComponent(side, _rxnComp[side].length);
+};
+
+window.removeRxnComponent = function(side, i) {
+  if (i < 0) return;
+  _rxnComp[side].splice(i, 1);
+  renderRxnEditor();
+  syncRxnFields();
+};
+
+/* Open Ketcher on ONE component. index -1 means "the empty placeholder",
+   i.e. the first structure on that side. */
+window.editRxnComponent = function(side, i) {
+  const idx = i < 0 ? 0 : i;
+  _rxnLabelCache.above = document.getElementById('f-rl')?.value || _rxnLabelCache.above;
+  _rxnLabelCache.below = document.getElementById('f-rlb')?.value || _rxnLabelCache.below;
+  openStructEditorFor({
+    title: (side === 'reactants' ? 'Reaktant' : 'Produkt') + ' ' + (idx + 1) + ' zeichnen (Ketcher)',
+    load: () => _rxnComp[side][idx] || '',
+    save: (mol) => {
+      // An empty canvas still yields a MOL header; only keep it when the
+      // counts line reports at least one atom.
+      _rxnComp[side][idx] = molHasAtoms(mol) ? mol : '';
+      renderRxnEditor();
+      syncRxnFields();
+    }
+  });
+};
+
 const KETCHER_URL = './vendor/ketcher/standalone/index.html';
 
 window.openStructEditor = async function(nodeIdx) {
@@ -2103,7 +2313,8 @@ window.closeStructEditor = function() {
 };
 
 /* When set, the modal commits here instead of to a quiz node.
-   { title, load(): string, save(mol, smiles) } */
+   { title, load(): string, save(mol, smiles, rxn) } — `rxn` is '' when the
+   canvas holds a single structure rather than a reaction. */
 let _structTarget = null;
 
 /* Open Ketcher on an arbitrary structure (used by the reaction form). */
@@ -2138,32 +2349,18 @@ window.openStructEditorFor = async function(target) {
   updateMetaFromKetcher();
 };
 
-/* The reaction form's "Struktur zeichnen" button. Ketcher round-trips
-   reaction SMILES, so the arrow and both sides come back in one string. */
-window.openReactionStructEditor = function() {
-  const field = document.getElementById('f-smi');
-  if (!field) return;
-  openStructEditorFor({
-    title: 'Reaktion zeichnen (Ketcher)',
-    load: () => field.value.trim(),
-    save: (mol, smiles) => {
-      if (!smiles) { toast('Ketcher lieferte kein SMILES', 'err'); return; }
-      field.value = smiles;
-      mu();
-      schedP();
-    }
-  });
-};
-
 window.commitStructEditor = async function() {
   if (_structTarget) {
     const iframe0 = document.getElementById('ketcher-iframe');
     const k0 = iframe0 && iframe0.contentWindow && iframe0.contentWindow.ketcher;
     if (k0) {
-      let mol = '', smiles = '';
+      let mol = '', smiles = '', rxn = '';
+      // getRxn only succeeds when the canvas actually holds a reaction
+      // (structures either side of an arrow); it throws otherwise.
+      try { rxn    = await k0.getRxn('v2000'); }    catch (e) { console.warn('getRxn:', e); }
       try { mol    = await k0.getMolfile('v2000'); } catch (e) { console.warn('getMolfile:', e); }
       try { smiles = await k0.getSmiles(); }        catch (e) { console.warn('getSmiles:', e); }
-      try { _structTarget.save(mol, smiles); } catch (e) { console.error('struct save:', e); }
+      try { _structTarget.save(mol, smiles, rxn); } catch (e) { console.error('struct save:', e); }
     }
     _structTarget = null;
     closeStructEditor();

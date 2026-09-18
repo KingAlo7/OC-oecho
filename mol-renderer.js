@@ -70,6 +70,38 @@ const MolRenderer = (() => {
     return false;
   }
 
+  /* An RXN file (what Ketcher's getRxn() returns) starts with the literal
+     "$RXN" header and carries one $MOL block per component — each with the
+     exact coordinates the chemist drew. This is the reaction library's
+     storage format; reaction SMILES is only kept as a search key. */
+  function isRxn(input) {
+    return !!input && /^\s*\$RXN/.test(String(input));
+  }
+
+  /* Split an RXN V2000 into its component MOL blocks. The counts line is
+     the last line of the header ("  2  1"): reactants then products.
+     We split here rather than using OCL.Reaction.fromRxn because the raw
+     MOL text is needed to recover atom aliases (see parseMolAliases). */
+  function splitRxn(rxn) {
+    const out = { reactants: [], products: [] };
+    if (!isRxn(rxn)) return out;
+    const parts = String(rxn).split('$MOL');
+    const counts = (parts[0].trim().split(/\r?\n/).pop() || '').trim().split(/\s+/).map(Number);
+    const nR = Number.isFinite(counts[0]) ? counts[0] : 0;
+    parts.slice(1).forEach(function (b, i) {
+      const block = b.replace(/^\r?\n/, '').replace(/\s+$/, '');
+      if (block) (i < nR ? out.reactants : out.products).push(block);
+    });
+    return out;
+  }
+
+  /* The drawing source for a reaction record, newest format first.
+     Older entries that only ever had a reaction SMILES still render. */
+  function rxnSource(r) {
+    if (!r) return '';
+    return r.reaction_rxn || r.reaction_smiles || '';
+  }
+
   function _clear(target) {
     if (!target) return null;
     if (typeof target === 'string') target = document.getElementById(target);
@@ -114,6 +146,38 @@ const MolRenderer = (() => {
     }
   }
 
+  /* Molfile atom aliases — the two-line
+   *     A    3
+   *     Ar
+   * form that Ketcher writes for a pseudo-atom. OCL parses the file
+   * happily but drops these lines, so a generic label like "Ar", "X" or
+   * "Nu" would render as its underlying carbon. We read them back out
+   * and re-apply them as custom labels.
+   *
+   * R-groups are NOT handled here: "R#" plus an "M  RGP" line is native
+   * molfile and OCL already renders those as R1, R2, …
+   *
+   * Returns { 0: 'Ar', 4: 'X' } keyed by zero-based atom index. */
+  function parseMolAliases(mol) {
+    const out = {};
+    if (!mol) return out;
+    const lines = String(mol).split(/\r?\n/);
+    for (let i = 0; i < lines.length - 1; i++) {
+      const m = /^A\s+(\d+)\s*$/.exec(lines[i]);
+      if (!m) continue;
+      const label = (lines[i + 1] || '').trim();
+      if (label) out[Number(m[1]) - 1] = label;   // molfile indices are 1-based
+    }
+    return out;
+  }
+
+  /* Merge file aliases with any caller-supplied ones (caller wins). */
+  function _aliasOpts(mol, o) {
+    const fromFile = parseMolAliases(mol);
+    if (!Object.keys(fromFile).length) return o;
+    return Object.assign({}, o, { alias: Object.assign(fromFile, o.alias || {}) });
+  }
+
   /**
    * Render a MOL file into a target element.
    * @param {string} mol  MOL V2000/V3000 text
@@ -125,7 +189,7 @@ const MolRenderer = (() => {
     const o = Object.assign({}, DEFAULTS, opts || {});
     try {
       const m = window.OCL.Molecule.fromMolfile(mol);
-      _applyAlias(m, o);
+      _applyAlias(m, _aliasOpts(mol, o));
       const svg = m.toSVG(o.width, o.height, undefined, o);
       return _injectSvg(target, svg);
     } catch (err) {
@@ -165,6 +229,20 @@ const MolRenderer = (() => {
      reaction itself but placed labels by its own rules and needed a
      second rendering engine on every page; OCL already renders every
      structure here, so the arrow is the only thing left to draw. */
+
+  /* Oversized so OCL's fit-to-box scaling never kicks in — see drawCell. */
+  const RXN_CANVAS_W = 2400;
+  const RXN_CANVAS_H = 1800;
+
+  /* Read the real size off an autoCrop'd SVG header, e.g.
+     <svg ... width="75px" height="36px" viewBox="254 226 75 36"> */
+  function _svgBox(svgText) {
+    const head = String(svgText).slice(0, 400);
+    const vb = head.match(/viewBox="\s*(-?[\d.]+)\s+(-?[\d.]+)\s+([\d.]+)\s+([\d.]+)/);
+    if (vb) return { w: Math.ceil(+vb[3]), h: Math.ceil(+vb[4]) };
+    const w = head.match(/width="([\d.]+)/), h = head.match(/height="([\d.]+)/);
+    return { w: w ? Math.ceil(+w[1]) : 120, h: h ? Math.ceil(+h[1]) : 100 };
+  }
 
   const RXN_LABEL_FONT_ABOVE = "500 12px 'Segoe UI', system-ui, -apple-system, sans-serif";
   const RXN_LABEL_FONT_BELOW = "500 11px 'Segoe UI', system-ui, -apple-system, sans-serif";
@@ -280,33 +358,80 @@ const MolRenderer = (() => {
    */
   function reactionSvg(rxn, opts) {
     const o = Object.assign({}, DEFAULTS, opts || {});
-    const parsed = parseReaction(rxn);
     const cells = [];
 
-    const molCell = function (smi) {
-      let inner;
-      try {
-        inner = window.OCL.Molecule.fromSmiles(smi).toSVG(o.width, o.height, undefined, o);
-      } catch (err) {
-        inner = '<svg xmlns="http://www.w3.org/2000/svg" width="' + o.width + '" height="' + o.height +
-          '"><text x="6" y="20" font-family="monospace" font-size="12" fill="#c91020">&#9888; ' +
-          String(smi).replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</text></svg>';
-      }
-      return { kind: 'svg', svg: inner, w: o.width, h: o.height };
+    /* Render one OCL Molecule into a tightly cropped cell.
+     *
+     * The canvas passed to toSVG is deliberately far larger than any
+     * component needs. OCL caps the drawn bond length at 24 px and only
+     * shrinks below that when the structure would not otherwise fit, so an
+     * oversized canvas means EVERY component lands at exactly 24 px/bond —
+     * a reagent and a polycycle come out at the same scale instead of each
+     * being stretched to fill its own box. `autoCrop` then trims the empty
+     * canvas away and reports the real size in the SVG header, which is
+     * what we lay the row out with.
+     *
+     * Crucially, none of this touches the atom coordinates: whatever
+     * geometry came out of Ketcher is what gets drawn, skewed angles and
+     * all. Only SMILES input forces OCL to invent a layout. */
+    const drawCell = function (m) {
+      const svg = m.toSVG(RXN_CANVAS_W, RXN_CANVAS_H, undefined,
+        Object.assign({}, o, { autoCrop: true, autoCropMargin: o.autoCropMargin != null ? o.autoCropMargin : 4 }));
+      const box = _svgBox(svg);
+      return { kind: 'svg', svg: svg, w: box.w, h: box.h };
     };
 
-    const addSide = function (list) {
-      list.forEach(function (smi, i) {
+    const errCell = function (what) {
+      const w = o.width, h = o.height;
+      return {
+        kind: 'svg', w: w, h: h,
+        svg: '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h +
+          '"><text x="6" y="20" font-family="monospace" font-size="12" fill="#c91020">&#9888; ' +
+          String(what).replace(/&/g, '&amp;').replace(/</g, '&lt;').slice(0, 60) + '</text></svg>'
+      };
+    };
+
+    /* Components joined by "+", in the order they were drawn. */
+    const addSide = function (list, make) {
+      list.forEach(function (item, i) {
         if (i) cells.push({ kind: 'plus', w: 20, h: 20 });
-        cells.push(molCell(smi));
+        try { cells.push(drawCell(make(item))); }
+        catch (err) { cells.push(errCell(item)); }
       });
     };
 
-    addSide(parsed.left);
-    const above = [o.above, parsed.agent.join(' + ')].filter(Boolean).join(', ');
+    let above, left = [], right = [], makeMol;
+
+    if (isRxn(rxn)) {
+      /* RXN file: each $MOL block already carries the drawn coordinates
+         and any atom aliases, so components are parsed one at a time. */
+      const split = splitRxn(rxn);
+      left = split.reactants;
+      right = split.products;
+      makeMol = function (molText) {
+        const m = window.OCL.Molecule.fromMolfile(molText);
+        _applyAlias(m, _aliasOpts(molText, o));
+        return m;
+      };
+      above = o.above || '';
+    } else {
+      /* Reaction SMILES: OCL has to invent coordinates. Kept so older
+         records and ad-hoc previews still render. */
+      const parsed = parseReaction(rxn);
+      left = parsed.left;
+      right = parsed.right;
+      makeMol = function (smi) {
+        const m = window.OCL.Molecule.fromSmiles(smi);
+        _applyAlias(m, o);
+        return m;
+      };
+      above = [o.above, parsed.agent.join(' + ')].filter(Boolean).join(', ');
+    }
+
+    addSide(left, makeMol);
     const arrow = _arrow(above, o.below);
     cells.push({ kind: 'svg', svg: arrow.svg, w: arrow.w, h: arrow.h });
-    addSide(parsed.right);
+    addSide(right, makeMol);
 
     const gap = 6;
     const totalW = cells.reduce(function (a, c) { return a + c.w; }, 0) + gap * (cells.length - 1);
@@ -347,9 +472,17 @@ const MolRenderer = (() => {
     const el = _clear(target);
     if (!el) return null;
     if (!window.OCL) { _renderError(target, 'OCL not loaded'); return null; }
-    const parsed = parseReaction(rxn);
-    if (!parsed.left.length && !parsed.right.length) { _renderError(target, 'Leere Reaktion'); return null; }
-    const out = reactionSvg(rxn, opts);
+    if (!isRxn(rxn)) {
+      const parsed = parseReaction(rxn);
+      if (!parsed.left.length && !parsed.right.length) { _renderError(target, 'Leere Reaktion'); return null; }
+    }
+    let out;
+    try { out = reactionSvg(rxn, opts); }
+    catch (err) {
+      console.error('MolRenderer.drawReaction:', err);
+      _renderError(target, 'Reaktion nicht lesbar: ' + err.message);
+      return null;
+    }
     el.innerHTML = out.svg;
     const svgEl = el.firstElementChild;
     if (svgEl) {
@@ -366,10 +499,12 @@ const MolRenderer = (() => {
    */
   function drawAuto(input, target, opts) {
     if (!input) { _renderError(target, 'Keine Struktur'); return null; }
+    if (isRxn(input)) return drawReaction(input, target, opts);
     return isMol(input) ? drawMol(input, target, opts) : drawSmiles(input, target, opts);
   }
 
-  return { ready, drawMol, drawSmiles, drawAuto, drawReaction, reactionSvg, parseReaction, isMol };
+  return { ready, drawMol, drawSmiles, drawAuto, drawReaction, reactionSvg, parseReaction,
+           parseMolAliases, splitRxn, isMol, isRxn, rxnSource };
 })();
 
 // Expose on window so cross-file consumers (scheme-graph-editor.js,
