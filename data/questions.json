@@ -3471,11 +3471,11 @@
     "name": "BW 2025 — Sapropterin (BH4-Analogon)",
     "difficulty": "D",
     "source": "ÖChO Bundeswettbewerb 2025 (BW 51), Aufgabe 4 B",
-    "intro": "Sapropterin ist ein synthetisches Analogon von Tetrahydrobiopterin, einem wichtigen Co-Faktor für Enzyme, die Phenylalanin abbauen. Es wird zur Behandlung bestimmter Formen der Phenylketonurie (PKU) eingesetzt, bei denen eine Restaktivität der Phenylalaninhydroxylase vorhanden ist. Durch die Einnahme können der Phenylalaninspiegel im Blut gesenkt und die Diätanforderungen für PKU-Patienten möglicherweise erleichtert werden.",
+    "intro": "Biochemie und organische Synthesen\n\nB. Synthese von Sapropterin\nSapropterin ist ein synthetisches Analogon von Tetrahydrobiopterin, einem wichtigen Co-Faktor für Enzyme, die Phenylalanin abbauen. Es wird zur Behandlung bestimmter Formen der Phenylketonurie (PKU) eingesetzt, bei denen eine Restaktivität der Phenylalaninhydroxylase vorhanden ist. Durch die Einnahme können der Phenylalaninspiegel im Blut gesenkt und die Diätanforderungen für PKU-Patienten möglicherweise erleichtert werden.",
     "sections": [
       {
         "type": "synthesis",
-        "title": "B. Synthese von Sapropterin",
+        "title": "4.5",
         "scheme": {
           "nodes": [
             {
@@ -3483,7 +3483,8 @@
               "label": "",
               "given": true,
               "smiles": "COC(=O)/C=C/C",
-              "explanation": "Edukt: (E)-Methylcrotonat."
+              "explanation": "Edukt: (E)-Methylcrotonat.",
+              "mol": "\n     RDKit          2D\n\n  7  6  0  0  0  0  0  0  0  0999 V2000\n    1.3750   -3.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5000   -4.2500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8750   -3.6250    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8750   -1.9500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.2500   -4.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.6250   -3.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.9500   -4.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  5  6  2  0\n  6  7  1  0\nM  END\n"
             },
             {
               "id": "A",
@@ -3491,34 +3492,38 @@
               "given": false,
               "smiles": "C[C@@H]1O[C@H]1C(=O)OC",
               "explanation": "Epoxidierung der E-Doppelbindung → trans-Epoxid.",
-              "related_reaction_id": "epoxidierung"
+              "related_reaction_id": "epoxidierung",
+              "mol": "\n     RDKit          2D\n\n  8  8  0  0  1  0  0  0  0  0999 V2000\n    5.7496   -7.2692    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8223   -5.7709    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.6344   -4.5098    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1449   -4.4427    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8750   -3.6250    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8750   -1.9500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5000   -4.2500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.3750   -3.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  6\n  5  6  2  0\n  5  7  1  0\n  7  8  1  0\n  4  2  1  0\n  2  1  1  1\nM  END\n"
             },
             {
               "id": "X",
               "label": "X",
               "given": false,
               "smiles": "CC(C)=O",
-              "name": "Aceton",
-              "explanation": "Carbonyl-Komponente für Acetonid-Bildung — bildet 5-Ring-Ketal mit dem Diol."
+              "explanation": "Carbonyl-Komponente für Acetonid-Bildung — bildet 5-Ring-Ketal mit dem Diol.",
+              "mol": "\n     RDKit          2D\n\n  4  3  0  0  0  0  0  0  0  0999 V2000\n   24.9241   -6.4583    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   23.6250   -5.7084    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   22.3259   -6.4583    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   23.6250   -4.2083    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  2  0\nM  END\n"
             },
             {
               "id": "AE",
               "label": "",
               "given": true,
-              "smiles": "C[C@@H]1OC(C)(C)O[C@@H]1C(=O)OC"
+              "smiles": "C[C@@H]1OC(C)(C)O[C@@H]1C(=O)OC",
+              "mol": "\n     RDKit          2D\n\n 12 12  0  0  1  0  0  0  0  0999 V2000\n   25.0000   -2.1250    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   24.3750   -3.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   24.8250   -4.7000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   23.6250   -5.6250    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   24.8750   -6.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   22.3750   -6.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   22.4250   -4.7000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   22.8000   -3.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   22.0000   -1.9500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   22.8750   -0.7000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   20.6750   -1.9500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   19.9250   -3.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  4  6  1  0\n  4  7  1  0\n  7  8  1  0\n  8  9  1  6\n  9 10  2  0\n  9 11  1  0\n 11 12  1  0\n  8  2  1  0\n  2  1  1  6\nM  END\n"
             },
             {
               "id": "B",
               "label": "B",
               "given": false,
               "smiles": "C[C@@H]1OC(C)(C)O[C@@H]1C(=O)O",
-              "explanation": "Esterverseifung (NaOH), dann Ansäuern."
+              "explanation": "Esterverseifung (NaOH), dann Ansäuern.",
+              "mol": "\n     RDKit          2D\n\n 11 11  0  0  1  0  0  0  0  0999 V2000\n   25.0000   -2.1250    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   24.3750   -3.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   24.8250   -4.7000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   23.6250   -5.6250    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   24.8750   -6.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   22.3750   -6.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   22.4250   -4.7000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   22.8000   -3.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   22.0000   -1.9500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   22.8750   -0.7000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   20.6750   -1.9500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  4  6  1  0\n  4  7  1  0\n  7  8  1  0\n  8  9  1  6\n  9 10  2  0\n  9 11  1  0\n  8  2  1  0\n  2  1  1  6\nM  END\n"
             },
             {
               "id": "CK",
               "label": "",
               "given": true,
-              "smiles": "C[C@@H]1OC(C)(C)O[C@@H]1C(=O)CCl"
+              "smiles": "C[C@@H]1OC(C)(C)O[C@@H]1C(=O)CCl",
+              "mol": "\n     RDKit          2D\n\n 12 12  0  0  1  0  0  0  0  0999 V2000\n   47.3750   -2.4500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   46.7000   -3.6250    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   47.1250   -5.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   45.9500   -5.9500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   47.2000   -6.8000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   44.7000   -6.8000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   44.7500   -5.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   45.2000   -3.6250    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   44.4500   -2.3750    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   45.1250   -1.0500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   43.0000   -2.3750    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   42.2500   -3.6250    0.0000 Cl  0  0  0  0  0  0  0  0  0  0  0  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  4  6  1  0\n  4  7  1  0\n  7  8  1  0\n  8  9  1  6\n  9 10  2  0\n  9 11  1  0\n 11 12  1  0\n  8  2  1  0\n  2  1  1  6\nM  END\n"
             },
             {
               "id": "C",
@@ -3526,19 +3531,15 @@
               "given": false,
               "smiles": "C[C@@H]1OC(C)(C)O[C@@H]1C(=O)CN=[N+]=[N-]",
               "explanation": "S_N2 mit Azid.",
-              "note": "α-Chlormethyl-keton."
+              "note": "α-Chlormethyl-keton.",
+              "mol": "\n     RDKit          2D\n\n 14 14  0  0  1  0  0  0  0  0999 V2000\n   47.3750   -2.4500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   46.7000   -3.6250    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   47.1250   -5.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   45.9500   -5.9500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   47.2000   -6.8000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   44.7000   -6.8000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   44.7500   -5.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   45.2000   -3.6250    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   44.4500   -2.3750    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   45.1250   -1.0500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   43.0000   -2.3750    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   42.2500   -1.0760    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   40.7500   -1.0760    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   39.2500   -1.0760    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  4  6  1  0\n  4  7  1  0\n  7  8  1  0\n  8  9  1  6\n  9 10  2  0\n  9 11  1  0\n 11 12  1  0\n 12 13  2  0\n 13 14  2  0\n  8  2  1  0\n  2  1  1  6\nM  CHG  2  13   1  14  -1\nM  END\n"
             },
             {
               "id": "AK",
               "label": "",
               "given": true,
-              "smiles": "C[C@@H]([C@@H](C(=O)CN)O)O"
-            },
-            {
-              "id": "PY",
-              "label": "",
-              "given": true,
-              "smiles": "CC(=O)Nc1nc(Cl)c([N+](=O)[O-])c(=O)[nH]1"
+              "smiles": "C[C@@H]([C@@H](C(=O)CN)O)O",
+              "mol": "\n     RDKit          2D\n\n  9  8  0  0  1  0  0  0  0  0999 V2000\n   37.2500  -12.1250    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   36.5500  -13.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   35.0000  -13.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   34.2500  -12.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   35.0000  -10.7000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   32.7500  -12.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   31.3750  -13.2500    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   34.2500  -14.6250    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   37.2500  -14.6250    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  2  3  1  0\n  3  4  1  6\n  4  5  2  0\n  4  6  1  0\n  6  7  1  0\n  3  8  1  0\n  2  9  1  0\n  2  1  1  6\nM  END\n"
             },
             {
               "id": "D",
@@ -3546,22 +3547,25 @@
               "given": false,
               "smiles": "C[C@@H]([C@@H](C(=O)CNc1nc(NC(C)=O)[nH]c(=O)c1[N+](=O)[O-])O)O",
               "explanation": "S_NAr: die Aminogruppe ersetzt das Cl am Nitropyrimidinon.",
-              "note": "Hier ist das Stickstoff-Heterocyclus 2-Acetamido-4-chlor-5-nitropyrimidinon angeknüpft."
+              "note": "Hier ist das Stickstoff-Heterocyclus 2-Acetamido-4-chlor-5-nitropyrimidinon angeknüpft.",
+              "mol": "\n     RDKit          2D\n\n 23 23  0  0  1  0  0  0  0  0999 V2000\n   37.2500  -12.1250    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   36.5500  -13.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   35.0000  -13.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   34.2500  -12.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   35.0000  -10.7000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   32.7500  -12.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   31.3750  -13.2500    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   29.9462  -12.7933    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   28.8363  -13.8023    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   27.4075  -13.3456    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   26.2976  -14.3546    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   24.8688  -13.8979    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   23.7589  -14.9069    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   24.5500  -12.4322    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   27.0887  -11.8799    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   28.1986  -10.8709    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   27.8797   -9.4052    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   29.6273  -11.3276    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   30.7373  -10.3186    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   32.1660  -10.7753    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   30.4184   -8.8529    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   34.2500  -14.6250    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   37.2500  -14.6250    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  2  3  1  0\n  3  4  1  6\n  4  5  2  0\n  4  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  2  0\n 10 11  1  0\n 11 12  1  0\n 12 13  1  0\n 12 14  2  0\n 10 15  1  0\n 15 16  1  0\n 16 17  2  0\n 16 18  1  0\n 18 19  1  0\n 19 20  2  0\n 19 21  1  0\n  3 22  1  0\n  2 23  1  0\n 18  8  2  0\n  2  1  1  6\nM  CHG  2  19   1  21  -1\nM  END\n"
             },
             {
               "id": "Ee",
               "label": "E",
               "given": false,
               "smiles": "C[C@@H]([C@@H](C1=Nc2c(NC1)nc(NC(C)=O)[nH]c2=O)O)O",
-              "explanation": "Die Nitrogruppe wird zum Amin reduziert, das mit dem Keton zum Dihydropterin kondensiert (neuer Heterocyclus)."
+              "explanation": "Die Nitrogruppe wird zum Amin reduziert, das mit dem Keton zum Dihydropterin kondensiert (neuer Heterocyclus).",
+              "mol": "\n     RDKit          2D\n\n 20 21  0  0  1  0  0  0  0  0999 V2000\n   11.6670  -10.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   12.2670  -11.7330    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   11.3330  -13.1670    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   10.0000  -14.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.7330  -13.2670    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    7.5000  -14.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.5000  -15.6000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.7330  -16.3330    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   10.0000  -15.6000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.1670  -16.3330    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    4.9330  -15.6000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.5000  -16.3330    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    2.2670  -15.6000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000  -16.3330    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.2670  -14.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.0000  -13.9330    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    6.1670  -13.2670    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.1670  -11.6670    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   12.6000  -14.1670    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   13.6670  -12.1670    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  2  3  1  0\n  3  4  1  6\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  1  0\n  7 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  1  0\n 13 14  1  0\n 13 15  2  0\n 11 16  1  0\n 16 17  1  0\n 17 18  2  0\n  3 19  1  0\n  2 20  1  0\n  9  4  1  0\n 17  6  1  0\n  2  1  1  6\nM  END\n"
             },
             {
               "id": "F",
               "label": "F",
               "given": false,
-              "smiles": "C[C@@H]([C@@H]([C@H]1CNc2nc(NC(C)=O)[nH]c(=O)c2N1)O)O",
+              "smiles": "C[C@@H]([C@@H](C1CNc2nc(NC(C)=O)[nH]c(=O)c2N1)O)O",
               "caption": "Sapropterin",
-              "explanation": "Hydrierung der weniger stabilen C=N-Bindung → Tetrahydropterin (6R)."
+              "explanation": "Hydrierung der weniger stabilen C=N-Bindung → Tetrahydropterin (6R).",
+              "mol": "\n     RDKit          2D\n\n 20 21  0  0  1  0  0  0  0  0999 V2000\n   11.6670  -10.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   12.2670  -11.7330    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   11.3330  -13.1670    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   10.0000  -14.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   10.0000  -15.6000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.7330  -16.3330    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    7.5000  -15.6000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.1670  -16.3330    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    4.9330  -15.6000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.5000  -16.3330    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    2.2670  -15.6000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000  -16.3330    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.2670  -14.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.0000  -13.9330    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    6.1670  -13.2670    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.1670  -11.6670    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    7.5000  -14.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.7330  -13.2670    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   12.6000  -14.1670    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   13.6670  -12.1670    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  2  3  1  0\n  3  4  1  6\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 11 13  2  0\n  9 14  1  0\n 14 15  1  0\n 15 16  2  0\n 15 17  1  0\n 17 18  1  0\n  3 19  1  0\n  2 20  1  0\n 18  4  1  0\n 17  7  2  0\n  2  1  1  6\nM  END\n"
             }
           ],
           "edges": [
@@ -3609,32 +3613,38 @@
             },
             {
               "from": [
-                "AK",
-                "PY"
+                "AK"
               ],
-              "to": "D"
+              "to": "D",
+              "reagent_above": "",
+              "reagent_below": "",
+              "reagent_mol": "\n     RDKit          2D\n\n 15 15  0  0  0  0  0  0  0  0999 V2000\n   -4.9363   -1.7499    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.6373   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.6373    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.3383   -1.7502    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0392   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.2598   -1.7499    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.5588   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8579   -1.7501    0.0000 Cl  0  0  0  0  0  0  0  0  0  0  0  0\n    1.5588    0.5001    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8579    1.2499    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1569    0.5001    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8579    2.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.2598    1.2499    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.2598    2.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0392    0.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  1  0\n  7  9  2  0\n  9 10  1  0\n 10 11  2  0\n 10 12  1  0\n  9 13  1  0\n 13 14  2  0\n 13 15  1  0\n 15  5  1  0\nM  CHG  2  10   1  12  -1\nM  END\n",
+              "reagent_mol_below": true
             },
             {
               "from": [
                 "D"
               ],
               "to": "Ee",
-              "reagent_above": "H_2 Pd/C, EtOH"
+              "reagent_above": "H_2 Pd/C , EtOH",
+              "reagent_below": ""
             },
             {
               "from": [
                 "Ee"
               ],
               "to": "F",
-              "reagent_above": "H_2 Pd/C, EtOH"
+              "reagent_above": "H_2 Pd/C , EtOH",
+              "reagent_below": ""
             }
           ]
         },
         "hints": [
-          "m-CPBA = meta-Chlorperbenzoesäure",
+          "m-CPBA = meta Chlorperbenzoesäure",
           "Bei der Bildung von E bildet sich ein weiterer Heterocyclus.",
-          "Bei der Bildung von F wird die weniger stabile Doppelbindung angegriffen."
-        ]
+          "Bei der Bildung von F wird die weniger stabile Doppelbindung angegriffen"
+        ],
+        "body": "Zeichnen Sie die Strukturformeln von A – F sowie des Reagenz X unter Berücksichtigung der Stereochemie."
       }
     ],
     "type": "composed"
@@ -3642,40 +3652,43 @@
   {
     "id": "bw51-2025-farnesol",
     "category": "Mehrstufige Synthesen",
-    "name": "BW 2025 — Farnesol",
+    "name": "BW 2025 — Farnesol – Strukturaufklärung und Synthese",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2025 (BW 51), Aufgabe 4 D",
-    "intro": "Farnesol wurde um 1905 nach dem Farnese-Akazienbaum (Vachellia farnesiana) benannt, da die Substanz in der Essenz von dessen Blüten identifiziert wurde. Gleich mehrere Wege — Strukturaufklärung und Synthese — führen hier zur Struktur des Farnesols.",
+    "intro": "Biochemie und organische Synthesen\n\nD. Farnesol – Strukturaufklärung und Synthese\nFarnesol wurde um 1905 nach dem Farnese-Akazienbaum (Vachellia farnesiana) benannt, da die Substanz in der Essenz von dessen Blüten identifiziert wurde. In diesem Beispiel führen gleich mehrere Wege – Strukturaufklärung und Synthese – zur Struktur des Farnesols.",
     "sections": [
       {
         "type": "synthesis",
-        "title": "Strukturaufklärung: Ozonolyse",
+        "title": "4.8",
         "scheme": {
           "nodes": [
             {
               "id": "FA",
               "label": "Farnesol",
               "given": true,
-              "smiles": "CC(=CCC/C(=C/CC/C(=C/CO)/C)/C)C"
+              "smiles": "CC(=CCC/C(=C/CC/C(=C/CO)/C)/C)C",
+              "mol": "\n     RDKit          2D\n\n 16 15  0  0  0  0  0  0  0  0999 V2000\n    6.8030   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8030   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1800   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1800   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4260   -8.8520    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8690   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -2.2620    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  1  0\n 10 14  1  0\n  6 15  1  0\n  2 16  1  0\nM  END\n"
             },
             {
               "id": "A",
               "label": "A",
               "given": false,
               "smiles": "CC(=O)CCC=O",
-              "caption": "(2 Äquivalente)"
+              "mol": "\n     RDKit          2D\n\n  7  6  0  0  0  0  0  0  0  0999 V2000\n    5.1567   -3.0922    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4452   -4.4129    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9459   -4.4568    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.2327   -5.6894    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.5212   -7.0097    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.3090   -8.2862    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.5972   -9.6066    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\nM  END\n"
             },
             {
               "id": "B",
               "label": "B",
               "given": false,
-              "smiles": "CC(C)=O"
+              "smiles": "CC(C)=O",
+              "mol": "\n     RDKit          2D\n\n  4  3  0  0  0  0  0  0  0  0999 V2000\n    6.8030   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1153   -6.7014    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  2  0\nM  END\n"
             },
             {
               "id": "C",
               "label": "C",
               "given": false,
-              "smiles": "OCC=O"
+              "smiles": "OCC=O",
+              "mol": "\n     RDKit          2D\n\n  4  3  0  0  0  0  0  0  0  0999 V2000\n    4.4260   -8.8520    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.7910   -5.9710    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\nM  END\n"
             }
           ],
           "edges": [
@@ -3705,47 +3718,52 @@
             }
           ]
         },
-        "body": "Farnesol wurde einer Ozonolyse unterworfen und mit Dimethylsulfid aufgearbeitet. Dabei erhielt man die drei Substanzen A, B und C im Verhältnis 2 : 1 : 1 (NMR in CD_3OD).",
+        "body": "Strukturaufklärung: Farnesol wurde einer Ozonolyse unterworfen und mit Dimethylsulfid aufgearbeitet. Dabei erhielt man die drei Substanzen A, B und C im Verhältnis 2 : 1 : 1. Von den drei Substanzen wurden jeweils ein ^1H- und ein ^{13}C-NMR Spektrum in CD_3OD aufgenommen.\nZeichnen Sie die Strukturen der Ozonolyseprodukte A, B, C auf.",
         "hints": [
-          "A: ^1H δ = 9,6 (1H, t, 6,65 Hz); 2,9 (2H, td, 7,41 Hz, 6,65 Hz); 2,7 (2H, t, 7,41 Hz); 2,1 (3H, s). ^{13}C δ = 29,8; 35,6; 37,5; 200,0; 206,5 ppm.",
-          "B: ^1H δ = 2,1 (6H, s). ^{13}C δ = 30,7; 206,7 ppm.",
-          "C: ^1H δ = 9,5 (1H, t, 6,03 Hz); 3,8 (2H, 6,03 Hz). ^{13}C δ = 63,9; 201,4 ppm."
+          "A: δ ^1H [ppm]: 9.6, 1H (t, 6.65 Hz); 2.9, 2H (td, 7.41 Hz, 6.65 Hz); 2.7, 2H (t, 7.41 Hz); 2.1, 3H (s). δ ^{13}C [ppm]: 29.8; 35.6; 37.5; 200.0; 206.5.",
+          "B: δ ^1H [ppm]: 2.1, 6H (s). δ ^{13}C [ppm]: 30.7; 206.7.",
+          "C: δ ^1H [ppm]: 9.5, 1H (t, 6.03 Hz); 3.8, 2H (6.03 Hz). δ ^{13}C [ppm]: 63.9; 201.4."
         ]
       },
       {
         "type": "synthesis",
-        "title": "Strukturaufklärung: Reaktionen 1–4",
+        "title": "4.9",
         "scheme": {
           "nodes": [
             {
               "id": "FA",
               "label": "Farnesol",
               "given": true,
-              "smiles": "CC(=CCC/C(=C/CC/C(=C/CO)/C)/C)C"
+              "smiles": "CC(=CCC/C(=C/CC/C(=C/CO)/C)/C)C",
+              "mol": "\n     RDKit          2D\n\n 16 15  0  0  0  0  0  0  0  0999 V2000\n    6.8030   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8030   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1800   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1800   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4260   -8.8520    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8690   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -2.2620    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  1  0\n 10 14  1  0\n  6 15  1  0\n  2 16  1  0\nM  END\n"
             },
             {
               "id": "R1",
               "label": "Reaktion 1",
               "given": false,
-              "smiles": "CC(C)CCCC(C)CCCC(C)CCO"
+              "smiles": "CC(C)CCCC(C)CCCC(C)CCO",
+              "mol": "\n     RDKit          2D\n\n 16 15  0  0  0  0  0  0  0  0999 V2000\n    6.8030   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -2.2620    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8030   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1800   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1800   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8690   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4260   -8.8520    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  7  9  1  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 12 13  1  0\n 12 14  1  0\n 14 15  1  0\n 15 16  1  0\nM  END\n"
             },
             {
               "id": "R2",
               "label": "Reaktion 2",
               "given": false,
-              "smiles": "CC(=CCC/C(=C/CC/C(=C/COC(C)=O)/C)/C)C"
+              "smiles": "CC(=CCC/C(=C/CC/C(=C/COC(C)=O)/C)/C)C",
+              "mol": "\n     RDKit          2D\n\n 19 18  0  1  0  0  0  0  0  0999 V2000\n    6.8030   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8030   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1800   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1800   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4260   -8.8520    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.1235   -8.1080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9271   -7.3354    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8280   -8.8639    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8690   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -2.2620    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  1  0\n 13 14  1  0\n 14 15  1  0\n 14 16  2  0\n 10 17  1  0\n  6 18  1  0\n  2 19  1  0\nM  STY  1   1 SUP\nM  SAL   1  4  13  14  16  15\nM  SMT   1 OAc\nM  END\n"
             },
             {
               "id": "R3",
               "label": "Reaktion 3",
               "given": false,
-              "smiles": "CC(=CCC/C(=C/CC/C(=C/C=O)/C)/C)C"
+              "smiles": "CC(=CCC/C(=C/CC/C(=C/C=O)/C)/C)C",
+              "mol": "\n     RDKit          2D\n\n 16 15  0  0  0  0  0  0  0  0999 V2000\n    6.8030   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8030   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1800   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1800   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4260   -8.8520    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8690   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -2.2620    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  2  0\n 10 14  1  0\n  6 15  1  0\n  2 16  1  0\nM  END\n"
             },
             {
               "id": "R4",
               "label": "Reaktion 4",
               "given": false,
-              "smiles": "CC(=CCC/C(=C/CC/C(=C/C=NO)/C)/C)C"
+              "smiles": "CC(=CCC/C(=C/CC/C(=C/C=NO)/C)/C)C",
+              "mol": "\n     RDKit          2D\n\n 17 16  0  0  0  0  0  0  0  0999 V2000\n    6.8030   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8030   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1800   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1800   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4260   -8.8520    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    3.1235   -8.1080    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8690   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -2.2620    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  2  0\n 13 14  1  0\n 10 15  1  0\n  6 16  1  0\n  2 17  1  0\nM  END\n"
             }
           ],
           "edges": [
@@ -3778,71 +3796,81 @@
               "reagent_above": "Hydroxylamin"
             }
           ]
-        }
+        },
+        "body": "Zusätzlich wurde Farnesol zur Strukturaufklärung weiteren chemischen Untersuchungen unterworfen:\nReaktion 1: Farnesol reagierte mit 3 Äquivalenten Wasserstoff\nReaktion 2: Farnesol reagierte mit Ethansäureanhydrid\nReaktionen 3+4: Farnesol reagierte mit Chrom(VI)-oxid und das Produkt mit Hydroxylamin.\nZeichnen Sie für zwei der vier Reaktionen die Strukturformeln der Reaktionsprodukte und beschriften Sie sie entsprechend mit „Reaktion 1, 2, 3 oder 4“."
       },
       {
         "type": "synthesis",
-        "title": "Synthese",
+        "title": "4.10",
         "scheme": {
           "nodes": [
             {
               "id": "EA",
               "label": "",
               "given": true,
-              "smiles": "CCOC(=O)CC(C)=O"
+              "smiles": "CCOC(=O)CC(C)=O",
+              "mol": "\n     RDKit          2D\n\n  9  8  0  1  0  0  0  0  0  0999 V2000\n    0.7355   -4.9131    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0498   -4.1902    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3330   -4.9670    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.3330   -4.4170    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.3330   -2.9170    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.7000   -5.2000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.7000   -6.6670    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.3670   -7.4670    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8330   -7.3330    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  4  6  1  0\n  6  7  1  0\n  7  8  1  0\n  7  9  2  0\nM  STY  1   1 SUP\nM  SAL   1  3   3   2   1\nM  SMT   1 OEt\nM  END\n"
             },
             {
               "id": "GC",
               "label": "",
               "given": true,
-              "smiles": "ClC/C=C(\\C)CCC=C(C)C"
+              "smiles": "ClC/C=C(\\C)CCC=C(C)C",
+              "mol": "\n     RDKit          2D\n\n 11 10  0  0  0  0  0  0  0  0999 V2000\n    4.1800   -4.5080    0.0000 Cl  0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8030   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -2.2620    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8030   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  4  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  2  0\n  9 10  1  0\n  9 11  1  0\nM  END\n"
             },
             {
               "id": "A2",
               "label": "A",
               "given": false,
-              "smiles": "CCOC(=O)C(C(C)=O)C/C=C(\\C)CCC=C(C)C"
+              "smiles": "CCOC(=O)C(C(C)=O)C/C=C(\\C)CCC=C(C)C",
+              "mol": "\n     RDKit          2D\n\n 19 18  0  1  0  0  0  0  0  0999 V2000\n    0.2579   -6.7142    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.5653   -5.9788    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8558   -6.7433    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1632   -6.0079    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4537   -6.7724    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1800   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8895   -3.7435    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.5821   -4.4789    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9063   -2.2436    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8030   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -2.2620    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8030   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  4  6  1  0\n  6  7  1  0\n  7  8  1  0\n  7  9  2  0\n  6 10  1  0\n 10 11  1  0\n 11 12  2  0\n 12 13  1  0\n 12 14  1  0\n 14 15  1  0\n 15 16  1  0\n 16 17  2  0\n 17 18  1  0\n 17 19  1  0\nM  STY  1   1 SUP\nM  SAL   1  3   3   2   1\nM  SMT   1 OEt\nM  END\n"
             },
             {
               "id": "B2",
               "label": "B",
               "given": false,
               "smiles": "CC(=O)CC/C=C(\\C)CCC=C(C)C",
-              "explanation": "Esterverseifung und Decarboxylierung der β-Ketosäure → Geranylaceton."
+              "explanation": "Esterverseifung und Decarboxylierung der β-Ketosäure → Geranylaceton.",
+              "mol": "\n     RDKit          2D\n\n 14 13  0  0  0  0  0  0  0  0999 V2000\n    1.5821   -4.4789    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8895   -3.7435    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9063   -2.2436    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1800   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8030   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -2.2620    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8030   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  7  9  1  0\n  9 10  1  0\n 10 11  1  0\n 11 12  2  0\n 12 13  1  0\n 12 14  1  0\nM  END\n"
             },
             {
               "id": "C2",
               "label": "C",
               "given": false,
               "smiles": "CC(Cl)(Cl)CC/C=C(\\C)CCC=C(C)C",
-              "explanation": "PCl_5 wandelt das Keton in das geminale Dichlorid um (M = 248 u, Cl_2-Isotopenmuster)."
+              "explanation": "PCl_5 wandelt das Keton in das geminale Dichlorid um (M = 248 u, Cl_2-Isotopenmuster).",
+              "mol": "\n     RDKit          2D\n\n 15 14  0  0  0  0  0  0  0  0999 V2000\n    1.5989   -2.9790    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8895   -3.7435    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.6540   -2.4529    0.0000 Cl  0  0  0  0  0  0  0  0  0  0  0  0\n    2.1249   -5.0340    0.0000 Cl  0  0  0  0  0  0  0  0  0  0  0  0\n    4.1800   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8030   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -2.2620    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8030   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  1  0\n  2  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  2  0\n  8  9  1  0\n  8 10  1  0\n 10 11  1  0\n 11 12  1  0\n 12 13  2  0\n 13 14  1  0\n 13 15  1  0\nM  END\n"
             },
             {
               "id": "D2",
               "label": "D",
               "given": false,
               "smiles": "[Na]C#CCC/C=C(\\C)CCC=C(C)C",
-              "explanation": "Doppelte Eliminierung von HCl; das terminale Alkin wird zum Natriumacetylid deprotoniert."
+              "explanation": "Doppelte Eliminierung von HCl; das terminale Alkin wird zum Natriumacetylid deprotoniert.",
+              "mol": "\n     RDKit          2D\n\n 14 13  0  0  0  0  0  0  0  0999 V2000\n    0.3084   -2.2145    0.0000 Na  0  0  0  0  0  1  0  0  0  0  0  0\n    1.5989   -2.9790    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8895   -3.7435    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1800   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8030   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -2.2620    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8030   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  3  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  7  9  1  0\n  9 10  1  0\n 10 11  1  0\n 11 12  2  0\n 12 13  1  0\n 12 14  1  0\nM  END\n"
             },
             {
               "id": "E2",
               "label": "E",
               "given": false,
               "smiles": "OCC#CCC/C=C(\\C)CCC=C(C)C",
-              "explanation": "A_N des Acetylids an Formaldehyd → Propargylalkohol (IR: 2155 und 3300 cm^{-1})."
+              "explanation": "A_N des Acetylids an Formaldehyd → Propargylalkohol (IR: 2155 und 3300 cm^{-1}).",
+              "mol": "\n     RDKit          2D\n\n 15 14  0  0  0  0  0  0  0  0999 V2000\n   -0.9990   -2.9499    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3084   -2.2145    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.5989   -2.9790    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8895   -3.7435    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1800   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8030   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -2.2620    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8030   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  3  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  2  0\n  8  9  1  0\n  8 10  1  0\n 10 11  1  0\n 11 12  1  0\n 12 13  2  0\n 13 14  1  0\n 13 15  1  0\nM  END\n"
             },
             {
               "id": "F2",
               "label": "F",
               "given": true,
-              "smiles": "OC/C=C(\\I)CC/C=C(\\C)CCC=C(C)C"
+              "smiles": "OC/C=C(\\I)CC/C=C(\\C)CCC=C(C)C",
+              "mol": "\n     RDKit          2D\n\n 16 15  0  0  0  0  0  0  0  0999 V2000\n    4.4260   -8.8520    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1800   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8690   -6.7210    0.0000 I   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1800   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8030   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -2.2620    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8030   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  4  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  2  0\n  9 10  1  0\n  9 11  1  0\n 11 12  1  0\n 12 13  1  0\n 13 14  2  0\n 14 15  1  0\n 14 16  1  0\nM  END\n"
             },
             {
               "id": "Fa",
               "label": "Farnesol",
               "given": false,
               "smiles": "CC(=CCC/C(=C/CC/C(=C/CO)/C)/C)C",
-              "explanation": "Me_2CuLi ersetzt das Vinyliodid unter Retention → (2E,6E)-Farnesol."
+              "explanation": "Me_2CuLi ersetzt das Vinyliodid unter Retention → (2E,6E)-Farnesol.",
+              "mol": "\n     RDKit          2D\n\n 16 15  0  0  0  0  0  0  0  0999 V2000\n    6.8030   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8030   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1800   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1800   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4260   -8.8520    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8690   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -2.2620    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  1  0\n 10 14  1  0\n  6 15  1  0\n  2 16  1  0\nM  END\n"
             }
           ],
           "edges": [
@@ -3861,7 +3889,7 @@
               ],
               "to": "B2",
               "reagent_above": "1. Ba(OH)_2",
-              "reagent_below": "2. HCl"
+              "reagent_below": "2.HCl"
             },
             {
               "from": [
@@ -3869,14 +3897,14 @@
               ],
               "to": "C2",
               "reagent_above": "PCl_5",
-              "reagent_below": "-POCl_3"
+              "reagent_below": "- POCl_3"
             },
             {
               "from": [
                 "C2"
               ],
               "to": "D2",
-              "reagent_above": "NaNH_2 / NH_3(l)"
+              "reagent_above": "NaNH_2 /NH_3(l)"
             },
             {
               "from": [
@@ -3901,21 +3929,39 @@
           ]
         },
         "hints": [
-          "Von C ist ein Massenspektrum gegeben: Molekülpeaks bei m/z = 248, 250 und 252 (Intensitäten ≈ 100 : 65 : 11).",
-          "D und E zeigen Signale im IR — D: eine Bande bei 2260 cm^{-1}; E: bei 2155 cm^{-1} und eine breite Bande bei 3300 cm^{-1}."
-        ]
+          "Von C ist ein Massenspektrum gegeben (Signale bei m/z = 248, 249, 250, 251, 252 mit relativen Intensitäten ≈ 100 : 15 : 65 : 10 : 11).",
+          "D und E zeigen Signale im IR: D: eine Bande bei 2260 cm^{-1}, E: bei 2155 cm^{-1} und eine breite Bande bei 3300 cm^{-1}"
+        ],
+        "body": "Zeichnen Sie die Strukturformeln von A-F aus Synthese 1 unter Berücksichtigung der Stereochemie."
+      },
+      {
+        "type": "synthesis",
+        "title": "4.11",
+        "body": "Zeichnen Sie die Strukturformel von Farnesol unter Berücksichtigung der Stereochemie und geben Sie den IUPAC-Namen samt Stereodeskriptoren an.",
+        "scheme": {
+          "nodes": [
+            {
+              "id": "FS",
+              "label": "",
+              "given": false,
+              "smiles": "CC(=CCC/C(=C/CC/C(=C/CO)/C)/C)C",
+              "mol": "\n     RDKit          2D\n\n 16 15  0  0  0  0  0  0  0  0999 V2000\n    6.8030   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8030   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1800   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1800   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4260   -8.8520    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8690   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -2.2620    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  1  0\n 10 14  1  0\n  6 15  1  0\n  2 16  1  0\nM  END\n"
+            }
+          ],
+          "edges": []
+        }
       },
       {
         "type": "short_answer",
-        "title": "Anzahl Stereoisomere von Farnesol",
-        "prompt": "Wie viele Stereoisomere kann Farnesol grundsätzlich haben?",
-        "expected_answer": "4 (zwei stereogene Doppelbindungen: C2=C3 und C6=C7 → 2^2 = 4)."
-      },
-      {
-        "type": "short_answer",
-        "title": "IUPAC-Name von Farnesol (4.11)",
+        "title": "4.11 — Name",
         "prompt": "Geben Sie den IUPAC-Namen von Farnesol samt Stereodeskriptoren an.",
-        "expected_answer": "(2E,6E)-3,7,11-Trimethyldodeca-2,6,10-trien-1-ol"
+        "expected_answer": "(2E, 6E) 3, 7, 11-Trimethyldodec-2,6,10-trien-1-ol"
+      },
+      {
+        "type": "short_answer",
+        "title": "4.12",
+        "prompt": "Geben Sie die Anzahl an Stereoisomeren von Farnesol an.",
+        "expected_answer": "4"
       }
     ],
     "type": "composed"
@@ -3923,86 +3969,88 @@
   {
     "id": "bw51-2025-phenylketonurie",
     "category": "Mehrstufige Synthesen",
-    "name": "BW 2025 — Phenylketonurie — Stoffwechselpfade von Phenylalanin",
+    "name": "BW 2025 — Pathobiochemie im Stoffwechsel: Phenylketonurie",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2025 (BW 51), Aufgabe 4 A",
-    "intro": "Phenylketonurie (PKU) ist eine erbliche Stoffwechselstörung, die die Verarbeitung der Aminosäure Phenylalanin A beeinträchtigt. Ohne Behandlung akkumuliert diese im Körper und kann schwere neurologische Schäden verursachen. Durch frühes Screening und eine gezielte Diät lässt sich die Erkrankung jedoch effektiv kontrollieren, sodass Betroffene ein weitgehend normales Leben führen können. Hier einige Stoffwechselpfade.",
+    "intro": "Biochemie und organische Synthesen\n\nA. Pathobiochemie im Stoffwechsel: Phenylketonurie\nPhenylketonurie (PKU) ist eine erbliche Stoffwechselstörung, die die Verarbeitung der Aminosäure Phenylalanin A beeinträchtigt. Ohne Behandlung akkumuliert diese im Körper und kann schwere neurologische Schäden verursachen. Durch frühes Screening und eine gezielte Diät lässt sich die Erkrankung jedoch effektiv kontrollieren, sodass Betroffene ein weitgehend normales Leben führen können. Hier einige Stoffwechselpfade:",
     "sections": [
       {
         "type": "synthesis",
-        "title": "A. Stoffwechselpfade von Phenylalanin",
+        "title": "4.1",
         "scheme": {
           "nodes": [
             {
               "id": "A",
               "label": "A",
               "given": true,
-              "smiles": "N[C@@H](Cc1ccccc1)C(=O)O",
-              "explanation": "Essentielle Aminosäure. Substrat aller folgenden Pfade."
+              "smiles": "NC(Cc1ccccc1)C(=O)O",
+              "explanation": "Essentielle Aminosäure. Substrat aller folgenden Pfade.",
+              "mol": "\n     RDKit          2D\n\n 12 12  0  0  0  0  0  0  0  0999 V2000\n    1.6238   -1.3125    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6239    0.1874    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3248    0.9375    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9741    0.1874    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2734    0.9376    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.5724    0.1876    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.5725   -1.3124    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2734   -2.0624    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9745   -1.3124    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9229    0.9375    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9230    2.4374    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.2219    0.1874    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  2 10  1  0\n 10 11  2  0\n 10 12  1  0\n  9  4  1  0\nM  END\n"
             },
             {
               "id": "W",
               "label": "W",
               "given": true,
               "smiles": "OC(=O)CCC(=O)C(=O)O",
-              "explanation": "Cosubstrat der Transaminase."
+              "explanation": "Cosubstrat der Transaminase.",
+              "mol": "\n     RDKit          2D\n\n 10  9  0  0  0  0  0  0  0  0999 V2000\n   -3.5722    0.1873    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2732    0.9373    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2733    2.4373    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9741    0.1874    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3248    0.9375    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6239    0.1874    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6240   -1.3125    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9229    0.9375    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9230    2.4374    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.2219    0.1874    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\n  6  8  1  0\n  8  9  2  0\n  8 10  1  0\nM  END\n"
             },
             {
               "id": "F",
               "label": "F",
               "given": false,
               "smiles": "NCCc1ccccc1",
-              "name": "Phenylethylamin",
-              "explanation": "A → F: Decarboxylase-katalysierte Decarboxylierung (-CO2). Klasse: Lyase."
+              "explanation": "A → F: Decarboxylase-katalysierte Decarboxylierung (-CO2). Klasse: Lyase.",
+              "mol": "\n     RDKit          2D\n\n  9  9  0  1  0  0  0  0  0  0999 V2000\n    2.4648   -0.8014    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9699   -0.6783    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3294    0.6781    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.1656    0.8013    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0197   -0.4317    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.5147   -0.3086    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.1554    1.0477    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.3013    2.2807    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8064    2.1576    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  9  4  1  0\nM  STY  1   1 SUP\nM  SAL   1  6   4   5   6   7   8   9\nM  SMT   1 Ph\nM  END\n"
             },
             {
               "id": "G",
               "label": "G",
               "given": false,
               "smiles": "N[C@@H](Cc1ccc(O)cc1)C(=O)O",
-              "name": "L-Tyrosin",
-              "explanation": "A → G: Phenylalanin-Hydroxylase hydroxyliert die para-Position des Aromaten. Klasse: Oxidoreduktase. Bei PKU defekt."
+              "explanation": "A → G: Phenylalanin-Hydroxylase hydroxyliert die para-Position des Aromaten. Klasse: Oxidoreduktase. Bei PKU defekt.",
+              "mol": "\n     RDKit          2D\n\n 13 13  0  0  1  0  0  0  0  0999 V2000\n    1.6238   -1.3125    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6239    0.1874    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3248    0.9375    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9741    0.1874    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2734    0.9376    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.5724    0.1876    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.5725   -1.3124    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.8716   -2.0623    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2734   -2.0624    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9745   -1.3124    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9229    0.9375    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9230    2.4374    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.2219    0.1874    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  7  9  1  0\n  9 10  2  0\n  2 11  1  0\n 11 12  2  0\n 11 13  1  0\n 10  4  1  0\n  2  1  1  1\nM  END\n"
             },
             {
               "id": "B",
               "label": "B",
               "given": false,
               "smiles": "O=C(C(=O)O)Cc1ccccc1",
-              "name": "Phenylbrenztraubensäure",
-              "explanation": "A + W → B + X: Pyridoxalphosphat (PLP)-abhängige Transaminase überträgt die α-Aminogruppe von Phenylalanin auf α-Ketoglutarat. Klasse: Transferase."
+              "explanation": "A + W → B + X: Pyridoxalphosphat (PLP)-abhängige Transaminase überträgt die α-Aminogruppe von Phenylalanin auf α-Ketoglutarat. Klasse: Transferase.",
+              "mol": "\n     RDKit          2D\n\n 12 12  0  1  0  0  0  0  0  0999 V2000\n    1.6240   -1.3126    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6239    0.1874    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9229    0.9375    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9230    2.4374    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.2219    0.1874    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3248    0.9375    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9741    0.1874    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9740   -1.3126    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2730   -2.0627    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.5721   -1.3127    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.5722    0.1873    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2732    0.9373    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  2  6  1  0\n  6  7  1  0\n  7  8  2  0\n  8  9  1  0\n  9 10  2  0\n 10 11  1  0\n 11 12  2  0\n 12  7  1  0\nM  STY  1   1 SUP\nM  SAL   1  6   7   8   9  10  11  12\nM  SMT   1 Ph\nM  END\n"
             },
             {
               "id": "X",
               "label": "X",
               "given": false,
               "smiles": "N[C@@H](CCC(=O)O)C(=O)O",
-              "name": "L-Glutaminsäure",
-              "explanation": "X entsteht durch Hydrolyse aus dem PLP-Glutamat-Schiff-Base-Intermediat Y."
+              "explanation": "X entsteht durch Hydrolyse aus dem PLP-Glutamat-Schiff-Base-Intermediat Y.",
+              "mol": "\n     RDKit          2D\n\n 10  9  0  0  1  0  0  0  0  0999 V2000\n    1.6238   -1.3125    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6239    0.1874    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3248    0.9375    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9741    0.1874    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2732    0.9373    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2733    2.4373    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.5722    0.1873    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9229    0.9375    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9230    2.4374    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.2219    0.1874    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  2  0\n  5  7  1  0\n  2  8  1  0\n  8  9  2  0\n  8 10  1  0\n  2  1  1  1\nM  END\n"
             },
             {
               "id": "C",
               "label": "C",
               "given": false,
               "smiles": "OC(Cc1ccccc1)C(=O)O",
-              "name": "Phenylmilchsäure",
-              "explanation": "B → C: Reduktion der α-Carbonyl-Gruppe durch NADH (Oxidoreduktase)."
+              "explanation": "B → C: Reduktion der α-Carbonyl-Gruppe durch NADH (Oxidoreduktase).",
+              "mol": "\n     RDKit          2D\n\n 12 12  0  1  0  0  0  0  0  0999 V2000\n    1.6240   -1.3126    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6239    0.1874    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3248    0.9375    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9741    0.1874    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9740   -1.3126    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2730   -2.0627    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.5721   -1.3127    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.5722    0.1873    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2732    0.9373    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9229    0.9375    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9230    2.4374    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.2219    0.1874    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  2 10  1  0\n 10 11  2  0\n 10 12  1  0\n  9  4  1  0\nM  STY  1   1 SUP\nM  SAL   1  6   4   5   6   7   8   9\nM  SMT   1 Ph\nM  END\n"
             },
             {
               "id": "D",
               "label": "D",
               "given": false,
               "smiles": "OC(=O)Cc1ccccc1",
-              "name": "Phenylessigsäure",
-              "explanation": "B → D: oxidative Decarboxylierung (-CO2, -NADH)."
+              "explanation": "B → D: oxidative Decarboxylierung (-CO2, -NADH).",
+              "mol": "\n     RDKit          2D\n\n 10 10  0  1  0  0  0  0  0  0999 V2000\n    4.2220    0.1874    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9229    0.9374    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9230    2.4374    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6238    0.1875    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3248    0.9374    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9742    0.1874    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2733    0.9373    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2733    2.4373    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9743    3.1874    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3247    2.4374    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  2  0\n  8  9  1  0\n  9 10  2  0\n 10  5  1  0\nM  STY  1   1 SUP\nM  SAL   1  6   5   6   7   8   9  10\nM  SMT   1 Ph\nM  END\n"
             },
             {
               "id": "Y",
               "label": "Y",
               "given": false,
               "smiles": "NC(=O)CC[C@H](N)C(=O)O",
-              "name": "L-Glutamin",
               "explanation": "Cofaktor-Intermediat: Pyridoxalphosphat (PLP) trägt vorübergehend die NH2-Gruppe als externes Aldimin.",
-              "note": "Cofaktor-Schiff-Base; X entsteht durch Hydrolyse von Y."
+              "note": "Cofaktor-Schiff-Base; X entsteht durch Hydrolyse von Y.",
+              "mol": "\n     RDKit          2D\n\n 10  9  0  0  1  0  0  0  0  0999 V2000\n   -3.5722    0.1873    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2732    0.9373    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2733    2.4373    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9741    0.1874    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3248    0.9375    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6239    0.1874    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6238   -1.3125    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9229    0.9375    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9230    2.4374    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.2219    0.1874    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  1\n  6  8  1  0\n  8  9  2  0\n  8 10  1  0\nM  END\n"
             },
             {
               "id": "Ee",
@@ -4010,7 +4058,7 @@
               "given": false,
               "smiles": "NC(=O)CC[C@H](NC(=O)Cc1ccccc1)C(=O)O",
               "caption": "C_13H_16N_2O_4",
-              "name": "Phenylacetylglutamin"
+              "mol": "\n     RDKit          2D\n\n 19 19  0  1  1  0  0  0  0  0999 V2000\n   -0.9744    4.6874    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9743    3.1874    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2733    2.4373    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3247    2.4374    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3248    0.9374    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6238    0.1875    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9228    0.9376    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    4.2219    0.1876    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.2220   -1.3124    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.5209    0.9377    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8200    0.1877    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1190    0.9378    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4181    0.1879    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4181   -1.3121    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1191   -2.0622    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8201   -1.3123    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6239   -1.3125    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3249   -2.0626    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9230   -2.0624    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  2  0\n  8 10  1  0\n 10 11  1  0\n 11 12  2  0\n 12 13  1  0\n 13 14  2  0\n 14 15  1  0\n 15 16  2  0\n  6 17  1  0\n 17 18  2  0\n 17 19  1  0\n 16 11  1  0\n  6  5  1  6\nM  STY  1   1 SUP\nM  SAL   1  6  11  12  13  14  15  16\nM  SMT   1 Ph\nM  END\n"
             }
           ],
           "edges": [
@@ -4032,7 +4080,9 @@
                 "W"
               ],
               "to": "B",
-              "reagent_above": "PLP (Pyridoxalphosphat)"
+              "reagent_above": "",
+              "reagent_below": "",
+              "reagent_mol": "\n     RDKit          2D\n\n 16 16  0  1  0  0  0  0  0  0999 V2000\n    1.0827    2.9998    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.2166    2.2499    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.2166    0.7499    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5156    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.8146    0.7498    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5156   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.8146   -2.2499    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.2166   -2.2501    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0824   -1.4999    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0824    0.0001    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.3817    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.6807   -0.0001    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.6806   -1.5001    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1806   -1.5002    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.1806   -1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.6805   -3.0001    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  4  6  2  0\n  6  7  1  0\n  6  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 12 13  1  0\n 13 14  2  0\n 13 15  1  0\n 13 16  1  0\n 10  3  2  0\nM  STY  1   1 SUP\nM  SAL   1  5  12  13  14  15  16\nM  SMT   1 OP\nM  END\n"
             },
             {
               "from": [
@@ -4040,7 +4090,8 @@
                 "W"
               ],
               "to": "X",
-              "reagent_above": "PLP (Pyridoxalphosphat)"
+              "reagent_above": "",
+              "reagent_below": ""
             },
             {
               "from": [
@@ -4068,63 +4119,81 @@
           ]
         },
         "hints": [
-          "Die Reaktion A → F wird katalysiert durch eine Decarboxylase.",
-          "F ist ein Neurotransmitter.",
+          "Die Reaktion A → F wird katalysiert durch eine Decarboxylase",
+          "F ist ein Neurotransmitter",
           "X entsteht durch Hydrolyse aus Y.",
           "Für die Reaktion A + W → B + X werden ein Enzym und ein Vitamin als Cofaktor benötigt.",
           "A → G (eine kanonische Aminosäure) benötigt als Enzym Phenylalaninhydroxylase."
-        ]
+        ],
+        "body": "Zeichnen Sie die Strukturen von B – G, X und Y"
+      },
+      {
+        "type": "short_answer",
+        "title": "4.2",
+        "prompt": "Schreiben Sie zu folgenden Reaktionen die korrekte Enzymklasse auf.\nA → F:\nA → G:\nB → C:\nA → B:",
+        "expected_answer": "A → F: Lyase\nA → G: Oxidoreduktase\nB → C: Oxidoreduktase\nA → B: Transferase"
+      },
+      {
+        "type": "short_answer",
+        "title": "4.3",
+        "prompt": "Benennen Sie die eingekreiste funktionelle Gruppe und zeichen Sie die vollständige Struktur von „-OP“ bei physiologischem pH-Wert.",
+        "expected_answer": "Phosphorsäureester; RO–P(=O)(O^–)–O^– (R–O–PO_3^{2–})"
       },
       {
         "type": "synthesis",
-        "title": "Katalytischer Cyclus der Transaminierung (4.4)",
+        "title": "4.4",
         "scheme": {
           "nodes": [
             {
               "id": "PMP",
               "label": "",
               "given": true,
-              "smiles": "NCc1c(O)c(C)[nH+]cc1COP(=O)([O-])[O-]"
+              "smiles": "NCc1c(O)c(C)[nH+]cc1COP(=O)([O-])[O-]",
+              "mol": "\n     RDKit          2D\n\n 16 16  0  1  0  0  0  0  0  0999 V2000\n    4.6000   -3.2000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8600   -3.9400    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8600   -5.4400    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.5600   -6.2000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.5000   -5.6000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.5600   -7.7600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.2600   -8.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8600   -8.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    7.1600   -7.7600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.1600   -6.2000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.4000   -5.4400    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.6000   -6.1000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    9.6311   -7.5997    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n   11.1308   -7.5685    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1315   -7.6308    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    9.6623   -9.0994    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  4  6  2  0\n  6  7  1  0\n  6  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 12 13  1  0\n 13 14  2  0\n 13 15  1  0\n 13 16  1  0\n 10  3  2  0\nM  CHG  3   8   1  15  -1  16  -1\nM  STY  1   1 SUP\nM  SAL   1  5  12  13  14  15  16\nM  SMT   1 OP\nM  END\n"
             },
             {
               "id": "W2",
-              "label": "W",
+              "label": "",
               "given": true,
-              "smiles": "OC(=O)CCC(=O)C(=O)O"
+              "text": "W oder A"
             },
             {
               "id": "K",
               "label": "K",
               "given": false,
               "smiles": "OC(=O)CCC(=NCc1c(O)c(C)[nH+]cc1COP(=O)([O-])[O-])C(=O)O",
-              "explanation": "Kondensation der Aminogruppe von PMP mit der Ketogruppe von W (-H_2O) → Ketimin."
+              "explanation": "Ketimin aus PMP und W (α-Ketoglutarat), R = –CH_2–CH_2–COOH",
+              "mol": "\n     RDKit          2D\n\n 25 25  0  3  0  0  0  0  0  0999 V2000\n    1.9781    2.7820    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9872    1.2820    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.6928    0.5241    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.2908    0.5400    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3000   -0.9600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.6000   -1.7000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.6000   -3.2000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8600   -3.9400    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8600   -5.4400    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.5600   -6.2000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.5000   -5.6000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.5600   -7.7600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.2600   -8.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8600   -8.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    7.1600   -7.7600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.1600   -6.2000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.4000   -5.4400    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.6000   -6.1000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    9.6311   -7.5997    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n   11.1308   -7.5685    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1315   -7.6308    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    9.6623   -9.0994    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.9000   -0.9600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.9092    0.5400    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    7.1944   -1.7179    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  1  0\n 10 12  2  0\n 12 13  1  0\n 12 14  1  0\n 14 15  2  0\n 15 16  1  0\n 16 17  1  0\n 17 18  1  0\n 18 19  1  0\n 19 20  2  0\n 19 21  1  0\n 19 22  1  0\n  6 23  1  0\n 23 24  2  0\n 23 25  1  0\n 16  9  2  0\nM  CHG  3  14   1  21  -1  22  -1\nM  STY  3   1 SUP   2 SUP   3 SUP\nM  SAL   1  5   5   4   2   3   1\nM  SMT   1 R\nM  SAL   2  3  23  24  25\nM  SMT   2 COOH\nM  SAL   3  5  18  19  20  21  22\nM  SMT   3 OP\nM  END\n"
             },
             {
               "id": "I",
               "label": "I",
               "given": false,
               "smiles": "OC(=O)CCC(=NC=C1C(COP(=O)([O-])[O-])=CNC(C)=C1O)C(=O)O",
-              "explanation": "Tautomerisierung über das chinoide Intermediat."
+              "explanation": "Tautomer (chinoide Zwischenstufe)",
+              "mol": "\n     RDKit          2D\n\n 25 25  0  3  0  0  0  0  0  0999 V2000\n    1.9781    2.7820    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9872    1.2820    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.6928    0.5241    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.2908    0.5400    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3000   -0.9600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.6000   -1.7000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.6000   -3.2000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8600   -3.9400    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8600   -5.4400    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.1600   -6.2000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.4000   -5.4400    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.6000   -6.1000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    9.6311   -7.5997    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n   11.1308   -7.5685    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1315   -7.6308    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    9.6623   -9.0994    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    7.1600   -7.7600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8600   -8.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    4.5600   -7.7600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.2600   -8.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.5600   -6.2000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.5000   -5.6000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.9000   -0.9600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.9092    0.5400    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    7.1944   -1.7179    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 12 13  1  0\n 13 14  2  0\n 13 15  1  0\n 13 16  1  0\n 10 17  2  0\n 17 18  1  0\n 18 19  1  0\n 19 20  1  0\n 19 21  2  0\n 21 22  1  0\n  6 23  1  0\n 23 24  2  0\n 23 25  1  0\n 21  9  1  0\nM  CHG  2  15  -1  16  -1\nM  STY  3   1 SUP   2 SUP   3 SUP\nM  SAL   1  5   5   4   2   3   1\nM  SMT   1 R\nM  SAL   2  3  23  24  25\nM  SMT   2 COOH\nM  SAL   3  5  12  13  14  15  16\nM  SMT   3 OP\nM  END\n"
             },
             {
               "id": "K2",
               "label": "K´",
               "given": false,
               "smiles": "OC(=O)CCC(N=Cc1c(O)c(C)[nH+]cc1COP(=O)([O-])[O-])C(=O)O",
-              "explanation": "Aldimin."
+              "explanation": "Aldimin",
+              "mol": "\n     RDKit          2D\n\n 25 25  0  3  0  0  0  0  0  0999 V2000\n    1.9781    2.7820    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9872    1.2820    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.6928    0.5241    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.2908    0.5400    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3000   -0.9600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.6000   -1.7000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.6000   -3.2000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8600   -3.9400    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8600   -5.4400    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.5600   -6.2000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.5000   -5.6000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.5600   -7.7600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.2600   -8.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8600   -8.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    7.1600   -7.7600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.1600   -6.2000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.4000   -5.4400    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.6000   -6.1000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    9.6311   -7.5997    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n   11.1308   -7.5685    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1315   -7.6308    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    9.6623   -9.0994    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.9000   -0.9600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.9092    0.5400    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    7.1944   -1.7179    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  2  0\n  8  9  1  0\n  9 10  1  0\n 10 11  1  0\n 10 12  2  0\n 12 13  1  0\n 12 14  1  0\n 14 15  2  0\n 15 16  1  0\n 16 17  1  0\n 17 18  1  0\n 18 19  1  0\n 19 20  2  0\n 19 21  1  0\n 19 22  1  0\n  6 23  1  0\n 23 24  2  0\n 23 25  1  0\n 16  9  2  0\nM  CHG  3  14   1  21  -1  22  -1\nM  STY  3   1 SUP   2 SUP   3 SUP\nM  SAL   1  5   5   4   2   3   1\nM  SMT   1 R\nM  SAL   2  3  23  24  25\nM  SMT   2 COOH\nM  SAL   3  5  18  19  20  21  22\nM  SMT   3 OP\nM  END\n"
             },
             {
               "id": "X2",
-              "label": "X",
-              "given": false,
-              "smiles": "N[C@@H](CCC(=O)O)C(=O)O"
+              "label": "",
+              "given": true,
+              "text": "X oder B"
             },
             {
               "id": "L",
               "label": "L",
               "given": false,
               "smiles": "O=Cc1c(O)c(C)[nH+]cc1COP(=O)([O-])[O-]",
-              "name": "Pyridoxalphosphat (PLP)"
+              "explanation": "Pyridoxalphosphat (PLP); aus K´ entsteht außerdem X (Glutaminsäure)",
+              "mol": "\n     RDKit          2D\n\n 16 16  0  1  0  0  0  0  0  0999 V2000\n    4.6000   -3.2000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8600   -3.9400    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8600   -5.4400    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.5600   -6.2000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.5000   -5.6000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.5600   -7.7600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.2600   -8.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8600   -8.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    7.1600   -7.7600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.1600   -6.2000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.4000   -5.4400    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.6000   -6.1000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    9.6311   -7.5997    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n   11.1308   -7.5685    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1315   -7.6308    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    9.6623   -9.0994    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  4  6  2  0\n  6  7  1  0\n  6  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 12 13  1  0\n 13 14  2  0\n 13 15  1  0\n 13 16  1  0\n 10  3  2  0\nM  CHG  3   8   1  15  -1  16  -1\nM  STY  1   1 SUP\nM  SAL   1  5  12  13  14  15  16\nM  SMT   1 OP\nM  END\n"
             }
           ],
           "edges": [
@@ -4134,77 +4203,55 @@
                 "W2"
               ],
               "to": "K",
-              "reagent_above": "-H_2O"
+              "reagent_above": "-H_2O",
+              "reagent_below": "",
+              "equilibrium": true
             },
             {
               "from": [
                 "K"
               ],
-              "to": "I"
+              "to": "I",
+              "reagent_above": "",
+              "reagent_below": "",
+              "equilibrium": true
             },
             {
               "from": [
                 "I"
               ],
-              "to": "K2"
+              "to": "K2",
+              "reagent_above": "",
+              "reagent_below": "",
+              "equilibrium": true
             },
             {
               "from": [
                 "K2"
               ],
               "to": "X2",
-              "reagent_above": "H_2O"
+              "reagent_above": "H_2O",
+              "reagent_below": "",
+              "equilibrium": true
             },
             {
               "from": [
                 "K2"
               ],
               "to": "L",
-              "reagent_above": "H_2O"
+              "reagent_above": "H_2O",
+              "reagent_below": "",
+              "equilibrium": true
             }
           ]
         },
-        "body": "Die Umwandlung A + W → B + X erfolgt in mehreren Schritten als katalytischer Cyclus, wobei auch diese Reaktionsfolge auftaucht, in der einer der beiden Ausgangsstoffe (Sie müssen entscheiden, welcher) umgesetzt wird. Die Pfeile sind Gleichgewichtspfeile."
-      },
-      {
-        "type": "multiple_choice",
-        "title": "Enzymklasse A → F",
-        "prompt": "Zu welcher Enzymklasse gehört die Decarboxylierung A → F?",
-        "choices": [
-          {
-            "id": "a",
-            "label": "Lyase",
-            "correct": true
-          },
-          {
-            "id": "b",
-            "label": "Oxidoreduktase",
-            "correct": false
-          },
-          {
-            "id": "c",
-            "label": "Transferase",
-            "correct": false
-          },
-          {
-            "id": "d",
-            "label": "Hydrolase",
-            "correct": false
-          }
-        ],
-        "explanation": "Lyasen spalten Bindungen ohne Hydrolyse oder Redox-Schritt. Decarboxylasen (-CO2) sind klassische Lyasen."
+        "body": "Die Umwandlung von A + W → B + X erfolgt in mehreren Schritten als katalytischer Cyclus, wobei auch diese Reaktionsfolge auftaucht, in der einer der beiden Ausgangsstoffe (Sie müssen entscheiden, welcher) umgesetzt wird:\nZeichnen Sie die fehlenden Strukturen K, I, K´ und L."
       },
       {
         "type": "short_answer",
-        "title": "Enzymklassen (4.2)",
-        "prompt": "Schreiben Sie zu den Reaktionen A → F, A → G, B → C und A → B die korrekte Enzymklasse auf.",
-        "expected_answer": "A → F: Lyase; A → G: Oxidoreduktase; B → C: Oxidoreduktase; A → B: Transferase"
-      },
-      {
-        "type": "short_answer",
-        "title": "Die Gruppe „-OP\" (4.3)",
-        "prompt": "Benennen Sie die eingekreiste funktionelle Gruppe und zeichnen Sie die vollständige Struktur von „-OP\" bei physiologischem pH-Wert.",
-        "expected_answer": "Phosphorsäureester: R-O-PO_3^{2-}"
+        "title": "4.4 — Ausgangsstoff",
+        "prompt": "Welcher der beiden Ausgangsstoffe (W oder A) wird im gezeigten Cyclus mit dem Pyridoxaminphosphat umgesetzt?",
+        "expected_answer": "W (α-Ketoglutarat): es bildet mit der NH_2-Gruppe das Ketimin K; am Ende entstehen X (Glutaminsäure) und L (Pyridoxalphosphat)."
       }
     ],
     "type": "composed"
@@ -4212,55 +4259,57 @@
   {
     "id": "bw51-2025-fettsaeure-biosynthese",
     "category": "Mehrstufige Synthesen",
-    "name": "BW 2025 — Fettsäure-Biosynthese (Palmitinsäure)",
+    "name": "BW 2025 — Biosynthese von Fettsäuren",
     "difficulty": "B",
     "source": "ÖChO Bundeswettbewerb 2025 (BW 51), Aufgabe 5",
-    "intro": "Die Fettsäurebiosynthese ist ein anaboler Prozess im Cytosol, bei dem Fettsäuren durch schrittweise Verlängerung aus C_2-Einheiten synthetisiert werden. In Eukaryoten und vielen Bakterien erfolgt die Synthese an einem Multienzymkomplex.",
+    "intro": "Biosynthese von Fettsäuren\n\nDie Fettsäurebiosynthese ist ein anaboler Prozess im Cytosol, bei dem Fettsäuren durch schrittweise Verlängerung aus C_2-Einheiten synthetisiert werden. In Eukaryoten und vielen Bakterien erfolgt die Synthese an einen Multienzymkomplex.",
     "sections": [
       {
         "type": "synthesis",
-        "title": "Glg. 1 und 2: Bildung von Malonyl-CoA (5.1)",
+        "title": "5.1",
         "scheme": {
           "nodes": [
             {
               "id": "HC",
               "label": "Hydrogencarbonat",
               "given": true,
-              "smiles": "OC(=O)[O-]"
+              "smiles": "OC(=O)[O-]",
+              "mol": "\n     RDKit          2D\n\n  4  3  0  0  0  0  0  0  0  0999 V2000\n   -0.2692    2.8326    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2721    1.7171    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.7394    2.0279    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8076    0.2908    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\nM  CHG  1   4  -1\nM  END\n"
             },
             {
               "id": "A",
               "label": "A",
               "given": false,
               "smiles": "[O-]C(=O)OP(=O)([O-])[O-]",
-              "name": "Carboxyphosphat"
+              "mol": "\n     RDKit          2D\n\n  8  7  0  0  0  0  0  0  0  0999 V2000\n   -0.2692    2.8325    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2721    1.7171    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.7394    2.0279    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8076    0.2909    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8105   -0.8245    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.6951   -1.8274    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.9259    0.1784    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.8134   -1.9399    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  5  6  2  0\n  5  7  1  0\n  5  8  1  0\nM  CHG  3   1  -1   7  -1   8  -1\nM  END\n"
             },
             {
               "id": "BE",
               "label": "Biotin-Enzym",
               "given": true,
-              "smiles": "O=C1NC2CSC(CCCCC(=O)NC)C2N1"
+              "smiles": "O=C1NC2CSC(CCCCC(=O)NC)C2N1",
+              "mol": "\n     RDKit          2D\n\n 17 18  0  1  0  0  0  0  0  0999 V2000\n   -3.1882   -0.9248    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.6882   -0.9236    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8053   -2.1362    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    0.6206   -1.6715    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0478   -2.1341    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9283   -0.9197    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0457    0.2929    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5080    1.7201    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.9749    2.0332    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4372    3.4602    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.9041    3.7734    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.3664    5.2004    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.3617    6.3142    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    7.8334    5.5136    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    8.2956    6.9405    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.6194   -0.1715    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8074    0.2908    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 12 13  2  0\n 12 14  1  0\n 14 15  1  0\n  7 16  1  0\n 16 17  1  0\n 17  2  1  0\n 16  4  1  0\nM  STY  1   1 SUP\nM  SAL   1  8   8   9  10  11  12  13  14  15\nM  SMT   1 Enzym\nM  END\n"
             },
             {
               "id": "C",
               "label": "C",
               "given": false,
               "smiles": "[O-]C(=O)N1C(=O)NC2CSC(CCCCC(=O)NC)C21",
-              "name": "Carboxybiotin-Enzym"
+              "mol": "\n     RDKit          2D\n\n 20 21  0  1  0  0  0  0  0  0999 V2000\n   -0.2692    2.8325    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2721    1.7171    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.7394    2.0279    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8074    0.2908    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.6882   -0.9236    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1882   -0.9248    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8053   -2.1362    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    0.6206   -1.6715    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0478   -2.1341    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9283   -0.9197    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0457    0.2929    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5080    1.7201    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.9749    2.0332    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4372    3.4602    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.9041    3.7734    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.3664    5.2004    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.3617    6.3142    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    7.8334    5.5136    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    8.2956    6.9405    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.6194   -0.1715    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  5  6  2  0\n  5  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 12 13  1  0\n 13 14  1  0\n 14 15  1  0\n 15 16  1  0\n 16 17  2  0\n 16 18  1  0\n 18 19  1  0\n 11 20  1  0\n 20  4  1  0\n 20  8  1  0\nM  CHG  1   1  -1\nM  STY  1   1 SUP\nM  SAL   1  8  12  13  14  15  16  17  18  19\nM  SMT   1 Enzym\nM  END\n"
             },
             {
               "id": "D",
               "label": "D",
               "given": false,
               "smiles": "[O-]P(=O)([O-])[O-]",
-              "name": "Phosphat"
+              "mol": "\n     RDKit          2D\n\n  5  4  0  0  0  0  0  0  0  0999 V2000\n   -0.8076    0.2909    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8105   -0.8245    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.6951   -1.8274    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.8134   -1.9399    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.9259    0.1784    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  2  5  1  0\nM  CHG  3   1  -1   4  -1   5  -1\nM  END\n"
             },
             {
               "id": "M",
               "label": "Malonyl-CoA",
               "given": false,
               "smiles": "[O-]C(=O)CC(=O)SCCNC(C)=O",
-              "name": "Malonyl-CoA (CoA hier als SNAC-Modell)"
+              "mol": "\n     RDKit          2D\n\n 13 12  0  1  0  0  0  0  0  0999 V2000\n   -0.2692    2.8325    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2721    1.7171    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.7394    2.0279    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8076    0.2909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8105   -0.8245    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3460   -2.2508    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.2780   -0.5137    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.2809   -1.6291    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7483   -1.3182    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -6.7512   -2.4337    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   -8.2187   -2.1228    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -9.2216   -3.2383    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -8.6832   -0.6966    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  5  6  2  0\n  5  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 11 13  2  0\nM  CHG  1   1  -1\nM  STY  1   1 SUP\nM  SAL   1  6   8   9  10  11  13  12\nM  SMT   1 CoA\nM  END\n"
             }
           ],
           "edges": [
@@ -4296,14 +4345,20 @@
             }
           ]
         },
-        "body": "Glg. 1: Hydrogencarbonat + ATP → A + B. Glg. 2: Biotin-Enzym + A → C + D; C + D + Acetyl-CoA → Malonyl-CoA + E.",
+        "body": "Schreiben Sie für A-D und Malonyl-CoA aus den Glg. 1 und 2 wenn möglich Strukturformeln oder adäquate Abkürzungen für komplexe Strukturen.\nGlg. 1: Hydrogencarbonat + ATP → A + B\nGlg. 2: Biotin-Enzym + A → C + D + Acetyl-CoA → Malonyl-CoA + E",
         "hints": [
-          "Abkürzungen: AC = Acetyl-CoA-Carboxylase, ER = Enoyl-ACP-Reduktase, HD = 3-Hydroxyacyl-ACP-Dehydratase, KS = β-Ketoacyl-ACP-Synthase, KR = β-Ketoacyl-ACP-Reduktase."
+          "Abkürzungen: AC Acetyl-CoA Carboxylase; ER Enoyl-ACP-Reduktase; HD 3-Hydroxyacyl-ACP-Dehydratase; KS β-Ketoacyl-ACP-Synthase; KR β-Ketoacyl-ACP-Reduktase"
         ]
       },
       {
+        "type": "short_answer",
+        "title": "5.1 — B und E",
+        "prompt": "Geben Sie B und E aus den Glg. 1 und 2 an.",
+        "expected_answer": "B: ADP\nE: Biotin-Enzym"
+      },
+      {
         "type": "synthesis",
-        "title": "Verlängerungscyclus an der FS-Synthase (5.2)",
+        "title": "5.2",
         "scheme": {
           "nodes": [
             {
@@ -4311,37 +4366,38 @@
               "label": "",
               "given": true,
               "smiles": "CC(=O)SCCNC(C)=O.[O-]C(=O)CC(=O)SCCNC(C)=O",
-              "name": "Acetyl- und Malonyl-FS-Synthase"
+              "mol": "\n     RDKit          2D\n\n 23 21  0  2  0  0  0  0  0  0999 V2000\n   -5.2000   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -6.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -6.5000    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -7.8000   -0.7500    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n   -7.8000   -2.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -9.0990   -3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -9.0990   -4.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n  -10.3981   -5.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  -10.3981   -6.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  -11.6971   -4.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8996   -0.7506    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.6000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.6000    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.3000   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3000   -0.7500    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3000   -2.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5990   -3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5990   -4.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8981   -5.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8981   -6.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.1971   -4.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  8 10  2  0\n 11 12  1  0\n 12 13  2  0\n 12 14  1  0\n 14 15  1  0\n 15 16  2  0\n 15 17  1  0\n 17 18  1  0\n 18 19  1  0\n 19 20  1  0\n 20 21  1  0\n 21 22  1  0\n 21 23  2  0\nM  CHG  1  11  -1\nM  STY  2   1 SUP   2 SUP\nM  SAL   1  6   5   6   7   8  10   9\nM  SMT   1 FS-Synthase\nM  SAL   2  6  18  19  20  21  23  22\nM  SMT   2 FS-Synthase\nM  END\n"
             },
             {
               "id": "S1",
               "label": "",
               "given": true,
-              "smiles": "CC(=O)CC(=O)SCCNC(C)=O"
+              "smiles": "CC(=O)CC(=O)SCCNC(C)=O",
+              "mol": "\n     RDKit          2D\n\n 13 12  0  1  0  0  0  0  0  0999 V2000\n    3.8977   -0.7510    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5988   -0.0008    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5990    1.4992    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2996   -0.7506    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3000   -0.7500    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3000   -2.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5990   -3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5990   -4.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8981   -5.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8981   -6.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.1971   -4.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  5  6  2  0\n  5  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 11 13  2  0\nM  STY  1   1 SUP\nM  SAL   1  6   8   9  10  11  13  12\nM  SMT   1 FS-Synthase\nM  END\n"
             },
             {
               "id": "S2",
               "label": "",
               "given": false,
-              "smiles": "C[C@@H](O)CC(=O)SCCNC(C)=O",
-              "name": "3-Hydroxybutyryl-FS",
-              "explanation": "KR (β-Ketoacyl-ACP-Reduktase) reduziert die Ketogruppe mit NADPH/H^+."
+              "smiles": "CC(O)CC(=O)SCCNC(C)=O",
+              "explanation": "KR (β-Ketoacyl-ACP-Reduktase) reduziert die Ketogruppe mit NADPH/H^+.",
+              "mol": "\n     RDKit          2D\n\n 13 12  0  1  0  0  0  0  0  0999 V2000\n    3.8977   -0.7510    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5988   -0.0008    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5990    1.4992    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2996   -0.7506    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3000   -0.7500    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3000   -2.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5990   -3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5990   -4.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8981   -5.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8981   -6.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.1971   -4.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  1  0\n  4  5  1  0\n  5  6  2  0\n  5  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 11 13  2  0\nM  STY  1   1 SUP\nM  SAL   1  6   8   9  10  11  13  12\nM  SMT   1 FS-Synthase\nM  END\n"
             },
             {
               "id": "S3",
               "label": "",
               "given": false,
               "smiles": "C/C=C/C(=O)SCCNC(C)=O",
-              "name": "Crotonyl-FS",
-              "explanation": "HD (Dehydratase) spaltet Wasser ab (Y = H_2O)."
+              "explanation": "HD (Dehydratase) spaltet Wasser ab (Y = H_2O).",
+              "mol": "\n     RDKit          2D\n\n 12 11  0  1  0  0  0  0  0  0999 V2000\n    3.8970   -0.7506    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981   -0.0004    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2996   -0.7506    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3000   -0.7500    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3000   -2.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5990   -3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5990   -4.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8981   -5.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8981   -6.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.1971   -4.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  2  0\n  4  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  1  0\n 10 12  2  0\nM  STY  1   1 SUP\nM  SAL   1  6   7   8   9  10  12  11\nM  SMT   1 FS-Synthase\nM  END\n"
             },
             {
               "id": "S4",
               "label": "",
               "given": false,
               "smiles": "CCCC(=O)SCCNC(C)=O",
-              "name": "Butyryl-FS",
-              "explanation": "ER (Enoyl-ACP-Reduktase) reduziert die C=C-Bindung mit NADPH/H^+."
+              "explanation": "ER (Enoyl-ACP-Reduktase) reduziert die C=C-Bindung mit NADPH/H^+.",
+              "mol": "\n     RDKit          2D\n\n 12 11  0  1  0  0  0  0  0  0999 V2000\n    3.8977   -0.7510    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5988   -0.0008    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2996   -0.7506    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3000   -0.7500    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3000   -2.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5990   -3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5990   -4.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8981   -5.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8981   -6.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.1971   -4.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  4  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  1  0\n 10 12  2  0\nM  STY  1   1 SUP\nM  SAL   1  6   7   8   9  10  12  11\nM  SMT   1 FS-Synthase\nM  END\n"
             }
           ],
           "edges": [
@@ -4351,7 +4407,7 @@
               ],
               "to": "S1",
               "reagent_above": "○",
-              "reagent_below": "± Y"
+              "reagent_below": "+ oder - Y"
             },
             {
               "from": [
@@ -4367,7 +4423,7 @@
               ],
               "to": "S3",
               "reagent_above": "○",
-              "reagent_below": "± Y"
+              "reagent_below": "+ oder - Y"
             },
             {
               "from": [
@@ -4379,47 +4435,45 @@
             }
           ]
         },
-        "body": "Die Kreise ○ stehen für die jeweils nötigen Enzyme (Abkürzungen oben), „± Y\" für die Nebenprodukte."
+        "body": "Zeichnen bzw. schreiben Sie in die vorgesehenen Kästchen der FS-Synthese die Strukturformeln der Zwischenprodukte und die Abkü./Summenformeln der Nebenprodukte. Schreiben Sie in die Kreise bei den Reaktionspfeilen die Abkürzungen für die notwendigen Enzyme",
+        "hints": [
+          "Abkürzungen: AC Acetyl-CoA Carboxylase; ER Enoyl-ACP-Reduktase; HD 3-Hydroxyacyl-ACP-Dehydratase; KS β-Ketoacyl-ACP-Synthase; KR β-Ketoacyl-ACP-Reduktase"
+        ]
       },
       {
         "type": "short_answer",
-        "title": "Anzahl Cyclen für Palmitinsäure",
-        "prompt": "Wie oft muss der Verlängerungscyclus der Fettsäure-Biosynthese durchlaufen werden, um Palmitinsäure (C16, Hexadecansäure) herzustellen?",
-        "expected_answer": "7 Cyclen. Jeder Cyclus verlängert um C2 (von Malonyl-CoA). Start ist Acetyl-CoA (C2). 2 + 7×2 = 16 C-Atome. Palmitinsäure-SMILES: CCCCCCCCCCCCCCCC(=O)O."
+        "title": "5.2 — Enzyme und Nebenprodukte",
+        "prompt": "Welche Enzyme gehören in die Kreise, welche Nebenprodukte Y entstehen?",
+        "expected_answer": "KS (– CO_2)\nKR (NADPH/H^+ → NADP^+)\nHD (– H_2O)\nER (NADPH/H^+ → NADP^+)"
       },
       {
-        "type": "multiple_choice",
-        "title": "Markierte funktionelle Gruppen (5.3)",
+        "type": "short_answer",
+        "title": "5.3",
         "prompt": "Benennen Sie die beiden funktionellen Gruppen, welche im FS-Schema mit einem * gekennzeichnet sind.",
-        "choices": [
-          {
-            "id": "a",
-            "label": "Thiol (-SH) und Thioester (R-CO-S-R′)",
-            "correct": true
-          },
-          {
-            "id": "b",
-            "label": "-OH (Hydroxyl) und R-CO-O-R′ (Ester)",
-            "correct": false
-          },
-          {
-            "id": "c",
-            "label": "-NH_2 (Amin) und R-CO-NH-R′ (Amid)",
-            "correct": false
-          },
-          {
-            "id": "d",
-            "label": "-PO_3H (Phosphat) und R-O-PO_3 (Ester)",
-            "correct": false
-          }
-        ],
-        "explanation": "Das ACP (Acyl-Carrier-Protein) trägt eine -SH-Gruppe, an die der Acyl-Rest als Thioester gebunden wird. Coenzym A (CoA-SH) bringt eine zweite -SH mit; die Beladung gibt einen Thioester R-CO-S-CoA."
+        "expected_answer": "-SH: Thiol, R-CO-S-CoA: Thioester"
+      },
+      {
+        "type": "synthesis",
+        "title": "5.4",
+        "body": "Zeichnen Sie die Strukturformel von Palmitinsäure (Hexadecansäure) auf und geben Sie an, wie oft der Cyclus der vorgestellten FS-Biosynthese zu ihrer Herstellung durchlaufen werden muss.",
+        "scheme": {
+          "nodes": [
+            {
+              "id": "PA",
+              "label": "",
+              "given": false,
+              "smiles": "CCCCCCCCCCCCCCCC(=O)O",
+              "mol": "\n     RDKit          2D\n\n 18 17  0  0  0  0  0  0  0  0999 V2000\n  -10.9072   -0.0389    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -9.5803    0.6605    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -8.3110   -0.1389    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -6.9841    0.5608    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7149   -0.2388    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.3880    0.4608    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1185   -0.3385    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.7916    0.3608    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5223   -0.4385    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8046    0.2608    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0738   -0.5385    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4007    0.1611    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.6699   -0.6385    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.9969    0.0611    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.2661   -0.7382    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.5930   -0.0389    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.6507    1.4601    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    9.8622   -0.8382    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 12 13  1  0\n 13 14  1  0\n 14 15  1  0\n 15 16  1  0\n 16 17  2  0\n 16 18  1  0\nM  END\n"
+            }
+          ],
+          "edges": []
+        }
       },
       {
         "type": "short_answer",
-        "title": "Enzyme und Nebenprodukte im Cyclus (5.2)",
-        "prompt": "Welche Enzyme gehören in die Kreise und welche Nebenprodukte Y entstehen?",
-        "expected_answer": "Acetyl/Malonyl → Acetoacetyl: KS, Y = CO_2 (abgespalten). Reduktion: KR (NADPH). Dehydratisierung: HD, Y = H_2O. Reduktion der C=C-Bindung: ER (NADPH)."
+        "title": "5.4 — Cyclen",
+        "prompt": "Wie oft muss der Cyclus durchlaufen werden?",
+        "expected_answer": "7"
       }
     ],
     "type": "composed"
