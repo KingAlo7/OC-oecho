@@ -212,7 +212,7 @@ const MolRenderer = (() => {
   /* "OMe" bonded to something on its RIGHT reads "MeO" in a textbook:
      the atom that carries the bond is written next to it. */
   function _mirrorLabel(label) {
-    const m = /^(CO2|(?:[CNOS]|Si)(?:H\d?)?)([A-Z].*)$/.exec(label);
+    const m = /^(CO2)([a-z].*)$/.exec(label) || /^(CO2|(?:[CNOS]|Si)(?:H\d?)?)([A-Z].*)$/.exec(label);   // CO2tBu → tBuO2C
     if (!m) return label;
     return m[1] === 'CO2' ? m[2] + 'O2C' : m[2] + m[1];
   }

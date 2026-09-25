@@ -1151,11 +1151,12 @@
       }
       // A caption is part of the Angabe (e.g. a sum formula printed under
       // an unknown compound), so it shows even while the node is hidden.
-      if (n.caption) {
+      // Line breaks in a caption ("Tropin\nC_8H_15NO") give stacked lines.
+      captionLines(n).forEach(line => {
         const cap = svg('text', { class: 'sg-node-caption', x: this.NW / 2, 'text-anchor': 'middle' });
-        setChemText(cap, n.caption);
+        setChemText(cap, line);
         g.appendChild(cap);
-      }
+      });
 
       if (this.revealedIds.has(n.id) && !n.given) {
         const ib = svg('g', { class: 'sg-info-badge' });
@@ -1182,7 +1183,8 @@
     _textBlockH(n) {
       const hidden = this._isHidden(n);
       const hasLabel = !hidden && String(n.label != null ? n.label : n.id || '').trim();
-      return (hasLabel ? V_LABEL_H : 2) + (n.name && !hidden ? V_NAME_H : 0) + (n.caption ? V_NAME_H + 2 : 0);
+      const capLines = captionLines(n).length;
+      return (hasLabel ? V_LABEL_H : 2) + (n.name && !hidden ? V_NAME_H : 0) + (capLines ? capLines * V_NAME_H + 2 : 0);
     }
 
     _placeNodeText(n, g) {
@@ -1195,8 +1197,7 @@
       let yy = bottom + (label ? 13 : 0);
       if (label) label.setAttribute('y', yy);
       if (name) { yy += V_NAME_H; name.setAttribute('y', yy); }
-      const cap = g.querySelector('.sg-node-caption');
-      if (cap) cap.setAttribute('y', yy + V_NAME_H + 1);
+      g.querySelectorAll('.sg-node-caption').forEach((cap, k) => cap.setAttribute('y', yy + (k + 1) * V_NAME_H + 1));
       const ib = g.querySelector('.sg-info-badge');
       if (ib) {
         const bx = Math.min(this.NW - 9, this.NW / 2 + m.w / 2 + 4);
@@ -1229,7 +1230,7 @@
       g.appendChild(labelText);
       if (n.caption) {
         const capText = svg('text', { class: 'sg-node-name', x: this.NW - 12, y: this.NH - 38, 'text-anchor': 'end' });
-        setChemText(capText, n.caption);
+        setChemText(capText, captionLines(n).join(' · '));
         g.appendChild(capText);
       }
       if (n.name) {
@@ -2718,6 +2719,12 @@
 
   /* "D^-" / "H_2" for an HTML tile. */
   function chemHtml(str) { return CT.html(str); }
+
+  /* A node caption split into its lines (a real line break, or the
+     two characters backslash-n some data carries). */
+  function captionLines(n) {
+    return n && n.caption ? String(n.caption).split(/\r?\n|\\n/).map(t => t.trim()).filter(Boolean) : [];
+  }
 
   function cssEsc(s) {
     return String(s || '').replace(/(["\\\.\#\:\[\]\(\)\,\>\+\~\*\=\^\$\|\!\?])/g, '\\$1');

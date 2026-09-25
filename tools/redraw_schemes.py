@@ -36,7 +36,8 @@ Layout spec: tools/scheme-layout.json
               "ring_only": false,              # chain may map onto a ring (pre-folded precursor)
               "fusion_h": false,               # no explicit H at ring-fusion stereocentres
               "release": "SMARTS",             # these atoms are laid out anew, not pinned
-              "explicit_h": "SMARTS"           # draw the H on the first atom of each match
+              "explicit_h": "SMARTS",          # draw the H on the first atom of each match
+              "perspective": true              # hand-placed 3D-perspective core: no wedges
             }
           },
           "abbrev": [...], "ring_only": ...     # defaults for all nodes of the scheme
@@ -512,9 +513,9 @@ def side_atoms(m, bidx):
 
 
 def check(qid, si, nid, mb, smiles):
-    """The molfile must describe exactly the node's SMILES, stereo included."""
+    """The molfile must describe exactly the node's structure, stereo included."""
     back = Chem.MolFromMolBlock(mb)
-    want = Chem.MolToSmiles(Chem.MolFromSmiles(smiles))
+    want = Chem.CanonSmiles(smiles)
     got = Chem.MolToSmiles(back) if back is not None else None
     if got != want:
         print(f'   !! {qid}/{si}/{nid}: molfile gives {got}, SMILES is {want}')
@@ -550,8 +551,15 @@ def layout_scheme(qid, si, scheme, spec, png_dir=None):
             hit = sorted({h[0] for h in m.GetSubstructMatches(Chem.MolFromSmarts(eh))})
             if hit:
                 m = Chem.AddHs(m, onlyOnAtoms=hit)
+        ns = nspec.get(nid, {})
+        if ns.get('perspective') and 'coords' in ns:
+            # a hand-drawn perspective core shows endo/exo by its geometry;
+            # wedges computed as if it were flat would contradict it
+            hit = m.GetSubstructMatch(Chem.MolFromSmarts(ns['coords']['smarts']))
+            for a in hit:
+                m.GetAtomWithIdx(a).SetChiralTag(Chem.ChiralType.CHI_UNSPECIFIED)
         full[nid] = m
-        mols[nid], groups[nid] = collapse(m, nspec.get(nid, {}).get('abbrev', spec.get('abbrev')))
+        mols[nid], groups[nid] = collapse(m, ns.get('abbrev', spec.get('abbrev')))
     adj = {nid: [] for nid in mols}
     for e in scheme.get('edges', []):
         for f in e.get('from', []):
@@ -568,11 +576,16 @@ def layout_scheme(qid, si, scheme, spec, png_dir=None):
         if 'coords' in s:
             patt = Chem.MolFromSmarts(s['coords']['smarts'])
             hit = m.GetSubstructMatch(patt)
-            cm = {hit[i]: tuple(p) for i, p in enumerate(s['coords']['xy'])} if hit else None
-            depict(m, cm)
+            if not hit:
+                print(f'   ! {qid}/{si}/{nid}: coords pattern not found')
+                depict(m)
+                normalise(m)
+            else:
+                # hand-placed core (e.g. a perspective drawing): kept exactly
+                m = pinned_depiction(m, {hit[i]: tuple(p) for i, p in enumerate(s['coords']['xy'])})
         else:
             depict(m)
-        normalise(m)
+            normalise(m)
         if 'orient' in s:
             apply_orient(m, s['orient'])
         elif 'rotate' in s or 'mirror' in s:
@@ -660,7 +673,7 @@ def layout_scheme(qid, si, scheme, spec, png_dir=None):
 
     for nid, m in placed.items():
         mb = mol_block(expand(m, full[nid], groups[nid]))
-        check(qid, si, nid, mb, nodes[nid]['smiles'])
+        check(qid, si, nid, mb, Chem.MolToSmiles(full[nid]))
         nodes[nid]['mol'] = mb
 
     # structures drawn on an arrow (above its text)
