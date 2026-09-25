@@ -187,5 +187,166 @@
         }
       }
     }
+  },
+  "bw42-2016-prontosil": {
+    "0": {
+      "anchor": "C",
+      "nodes": {
+        "C": {
+          "orient": {
+            "smarts": "CC(=O)Nc1ccc(S)cc1",
+            "from": 4,
+            "to": 7,
+            "angle": 30,
+            "side": [
+              2,
+              "up"
+            ]
+          }
+        },
+        "BD": {
+          "free": true,
+          "orient": {
+            "smarts": "Nc1cccc(N)c1",
+            "from": 1,
+            "to": 5,
+            "angle": 0,
+            "side": [
+              3,
+              "down"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "bw42-2016-chloramphenicol": {
+    "0": {
+      "anchor": "D",
+      "abbrev": [
+        {
+          "smarts": "*-OC(=O)[CH3]",
+          "first": 1,
+          "label": "OAc"
+        },
+        {
+          "smarts": "*-[N+](=O)[O-]",
+          "first": 1,
+          "label": "NO2"
+        }
+      ],
+      "nodes": {
+        "D": {
+          "orient": {
+            "smarts": "c1ccccc1C(*)C(N)C*",
+            "from": 5,
+            "to": 6,
+            "angle": 30,
+            "side": [
+              7,
+              "up"
+            ]
+          }
+        }
+      },
+      "edges": {
+        "A>B": {
+          "smiles": "[O-][N+](=O)CCO",
+          "orient": {
+            "smarts": "[N+]CCO",
+            "from": 0,
+            "to": 3,
+            "angle": 0
+          }
+        },
+        "C>D": {
+          "smiles": "CC(=O)OC(C)=O.CC(=O)OC(=O)C(Cl)Cl"
+        }
+      }
+    }
+  },
+  "bw42-2016-trimethoprim": {
+    "0": {
+      "anchor": "D",
+      "nodes": {
+        "D": {
+          "orient": {
+            "smarts": "O=Cc1cc(O)c(O)c(O)c1",
+            "from": 6,
+            "to": 1,
+            "angle": 90
+          }
+        },
+        "X": {
+          "free": true
+        }
+      },
+      "edges": {
+        "E>T": {
+          "smiles": "NC(N)=N",
+          "orient": {
+            "smarts": "N=C",
+            "from": 1,
+            "to": 0,
+            "angle": 90
+          }
+        }
+      }
+    }
+  },
+  "bw42-2016-penicillin-v": {
+    "0": {
+      "anchor": "B",
+      "abbrev": [
+        {
+          "smarts": "*-Oc1ccccc1",
+          "first": 1,
+          "label": "OPh"
+        },
+        {
+          "smarts": "*-C(=O)O[K]",
+          "first": 1,
+          "label": "CO2K"
+        },
+        {
+          "smarts": "[R]-C(=O)[OH]",
+          "first": 1,
+          "label": "CO2H"
+        }
+      ],
+      "explicit_h": "[CH1;$([CH1]S),$([CH1][NX3;H1]C=O)]",
+      "nodes": {
+        "B": {
+          "orient": {
+            "smarts": "C1(=O)N2CCSC2C1",
+            "from": 2,
+            "to": 6,
+            "angle": 90,
+            "side": [
+              0,
+              "up"
+            ]
+          }
+        },
+        "S": {
+          "abbrev": [
+            {
+              "smarts": "*-Oc1ccccc1",
+              "first": 1,
+              "label": "OPh"
+            },
+            {
+              "smarts": "*-C(=O)[OH]",
+              "first": 1,
+              "label": "CO2H"
+            }
+          ],
+          "ring_only": false
+        },
+        "A": {
+          "ring_only": false
+        }
+      }
+    }
   }
 }

@@ -249,12 +249,9 @@ def pinned_depiction(m, cm):
     return mm
 
 
-def mcs_map(ref, m, timeout=6, ring_only=True):
-    """Atom map ref_idx -> m_idx of the largest common substructure.
-    Elements and bond orders may differ (a C=O that becomes C–OH keeps its
-    place); rings only match rings, so a chain never folds onto a ring."""
+def _mcs(ref, m, timeout, ring_only, any_atom):
     p = rdFMCS.MCSParameters()
-    p.AtomTyper = rdFMCS.AtomCompare.CompareAny
+    p.AtomTyper = rdFMCS.AtomCompare.CompareAny if any_atom else rdFMCS.AtomCompare.CompareElements
     p.BondTyper = rdFMCS.BondCompare.CompareAny
     p.BondCompareParameters.RingMatchesRingOnly = ring_only
     p.BondCompareParameters.CompleteRingsOnly = False
@@ -265,7 +262,7 @@ def mcs_map(ref, m, timeout=6, ring_only=True):
         return {}
     q = Chem.MolFromSmarts(res.smartsString)
     best = {}
-    ra = ref.GetSubstructMatches(q, useChirality=False, uniquify=False, maxMatches=50)
+    ra = ref.GetSubstructMatches(q, useChirality=False, uniquify=False, maxMatches=5000)
     ma = m.GetSubstructMatch(q)
     if not ma:
         return {}
@@ -278,6 +275,21 @@ def mcs_map(ref, m, timeout=6, ring_only=True):
     # an explicit H only ever stands in for another H
     return {i: j for i, j in best.items()
             if (ref.GetAtomWithIdx(i).GetAtomicNum() == 1) == (m.GetAtomWithIdx(j).GetAtomicNum() == 1)}
+
+
+def mcs_map(ref, m, timeout=6, ring_only=True):
+    """Atom map ref_idx -> m_idx of the largest common substructure.
+    Rings only match rings (unless ring_only is off), so a chain never
+    folds onto a ring. Element-matched mappings are preferred; elements
+    may differ (a C=O that becomes C-OH keeps its place, Cl that becomes
+    OH too) only where that maps clearly more atoms."""
+    strict = _mcs(ref, m, timeout, ring_only, False)
+    loose = _mcs(ref, m, timeout, ring_only, True)
+
+    def score(mp):   # an element mismatch costs more than the atom it adds
+        bad = sum(ref.GetAtomWithIdx(i).GetAtomicNum() != m.GetAtomWithIdx(j).GetAtomicNum() for i, j in mp.items())
+        return len(mp) - 3 * bad
+    return strict if score(strict) >= score(loose) else loose
 
 
 def prefer_same_elements(ref, m, amap):
@@ -360,7 +372,8 @@ def collapse(m, abbrevs):
     drop = []
     for g in groups:
         h = rw.GetAtomWithIdx(g['head'])
-        h.SetAtomicNum(0)
+        # the head keeps its element, so it still matches the same group
+        # drawn out in full in a neighbouring compound
         h.SetIsAromatic(False)
         h.SetNoImplicit(True)
         h.SetNumExplicitHs(0)
@@ -417,7 +430,8 @@ def expand(mc, full, groups):
     Chem.WedgeMolBonds(wc, wc.GetConformer())
     want = [(b.GetBeginAtom().GetIntProp('orig'), b.GetEndAtom().GetIntProp('orig'))
             for b in wc.GetBonds() if b.GetBondDir() in (Chem.BondDir.BEGINWEDGE, Chem.BondDir.BEGINDASH)]
-    ref_smi = Chem.MolToSmiles(full)
+    canon = lambda x: Chem.CanonSmiles(Chem.MolToSmiles(x))   # kekulé-insensitive
+    ref_smi = canon(full)
     for i, j in want:
         fb = fm.GetBondBetweenAtoms(i, j)
         if fb is None or fb.GetBeginAtomIdx() == i:
@@ -430,10 +444,18 @@ def expand(mc, full, groups):
         rw.AddBond(i, j, bt)
         fm = rw.GetMol()
         fm.UpdatePropertyCache(False)
-        if Chem.MolToSmiles(fm) != ref_smi:
-            a = fm.GetAtomWithIdx(i)
-            a.SetChiralTag(Chem.ChiralType.CHI_TETRAHEDRAL_CW if a.GetChiralTag() == Chem.ChiralType.CHI_TETRAHEDRAL_CCW
-                           else Chem.ChiralType.CHI_TETRAHEDRAL_CCW)
+        # both ends may be stereocentres: restore whichever parities changed
+        for flips in ((), (i,), (j,), (i, j)):
+            trial = Chem.Mol(fm)
+            for k in flips:
+                a = trial.GetAtomWithIdx(k)
+                if a.GetChiralTag() == Chem.ChiralType.CHI_TETRAHEDRAL_CCW:
+                    a.SetChiralTag(Chem.ChiralType.CHI_TETRAHEDRAL_CW)
+                elif a.GetChiralTag() == Chem.ChiralType.CHI_TETRAHEDRAL_CW:
+                    a.SetChiralTag(Chem.ChiralType.CHI_TETRAHEDRAL_CCW)
+            if canon(trial) == ref_smi:
+                fm = trial
+                break
     for b in fm.GetBonds():
         b.SetBondDir(Chem.BondDir.NONE)
     for i, j in want:
