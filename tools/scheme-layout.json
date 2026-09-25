@@ -1259,5 +1259,205 @@
         }
       }
     }
+  },
+  "bw44-2018-lactid-pla": {
+    "0": {
+      "nodes": {
+        "RR": {
+          "free": true,
+          "explicit_h": "[CH1;R]",
+          "orient": {
+            "smarts": "O1C(=O)COC(=O)C1",
+            "from": 0,
+            "to": 4,
+            "angle": -30,
+            "side": [
+              1,
+              "down"
+            ]
+          }
+        },
+        "SS": {
+          "free": true,
+          "explicit_h": "[CH1;R]",
+          "orient": {
+            "smarts": "O1C(=O)COC(=O)C1",
+            "from": 0,
+            "to": 4,
+            "angle": -30,
+            "side": [
+              1,
+              "down"
+            ]
+          }
+        },
+        "RS": {
+          "free": true,
+          "explicit_h": "[CH1;R]",
+          "orient": {
+            "smarts": "O1C(=O)COC(=O)C1",
+            "from": 0,
+            "to": 4,
+            "angle": -30,
+            "side": [
+              1,
+              "down"
+            ]
+          }
+        }
+      }
+    },
+    "1": {
+      "anchor": "LA",
+      "nodes": {
+        "LA": {
+          "orient": {
+            "smarts": "O1C(=O)COC(=O)C1",
+            "from": 0,
+            "to": 4,
+            "angle": -30,
+            "side": [
+              1,
+              "up"
+            ]
+          }
+        },
+        "P2": {
+          "rigid": true,
+          "align": "I"
+        },
+        "P3": {
+          "rigid": true,
+          "align": "P2"
+        }
+      }
+    }
+  },
+  "bw44-2018-kaffeesaeure": {
+    "0": {
+      "anchor": "F",
+      "abbrev": [
+        {
+          "smarts": "*-OCOC",
+          "first": 1,
+          "label": "OMOM"
+        },
+        {
+          "smarts": "*-C(=O)[OH]",
+          "first": 1,
+          "label": "CO2H"
+        },
+        {
+          "smarts": "*-C(=O)Cl",
+          "first": 1,
+          "label": "COCl"
+        },
+        {
+          "smarts": "*-OCc1ccccc1",
+          "first": 1,
+          "label": "OBn"
+        },
+        {
+          "smarts": "[CH2]-c1ccccc1",
+          "first": 1,
+          "label": "Ph"
+        }
+      ],
+      "nodes": {
+        "F": {
+          "orient": {
+            "smarts": "c1(C=C)ccc(O)c(O)c1",
+            "from": 0,
+            "to": 1,
+            "angle": 30,
+            "side": [
+              9,
+              "up"
+            ]
+          }
+        },
+        "Z": {
+          "free": true
+        },
+        "C": {
+          "free": true,
+          "abbrev": [
+            {
+              "smarts": "*-OCc1ccccc1",
+              "first": 1,
+              "label": "OBn"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "bw44-2018-colchicin": {
+    "0": {
+      "anchor": "K",
+      "abbrev": [
+        {
+          "smarts": "*-C(=O)O[CH3]",
+          "first": 1,
+          "label": "CO2Me"
+        },
+        {
+          "smarts": "*-C(=O)[OH]",
+          "first": 1,
+          "label": "CO2H"
+        },
+        {
+          "smarts": "*-O[CH3]",
+          "first": 1,
+          "label": "OMe"
+        },
+        {
+          "smarts": "*-C(=O)O[Li]",
+          "first": 1,
+          "label": "CO2Li"
+        },
+        {
+          "smarts": "*-c1ccccc1",
+          "first": 1,
+          "label": "Ph"
+        }
+      ],
+      "nodes": {
+        "K": {
+          "orient": {
+            "smarts": "[cH1;r6].[n;r5].[CH1;R1]([#6;!R])(c)c",
+            "from": 0,
+            "to": 1,
+            "angle": 0,
+            "side": [
+              2,
+              "down"
+            ]
+          }
+        },
+        "H": {
+          "rigid": true,
+          "align": "I"
+        },
+        "D": {
+          "free": true
+        },
+        "A": {
+          "free": true
+        },
+        "IT": {
+          "free": true
+        },
+        "B": {
+          "align": "IT"
+        },
+        "C": {
+          "align": "B"
+        },
+        "E": {
+          "release": "[#6;D1;!R]"
+        }
+      }
+    }
   }
 }

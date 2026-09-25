@@ -255,7 +255,7 @@ def _mcs(ref, m, timeout, ring_only, any_atom):
     p.AtomTyper = rdFMCS.AtomCompare.CompareAny if any_atom else rdFMCS.AtomCompare.CompareElements
     p.BondTyper = rdFMCS.BondCompare.CompareAny
     p.BondCompareParameters.RingMatchesRingOnly = ring_only
-    p.BondCompareParameters.CompleteRingsOnly = False
+    p.BondCompareParameters.CompleteRingsOnly = ring_only   # a ring is pinned whole or not at all
     p.AtomCompareParameters.RingMatchesRingOnly = False
     p.Timeout = timeout
     res = rdFMCS.FindMCS([ref, m], p)
@@ -278,14 +278,33 @@ def _mcs(ref, m, timeout, ring_only, any_atom):
             if (ref.GetAtomWithIdx(i).GetAtomicNum() == 1) == (m.GetAtomWithIdx(j).GetAtomicNum() == 1)}
 
 
+def keep_rings(ref, m, amap):
+    """A ring of m keeps its mapping only if all of its atoms map onto one
+    ring of the same size in ref; otherwise it would be bent out of shape,
+    so its atoms are laid out anew. (Chain atoms of m may still map onto
+    ring atoms of ref: a precursor is then drawn pre-folded.)"""
+    if not amap:
+        return amap
+    inv = {j: i for i, j in amap.items()}
+    ref_rings = [frozenset(r) for r in ref.GetRingInfo().AtomRings()]
+    drop = set()
+    for ring in m.GetRingInfo().AtomRings():
+        mapped = [inv[a] for a in ring if a in inv]
+        if not mapped:
+            continue
+        if len(mapped) < len(ring) or frozenset(mapped) not in ref_rings:
+            drop |= set(ring)
+    return {i: j for i, j in amap.items() if j not in drop}
+
+
 def mcs_map(ref, m, timeout=6, ring_only=True):
     """Atom map ref_idx -> m_idx of the largest common substructure.
     Rings only match rings (unless ring_only is off), so a chain never
     folds onto a ring. Element-matched mappings are preferred; elements
     may differ (a C=O that becomes C-OH keeps its place, Cl that becomes
     OH too) only where that maps clearly more atoms."""
-    strict = _mcs(ref, m, timeout, ring_only, False)
-    loose = _mcs(ref, m, timeout, ring_only, True)
+    strict = keep_rings(ref, m, _mcs(ref, m, timeout, ring_only, False))
+    loose = keep_rings(ref, m, _mcs(ref, m, timeout, ring_only, True))
 
     def score(mp):   # an element mismatch costs more than the atom it adds
         bad = sum(ref.GetAtomWithIdx(i).GetAtomicNum() != m.GetAtomWithIdx(j).GetAtomicNum() for i, j in mp.items())

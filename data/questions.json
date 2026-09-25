@@ -7384,11 +7384,11 @@
     "name": "BW 2018 — Lactid → Polylactid (PLA)",
     "difficulty": "B",
     "source": "ÖChO Bundeswettbewerb 2018 (BW 44), Aufgabe 3 A",
-    "intro": "Polylactide, kurz PLA, sind Polymere, die durch ROP (ring opening polymerisation) gebildet werden können. Erstmalig beschrieben wurden Polylactide 1845 von Théophile-Jules Pelouze. Die aus PLA herstellbaren Thermoplaste erfreuen sich wegen ihrer biologischen Abbaubarkeit wachsender Beliebtheit. Ein Verfahren zur Herstellung von PLA aus Lactiden wurde 1932 entwickelt und 1954 von der Firma DuPont patentiert.",
+    "intro": "Organische Synthesen\n\nA. Polymerisation\n\nPolylactide, kurz PLA, sind Polymere, die durch ROP (ring opening polymerisation) gebildet werden können. Erstmalig beschrieben wurden Polylactide 1845 von Théophile-Jules Pelouze, der im Zuge der Isolierung von Milchsäure die Bildung von Oligo- und Polymeren beobachtete. Die aus PLA herstellbaren Thermoplaste erfreuen sich wegen ihrer biologischen Abbaubarkeit wachsender Beliebtheit. Beispielsweise stehen PLA-Mulchfolien für Landwirtschaft und Gartenbau mit herkömmlichen Folien aus PE im Wettbewerb. Ein Verfahren zur Herstellung von PLA aus Lactiden wurde 1932 entwickelt und 1954 von der Firma DuPont patentiert.",
     "sections": [
       {
         "type": "synthesis",
-        "title": "Stereoisomere des Lactids (3.1)",
+        "title": "3.1",
         "scheme": {
           "nodes": [
             {
@@ -7397,7 +7397,8 @@
               "given": false,
               "smiles": "C[C@H]1OC(=O)[C@@H](C)OC1=O",
               "name": "(3R,6R)-Lactid",
-              "explanation": "Beide Stereozentren R. Enantiomer der (S,S)-Form."
+              "explanation": "Beide Stereozentren R. Enantiomer der (S,S)-Form.",
+              "mol": "\n     RDKit          2D\n\n 12 12  0  0  0  0  0  0  0  0999 V2000\n    0.9640    2.6492    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0001    1.5001    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2991    0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7501    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5982   -1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0001   -1.5001    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9640   -2.6492    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2991   -0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7501    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5982    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9641    2.6491    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9641   -2.6491    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  4  6  1  0\n  6  7  1  0\n  6  8  1  0\n  8  9  1  0\n  9 10  2  0\n  9  2  1  0\n  2 11  1  1\n  6 12  1  1\nM  END\n"
             },
             {
               "id": "SS",
@@ -7405,7 +7406,8 @@
               "given": false,
               "smiles": "C[C@@H]1OC(=O)[C@H](C)OC1=O",
               "name": "(3S,6S)-Lactid",
-              "explanation": "Spiegelbild von (R,R)."
+              "explanation": "Spiegelbild von (R,R).",
+              "mol": "\n     RDKit          2D\n\n 12 12  0  0  0  0  0  0  0  0999 V2000\n    0.9640    2.6492    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0001    1.5001    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2991    0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7501    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5982   -1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0001   -1.5001    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9640   -2.6492    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2991   -0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7501    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5982    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9641    2.6491    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9641   -2.6491    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  4  6  1  0\n  6  7  1  0\n  6  8  1  0\n  8  9  1  0\n  9 10  2  0\n  9  2  1  0\n  2 11  1  6\n  6 12  1  6\nM  END\n"
             },
             {
               "id": "RS",
@@ -7414,7 +7416,8 @@
               "smiles": "C[C@H]1OC(=O)[C@H](C)OC1=O",
               "name": "(3R,6S)-Lactid (meso)",
               "explanation": "Ein C ist R, der andere S → interne Spiegelebene → meso (achiral, obwohl 2 Stereozentren vorhanden).",
-              "note": "Die zwei Stereozentren sind „inneres Spiegelbild\" — Verbindung achiral (meso)."
+              "note": "Die zwei Stereozentren sind „inneres Spiegelbild\" — Verbindung achiral (meso).",
+              "mol": "\n     RDKit          2D\n\n 12 12  0  0  0  0  0  0  0  0999 V2000\n    0.9640    2.6492    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0001    1.5001    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2991    0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7501    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5982   -1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0001   -1.5001    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9640   -2.6492    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2991   -0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7501    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5982    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9641    2.6491    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9641   -2.6491    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  4  6  1  0\n  6  7  1  0\n  6  8  1  0\n  8  9  1  0\n  9 10  2  0\n  9  2  1  0\n  2 11  1  1\n  6 12  1  6\nM  END\n"
             }
           ],
           "edges": []
@@ -7423,7 +7426,7 @@
       },
       {
         "type": "synthesis",
-        "title": "Ringöffnungspolymerisation von Lactid (3.2)",
+        "title": "3.2",
         "scheme": {
           "nodes": [
             {
@@ -7431,7 +7434,8 @@
               "label": "Lactid (LA)",
               "given": true,
               "smiles": "C[C@H]1OC(=O)[C@@H](C)OC1=O",
-              "explanation": "Cyclischer Diester der Milchsäure (R,R-Form gezeigt)."
+              "explanation": "Cyclischer Diester der Milchsäure (R,R-Form gezeigt).",
+              "mol": "\n     RDKit          2D\n\n 10 10  0  0  0  0  0  0  0  0999 V2000\n   -2.5981   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2992   -0.7499    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2991    0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0001    1.4999    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0001    3.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2992    0.7499    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2991   -0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0001   -1.4999    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0001   -3.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  4  6  1  0\n  6  7  1  1\n  6  8  1  0\n  8  9  1  0\n  9 10  2  0\n  9  2  1  0\n  2  1  1  1\nM  END\n"
             },
             {
               "id": "I",
@@ -7440,7 +7444,8 @@
               "smiles": "COC(=O)[C@@H](C)OC(=O)[C@@H](C)[O-].[Na+]",
               "name": "Initiation",
               "explanation": "Methanolat greift ein Carbonyl-C des Lactids an (Acylsubstitution); der Ring öffnet sich zum Alkoxid. Die stereogenen Zentren bleiben unverändert (R).",
-              "note": "1. Initiation: das Methanolat-Anion (NaOMe → CH_3O^-) greift einen der Ester-C=O nukleophil an (A_N) → tetraedrisches Intermediat → Ring-Öffnung mit dem zweiten Ester-O als Abgangsgruppe → offenkettiges Dimer-Alkoholat."
+              "note": "1. Initiation: das Methanolat-Anion (NaOMe → CH_3O^-) greift einen der Ester-C=O nukleophil an (A_N) → tetraedrisches Intermediat → Ring-Öffnung mit dem zweiten Ester-O als Abgangsgruppe → offenkettiges Dimer-Alkoholat.",
+              "mol": "\n     RDKit          2D\n\n 13 11  0  0  0  0  0  0  0  0999 V2000\n   -4.8809    0.2268    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.5813   -0.5223    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2829    0.2289    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2841    1.7289    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9833   -0.5202    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9821   -2.0202    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3150    0.2310    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6146   -0.5181    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6158   -2.0181    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9130    0.2331    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.2126   -0.5160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9118    1.7331    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.4118    1.7331    0.0000 Na  0  0  0  0  0 15  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  5  6  1  6\n  5  7  1  0\n  7  8  1  0\n  8  9  2  0\n  8 10  1  0\n 10 11  1  6\n 10 12  1  0\nM  CHG  2  12  -1  13   1\nM  END\n"
             },
             {
               "id": "P2",
@@ -7448,7 +7453,8 @@
               "given": false,
               "smiles": "COC(=O)[C@@H](C)OC(=O)[C@@H](C)OC(=O)[C@@H](C)OC(=O)[C@@H](C)[O-].[Na+]",
               "name": "Propagation (n = 1)",
-              "explanation": "Das Alkoxid öffnet das nächste Lactid-Molekül; die Kette wächst um zwei Milchsäure-Einheiten."
+              "explanation": "Das Alkoxid öffnet das nächste Lactid-Molekül; die Kette wächst um zwei Milchsäure-Einheiten.",
+              "mol": "\n     RDKit          2D\n\n 23 21  0  0  0  0  0  0  0  0999 V2000\n   -4.8810    0.2267    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.5814   -0.5221    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2830    0.2288    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2842    1.7288    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9833   -0.5200    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9821   -2.0200    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3150    0.2309    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6147   -0.5181    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6159   -2.0181    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9130    0.2331    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9118    1.7331    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.2127   -0.5160    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.5111    0.2352    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.5098    1.7352    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8107   -0.5139    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8119   -2.0139    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1091    0.2374    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4087   -0.5117    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4099   -2.0117    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   10.7071    0.2395    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   12.0067   -0.5096    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   10.7058    1.7395    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    9.2058    1.7395    0.0000 Na  0  0  0  0  0 15  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  5  6  1  6\n  5  7  1  0\n  7  8  1  0\n  8  9  2  0\n  8 10  1  0\n 10 11  1  1\n 10 12  1  0\n 12 13  1  0\n 13 14  2  0\n 13 15  1  0\n 15 16  1  6\n 15 17  1  0\n 17 18  1  0\n 18 19  2  0\n 18 20  1  0\n 20 21  1  6\n 20 22  1  0\nM  CHG  2  22  -1  23   1\nM  END\n"
             },
             {
               "id": "P3",
@@ -7456,7 +7462,8 @@
               "given": false,
               "smiles": "COC(=O)[C@@H](C)OC(=O)[C@@H](C)OC(=O)[C@@H](C)OC(=O)[C@@H](C)O",
               "name": "Termination",
-              "explanation": "H_3O^+ protoniert das Alkoxid-Kettenende. Repetitive Einheit: -[O-CH(CH_3)-C(=O)]-."
+              "explanation": "H_3O^+ protoniert das Alkoxid-Kettenende. Repetitive Einheit: -[O-CH(CH_3)-C(=O)]-.",
+              "mol": "\n     RDKit          2D\n\n 22 21  0  0  0  0  0  0  0  0999 V2000\n   -4.8810    0.2267    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.5814   -0.5221    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2830    0.2288    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2842    1.7288    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9833   -0.5200    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9821   -2.0200    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3150    0.2309    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6147   -0.5181    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6159   -2.0181    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9130    0.2331    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9118    1.7331    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.2127   -0.5160    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.5111    0.2352    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.5098    1.7352    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8107   -0.5139    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8119   -2.0139    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1091    0.2374    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4087   -0.5117    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4099   -2.0117    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   10.7071    0.2395    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   12.0067   -0.5096    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   10.7058    1.7395    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  5  6  1  6\n  5  7  1  0\n  7  8  1  0\n  8  9  2  0\n  8 10  1  0\n 10 11  1  1\n 10 12  1  0\n 12 13  1  0\n 13 14  2  0\n 13 15  1  0\n 15 16  1  6\n 15 17  1  0\n 17 18  1  0\n 18 19  2  0\n 18 20  1  0\n 20 21  1  6\n 20 22  1  0\nM  END\n"
             }
           ],
           "edges": [
@@ -7485,31 +7492,32 @@
               "reagent_below": "3"
             }
           ]
-        }
+        },
+        "body": "Formulieren Sie einen Mechanismus (samt Pfeilen für angreifende Teilchen) für Initiation (1), Propagation (2, mit n(LA) = 1) und Termination (3) der Ringöffnungs-polymerisation von Lactid (LA). Achten Sie auch auf die Stereochemie.\nMarkieren Sie beim Produkt (nach Schritt 3) die repetitive Einheit in üblicher Weise."
       },
       {
         "type": "multiple_choice",
-        "title": "Polymer-Klasse (3.3)",
-        "prompt": "Welche Polymerklasse entsteht bei der ROP von Lactid?",
+        "title": "3.3",
+        "prompt": "Kreuzen Sie die richtige Antwort an.\nDie Polymerisation führt zur Bildung ….",
         "choices": [
           {
             "id": "a",
-            "label": "Polyamid",
+            "label": "eines Polyamids.",
             "correct": false
           },
           {
             "id": "b",
-            "label": "Polyester",
+            "label": "eines Polyesters.",
             "correct": true
           },
           {
             "id": "c",
-            "label": "Polyanhydrid",
+            "label": "eines Polyanhydrids.",
             "correct": false
           },
           {
             "id": "d",
-            "label": "Polycarbonsäure",
+            "label": "einer Polycarbonsäure.",
             "correct": false
           }
         ],
@@ -7517,7 +7525,7 @@
       },
       {
         "type": "short_answer",
-        "title": "Saure Hydrolyse des Lactids (3.4)",
+        "title": "3.4",
         "prompt": "Geben Sie den/die IUPAC-Namen für das Produkt / die Produkte der sauren Hydrolyse des Lactids LA inklusive etwaiger Stereodeskriptoren an.",
         "expected_answer": "(R)-2-Hydroxypropansäure"
       }
@@ -7531,11 +7539,11 @@
     "type": "composed",
     "difficulty": "D",
     "source": "ÖChO Bundeswettbewerb 2018 (BW 44), Aufgabe 3 B",
-    "intro": "In dieser Aufgabe geht es um die Synthese eines Kaffeesäurederivates I, das neben 20 anderen Estern der Kaffeesäure in Bezug auf cytoprotektive Eigenschaften gegenüber H_2O_2-induzierter Cytotoxizität untersucht wurde.",
+    "intro": "Organische Synthesen\n\nB. Synthese eines Kaffeesäurederivates\n\nIn dieser Aufgabe geht es um die Synthese eines Kaffeesäurederivates I, das neben 20 anderen Estern der Kaffeesäure in Bezug auf cytoprotektive Eigenschaften gegenüber H_2O_2-induzierter Cytotoxizität untersucht wurde.",
     "sections": [
       {
         "type": "synthesis",
-        "title": "B. Synthese eines Kaffeesäurederivates",
+        "title": "3.6",
         "scheme": {
           "nodes": [
             {
@@ -7544,7 +7552,8 @@
               "given": false,
               "smiles": "OC(=O)CBr",
               "explanation": "Edukt für Arbuzov-Reaktion mit P(OBn)_3.",
-              "related_reaction_id": "arbuzov"
+              "related_reaction_id": "arbuzov",
+              "mol": "\n     RDKit          2D\n\n  5  4  0  1  0  0  0  0  0  0999 V2000\n    1.2974   -1.7511    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2988   -0.2511    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5985    0.4977    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0004    0.5001    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2992   -0.2490    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\nM  STY  1   1 SUP\nM  SAL   1  3   2   3   1\nM  SMT   1 CO2H\nM  END\n"
             },
             {
               "id": "C",
@@ -7553,14 +7562,16 @@
               "smiles": "OC(=O)CP(=O)(OCc1ccccc1)OCc1ccccc1",
               "explanation": "Arbuzov-Reaktion: P(OBn)_3 substituiert das Bromid in einer S_N2 → Phosphoniumsalz → eliminiert BnBr → α-Phosphono-Essigsäure. Dieses ist das HWE-Reagenz.",
               "note": "Mechanismus: S_N2 von P^III auf das Bromid → Phosphoniumsalz → -BnBr Eliminierung → Phosphonat (P^V mit zwei OBn-Gruppen).",
-              "related_reaction_id": "arbuzov"
+              "related_reaction_id": "arbuzov",
+              "mol": "\n     RDKit          2D\n\n 22 23  0  2  0  0  0  0  0  0999 V2000\n   -2.1070   -1.9730    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8095   -1.2203    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4913   -1.9676    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8125    0.2797    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4850    1.0321    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7825    1.7848    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.2674    2.3296    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4801    3.6301    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.2723    4.9277    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4752    6.2281    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.2773    7.5258    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.7773    7.5229    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5248    6.2225    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.7723    4.9248    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2377   -0.2654    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4904   -1.5660    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2431   -2.8635    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4958   -4.1640    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2485   -5.4615    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.7484   -5.4584    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4958   -4.1578    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.7431   -2.8604    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  5  6  2  0\n  5  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  2  0\n 10 11  1  0\n 11 12  2  0\n 12 13  1  0\n 13 14  2  0\n  5 15  1  0\n 15 16  1  0\n 16 17  1  0\n 17 18  2  0\n 18 19  1  0\n 19 20  2  0\n 20 21  1  0\n 21 22  2  0\n 14  9  1  0\n 22 17  1  0\nM  STY  2   1 SUP   2 SUP\nM  SAL   1  8   7   8   9  10  11  12  13  14\nM  SMT   1 OBn\nM  SAL   2  8  15  16  17  18  19  20  21  22\nM  SMT   2 OBn\nM  END\n"
             },
             {
               "id": "A",
               "label": "A",
               "given": false,
               "smiles": "O=Cc1ccc(O)c(O)c1",
-              "explanation": "Edukt mit Catechol-Funktion (zwei phenolische OH)."
+              "explanation": "X = H_2O",
+              "mol": "\n     RDKit          2D\n\n 10 10  0  0  0  0  0  0  0  0999 V2000\n    3.3067    0.4090    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0077    1.1590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7086    0.4089    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7085   -1.0911    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5906   -1.8408    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8896   -1.0908    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1885   -1.8407    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8894    0.4092    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1884    1.1593    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5904    1.1592    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  1  0\n  6  8  2  0\n  8  9  1  0\n  8 10  1  0\n 10  3  2  0\nM  END\n"
             },
             {
               "id": "B",
@@ -7568,7 +7579,8 @@
               "given": false,
               "smiles": "O=Cc1ccc2OCOc2c1",
               "explanation": "Methanal bildet unter Säurekatalyse mit dem Catechol ein cyclisches Acetal (Methylendioxy-Gruppe); X = H_2O.",
-              "note": "X = HCl (Nebenprodukt der Acetalbildung)."
+              "note": "X = HCl (Nebenprodukt der Acetalbildung).",
+              "mol": "\n     RDKit          2D\n\n 11 12  0  0  0  0  0  0  0  0999 V2000\n    3.3067    0.4090    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0077    1.1590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7086    0.4089    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7085   -1.0911    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5906   -1.8408    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8896   -1.0908    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.3162   -1.5543    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.1978   -0.3407    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.3160    0.8728    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8894    0.4092    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5904    1.1592    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  1  0\n 11  3  2  0\n 10  6  2  0\nM  END\n"
             },
             {
               "id": "F",
@@ -7578,54 +7590,62 @@
               "caption": "Kaffeesäure",
               "explanation": "Horner-Wadsworth-Emmons-Reaktion: NaOEt deprotoniert das Phosphonat C; das Carbanion addiert an den Aldehyd (A_N) → E-Alken. HCl spaltet anschließend die Schutzgruppe.",
               "note": "F' wäre die Z-Form (cis-Doppelbindung) — entstehend durch UV-Isomerisierung über ein Singulett/Triplett-Diradikal.",
-              "related_reaction_id": "hwe-wittig"
+              "related_reaction_id": "hwe-wittig",
+              "mol": "\n     RDKit          2D\n\n 13 13  0  1  0  0  0  0  0  0999 V2000\n    5.9047    0.4087    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.6057    1.1587    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.6057    2.6587    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3066    0.4087    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0077    1.1590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7086    0.4089    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7085   -1.0911    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5906   -1.8408    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8896   -1.0908    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1886   -1.8405    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8894    0.4092    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1884    1.1595    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5904    1.1592    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  1  0\n  7  8  2  0\n  8  9  1  0\n  9 10  1  0\n  9 11  2  0\n 11 12  1  0\n 11 13  1  0\n 13  6  2  0\nM  STY  1   1 SUP\nM  SAL   1  3   2   3   1\nM  SMT   1 CO2H\nM  END\n"
             },
             {
               "id": "F2",
               "label": "F´",
               "given": false,
               "smiles": "OC(=O)/C=C\\c1ccc(O)c(O)c1",
-              "name": "Z-Kaffeesäure"
+              "name": "Z-Form",
+              "mol": "\n     RDKit          2D\n\n 13 13  0  1  0  0  0  0  0  0999 V2000\n    2.0077   -1.8410    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3067   -1.0910    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.6057   -1.8410    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3067    0.4090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0077    1.1590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7086    0.4089    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7085   -1.0911    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5906   -1.8408    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8896   -1.0908    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1886   -1.8405    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8894    0.4092    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1884    1.1595    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5904    1.1592    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  1  0\n  7  8  2  0\n  8  9  1  0\n  9 10  1  0\n  9 11  2  0\n 11 12  1  0\n 11 13  1  0\n 13  6  2  0\nM  STY  1   1 SUP\nM  SAL   1  3   2   3   1\nM  SMT   1 CO2H\nM  END\n"
             },
             {
               "id": "D",
               "label": "D",
               "given": false,
               "smiles": "O=Cc1ccc(OCOC)c(OCOC)c1",
-              "explanation": "Williamson-Ethersynthese (S_N2): NaH deprotoniert die Phenole, die Phenolate substituieren MOM-Cl. Schutz vor Oxidation der Phenole."
+              "explanation": "Williamson-Ethersynthese (S_N2): NaH deprotoniert die Phenole, die Phenolate substituieren MOM-Cl. Schutz vor Oxidation der Phenole.",
+              "mol": "\n     RDKit          2D\n\n 16 16  0  2  0  0  0  0  0  0999 V2000\n    3.3067    0.4090    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0077    1.1590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7086    0.4089    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7085   -1.0911    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5906   -1.8408    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8896   -1.0908    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1885   -1.8407    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.4876   -1.0907    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7866   -1.8407    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -7.0856   -1.0906    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8894    0.4092    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1884    1.1593    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1883    2.6593    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.4873    3.4094    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.4871    4.9094    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5904    1.1592    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n  6 11  2  0\n 11 12  1  0\n 12 13  1  0\n 13 14  1  0\n 14 15  1  0\n 11 16  1  0\n 16  3  2  0\nM  STY  2   1 SUP   2 SUP\nM  SAL   1  4   7   8   9  10\nM  SMT   1 OMOM\nM  SAL   2  4  12  13  14  15\nM  SMT   2 OMOM\nM  END\n"
             },
             {
               "id": "E",
               "label": "E",
               "given": false,
               "smiles": "O=C/C=C/c1ccc(OCOC)c(OCOC)c1",
-              "explanation": "Aldolkondensation (A_N, dann Eliminierung) mit Ethanal → α,β-ungesättigter Aldehyd (E-Form)."
+              "explanation": "Aldolkondensation (A_N, dann Eliminierung) mit Ethanal → α,β-ungesättigter Aldehyd (E-Form).",
+              "mol": "\n     RDKit          2D\n\n 18 18  0  2  0  0  0  0  0  0999 V2000\n    5.9047    0.4087    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.6057    1.1587    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3066    0.4087    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0077    1.1590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7086    0.4089    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7085   -1.0911    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5906   -1.8408    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8896   -1.0908    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1886   -1.8405    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.4875   -1.0903    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7867   -1.8401    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -7.0856   -1.0898    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8894    0.4092    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1884    1.1595    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1881    2.6595    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.4870    3.4098    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.4867    4.9098    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5904    1.1592    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n  8 13  2  0\n 13 14  1  0\n 14 15  1  0\n 15 16  1  0\n 16 17  1  0\n 13 18  1  0\n 18  5  2  0\nM  STY  2   1 SUP   2 SUP\nM  SAL   1  4   9  10  11  12\nM  SMT   1 OMOM\nM  SAL   2  4  14  15  16  17\nM  SMT   2 OMOM\nM  END\n"
             },
             {
               "id": "E2",
               "label": "E´",
               "given": false,
               "smiles": "O=C/C=C\\c1ccc(OCOC)c(OCOC)c1",
-              "name": "Z-Form"
+              "name": "Z-Form",
+              "mol": "\n     RDKit          2D\n\n 18 18  0  2  0  0  0  0  0  0999 V2000\n    2.0077   -1.8410    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3067   -1.0910    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3067    0.4090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0077    1.1590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7086    0.4089    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7085   -1.0911    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5906   -1.8408    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8896   -1.0908    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1886   -1.8405    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.4875   -1.0903    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7867   -1.8401    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -7.0856   -1.0898    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8894    0.4092    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1884    1.1595    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1881    2.6595    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.4870    3.4098    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.4867    4.9098    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5904    1.1592    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n  8 13  2  0\n 13 14  1  0\n 14 15  1  0\n 15 16  1  0\n 16 17  1  0\n 13 18  1  0\n 18  5  2  0\nM  STY  2   1 SUP   2 SUP\nM  SAL   1  4   9  10  11  12\nM  SMT   1 OMOM\nM  SAL   2  4  14  15  16  17\nM  SMT   2 OMOM\nM  END\n"
             },
             {
               "id": "G",
               "label": "G",
               "given": false,
-              "smiles": "OC(=O)/C=C/c1ccc(OCOC)c(OCOC)c1"
+              "smiles": "OC(=O)/C=C/c1ccc(OCOC)c(OCOC)c1",
+              "mol": "\n     RDKit          2D\n\n 19 19  0  3  0  0  0  0  0  0999 V2000\n    5.9047    0.4087    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.6057    1.1587    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.6057    2.6587    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3066    0.4087    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0077    1.1590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7086    0.4089    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7085   -1.0911    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5906   -1.8408    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8896   -1.0908    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1886   -1.8405    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.4875   -1.0903    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7867   -1.8401    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -7.0856   -1.0898    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8894    0.4092    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1884    1.1595    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1881    2.6595    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.4870    3.4098    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.4867    4.9098    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5904    1.1592    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  1  0\n  7  8  2  0\n  8  9  1  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 12 13  1  0\n  9 14  2  0\n 14 15  1  0\n 15 16  1  0\n 16 17  1  0\n 17 18  1  0\n 14 19  1  0\n 19  6  2  0\nM  STY  3   1 SUP   2 SUP   3 SUP\nM  SAL   1  4  10  11  12  13\nM  SMT   1 OMOM\nM  SAL   2  4  15  16  17  18\nM  SMT   2 OMOM\nM  SAL   3  3   2   3   1\nM  SMT   3 CO2H\nM  END\n"
             },
             {
               "id": "H",
               "label": "H",
               "given": false,
-              "smiles": "ClC(=O)/C=C/c1ccc(OCOC)c(OCOC)c1"
+              "smiles": "ClC(=O)/C=C/c1ccc(OCOC)c(OCOC)c1",
+              "mol": "\n     RDKit          2D\n\n 19 19  0  3  0  0  0  0  0  0999 V2000\n    4.6057    2.6587    0.0000 Cl  0  0  0  0  0  0  0  0  0  0  0  0\n    4.6057    1.1587    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.9047    0.4087    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3066    0.4087    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0077    1.1590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7086    0.4089    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7085   -1.0911    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5906   -1.8408    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8896   -1.0908    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1886   -1.8405    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.4875   -1.0903    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7867   -1.8401    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -7.0856   -1.0898    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8894    0.4092    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1884    1.1595    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1881    2.6595    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.4870    3.4098    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.4867    4.9098    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5904    1.1592    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  1  0\n  7  8  2  0\n  8  9  1  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 12 13  1  0\n  9 14  2  0\n 14 15  1  0\n 15 16  1  0\n 16 17  1  0\n 17 18  1  0\n 14 19  1  0\n 19  6  2  0\nM  STY  3   1 SUP   2 SUP   3 SUP\nM  SAL   1  4  10  11  12  13\nM  SMT   1 OMOM\nM  SAL   2  4  15  16  17  18\nM  SMT   2 OMOM\nM  SAL   3  3   2   3   1\nM  SMT   3 COCl\nM  END\n"
             },
             {
               "id": "I",
               "label": "I",
               "given": false,
               "smiles": "O=C(/C=C/c1ccc(O)c(O)c1)OCCCc1ccccc1",
-              "explanation": "Veresterung des Säurechlorids mit 3-Phenylpropan-1-ol (Y = HCl); HCl spaltet die MOM-Ether."
+              "explanation": "Y = HCl",
+              "mol": "\n     RDKit          2D\n\n 22 23  0  1  0  0  0  0  0  0999 V2000\n    4.6057    2.6587    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.6057    1.1587    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3066    0.4087    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0077    1.1590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7086    0.4089    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7085   -1.0911    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5906   -1.8408    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8896   -1.0908    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1886   -1.8405    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8894    0.4092    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1884    1.1595    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5904    1.1592    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.9047    0.4087    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    7.2037    1.1587    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.5028    0.4087    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.8018    1.1587    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   11.1009    0.4087    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   11.1009   -1.0913    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   12.3999   -1.8413    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   13.6989   -1.0913    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   13.6989    0.4087    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   12.3999    1.1587    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  1  0\n  8 10  2  0\n 10 11  1  0\n 10 12  1  0\n  2 13  1  0\n 13 14  1  0\n 14 15  1  0\n 15 16  1  0\n 16 17  1  0\n 17 18  2  0\n 18 19  1  0\n 19 20  2  0\n 20 21  1  0\n 21 22  2  0\n 12  5  2  0\n 22 17  1  0\nM  STY  1   1 SUP\nM  SAL   1  6  17  18  19  20  21  22\nM  SMT   1 Ph\nM  END\n"
             }
           ],
           "edges": [
@@ -7651,7 +7671,7 @@
                 "C"
               ],
               "to": "F",
-              "reagent_above": "1. NaOEt",
+              "reagent_above": "1. C, NaOEt",
               "reagent_below": "2. HCl"
             },
             {
@@ -7721,8 +7741,8 @@
                 "H"
               ],
               "to": "I",
-              "reagent_above": "1. 3-Phenylpropan-1-ol",
-              "reagent_below": "2. HCl, 7h; -Y"
+              "reagent_above": "1. 3-Phenyl-propan-1-ol",
+              "reagent_below": "2. HCl, 7h\n-Y"
             }
           ]
         },
@@ -7731,90 +7751,58 @@
           "E und E´ sind Stereoisomere.",
           "F und F´ sind Stereoisomere.",
           "Substanz F kann durch eine Isomerisierungsreaktion in F´ übergeführt werden.",
-          "F und F´ haben folgende Elementarzusammensetzung (w/w): 60,00 % C, 4,48 % H, 35,52 % O.",
-          "Abkürzungen: Ph = Phenyl, Bn = Benzyl (Phenylmethyl), MOMCl = CH_3OCH_2Cl, PDC = Pyridiniumdichromat."
-        ]
+          "F und F´ haben folgende Elementarzusammensetzung (w/w): 60,00% C, 4,48% H, 35,52% O.",
+          "Folgende gebräuchliche Abkürzungen werden verwendet: Ph = Phenyl, Bn = Benzyl (Phenylmethyl), MOMCl = CH_3OCH_2Cl, PDC = Pyridiniumdichromat."
+        ],
+        "body": "Zeichnen Sie unter Berücksichtigung der korrekten Stereochemie die Strukturformeln von A, B, D, E, E´, F, F´, G, H, I und Z sowie die Summenformeln von X und Y in die Kästchen im Reaktionsschema. Kürzen Sie allfällige Benzyl-, Phenyl- oder MOM-Gruppen mit Bn, Ph oder MOM ab."
       },
       {
         "type": "short_answer",
-        "title": "Summenformel von F und F´ (3.5)",
+        "title": "3.5",
         "prompt": "Schreiben Sie die Summenformel von F und F´ auf.",
         "expected_answer": "C_9H_8O_4"
       },
       {
-        "type": "multiple_choice",
-        "title": "Mechanismus P(OBn)_3 + Z → C (3.7)",
-        "prompt": "Nach welchem Reaktionsmechanismus verläuft die Reaktion von P(OBn)_3 + Z nach C (im 1. Schritt)?",
-        "choices": [
-          {
-            "id": "a",
-            "label": "S_N1"
-          },
-          {
-            "id": "b",
-            "label": "S_N2",
-            "correct": true
-          },
-          {
-            "id": "c",
-            "label": "A_N"
-          },
-          {
-            "id": "d",
-            "label": "Radikalisch"
-          }
-        ],
-        "explanation": "P^III ist ein gutes Nukleophil. Es greift das α-C des Br-Acetats von der Rückseite an (S_N2, Walden-Inversion) → Phosphoniumsalz (R-P^+(OBn)_3 Br^-). Diese ionische Spezies zerfällt anschließend zu Phosphonat (P^V) + BnBr (Arbuzov-Umlagerung)."
-      },
-      {
-        "type": "multiple_choice",
-        "title": "Bildung von D aus A (3.12)",
-        "prompt": "Begründen Sie, warum der Schritt A → D im Reaktionsschema notwendig ist.",
-        "choices": [
-          {
-            "id": "a",
-            "label": "Damit die Phenol-Gruppen nicht oxidiert werden",
-            "correct": true
-          },
-          {
-            "id": "b",
-            "label": "Damit die Phenol-Gruppen im Schritt H → I nicht mit dem Säurechlorid reagieren",
-            "correct": true
-          },
-          {
-            "id": "c",
-            "label": "Um die Wasserlöslichkeit zu erhöhen"
-          },
-          {
-            "id": "d",
-            "label": "Damit die Reaktion D → E stereoselektiv wird"
-          }
-        ],
-        "explanation": "Beide korrekten Antworten: Catechole sind extrem leicht oxidierbar zu o-Chinonen (insbesondere unter basischen oder oxidierenden Bedingungen) — MOM verhindert das. Außerdem würden die Phenole mit Säurechloriden veresternd reagieren und die selektive Esterbildung am späteren Carbonsäure-Zentrum verhindern."
-      },
-      {
         "type": "short_answer",
-        "title": "Isomerisierung F → F´ (3.9)",
-        "prompt": "Formulieren Sie einen Mechanismus für die Isomerisierung von F nach F´ und schlagen Sie Reaktionsbedingungen vor.",
-        "expected_answer": "Photochemisch (UV): Anregung des konjugierten π-Systems verbreitert die C=C-Bindung durch Population des π*-Orbitals → die π-Bindungsordnung wird kurzzeitig 0 → freie Rotation um die ehemalige Doppelbindung. Geht das System in den Grundzustand zurück, kann es in der Z-Form „eingefangen\" werden. Mechanistisch über ein elektronisch angeregtes Singulett/Triplett-Diradikal-Zwischenprodukt."
-      },
-      {
-        "type": "short_answer",
-        "title": "Moleküle X und Y",
-        "prompt": "Geben Sie die Summenformeln der abgespaltenen Moleküle X und Y an.",
+        "title": "3.6 — X und Y",
+        "prompt": "Geben Sie die Summenformeln von X und Y an.",
         "expected_answer": "X = H_2O, Y = HCl"
       },
       {
         "type": "short_answer",
-        "title": "E/E´ und F/F´ (3.8)",
-        "prompt": "In welchem stereochemischen Verhältnis stehen E und E´ bzw. F und F´ jeweils zueinander?",
-        "expected_answer": "Diastereomere (geometrische Isomere, E/Z)."
+        "title": "3.7",
+        "prompt": "Geben Sie an, nach welchem Reaktionsmechanismus die Reaktion von P(OBn)_3 + Z nach C (im 1. Schritt) verläuft.",
+        "expected_answer": "S_N2"
       },
       {
         "type": "short_answer",
-        "title": "Rolle von NaOEt (3.10)",
-        "prompt": "Welche Funktion hat NaOEt im ersten Schritt bei der Bildung von F aus B und C? Welcher Mechanismus folgt, und wie heißt die Namensreaktion?",
-        "expected_answer": "NaOEt ist Base und deprotoniert das Phosphonat C zum Carbanion; dieses reagiert per A_N mit dem Aldehyd B. Namensreaktion: Horner-Wadsworth-Emmons (HWE-Wittig)."
+        "title": "3.8",
+        "prompt": "Geben Sie an, in welchem stereochemischen Verhältnis E und E´ bzw. F und F´ jeweils zueinander stehen.",
+        "expected_answer": "Diastereomerie / geometrische Isomere"
+      },
+      {
+        "type": "short_answer",
+        "title": "3.9",
+        "prompt": "Formulieren Sie einen Mechanismus für die Isomerisierung von F nach F’, in dem Sie auch die Reaktionsbedingungen vorschlagen.",
+        "expected_answer": "Bedingungen: UV-Licht. Die Anregung bricht die π-Bindung der C=C-Doppelbindung auf (Diradikal •C–C•); um die verbleibende Einfachbindung ist freie Drehung möglich, danach schließt sich die Doppelbindung wieder – teilweise in der Z-Form F´."
+      },
+      {
+        "type": "short_answer",
+        "title": "3.10",
+        "prompt": "Geben Sie an, welche Funktion NaOEt im ersten Schritt bei der Bildung von F aus B und C hat. Zeichnen Sie die Konstitutionsformel des dabei gebildeten reaktiven Intermediats. Benennen Sie den Mechanismus der Reaktion desselben mit der anderen Substanz. Wie heißt die vorliegende Namensreaktion?",
+        "expected_answer": "Base.\nReaktives Intermediat: das Carbanion HO–CO–C^-H–P(=O)(OBn)_2.\nMechanismus: A_N.\nNamensreaktion: HWE-Wittig (Horner-Wadsworth-Emmons)."
+      },
+      {
+        "type": "short_answer",
+        "title": "3.11",
+        "prompt": "Formulieren Sie einen möglichst detaillierten allgemeinen (R für Reste verwenden) Reaktionsmechanismus für die Bildung von E bzw. E´ aus D und Ethanal. Verwenden sie dabei Pfeile für angreifende Teilchen. Benennen Sie den Reaktionsmechanismus.",
+        "expected_answer": "A_N (Aldolkondensation): Die Base deprotoniert Ethanal in α-Stellung (+ B, − HB^+) zum Enolat; dieses greift das Carbonyl-C-Atom von D an → Alkoholat, das mit H_2O protoniert wird (− OH^-) → Aldol. Erneute α-Deprotonierung und Abspaltung von OH^- (− H_2O) liefert den α,β-ungesättigten Aldehyd E (+ Z-Isomer E´)."
+      },
+      {
+        "type": "short_answer",
+        "title": "3.12",
+        "prompt": "Welche Namensreaktion liegt der Bildung von D aus A zugrunde? Benennen Sie den zugehörigen Reaktionsmechanismus.\nBegründen Sie verbal, warum dieser Schritt im Reaktionsschema notwendig ist.",
+        "expected_answer": "Williamson´sche Ethersynthese\nS_N2\nSchutzgruppe, damit Phenole nicht oxidieren"
       }
     ]
   },
@@ -7824,104 +7812,118 @@
     "name": "BW 2018 — Colchicin-Totalsynthese (Übersicht)",
     "difficulty": "E",
     "source": "ÖChO Bundeswettbewerb 2018 (BW 44), Aufgabe 3 C",
-    "intro": "Colchicin, das Hauptalkaloid der Herbstzeitlosen, ist einer der prominentesten Naturstoffe. Einerseits potentes Pflanzengift, besitzt es andererseits großes pharmazeutisches Potential, da es als Mitose-Hemmstoff die Ausbildung des Spindelapparates inhibiert. Die Reaktionsfolge in dieser Aufgabe geht auf Woodward (1963) zurück. Ein besonderes Merkmal dieser Synthese ist die sehr frühe strategische Einführung der Stickstofffunktionalität am C-7.",
+    "intro": "Organische Synthesen\n\nC. Die Woodwardsynthese von Colchicin\n\nColchicin, das Hauptalkaloid der Herbstzeitlosen, ist einer der prominentesten Naturstoffe. Einerseits potentes Pflanzengift besitzt es andererseits großes pharmazeutisches Potential, da es als Mitose-Hemmstoff die Ausbildung des Spindelapparates inhibiert.\nErste Synthesen in den 50er Jahren setzten generelle Meilensteine in der Naturstoffsynthese. Nur wenige Zielverbindungen sind auf so facettenreiche Weise synthetisiert worden wie Colchicin. Die Reaktionsfolge in dieser Aufgabe geht auf den renommierten organischen Chemiker Woodward (1963) zurück. Ein besonderes Merkmal dieser Synthese ist die sehr frühe strategische Einführung der Stickstofffunktionalität am C-7. [1] Woodward wurde für seine Leistungen 1965 mit dem Nobelpreis für Chemie ausgezeichnet.\n\n[1] Graening, T. and Schmalz, H. (2004), Colchicin-Totalsynthesen im Vergleich: Eine Reise durch 50 Jahre Organische Synthesechemie. Angewandte Chemie, 116: 3292-3318. doi:10.1002/ange.200300615",
     "sections": [
       {
         "type": "synthesis",
-        "title": "C. Die Woodward-Synthese von Colchicin (3.13)",
+        "title": "3.13",
         "scheme": {
           "nodes": [
             {
               "id": "A",
               "label": "A",
               "given": false,
-              "smiles": "COC(=O)/C=C(\\C)N"
+              "smiles": "COC(=O)/C=C(\\C)N",
+              "mol": "\n     RDKit          2D\n\n  8  7  0  1  0  0  0  0  0  0999 V2000\n   -0.2680   -4.0495    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.2650   -2.5495    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0356   -1.8021    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.3331   -2.5547    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0386   -0.3021    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.2589    0.4506    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5594   -0.2970    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.2559    1.9506    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  5  6  2  0\n  6  7  1  0\n  6  8  1  0\nM  STY  1   1 SUP\nM  SAL   1  4   3   4   2   1\nM  SMT   1 CO2Me\nM  END\n"
             },
             {
               "id": "IT",
               "label": "",
               "given": true,
-              "smiles": "Cc1nscc1C(=O)OC"
+              "smiles": "Cc1nscc1C(=O)OC",
+              "mol": "\n     RDKit          2D\n\n 10 10  0  1  0  0  0  0  0  0999 V2000\n   -1.7980   -1.4153    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7885   -0.3059    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0924    1.1629    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    0.2106    1.9060    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n    1.3200    0.8965    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7026   -0.4706    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.4457   -1.7736    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9457   -1.7815    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.6889   -3.0686    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.4320   -4.3716    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  2  0\n  7  9  1  0\n  9 10  1  0\n  6  2  1  0\nM  STY  1   1 SUP\nM  SAL   1  4   7   8   9  10\nM  SMT   1 CO2Me\nM  END\n"
             },
             {
               "id": "B",
               "label": "B",
               "given": false,
               "smiles": "BrCc1nscc1C(=O)OC",
-              "explanation": "Radikalische Substitution (NBS, hν) an der benzylartigen Methylgruppe."
+              "explanation": "Radikalische Substitution (NBS, hν) an der benzylartigen Methylgruppe.",
+              "mol": "\n     RDKit          2D\n\n 11 11  0  1  0  0  0  0  0  0999 V2000\n   -0.3251    2.9175    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    1.1280    2.5454    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.1757    3.6165    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9263    5.0958    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    3.2538    5.7922    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n    4.3271    4.7424    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.6599    3.3998    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.3538    2.0708    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8525    2.0073    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.5494    0.8047    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.2437   -0.5249    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  8 10  1  0\n 10 11  1  0\n  7  3  1  0\nM  STY  1   1 SUP\nM  SAL   1  4   8   9  10  11\nM  SMT   1 CO2Me\nM  END\n"
             },
             {
               "id": "C",
               "label": "C",
               "given": false,
               "smiles": "[Br-].COC(=O)c1csnc1C[P+](c1ccccc1)(c1ccccc1)c1ccccc1",
-              "explanation": "S_N2 von PPh_3 am Brommethyl-C → Phosphoniumsalz."
+              "explanation": "S_N2 von PPh_3 am Brommethyl-C → Phosphoniumsalz.",
+              "mol": "\n     RDKit          2D\n\n 30 32  0  4  0  0  0  0  0  0999 V2000\n    0.0000    6.7922    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    4.2437   -0.5249    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.5494    0.8047    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.3538    2.0708    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8525    2.0073    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.6599    3.3998    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.3271    4.7424    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.2538    5.7922    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9263    5.0958    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    2.1757    3.6165    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1280    2.5454    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.3251    2.9175    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.6972    1.4644    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.1417    1.0602    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5139   -0.3929    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4415   -1.4418    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0030   -1.0375    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3751    0.4156    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0471    4.3706    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.4916    4.7749    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8637    6.2280    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7914    7.2768    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.6531    6.8726    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0253    5.4195    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.7782    3.2897    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.1824    4.7342    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.6355    5.1063    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.6844    4.0340    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.2801    2.5895    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.8270    2.2173    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  4  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  1  0\n  9 10  2  0\n 10 11  1  0\n 11 12  1  0\n 12 13  1  0\n 13 14  2  0\n 14 15  1  0\n 15 16  2  0\n 16 17  1  0\n 17 18  2  0\n 12 19  1  0\n 19 20  2  0\n 20 21  1  0\n 21 22  2  0\n 22 23  1  0\n 23 24  2  0\n 12 25  1  0\n 25 26  2  0\n 26 27  1  0\n 27 28  2  0\n 28 29  1  0\n 29 30  2  0\n 10  6  1  0\n 18 13  1  0\n 24 19  1  0\n 30 25  1  0\nM  CHG  2   1  -1  12   1\nM  STY  4   1 SUP   2 SUP   3 SUP   4 SUP\nM  SAL   1  4   4   5   3   2\nM  SMT   1 CO2Me\nM  SAL   2  6  13  14  15  16  17  18\nM  SMT   2 Ph\nM  SAL   3  6  19  20  21  22  23  24\nM  SMT   3 Ph\nM  SAL   4  6  25  26  27  28  29  30\nM  SMT   4 Ph\nM  END\n"
             },
             {
               "id": "D",
               "label": "D",
               "given": false,
               "smiles": "O=Cc1cc(OC)c(OC)c(OC)c1",
-              "explanation": "3,4,5-Trimethoxybenzaldehyd. W = NaOMe erzeugt das Ylid (Wittig)."
+              "explanation": "3,4,5-Trimethoxybenzaldehyd. W = NaOMe erzeugt das Ylid (Wittig).",
+              "mol": "\n     RDKit          2D\n\n 14 14  0  3  0  0  0  0  0  0999 V2000\n    1.1734    3.6841    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1241    2.9315    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1211    1.4315    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4186    0.6791    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4153   -0.8209    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.7131   -1.5736    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.0136   -0.8262    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1148   -1.5685    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1118   -3.0682    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4094   -3.8208    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1827   -0.8158    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.4832   -1.5631    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.4862   -3.0631    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1797    0.6842    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  5  8  2  0\n  8  9  1  0\n  9 10  1  0\n  8 11  1  0\n 11 12  1  0\n 12 13  1  0\n 11 14  2  0\n 14  3  1  0\nM  STY  3   1 SUP   2 SUP   3 SUP\nM  SAL   1  2   6   7\nM  SMT   1 OMe\nM  SAL   2  2   9  10\nM  SMT   2 OMe\nM  SAL   3  2  12  13\nM  SMT   3 OMe\nM  END\n"
             },
             {
               "id": "E",
               "label": "E",
               "given": true,
-              "smiles": "COC(=O)c1csnc1C=Cc1cc(OC)c(OC)c(OC)c1"
+              "smiles": "COC(=O)c1csnc1C=Cc1cc(OC)c(OC)c(OC)c1",
+              "mol": "\n     RDKit          2D\n\n 23 24  0  4  0  0  0  0  0  0999 V2000\n    4.2437   -0.5249    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.5494    0.8047    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.3538    2.0708    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8525    2.0073    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.6599    3.3998    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.3271    4.7424    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.2538    5.7922    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9263    5.0958    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    2.1757    3.6165    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1280    2.5454    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.3248    2.9170    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3722    1.8446    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.8287    2.2175    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8745    1.1438    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.3289    1.5161    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7334    2.9606    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.4736   -0.3006    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.5208   -1.3727    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.9742   -1.0016    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0168   -0.6737    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.6135   -2.1171    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.6628   -3.1890    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9710    0.4001    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  2  3\n 11 12  1  0\n 12 13  2  0\n 13 14  1  0\n 14 15  1  0\n 15 16  1  0\n 14 17  2  0\n 17 18  1  0\n 18 19  1  0\n 17 20  1  0\n 20 21  1  0\n 21 22  1  0\n 20 23  2  0\n  9  5  1  0\n 23 12  1  0\nM  STY  4   1 SUP   2 SUP   3 SUP   4 SUP\nM  SAL   1  4   3   4   2   1\nM  SMT   1 CO2Me\nM  SAL   2  2  15  16\nM  SMT   2 OMe\nM  SAL   3  2  18  19\nM  SMT   3 OMe\nM  SAL   4  2  21  22\nM  SMT   4 OMe\nM  END\n"
             },
             {
               "id": "F",
               "label": "F",
               "given": false,
               "smiles": "OCc1csnc1CCc1cc(OC)c(OC)c(OC)c1",
-              "explanation": "Diimid (aus N_2H_4/H_2O_2/Cu^{2+}) hydriert die C=C-Bindung; LiAlH_4 reduziert den Ester zum primären Alkohol."
+              "explanation": "Diimid (aus N_2H_4/H_2O_2/Cu^{2+}) hydriert die C=C-Bindung; LiAlH_4 reduziert den Ester zum primären Alkohol.",
+              "mol": "\n     RDKit          2D\n\n 21 22  0  3  0  0  0  0  0  0999 V2000\n    3.5529    0.8029    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.3560    2.0697    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.6599    3.3998    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.3271    4.7424    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.2538    5.7922    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9263    5.0958    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    2.1757    3.6165    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1280    2.5454    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.3248    2.9170    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3722    1.8446    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.8287    2.2175    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8745    1.1438    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.3289    1.5161    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7334    2.9606    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.4736   -0.3006    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.5208   -1.3727    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.9742   -1.0016    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0168   -0.6737    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.6135   -2.1171    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.6628   -3.1890    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9710    0.4001    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  1  0\n 13 14  1  0\n 12 15  2  0\n 15 16  1  0\n 16 17  1  0\n 15 18  1  0\n 18 19  1  0\n 19 20  1  0\n 18 21  2  0\n  7  3  1  0\n 21 10  1  0\nM  STY  3   1 SUP   2 SUP   3 SUP\nM  SAL   1  2  13  14\nM  SMT   1 OMe\nM  SAL   2  2  16  17\nM  SMT   2 OMe\nM  SAL   3  2  19  20\nM  SMT   3 OMe\nM  END\n"
             },
             {
               "id": "G2",
               "label": "G",
               "given": false,
               "smiles": "O=Cc1csnc1CCc1cc(OC)c(OC)c(OC)c1",
-              "explanation": "PDC oxidiert den primären Alkohol zum Aldehyd."
+              "explanation": "PDC oxidiert den primären Alkohol zum Aldehyd.",
+              "mol": "\n     RDKit          2D\n\n 21 22  0  3  0  0  0  0  0  0999 V2000\n    3.5529    0.8029    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.3560    2.0697    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.6599    3.3998    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.3271    4.7424    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.2538    5.7922    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9263    5.0958    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    2.1757    3.6165    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1280    2.5454    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.3248    2.9170    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3722    1.8446    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.8287    2.2175    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8745    1.1438    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.3289    1.5161    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7334    2.9606    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.4736   -0.3006    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.5208   -1.3727    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.9742   -1.0016    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0168   -0.6737    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.6135   -2.1171    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.6628   -3.1890    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9710    0.4001    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  1  0\n 13 14  1  0\n 12 15  2  0\n 15 16  1  0\n 16 17  1  0\n 15 18  1  0\n 18 19  1  0\n 19 20  1  0\n 18 21  2  0\n  7  3  1  0\n 21 10  1  0\nM  STY  3   1 SUP   2 SUP   3 SUP\nM  SAL   1  2  13  14\nM  SMT   1 OMe\nM  SAL   2  2  16  17\nM  SMT   2 OMe\nM  SAL   3  2  19  20\nM  SMT   3 OMe\nM  END\n"
             },
             {
               "id": "H",
               "label": "H",
               "given": false,
               "smiles": "OC(=O)/C=C/C=C/c1csnc1CCc1cc(OC)c(OC)c(OC)c1",
-              "explanation": "Wittig-Olefinierung mit dem Dienyl-Ylid, Esterverseifung und Isomerisierung zum E,E-Dien."
+              "explanation": "Wittig-Olefinierung mit dem Dienyl-Ylid, Esterverseifung und Isomerisierung zum E,E-Dien.",
+              "mol": "\n     RDKit          2D\n\n 26 27  0  4  0  0  0  0  0  0999 V2000\n    7.9423   -1.9787    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    8.7452   -0.7116    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   10.2439   -0.7734    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    8.0493    0.6172    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.5507    0.6790    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8548    2.0078    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.3560    2.0697    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.6599    3.3998    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.3271    4.7424    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.2538    5.7922    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9263    5.0958    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    2.1757    3.6165    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1280    2.5454    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.3248    2.9170    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3722    1.8446    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.8287    2.2175    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8745    1.1438    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.3289    1.5161    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7334    2.9606    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.4736   -0.3006    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.5208   -1.3727    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.9742   -1.0016    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0168   -0.6737    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.6135   -2.1171    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.6628   -3.1890    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9710    0.4001    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  1  0\n 11 12  2  0\n 12 13  1  0\n 13 14  1  0\n 14 15  1  0\n 15 16  2  0\n 16 17  1  0\n 17 18  1  0\n 18 19  1  0\n 17 20  2  0\n 20 21  1  0\n 21 22  1  0\n 20 23  1  0\n 23 24  1  0\n 24 25  1  0\n 23 26  2  0\n 12  8  1  0\n 26 15  1  0\nM  STY  4   1 SUP   2 SUP   3 SUP   4 SUP\nM  SAL   1  3   2   3   1\nM  SMT   1 CO2H\nM  SAL   2  2  18  19\nM  SMT   2 OMe\nM  SAL   3  2  21  22\nM  SMT   3 OMe\nM  SAL   4  2  24  25\nM  SMT   4 OMe\nM  END\n"
             },
             {
               "id": "I",
               "label": "I",
               "given": false,
               "smiles": "OC(=O)C/C=C/C1c2csnc2CCc2cc(OC)c(OC)c(OC)c21",
-              "explanation": "Säurekatalysierter Ringschluss: Friedel-Crafts-Alkylierung (S_E) des elektronenreichen Aromaten → Siebenring; die Doppelbindung wandert."
+              "explanation": "Säurekatalysierter Ringschluss: Friedel-Crafts-Alkylierung (S_E) des elektronenreichen Aromaten → Siebenring; die Doppelbindung wandert.",
+              "mol": "\n     RDKit          2D\n\n 26 28  0  4  0  0  0  0  0  0999 V2000\n    3.3004   -6.0496    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.2274   -4.5514    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4884   -3.7391    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8934   -3.8655    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8205   -2.3677    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4866   -1.6821    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4118   -0.1834    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.5323    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0551   -0.1743    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1334    0.8685    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4784    2.2173    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9912    2.0092    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0025    3.1365    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.4952    3.0606    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3747    1.8440    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.8267    2.2173    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8743    1.1431    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.3286    1.5157    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7328    2.9602    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.4730   -0.3020    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.5205   -1.3729    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.9736   -1.0008    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0195   -0.6710    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.6146   -2.1168    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.6633   -3.1893    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9681    0.4004    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  1  0\n 11 12  2  0\n 12 13  1  0\n 13 14  1  0\n 14 15  1  0\n 15 16  1  0\n 16 17  2  0\n 17 18  1  0\n 18 19  1  0\n 17 20  1  0\n 20 21  1  0\n 21 22  1  0\n 20 23  2  0\n 23 24  1  0\n 24 25  1  0\n 23 26  1  0\n 26  7  1  0\n 12  8  1  0\n 26 15  2  0\nM  STY  4   1 SUP   2 SUP   3 SUP   4 SUP\nM  SAL   1  3   2   3   1\nM  SMT   1 CO2H\nM  SAL   2  2  18  19\nM  SMT   2 OMe\nM  SAL   3  2  21  22\nM  SMT   3 OMe\nM  SAL   4  2  24  25\nM  SMT   4 OMe\nM  END\n"
             },
             {
               "id": "K",
               "label": "K",
               "given": true,
-              "smiles": "[Li]OC(=O)CCCC1c2c([Li])snc2CCc2cc(OC)c(OC)c(OC)c21"
+              "smiles": "[Li]OC(=O)CCCC1c2c([Li])snc2CCc2cc(OC)c(OC)c(OC)c21",
+              "mol": "\n     RDKit          2D\n\n 28 30  0  4  0  0  0  0  0  0999 V2000\n    4.6344   -6.7355    0.0000 Li  0  0  0  0  0  1  0  0  0  0  0  0\n    3.3004   -6.0496    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.2274   -4.5514    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4884   -3.7391    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8934   -3.8655    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8205   -2.3677    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4866   -1.6821    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4118   -0.1834    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.5323    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0551   -0.1743    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.2627   -1.6581    0.0000 Li  0  0  0  0  0  1  0  0  0  0  0  0\n    4.1334    0.8685    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4784    2.2173    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9912    2.0092    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0025    3.1365    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.4952    3.0606    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3747    1.8440    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.8267    2.2173    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8743    1.1431    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.3286    1.5157    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7328    2.9602    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.4730   -0.3020    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.5205   -1.3729    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.9736   -1.0008    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0195   -0.6710    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.6146   -2.1168    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.6633   -3.1893    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9681    0.4004    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  2  0\n 10 11  1  0\n 10 12  1  0\n 12 13  1  0\n 13 14  2  0\n 14 15  1  0\n 15 16  1  0\n 16 17  1  0\n 17 18  1  0\n 18 19  2  0\n 19 20  1  0\n 20 21  1  0\n 19 22  1  0\n 22 23  1  0\n 23 24  1  0\n 22 25  2  0\n 25 26  1  0\n 26 27  1  0\n 25 28  1  0\n 28  8  1  0\n 14  9  1  0\n 28 17  2  0\nM  STY  4   1 SUP   2 SUP   3 SUP   4 SUP\nM  SAL   1  2  20  21\nM  SMT   1 OMe\nM  SAL   2  2  23  24\nM  SMT   2 OMe\nM  SAL   3  2  26  27\nM  SMT   3 OMe\nM  SAL   4  4   3   4   2   1\nM  SMT   4 CO2Li\nM  END\n"
             },
             {
               "id": "L",
               "label": "L",
               "given": false,
-              "smiles": "OC(=O)CCCC1c2c(C(=O)O)snc2CCc2cc(OC)c(OC)c(OC)c21"
+              "smiles": "OC(=O)CCCC1c2c(C(=O)O)snc2CCc2cc(OC)c(OC)c(OC)c21",
+              "mol": "\n     RDKit          2D\n\n 29 31  0  5  0  0  0  0  0  0999 V2000\n    3.3004   -6.0496    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.2274   -4.5514    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4884   -3.7391    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8934   -3.8655    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8205   -2.3677    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4866   -1.6821    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4118   -0.1834    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.5323    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0551   -0.1743    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.2611   -1.6599    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.6508   -2.2244    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.6538   -2.4343    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1334    0.8685    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4784    2.2173    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9912    2.0092    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0025    3.1365    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.4952    3.0606    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3747    1.8440    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.8267    2.2173    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8743    1.1431    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.3286    1.5157    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7328    2.9602    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.4730   -0.3020    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.5205   -1.3729    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.9736   -1.0008    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0195   -0.6710    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.6146   -2.1168    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.6633   -3.1893    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9681    0.4004    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  2  0\n 10 12  1  0\n  9 13  1  0\n 13 14  1  0\n 14 15  2  0\n 15 16  1  0\n 16 17  1  0\n 17 18  1  0\n 18 19  1  0\n 19 20  2  0\n 20 21  1  0\n 21 22  1  0\n 20 23  1  0\n 23 24  1  0\n 24 25  1  0\n 23 26  2  0\n 26 27  1  0\n 27 28  1  0\n 26 29  1  0\n 29  7  1  0\n 15  8  1  0\n 29 18  2  0\nM  STY  5   1 SUP   2 SUP   3 SUP   4 SUP   5 SUP\nM  SAL   1  3   2   3   1\nM  SMT   1 CO2H\nM  SAL   2  3  10  11  12\nM  SMT   2 CO2H\nM  SAL   3  2  21  22\nM  SMT   3 OMe\nM  SAL   4  2  24  25\nM  SMT   4 OMe\nM  SAL   5  2  27  28\nM  SMT   5 OMe\nM  END\n"
             },
             {
               "id": "M",
               "label": "M",
               "given": false,
-              "smiles": "COC(=O)CCCC1c2c(C(=O)OC)snc2CCc2cc(OC)c(OC)c(OC)c21"
+              "smiles": "COC(=O)CCCC1c2c(C(=O)OC)snc2CCc2cc(OC)c(OC)c(OC)c21",
+              "mol": "\n     RDKit          2D\n\n 31 33  0  5  0  0  0  0  0  0999 V2000\n    4.6344   -6.7355    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3004   -6.0496    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.2274   -4.5514    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4884   -3.7391    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8934   -3.8655    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8205   -2.3677    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4866   -1.6821    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4118   -0.1834    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.5323    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0551   -0.1743    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.2611   -1.6599    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.6508   -2.2244    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0774   -2.5812    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.6368   -3.9730    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1334    0.8685    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4784    2.2173    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9912    2.0092    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0025    3.1365    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.4952    3.0606    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3747    1.8440    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.8267    2.2173    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8743    1.1431    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.3286    1.5157    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7328    2.9602    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.4730   -0.3020    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.5205   -1.3729    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.9736   -1.0008    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0195   -0.6710    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.6146   -2.1168    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.6633   -3.1893    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9681    0.4004    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  2  0\n 10 11  1  0\n 11 12  2  0\n 11 13  1  0\n 13 14  1  0\n 10 15  1  0\n 15 16  1  0\n 16 17  2  0\n 17 18  1  0\n 18 19  1  0\n 19 20  1  0\n 20 21  1  0\n 21 22  2  0\n 22 23  1  0\n 23 24  1  0\n 22 25  1  0\n 25 26  1  0\n 26 27  1  0\n 25 28  2  0\n 28 29  1  0\n 29 30  1  0\n 28 31  1  0\n 31  8  1  0\n 17  9  1  0\n 31 20  2  0\nM  STY  5   1 SUP   2 SUP   3 SUP   4 SUP   5 SUP\nM  SAL   1  4   3   4   2   1\nM  SMT   1 CO2Me\nM  SAL   2  4  11  12  13  14\nM  SMT   2 CO2Me\nM  SAL   3  2  23  24\nM  SMT   3 OMe\nM  SAL   4  2  26  27\nM  SMT   4 OMe\nM  SAL   5  2  29  30\nM  SMT   5 OMe\nM  END\n"
             },
             {
               "id": "N",
               "label": "N",
               "given": false,
               "smiles": "COC(=O)C1CCC2c3c(snc3CCc3cc(OC)c(OC)c(OC)c32)C1=O",
-              "explanation": "Dieckmann-Kondensation (NaH) → Siebenring-β-Ketoester."
+              "explanation": "Dieckmann-Kondensation (NaH) → Siebenring-β-Ketoester.",
+              "mol": "\n     RDKit          2D\n\n 29 32  0  4  0  0  0  0  0  0999 V2000\n    2.6344   -6.7373    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0404   -5.3600    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9362   -4.1568    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4260   -4.3310    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.3421   -2.7795    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8434   -2.7171    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0422   -1.5065    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3521   -0.0592    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7294    0.5348    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0526   -0.1716    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1334    0.8685    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4784    2.2173    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9912    2.0092    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0025    3.1365    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.4952    3.0606    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3747    1.8440    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.8267    2.2173    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8743    1.1431    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.3286    1.5157    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7328    2.9602    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.4730   -0.3020    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.5205   -1.3729    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.9736   -1.0008    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0195   -0.6710    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.6146   -2.1168    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.6633   -3.1893    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9681    0.4004    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3253   -1.6466    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.7726   -2.0410    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  2  0\n 10 11  1  0\n 11 12  1  0\n 12 13  2  0\n 13 14  1  0\n 14 15  1  0\n 15 16  1  0\n 16 17  1  0\n 17 18  2  0\n 18 19  1  0\n 19 20  1  0\n 18 21  1  0\n 21 22  1  0\n 22 23  1  0\n 21 24  2  0\n 24 25  1  0\n 25 26  1  0\n 24 27  1  0\n 10 28  1  0\n 28 29  2  0\n 28  5  1  0\n 27  8  1  0\n 13  9  1  0\n 27 16  2  0\nM  STY  4   1 SUP   2 SUP   3 SUP   4 SUP\nM  SAL   1  4   3   4   2   1\nM  SMT   1 CO2Me\nM  SAL   2  2  19  20\nM  SMT   2 OMe\nM  SAL   3  2  22  23\nM  SMT   3 OMe\nM  SAL   4  2  25  26\nM  SMT   4 OMe\nM  END\n"
             },
             {
               "id": "O",
@@ -7929,34 +7931,39 @@
               "given": false,
               "smiles": "O=C1CCCC2c3c1snc3CCc1cc(OC)c(OC)c(OC)c21",
               "caption": "C_19H_21NO_4S",
-              "explanation": "Esterhydrolyse und Decarboxylierung des β-Ketoesters."
+              "explanation": "Esterhydrolyse und Decarboxylierung des β-Ketoesters.",
+              "mol": "\n     RDKit          2D\n\n 25 28  0  3  0  0  0  0  0  0999 V2000\n    4.7726   -2.0410    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3253   -1.6466    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.3421   -2.7795    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8434   -2.7171    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0422   -1.5065    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3521   -0.0592    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7294    0.5348    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0526   -0.1716    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1334    0.8685    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4784    2.2173    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9912    2.0092    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0025    3.1365    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.4952    3.0606    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3747    1.8440    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.8267    2.2173    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8743    1.1431    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.3286    1.5157    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7328    2.9602    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.4730   -0.3020    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.5205   -1.3729    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.9736   -1.0008    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0195   -0.6710    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.6146   -2.1168    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.6633   -3.1893    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9681    0.4004    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  2  0\n  8  9  1  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  1  0\n 13 14  1  0\n 14 15  1  0\n 15 16  2  0\n 16 17  1  0\n 17 18  1  0\n 16 19  1  0\n 19 20  1  0\n 20 21  1  0\n 19 22  2  0\n 22 23  1  0\n 23 24  1  0\n 22 25  1  0\n  8  2  1  0\n 25 14  2  0\n 25  6  1  0\n 11  7  1  0\nM  STY  3   1 SUP   2 SUP   3 SUP\nM  SAL   1  2  17  18\nM  SMT   1 OMe\nM  SAL   2  2  20  21\nM  SMT   2 OMe\nM  SAL   3  2  23  24\nM  SMT   3 OMe\nM  END\n"
             },
             {
               "id": "P",
               "label": "P",
               "given": false,
               "smiles": "O=C1C(=CO)CCC2c3c1snc3CCc1cc(OC)c(OC)c(OC)c21",
-              "caption": "Enolform, C_20H_21NO_5S",
-              "explanation": "Claisen-Kondensation mit Ameisensäureethylester → Hydroxymethylenketon (Enolform)."
+              "caption": "Enolform C_20H_21NO_5S",
+              "explanation": "Claisen-Kondensation mit Ameisensäureethylester → Hydroxymethylenketon (Enolform).",
+              "mol": "\n     RDKit          2D\n\n 27 30  0  3  0  0  0  0  0  0999 V2000\n    4.7726   -2.0410    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3253   -1.6466    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.3421   -2.7795    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9362   -4.1568    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0404   -5.3600    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8434   -2.7171    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0422   -1.5065    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3521   -0.0592    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7294    0.5348    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0526   -0.1716    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1334    0.8685    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4784    2.2173    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9912    2.0092    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0025    3.1365    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.4952    3.0606    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3747    1.8440    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.8267    2.2173    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8743    1.1431    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.3286    1.5157    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7328    2.9602    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.4730   -0.3020    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.5205   -1.3729    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.9736   -1.0008    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0195   -0.6710    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.6146   -2.1168    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.6633   -3.1893    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9681    0.4004    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  2  3\n  4  5  1  0\n  3  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  2  0\n 10 11  1  0\n 11 12  1  0\n 12 13  2  0\n 13 14  1  0\n 14 15  1  0\n 15 16  1  0\n 16 17  1  0\n 17 18  2  0\n 18 19  1  0\n 19 20  1  0\n 18 21  1  0\n 21 22  1  0\n 22 23  1  0\n 21 24  2  0\n 24 25  1  0\n 25 26  1  0\n 24 27  1  0\n 10  2  1  0\n 27 16  2  0\n 27  8  1  0\n 13  9  1  0\nM  STY  3   1 SUP   2 SUP   3 SUP\nM  SAL   1  2  19  20\nM  SMT   1 OMe\nM  SAL   2  2  22  23\nM  SMT   2 OMe\nM  SAL   3  2  25  26\nM  SMT   3 OMe\nM  END\n"
             },
             {
               "id": "Qd",
               "label": "Q",
               "given": true,
-              "smiles": "O=C1c2snc3CCc4cc(OC)c(OC)c(OC)c4C(CCC15SCCS5)c23"
+              "smiles": "O=C1c2snc3CCc4cc(OC)c(OC)c(OC)c4C(CCC15SCCS5)c23",
+              "mol": "\n     RDKit          2D\n\n 29 33  0  3  0  0  0  0  0  0999 V2000\n    4.7726   -2.0410    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3253   -1.6466    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0526   -0.1716    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1334    0.8685    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4784    2.2173    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9912    2.0092    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0025    3.1365    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.4952    3.0606    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3747    1.8440    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.8267    2.2173    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8743    1.1431    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.3286    1.5157    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7328    2.9602    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.4730   -0.3020    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.5205   -1.3729    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.9736   -1.0008    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0195   -0.6710    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.6146   -2.1168    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.6633   -3.1893    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9681    0.4004    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3521   -0.0592    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0422   -1.5065    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8434   -2.7171    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.3421   -2.7795    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8056   -3.1085    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n    3.9450   -4.6020    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5676   -5.1960    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.5770   -4.0697    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7294    0.5348    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  1  0\n 11 14  1  0\n 14 15  1  0\n 15 16  1  0\n 14 17  2  0\n 17 18  1  0\n 18 19  1  0\n 17 20  1  0\n 20 21  1  0\n 21 22  1  0\n 22 23  1  0\n 23 24  1  0\n 24 25  1  0\n 25 26  1  0\n 26 27  1  0\n 27 28  1  0\n 21 29  1  0\n 24  2  1  0\n 29  3  2  0\n 29  6  1  0\n 20  9  2  0\n 28 24  1  0\nM  STY  3   1 SUP   2 SUP   3 SUP\nM  SAL   1  2  12  13\nM  SMT   1 OMe\nM  SAL   2  2  15  16\nM  SMT   2 OMe\nM  SAL   3  2  18  19\nM  SMT   3 OMe\nM  END\n"
             },
             {
               "id": "R",
               "label": "R",
               "given": false,
               "smiles": "O=C1c2snc3CCc4cc(OC)c(OC)c(OC)c4C(CCC1=O)c23",
-              "explanation": "Hg^{2+} spaltet das Dithioacetal → 1,2-Diketon."
+              "explanation": "Hg^{2+} spaltet das Dithioacetal → 1,2-Diketon.",
+              "mol": "\n     RDKit          2D\n\n 26 29  0  3  0  0  0  0  0  0999 V2000\n    4.7726   -2.0410    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3253   -1.6466    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0526   -0.1716    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1334    0.8685    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4784    2.2173    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9912    2.0092    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0025    3.1365    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.4952    3.0606    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3747    1.8440    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.8267    2.2173    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8743    1.1431    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.3286    1.5157    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7328    2.9602    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.4730   -0.3020    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.5205   -1.3729    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.9736   -1.0008    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0195   -0.6710    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.6146   -2.1168    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.6633   -3.1893    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9681    0.4004    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3521   -0.0592    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0422   -1.5065    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8434   -2.7171    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.3421   -2.7795    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9362   -4.1568    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7294    0.5348    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  1  0\n 11 14  1  0\n 14 15  1  0\n 15 16  1  0\n 14 17  2  0\n 17 18  1  0\n 18 19  1  0\n 17 20  1  0\n 20 21  1  0\n 21 22  1  0\n 22 23  1  0\n 23 24  1  0\n 24 25  2  0\n 21 26  1  0\n 24  2  1  0\n 26  3  2  0\n 26  6  1  0\n 20  9  2  0\nM  STY  3   1 SUP   2 SUP   3 SUP\nM  SAL   1  2  12  13\nM  SMT   1 OMe\nM  SAL   2  2  15  16\nM  SMT   2 OMe\nM  SAL   3  2  18  19\nM  SMT   3 OMe\nM  END\n"
             },
             {
               "id": "COL",
               "label": "Colchicin",
               "given": true,
-              "smiles": "COC1=CC=C2C(=CC1=O)[C@H](CCC3=CC(=C(C(=C32)OC)OC)OC)NC(C)=O"
+              "smiles": "COC1=CC=C2C(=CC1=O)[C@H](CCC3=CC(=C(C(=C32)OC)OC)OC)NC(C)=O",
+              "mol": "\n     RDKit          2D\n\n 29 31  0  4  0  0  0  0  0  0999 V2000\n    2.0404   -5.3600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9362   -4.1568    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.3421   -2.7795    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8434   -2.7171    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0422   -1.5065    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3521   -0.0592    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7294    0.5348    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0526   -0.1716    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3253   -1.6466    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.7726   -2.0410    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9912    2.0092    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0025    3.1365    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.4952    3.0606    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3747    1.8440    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.8267    2.2173    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8743    1.1431    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.4730   -0.3020    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0195   -0.6710    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9681    0.4004    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.6146   -2.1168    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.6633   -3.1893    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.5205   -1.3729    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.9736   -1.0008    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.3286    1.5157    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7328    2.9602    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4332    2.4131    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8051    3.8662    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.2496    4.2707    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.7326    4.9149    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  2  0\n  8  9  1  0\n  9 10  2  0\n  7 11  1  0\n 11 12  1  0\n 12 13  1  0\n 13 14  1  0\n 14 15  1  0\n 15 16  2  0\n 16 17  1  0\n 17 18  2  0\n 18 19  1  0\n 18 20  1  0\n 20 21  1  0\n 17 22  1  0\n 22 23  1  0\n 16 24  1  0\n 24 25  1  0\n 11 26  1  6\n 26 27  1  0\n 27 28  1  0\n 27 29  2  0\n  9  3  1  0\n 19  6  1  0\n 19 14  2  0\nM  STY  4   1 SUP   2 SUP   3 SUP   4 SUP\nM  SAL   1  2   2   1\nM  SMT   1 OMe\nM  SAL   2  2  24  25\nM  SMT   2 OMe\nM  SAL   3  2  22  23\nM  SMT   3 OMe\nM  SAL   4  2  20  21\nM  SMT   4 OMe\nM  END\n"
             }
           ],
           "edges": [
@@ -7997,7 +8004,7 @@
                 "E"
               ],
               "to": "F",
-              "reagent_above": "1. N_2H_4 / H_2O_2 / Cu^{2+}",
+              "reagent_above": "1. N_2H_4 / H_2O_2 / Cu^{2+} Reduktion",
               "reagent_below": "2. LiAlH_4"
             },
             {
@@ -8020,8 +8027,8 @@
                 "H"
               ],
               "to": "I",
-              "reagent_above": "1. Ringschluss, HClO_4",
-              "reagent_below": "2. HClO_4, Umwandlung Stellungsisomere"
+              "reagent_above": "1. Ringschluss HClO_4",
+              "reagent_below": "2. HClO_4 Umwandlung Stellungsisomere"
             },
             {
               "from": [
@@ -8059,7 +8066,7 @@
                 "N"
               ],
               "to": "O",
-              "reagent_above": "H_3O^+, erhitzen",
+              "reagent_above": "H_3O^+ erhitzen",
               "reagent_below": "-CO_2"
             },
             {
@@ -8083,7 +8090,7 @@
               ],
               "to": "R",
               "reagent_above": "H^+, erhitzen, Hg(Ac)_2",
-              "reagent_below": "-X, -Y"
+              "reagent_below": "-X\n-Y"
             },
             {
               "from": [
@@ -8097,55 +8104,39 @@
         "hints": [
           "Substanz A: Methyl-(E)-3-aminobut-2-enoat",
           "N_2H_4 / H_2O_2 / Cu^{2+}: spezielles Reduktionsmittel, reduziert nicht aromatische Doppelbindungen",
-          "PDC: Pyridiniumdichromat",
-          "Für F bis R gibt die Angabe als Teilstrukturen den Trimethoxyphenyl-Teil und den Isothiazol-Ring vor."
-        ]
-      },
-      {
-        "type": "short_answer",
-        "title": "Moleküle W, X und Y",
-        "prompt": "Geben Sie die Summenformeln von W, X und Y an.",
-        "expected_answer": "W = NaOMe (Base für die Ylid-Bildung); X und Y: beim Entschützen abgespalten — Hg(SCH_2CH_2S) und HAc (Essigsäure)."
-      },
-      {
-        "type": "short_answer",
-        "title": "Reagenzien Z_1 und Z_2 (3.14)",
-        "prompt": "Welche Reagenzien Z_1 und Z_2 sind für die Schritte I → K vorgeschlagen?",
-        "expected_answer": "Z_1 = N_2H_4 / H_2O_2 / Cu^{2+} (Cu-katalysierte Hydrazin-Reduktion der C=C-Doppelbindung — selektive Reduktion isolierter Alkene). Z_2 = LDA (Lithiumdiisopropylamid, starke nicht-nukleophile Base, deprotoniert das α-Heteroaryl-CH zum Lithium-Carbanion, das anschließend mit CO_2 carboxyliert wird)."
-      },
-      {
-        "type": "multiple_choice",
-        "title": "Ringschluss H → I (3.15)",
-        "prompt": "Welche Namensreaktion liegt dem Schritt von H nach I (Cyclisierungsschritt) zugrunde?",
-        "choices": [
-          {
-            "id": "a",
-            "label": "Friedl-Crafts-Alkylierung (S_E am Aromaten)",
-            "correct": true
-          },
-          {
-            "id": "b",
-            "label": "Diels-Alder ([4+2])",
-            "correct": false
-          },
-          {
-            "id": "c",
-            "label": "Wittig-Olefinierung",
-            "correct": false
-          },
-          {
-            "id": "d",
-            "label": "Wolff-Kishner-Reduktion",
-            "correct": false
-          }
+          "PDC: Pyridiniumdichromat"
         ],
-        "explanation": "Die intramolekulare Cyclisierung schließt den 7-gliedrigen B-Ring von Colchicin durch elektrophile aromatische Substitution (S_E) — das aktivierte Allyl-Kation greift den Trimethoxyaryl von der Seite an. Mechanismus: S_E."
+        "body": "Zeichnen Sie die Strukturformeln von A, B, C, D, F, G, H, I, L, M, N, O, P und R sowie die Summenformeln von W, X und Y in die Kästchen im Reaktionsschema. Für manche der Substanzen sind schon Teilstrukturen angegeben, die Sie nur mehr ergänzen müssen."
       },
       {
         "type": "short_answer",
-        "title": "Chiralität von Colchicin (3.16-3.17)",
-        "prompt": "Welche Formen der Chiralität besitzt Colchicin und welche Stereodeskriptoren werden verwendet?",
-        "expected_answer": "Colchicin besitzt EIN Stereozentrum (sp^3-C mit -NHAc-Substituent) UND eine AXIALE CHIRALITÄT (Atropisomerie: der Tropolon-Ring und der Trimethoxyaryl-Ring sind so verbrückt, dass die Rotation um die zwischen ihnen liegende C-C-Achse gehindert ist). Stereodeskriptoren: (aR, S). Das (aR) gibt die axiale Konfiguration an, (S) das klassische sp^3-Stereozentrum."
+        "title": "3.13 — W, X und Y",
+        "prompt": "Geben Sie die Summenformeln von W, X und Y an.",
+        "expected_answer": "W = NaOMe\nX = Hg(SCH_2CH_2S)\nY = HAc (CH_3COOH)"
+      },
+      {
+        "type": "short_answer",
+        "title": "3.14",
+        "prompt": "Schlagen Sie Reagenzien Z_1 und Z_2 für die Umwandlung von I nach K vor.",
+        "expected_answer": "Z_1 = N_2H_4, H_2O_2, Cu^{2+} (Reduktion der C=C-Doppelbindung)\nZ_2 = LDA (Base)"
+      },
+      {
+        "type": "short_answer",
+        "title": "3.15",
+        "prompt": "Welche Namensreaktion liegt dem Schritt von H nach I (Cyclisierungsschritt) zugrunde? Benennen Sie den zugehörigen Reaktionsmechanismus.",
+        "expected_answer": "Friedl-Crafts-Alkylierung\nS_E"
+      },
+      {
+        "type": "short_answer",
+        "title": "3.16",
+        "prompt": "Geben Sie die Form(en) der Chiralität im Colchicin samt ihrer Anzahl an.",
+        "expected_answer": "Eine Axiale Chiralität und ein Chiralitätszentrum"
+      },
+      {
+        "type": "short_answer",
+        "title": "3.17",
+        "prompt": "Geben Sie den/die Stereodeskriptor(en) des Colchicins an.",
+        "expected_answer": "(aR)-, S-"
       }
     ],
     "type": "composed"
