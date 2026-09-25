@@ -84,6 +84,9 @@
   const JUNCTION_OFF   = 30;    // px from a gap's start to the point where things join
   const GAP_EMPTY      = 40;
   const Y_RUN          = 120;   // px of diagonal a "Y" arrow spends before/after its junction
+  const CELL_MAX_W     = 250;   // viewer: largest structure is shrunk to fit this …
+  const CELL_MAX_H     = 170;   // … and every other one by the same factor
+  const NATURAL_BOX    = 2400;  // oversized, so OCL draws at its own bond length
   const EMOL_W         = 86;    // structure slot on an arrow (above its text)
   const EMOL_H         = 58;
   const EMOL_GAP       = 4;     // px between that structure and the text below it
@@ -746,9 +749,12 @@
       this.pinch = null;
       this._pointers = new Map();
       this._mb = new Map();        // viewer: nodeId → {w,h} of the drawn structure
+      this._nat = new Map();       // viewer: structure → natural {w,h} at OCL's own bond length
+      this._cell = null;           // viewer: per-scheme cell size + common structure scale
       this._renderGen = 0;
       this.revealedIds = new Set(opts.revealedNodeIds || []);
       this._build();
+      this._measureCell();
       this._ensurePositions();
       this.refresh();
       this._bindEvents();
@@ -802,6 +808,54 @@
       this.toolbar = this.container.querySelector('.sg-toolbar');
     }
 
+    /* ─── Cell size ───────────────────────────────────────────── */
+
+    /* In the viewer every structure of a scheme is drawn with the SAME
+       bond length, as on the exam sheet: each molecule is measured at
+       OCL's natural size, one common factor shrinks them only as far as
+       the largest one needs (CELL_MAX_W × CELL_MAX_H), and the cells of
+       this scheme grow to hold that largest structure. The editor keeps
+       its fixed boxes. */
+    get NW()  { return this._cell ? this._cell.nw : NODE_W; }
+    get NH()  { return this._cell ? this._cell.nh : NODE_H; }
+    get FOW() { return this.NW - (NODE_W - V_FO_W); }
+    get FOH() { return this.NH - (NODE_H - V_FO_H); }
+    get VCY() { return V_FO_Y + this.FOH / 2; }
+
+    _natural(n) {
+      const key = (n.mol || n.smiles || '') + '|' + JSON.stringify(n.alias || null);
+      if (this._nat.has(key)) return this._nat.get(key);
+      let r = null;
+      try {
+        const o = { width: NATURAL_BOX, height: NATURAL_BOX, autoCrop: true, autoCropMargin: 2 };
+        if (n.alias) o.alias = n.alias;
+        const d = document.createElement('div');
+        const el = n.mol ? window.MolRenderer.drawMol(n.mol, d, o) : window.MolRenderer.drawSmiles(n.smiles, d, o);
+        if (el && el.getAttribute) r = { w: parseFloat(el.getAttribute('width')) || 0, h: parseFloat(el.getAttribute('height')) || 0 };
+      } catch (_) { r = null; }
+      this._nat.set(key, r);
+      return r;
+    }
+
+    /* Returns true when the cell size changed (the layout must follow). */
+    _measureCell() {
+      if (!this.readOnly || !window.OCL || typeof window.MolRenderer === 'undefined') return false;
+      let mw = 0, mh = 0;
+      for (const n of this.scheme.nodes) {
+        if (!(n.mol || n.smiles)) continue;
+        const r = this._natural(n);
+        if (r) { mw = Math.max(mw, r.w); mh = Math.max(mh, r.h); }
+      }
+      if (!mw || !mh) return false;
+      const f = Math.min(1, CELL_MAX_W / mw, CELL_MAX_H / mh);
+      const nw = Math.max(V_FO_W, Math.ceil(mw * f)) + (NODE_W - V_FO_W);
+      const nh = Math.max(V_FO_H, Math.ceil(mh * f)) + (NODE_H - V_FO_H);
+      const c = this._cell;
+      const changed = !c || c.nw !== nw || c.nh !== nh || Math.abs(c.f - f) > 1e-3;
+      this._cell = { nw, nh, f };
+      return changed;
+    }
+
     /* ─── Layout ──────────────────────────────────────────────── */
 
     _isAutoLayout() {
@@ -848,15 +902,15 @@
       let x = 0;
       for (let h = 0; h <= maxHx + 1; h++) {
         colX[h] = x;
-        if (h % 2 === 0) x += NODE_W;
+        if (h % 2 === 0) x += this.NW;
         else {
           if (!gapW.has(h)) gapW.set(h, GAP_EMPTY);
           x += gapW.get(h);
         }
       }
-      const jOff = g => Math.min(JUNCTION_OFF, (g % 2 ? gapW.get(g) : NODE_W) / 2);
+      const jOff = g => Math.min(JUNCTION_OFF, (g % 2 ? gapW.get(g) : this.NW) / 2);
       const jx = (g, dir) => {
-        const w = g % 2 ? gapW.get(g) : NODE_W;
+        const w = g % 2 ? gapW.get(g) : this.NW;
         return dir < 0 ? colX[g] + w - jOff(g) : colX[g] + jOff(g);
       };
 
@@ -875,17 +929,17 @@
         if (!m.mol) continue;
         // The structure sits above the text and reaches into the row gap above.
         const gi = Math.ceil(it.row) - 1;
-        const need = m.above.length * LABEL_LINE_H + EMOL_H + EMOL_GAP + LABEL_GAP - NODE_H / 2 + 20;
+        const need = m.above.length * LABEL_LINE_H + EMOL_H + EMOL_GAP + LABEL_GAP - this.NH / 2 + 20;
         if (gi >= 0 && gi < rowGap.length) rowGap[gi] = Math.max(rowGap[gi], STACK_GAP + 8 + need);
       }
       const rowY = [];
       let y = 0;
-      for (let r = 0; r < nRows; r++) { rowY[r] = y; y += NODE_H + rowGap[r]; }
+      for (let r = 0; r < nRows; r++) { rowY[r] = y; y += this.NH + rowGap[r]; }
 
-      const xOf = p => p.h % 2 ? jx(p.h, p.jdir) - NODE_W / 2 : colX[p.h];
+      const xOf = p => p.h % 2 ? jx(p.h, p.jdir) - this.NW / 2 : colX[p.h];
       if (opts.dry) {
         const xs = [...pos.values()].map(xOf);
-        return Math.max(...xs) + NODE_W - Math.min(...xs);
+        return Math.max(...xs) + this.NW - Math.min(...xs);
       }
       this._rowOf = new Map();
       for (const n of nodes) {
@@ -912,8 +966,8 @@
           if (!cn || c.slot === 'stack' || !main) continue;
           let sft = Math.min(Y_RUN, Math.abs(cn.x - main.x) - 12);
           for (const o of nodes) {
-            if (o === cn || Math.abs(o.y - cn.y) >= NODE_H) continue;
-            const behind = dir > 0 ? cn.x - (o.x + NODE_W) : o.x - (cn.x + NODE_W);
+            if (o === cn || Math.abs(o.y - cn.y) >= this.NH) continue;
+            const behind = dir > 0 ? cn.x - (o.x + this.NW) : o.x - (cn.x + this.NW);
             if (behind >= 0) sft = Math.min(sft, behind - 16);
           }
           if (sft > 8) cn.x -= dir * sft;
@@ -961,6 +1015,13 @@
       const gen = ++this._renderGen;
       window.MolRenderer.ready().then(() => {
         if (gen !== this._renderGen) return;
+        // OCL was not there when the layout ran: size the cells now, once.
+        if (this._measureCell() && this._isAutoLayout()) {
+          this.autoLayout();
+          this.refresh();
+          if (this._fitted) this.fitToContent();
+          return;
+        }
         for (const n of this.scheme.nodes) {
           if (this.readOnly && !this._isVisible(n)) { this._mb.delete(n.id); continue; }
           const host = this.container.querySelector(`[data-struct-host="${cssEsc(n.id)}"]`);
@@ -972,14 +1033,16 @@
           }
           try {
             const o = this.readOnly
-              ? { width: V_FO_W, height: V_FO_H, autoCrop: true, autoCropMargin: 2 }
-              : { width: NODE_W - 24, height: NODE_H - 60 };
+              ? (this._cell ? { width: NATURAL_BOX, height: NATURAL_BOX, autoCrop: true, autoCropMargin: 2 }
+                            : { width: this.FOW, height: this.FOH, autoCrop: true, autoCropMargin: 2 })
+              : { width: this.NW - 24, height: this.NH - 60 };
             if (n.alias) o.alias = n.alias;
             const el = n.mol ? window.MolRenderer.drawMol(n.mol, host, o)
                              : window.MolRenderer.drawSmiles(n.smiles, host, o);
             if (this.readOnly && el && el.getAttribute) {
-              const w = Math.min(V_FO_W, parseFloat(el.getAttribute('width')) || PH_SIZE);
-              const h = Math.min(V_FO_H, parseFloat(el.getAttribute('height')) || PH_SIZE);
+              const k = this._cell ? this._cell.f : 1;
+              const w = Math.min(this.FOW, (parseFloat(el.getAttribute('width')) || PH_SIZE) * k);
+              const h = Math.min(this.FOH, (parseFloat(el.getAttribute('height')) || PH_SIZE) * k);
               el.style.width = w + 'px';
               el.style.height = h + 'px';
               this._mb.set(n.id, { w, h });
@@ -1055,10 +1118,10 @@
         'data-node': n.id
       });
       g.appendChild(svg('rect', {
-        class: 'sg-node-bg', x: 0, y: 0, width: NODE_W, height: NODE_H, rx: NODE_RX, ry: NODE_RX
+        class: 'sg-node-bg', x: 0, y: 0, width: this.NW, height: this.NH, rx: NODE_RX, ry: NODE_RX
       }));
 
-      const fo = svg('foreignObject', { x: V_FO_X, y: V_FO_Y, width: V_FO_W, height: V_FO_H });
+      const fo = svg('foreignObject', { x: V_FO_X, y: V_FO_Y, width: this.FOW, height: this.FOH });
       const div = document.createElement('div');
       div.className = 'sg-struct-host';
       div.setAttribute('data-struct-host', n.id);
@@ -1076,20 +1139,20 @@
       // The letter goes under the structure once it is shown; while the
       // compound is hidden the tile itself carries the letter.
       if (!this._isHidden(n) && letter.trim()) {
-        const label = svg('text', { class: 'sg-node-label', x: NODE_W / 2, 'text-anchor': 'middle' });
+        const label = svg('text', { class: 'sg-node-label', x: this.NW / 2, 'text-anchor': 'middle' });
         setChemText(label, letter);
         g.appendChild(label);
       }
 
       if (n.name && !this._isHidden(n)) {
-        const name = svg('text', { class: 'sg-node-name', x: NODE_W / 2, 'text-anchor': 'middle' });
+        const name = svg('text', { class: 'sg-node-name', x: this.NW / 2, 'text-anchor': 'middle' });
         name.textContent = n.name.length > 30 ? n.name.slice(0, 28) + '…' : n.name;
         g.appendChild(name);
       }
       // A caption is part of the Angabe (e.g. a sum formula printed under
       // an unknown compound), so it shows even while the node is hidden.
       if (n.caption) {
-        const cap = svg('text', { class: 'sg-node-caption', x: NODE_W / 2, 'text-anchor': 'middle' });
+        const cap = svg('text', { class: 'sg-node-caption', x: this.NW / 2, 'text-anchor': 'middle' });
         setChemText(cap, n.caption);
         g.appendChild(cap);
       }
@@ -1109,7 +1172,7 @@
     _tileSize(n) {
       const txt = plainChemText(n.label != null ? n.label : n.id).trim() || '?';
       const fs = txt.length <= 2 ? 26 : txt.length <= 4 ? 19 : 13;
-      const w = Math.max(PH_SIZE, Math.min(V_FO_W, Math.ceil(measureText(txt, `bold ${fs}px 'Segoe UI', sans-serif`)) + 18));
+      const w = Math.max(PH_SIZE, Math.min(this.FOW, Math.ceil(measureText(txt, `bold ${fs}px 'Segoe UI', sans-serif`)) + 18));
       return { w, h: PH_SIZE, fs };
     }
     _footprint(n) {
@@ -1126,7 +1189,7 @@
       g = g || this.container.querySelector(`[data-node="${cssEsc(n.id)}"]`);
       if (!g) return;
       const m = this._footprint(n);
-      const bottom = V_CY + m.h / 2;
+      const bottom = this.VCY + m.h / 2;
       const label = g.querySelector('.sg-node-label');
       const name = g.querySelector('.sg-node-name');
       let yy = bottom + (label ? 13 : 0);
@@ -1136,8 +1199,8 @@
       if (cap) cap.setAttribute('y', yy + V_NAME_H + 1);
       const ib = g.querySelector('.sg-info-badge');
       if (ib) {
-        const bx = Math.min(NODE_W - 9, NODE_W / 2 + m.w / 2 + 4);
-        const by = Math.max(9, V_CY - m.h / 2 - 2);
+        const bx = Math.min(this.NW - 9, this.NW / 2 + m.w / 2 + 4);
+        const by = Math.max(9, this.VCY - m.h / 2 - 2);
         ib.setAttribute('transform', `translate(${bx} ${by})`);
       }
     }
@@ -1150,9 +1213,9 @@
         'data-node': n.id
       });
       g.appendChild(svg('rect', {
-        class: 'sg-node-bg', x: 0, y: 0, width: NODE_W, height: NODE_H, rx: NODE_RX, ry: NODE_RX
+        class: 'sg-node-bg', x: 0, y: 0, width: this.NW, height: this.NH, rx: NODE_RX, ry: NODE_RX
       }));
-      const fo = svg('foreignObject', { x: 12, y: 8, width: NODE_W - 24, height: NODE_H - 60 });
+      const fo = svg('foreignObject', { x: 12, y: 8, width: this.NW - 24, height: this.NH - 60 });
       const div = document.createElement('div');
       div.className = 'sg-struct-host';
       div.setAttribute('data-struct-host', n.id);
@@ -1161,16 +1224,16 @@
       fo.appendChild(div);
       g.appendChild(fo);
 
-      const labelText = svg('text', { class: 'sg-node-label', x: 12, y: NODE_H - 38 });
+      const labelText = svg('text', { class: 'sg-node-label', x: 12, y: this.NH - 38 });
       labelText.textContent = n.label || n.id || '?';
       g.appendChild(labelText);
       if (n.caption) {
-        const capText = svg('text', { class: 'sg-node-name', x: NODE_W - 12, y: NODE_H - 38, 'text-anchor': 'end' });
+        const capText = svg('text', { class: 'sg-node-name', x: this.NW - 12, y: this.NH - 38, 'text-anchor': 'end' });
         setChemText(capText, n.caption);
         g.appendChild(capText);
       }
       if (n.name) {
-        const nameText = svg('text', { class: 'sg-node-name', x: 12, y: NODE_H - 20 });
+        const nameText = svg('text', { class: 'sg-node-name', x: 12, y: this.NH - 20 });
         nameText.textContent = n.name.length > 26 ? n.name.slice(0, 24) + '…' : n.name;
         g.appendChild(nameText);
       }
@@ -1181,12 +1244,12 @@
       }
       g.appendChild(svg('circle', {
         class: 'sg-handle sg-handle-out',
-        cx: NODE_W, cy: NODE_H / 2, r: HANDLE_R,
+        cx: this.NW, cy: this.NH / 2, r: HANDLE_R,
         'data-handle': 'out', 'data-node': n.id
       }));
       const deg = this._degreeOf(n.id);
       if (deg.in || deg.out) {
-        const badge = svg('text', { class: 'sg-node-deg', x: NODE_W - 6, y: 14, 'text-anchor': 'end' });
+        const badge = svg('text', { class: 'sg-node-deg', x: this.NW - 6, y: 14, 'text-anchor': 'end' });
         badge.textContent = `↘${deg.in} ↗${deg.out}`;
         g.appendChild(badge);
       }
@@ -1200,12 +1263,12 @@
        structure, so a downward arrow starts below the letter. */
     _box(n) {
       if (!this.readOnly) {
-        return { id: n.id, l: n.x, r: n.x + NODE_W, t: n.y, b: n.y + NODE_H,
-                 cx: n.x + NODE_W / 2, cy: n.y + NODE_H / 2 };
+        return { id: n.id, l: n.x, r: n.x + this.NW, t: n.y, b: n.y + this.NH,
+                 cx: n.x + this.NW / 2, cy: n.y + this.NH / 2 };
       }
       const m = this._footprint(n);
-      const cx = n.x + NODE_W / 2;
-      const cy = n.y + V_CY;
+      const cx = n.x + this.NW / 2;
+      const cy = n.y + this.VCY;
       return {
         id: n.id,
         l: cx - m.w / 2 - V_GAP,
@@ -1238,7 +1301,7 @@
       }
       if (Math.abs(dy) < 4) return dx >= 0 ? 'R' : 'L';
       if (Math.abs(dx) < 4) return dy >= 0 ? 'D' : 'U';
-      const horiz = Math.abs(dx) * NODE_H >= Math.abs(dy) * NODE_W;
+      const horiz = Math.abs(dx) * this.NH >= Math.abs(dy) * this.NW;
       return horiz ? (dx >= 0 ? 'R' : 'L') : (dy >= 0 ? 'D' : 'U');
     }
     _exit(b, side) {
@@ -2255,8 +2318,8 @@
       const n = this._nodeById(id);
       if (!n) return;
       const r = this.svg.getBoundingClientRect();
-      this.viewX = r.width / 2 - (n.x + NODE_W / 2) * this.scale;
-      this.viewY = r.height / 2 - (n.y + NODE_H / 2) * this.scale;
+      this.viewX = r.width / 2 - (n.x + this.NW / 2) * this.scale;
+      this.viewY = r.height / 2 - (n.y + this.NH / 2) * this.scale;
       this._applyView();
       this.select('node', id);
     }
@@ -2274,8 +2337,8 @@
       nodes.forEach(n => {
         minX = Math.min(minX, n.x || 0);
         minY = Math.min(minY, n.y || 0);
-        maxX = Math.max(maxX, (n.x || 0) + NODE_W);
-        maxY = Math.max(maxY, (n.y || 0) + NODE_H);
+        maxX = Math.max(maxX, (n.x || 0) + this.NW);
+        maxY = Math.max(maxY, (n.y || 0) + this.NH);
       });
       return { x: minX, y: minY, w: maxX - minX, h: maxY - minY };
     }

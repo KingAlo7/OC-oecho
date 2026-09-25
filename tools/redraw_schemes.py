@@ -30,8 +30,15 @@ Layout spec: tools/scheme-layout.json
               },
               "align": "<node id>",             # use this neighbour as reference
               "free": true,                     # never pin atoms (own depiction + orient)
+              "rigid": true,                    # own depiction, rigidly superposed on the neighbour
               "coords": {"smarts": "...", "xy": [[x,y],...]}   # hand template for a core
-              "abbrev": [{"smarts": "...", "label": "OAc", "anchor": 0}]
+              "abbrev": [{"smarts": "*-OC(=O)[CH3]", "first": 1, "label": "OAc"}],
+              "ring_only": false,              # chain may map onto a ring (pre-folded precursor)
+              "fusion_h": false,               # no explicit H at ring-fusion stereocentres
+              "release": "SMARTS"              # these atoms are laid out anew, not pinned
+            }
+          },
+          "abbrev": [...], "ring_only": ...     # defaults for all nodes of the scheme
             }
           }
         }
@@ -61,10 +68,27 @@ BOND = 1.5          # RDKit's standard bond length; everything is normalised to 
 # ── helpers ──────────────────────────────────────────────────────────
 
 def mol_from(smiles):
-    m = Chem.MolFromSmiles(smiles)
+    """Explicit [H] in the SMILES are kept (drawn), e.g. at ring fusions."""
+    ps = Chem.SmilesParserParams()
+    ps.removeHs = False
+    m = Chem.MolFromSmiles(smiles, ps)
     if m is None:
         raise ValueError('bad SMILES: ' + smiles)
     return m
+
+
+def fusion_h(m):
+    """Draw the H on stereocentres at ring fusions (all heavy neighbours in
+    rings, atom in two rings), the way steroid-type skeletons are drawn."""
+    ri = m.GetRingInfo()
+    Chem.AssignStereochemistry(m, cleanIt=True, force=True)
+    idx = [a.GetIdx() for a in m.GetAtoms()
+           if a.GetChiralTag() != Chem.ChiralType.CHI_UNSPECIFIED and a.GetTotalNumHs() == 1
+           and ri.NumAtomRings(a.GetIdx()) >= 2
+           and all(nb.IsInRing() for nb in a.GetNeighbors() if nb.GetAtomicNum() > 1)]
+    if not idx:
+        return m
+    return Chem.AddHs(m, onlyOnAtoms=idx)
 
 
 def xy(m):
@@ -224,14 +248,14 @@ def pinned_depiction(m, cm):
     return mm
 
 
-def mcs_map(ref, m, timeout=6):
+def mcs_map(ref, m, timeout=6, ring_only=True):
     """Atom map ref_idx -> m_idx of the largest common substructure.
     Elements and bond orders may differ (a C=O that becomes C–OH keeps its
     place); rings only match rings, so a chain never folds onto a ring."""
     p = rdFMCS.MCSParameters()
     p.AtomTyper = rdFMCS.AtomCompare.CompareAny
     p.BondTyper = rdFMCS.BondCompare.CompareAny
-    p.BondCompareParameters.RingMatchesRingOnly = True
+    p.BondCompareParameters.RingMatchesRingOnly = ring_only
     p.BondCompareParameters.CompleteRingsOnly = False
     p.AtomCompareParameters.RingMatchesRingOnly = False
     p.Timeout = timeout
@@ -250,7 +274,9 @@ def mcs_map(ref, m, timeout=6):
         s = sum(ref.GetAtomWithIdx(i).GetAtomicNum() == m.GetAtomWithIdx(j).GetAtomicNum() for i, j in zip(r, ma))
         if s > score_best:
             score_best, best = s, dict(zip(r, ma))
-    return best
+    # an explicit H only ever stands in for another H
+    return {i: j for i, j in best.items()
+            if (ref.GetAtomWithIdx(i).GetAtomicNum() == 1) == (m.GetAtomWithIdx(j).GetAtomicNum() == 1)}
 
 
 def prefer_same_elements(ref, m, amap):
@@ -273,6 +299,7 @@ def kekulize_like(m, ref=None, amap=None):
     except Exception:
         pass
     inv = {v: k for k, v in amap.items()}
+    arom = {b.GetIdx() for b in mk.GetBonds() if b.GetIsAromatic()}
     best, best_s = None, -1
     sup = Chem.ResonanceMolSupplier(mk, Chem.KEKULE_ALL)
     n = 0
@@ -281,9 +308,13 @@ def kekulize_like(m, ref=None, amap=None):
         if n > 64 or cand is None:
             break
         s = 0
+        # other resonance forms (nitro, carboxylate …) are not wanted
+        if any(cand.GetBondWithIdx(k).GetBondType() != mk.GetBondWithIdx(k).GetBondType()
+               for k in range(mk.GetNumBonds()) if k not in arom):
+            continue
         for b in cand.GetBonds():
             i, j = b.GetBeginAtomIdx(), b.GetEndAtomIdx()
-            if i in inv and j in inv:
+            if b.GetIdx() in arom and i in inv and j in inv:
                 rb = refk.GetBondBetweenAtoms(inv[i], inv[j])
                 if rb is not None and rb.GetBondType() == b.GetBondType():
                     s += 1
@@ -295,26 +326,179 @@ def kekulize_like(m, ref=None, amap=None):
     out = Chem.Mol(mk)
     Chem.Kekulize(out, clearAromaticFlags=True)
     for b in best.GetBonds():
-        ob = out.GetBondBetweenAtoms(b.GetBeginAtomIdx(), b.GetEndAtomIdx())
-        ob.SetBondType(b.GetBondType())
+        if b.GetIdx() in arom:
+            out.GetBondWithIdx(b.GetIdx()).SetBondType(b.GetBondType())
     return out
 
 
-def apply_abbrev(m, abbrevs):
-    """Mark substituents as superatoms (label shown instead of the atoms)."""
+def collapse(m, abbrevs):
+    """Replace every abbreviated group (Ph, CO2Me, OAc …) by ONE dummy atom
+    carrying the label, so the layout treats it like the single label the
+    exam sheet draws. Pattern atoms from index `first` on form the group;
+    the first of them stays (as the dummy) and keeps its bond. Every atom
+    remembers its index in the full molecule in the property 'orig'."""
+    rw = Chem.RWMol(m)
+    for a in rw.GetAtoms():
+        a.SetIntProp('orig', a.GetIdx())
+    groups, used = [], set()
     for ab in abbrevs or []:
         patt = Chem.MolFromSmarts(ab['smarts'])
+        f = ab.get('first', 0)
         for hit in m.GetSubstructMatches(patt):
-            sg = Chem.CreateMolSubstanceGroup(m, 'SUP')
-            for a in hit[ab.get('first', 0):]:
-                sg.AddAtomWithIdx(a)
-            sg.SetProp('LABEL', ab['label'])
-            att = hit[ab.get('first', 0)]
-            # attachment: the bond leaving the group
-            for nb in m.GetAtomWithIdx(att).GetNeighbors():
-                if nb.GetIdx() not in hit[ab.get('first', 0):]:
-                    sg.AddAttachPoint(att, nb.GetIdx(), '1')
-                    break
+            g = hit[f:]
+            if used & set(g):
+                continue
+            # the group must hang off the rest by exactly one bond
+            out = [(a, nb.GetIdx()) for a in g for nb in m.GetAtomWithIdx(a).GetNeighbors() if nb.GetIdx() not in g]
+            if len(out) != 1:
+                continue
+            used |= set(g)
+            groups.append({'atoms': list(g), 'head': out[0][0], 'outer': out[0][1], 'label': ab['label']})
+    if not groups:
+        return Chem.Mol(rw.GetMol()), []
+    drop = []
+    for g in groups:
+        h = rw.GetAtomWithIdx(g['head'])
+        h.SetAtomicNum(0)
+        h.SetIsAromatic(False)
+        h.SetNoImplicit(True)
+        h.SetNumExplicitHs(0)
+        h.SetFormalCharge(0)
+        h.SetProp('atomLabel', g['label'])
+        bd = rw.GetBondBetweenAtoms(g['head'], g['outer'])
+        bd.SetIsAromatic(False)
+        bd.SetBondType(Chem.BondType.SINGLE)
+        drop += [a for a in g['atoms'] if a != g['head']]
+    for a in sorted(drop, reverse=True):
+        rw.RemoveAtom(a)
+    mc = rw.GetMol()
+    Chem.SanitizeMol(mc)
+    return mc, groups
+
+
+def expand(mc, full, groups):
+    """Full molecule with mc's coordinates and Kekulé bonds; the atoms
+    hidden in a group get a local layout and a superatom S-group, which
+    the viewer collapses back to the label."""
+    fm = Chem.Mol(full)
+    Chem.Kekulize(fm, clearAromaticFlags=True)
+    hidden = set(a for g in groups for a in g['atoms'])
+    for b in mc.GetBonds():
+        i, j = b.GetBeginAtom().GetIntProp('orig'), b.GetEndAtom().GetIntProp('orig')
+        if i in hidden or j in hidden:
+            continue
+        fb = fm.GetBondBetweenAtoms(i, j)
+        if fb is not None:
+            fb.SetBondType(b.GetBondType())
+    cpts = xy(mc)
+    fixed = {a.GetIntProp('orig'): cpts[a.GetIdx()] for a in mc.GetAtoms()}
+    fm.RemoveAllConformers()
+    conf = Chem.Conformer(fm.GetNumAtoms())
+    conf.Set3D(False)
+    fm.AddConformer(conf, assignId=True)
+    if len(fixed) == fm.GetNumAtoms():
+        set_xy(fm, [fixed[i] for i in range(fm.GetNumAtoms())])
+    else:
+        rdDepictor.SetPreferCoordGen(False)
+        try:
+            depict(fm, fixed)
+        finally:
+            rdDepictor.SetPreferCoordGen(True)
+        superpose(fm, fixed)
+        pts = xy(fm)
+        for o, p in fixed.items():
+            pts[o] = p
+        set_xy(fm, pts)
+    # Wedges are chosen on the collapsed molecule, where "Ph" is a single
+    # terminal label and therefore the natural bond to wedge (as drawn on
+    # the sheet); the direction is then worked out on the full molecule.
+    wc = Chem.Mol(mc)
+    Chem.WedgeMolBonds(wc, wc.GetConformer())
+    want = [(b.GetBeginAtom().GetIntProp('orig'), b.GetEndAtom().GetIntProp('orig'))
+            for b in wc.GetBonds() if b.GetBondDir() in (Chem.BondDir.BEGINWEDGE, Chem.BondDir.BEGINDASH)]
+    ref_smi = Chem.MolToSmiles(full)
+    for i, j in want:
+        fb = fm.GetBondBetweenAtoms(i, j)
+        if fb is None or fb.GetBeginAtomIdx() == i:
+            continue
+        # a molfile wedge starts at the bond's first atom: re-add the bond
+        # as i→j, then restore i's parity (its bond order changed)
+        rw = Chem.RWMol(fm)
+        bt = fb.GetBondType()
+        rw.RemoveBond(j, i)
+        rw.AddBond(i, j, bt)
+        fm = rw.GetMol()
+        fm.UpdatePropertyCache(False)
+        if Chem.MolToSmiles(fm) != ref_smi:
+            a = fm.GetAtomWithIdx(i)
+            a.SetChiralTag(Chem.ChiralType.CHI_TETRAHEDRAL_CW if a.GetChiralTag() == Chem.ChiralType.CHI_TETRAHEDRAL_CCW
+                           else Chem.ChiralType.CHI_TETRAHEDRAL_CCW)
+    for b in fm.GetBonds():
+        b.SetBondDir(Chem.BondDir.NONE)
+    for i, j in want:
+        fb = fm.GetBondBetweenAtoms(i, j)
+        if fb is not None and fb.GetBeginAtomIdx() == i:
+            Chem.WedgeBond(fb, i, fm.GetConformer())
+    for g in groups:
+        sg = Chem.CreateMolSubstanceGroup(fm, 'SUP')
+        for a in g['atoms']:
+            sg.AddAtomWithIdx(a)
+        sg.SetProp('LABEL', g['label'])
+        # no SAP line: RDKit's own reader rejects the one it writes, and the
+        # viewer finds the attachment from the group's outside bond anyway
+    return fm
+
+
+def bad_double_bonds(m):
+    """Stereo double bonds whose drawn geometry contradicts their E/Z."""
+    want = {}
+    ref = Chem.Mol(m)
+    Chem.AssignStereochemistry(ref, cleanIt=True, force=True)
+    for b in ref.GetBonds():
+        if b.GetStereo() in (Chem.BondStereo.STEREOE, Chem.BondStereo.STEREOZ):
+            want[b.GetIdx()] = b.GetStereo()
+    if not want:
+        return []
+    chk = Chem.Mol(m)
+    for b in chk.GetBonds():
+        if b.GetBondType() == Chem.BondType.DOUBLE:
+            b.SetStereo(Chem.BondStereo.STEREONONE)
+        b.SetBondDir(Chem.BondDir.NONE)
+    Chem.DetectBondStereoChemistry(chk, chk.GetConformer())
+    Chem.AssignStereochemistry(chk, cleanIt=True, force=True)
+    return [i for i, st in want.items() if chk.GetBondWithIdx(i).GetStereo() != st]
+
+
+def side_atoms(m, bidx):
+    """Atoms on the smaller side of bond bidx, including the bond's atom there."""
+    b = m.GetBondWithIdx(bidx)
+    u, v = b.GetBeginAtomIdx(), b.GetEndAtomIdx()
+
+    def reach(start, block):
+        seen, st = {start}, [start]
+        while st:
+            x = st.pop()
+            for y in m.GetAtomWithIdx(x).GetNeighbors():
+                yi = y.GetIdx()
+                if yi != block and yi not in seen:
+                    seen.add(yi)
+                    st.append(yi)
+        return seen
+    su, sv = reach(u, v), reach(v, u)
+    return su if len(su) < len(sv) else sv
+
+
+def check(qid, si, nid, mb, smiles):
+    """The molfile must describe exactly the node's SMILES, stereo included."""
+    back = Chem.MolFromMolBlock(mb)
+    want = Chem.MolToSmiles(Chem.MolFromSmiles(smiles))
+    got = Chem.MolToSmiles(back) if back is not None else None
+    if got != want:
+        print(f'   !! {qid}/{si}/{nid}: molfile gives {got}, SMILES is {want}')
+        PROBLEMS.append((qid, si, nid))
+
+
+PROBLEMS = []
 
 
 def mol_block(m):
@@ -329,12 +513,17 @@ def layout_scheme(qid, si, scheme, spec, png_dir=None):
     if not nodes:
         return
     nspec = spec.get('nodes', {})
-    mols = {}
+    mols, full, groups = {}, {}, {}
     for nid, n in nodes.items():
         try:
-            mols[nid] = mol_from(n['smiles'])
+            m = mol_from(n['smiles'])
         except ValueError as e:
             print(f'   ! {qid}/{si}/{nid}: {e}')
+            continue
+        if nspec.get(nid, {}).get('fusion_h', spec.get('fusion_h', True)):
+            m = fusion_h(m)
+        full[nid] = m
+        mols[nid], groups[nid] = collapse(m, nspec.get(nid, {}).get('abbrev', spec.get('abbrev')))
     adj = {nid: [] for nid in mols}
     for e in scheme.get('edges', []):
         for f in e.get('from', []):
@@ -366,13 +555,27 @@ def layout_scheme(qid, si, scheme, spec, png_dir=None):
     def place_aligned(nid, rid):
         ref = placed[rid]
         m = Chem.Mol(mols[nid])
-        amap = mcs_map(mols[rid], m)
+        s_ = nspec.get(nid, {})
+        amap = mcs_map(mols[rid], m, ring_only=s_.get('ring_only', spec.get('ring_only', True)))
         if len(amap) < 3:
             return None, amap
         rpts = xy(ref)
         loose = released(mols[rid], m, amap)
+        if s_.get('release'):
+            for hit in m.GetSubstructMatches(Chem.MolFromSmarts(s_['release'])):
+                loose |= set(hit)
         cm = {j: rpts[i] for i, j in amap.items() if j not in loose}
-        m = pinned_depiction(m, cm)
+        m0 = m
+        m = pinned_depiction(m0, cm)
+        # a pinned chain can force the wrong E/Z: free that side and retry
+        for _ in range(4):
+            bad = bad_double_bonds(m)
+            if not bad:
+                break
+            for bi in bad:
+                for a in side_atoms(m0, bi):
+                    cm.pop(a, None)
+            m = pinned_depiction(m0, cm)
         mk = kekulize_like(m, ref_kek[rid], amap)
         return mk, amap
 
@@ -397,6 +600,15 @@ def layout_scheme(qid, si, scheme, spec, png_dir=None):
                 s = nspec.get(nb, {})
                 if s.get('free'):
                     placed[nb] = place_fresh(nb)
+                elif s.get('rigid'):
+                    # own layout, turned/moved onto the neighbour as a whole
+                    r = s['align'] if s.get('align') in placed else next(x for x in adj[nb] if x in placed)
+                    mk = place_fresh(nb)
+                    amap = mcs_map(mols[r], mols[nb], ring_only=s.get('ring_only', True))
+                    if len(amap) >= 3:
+                        rp = xy(placed[r])
+                        superpose(mk, {j: rp[i] for i, j in amap.items()})
+                    placed[nb] = mk
                 else:
                     cands = [s['align']] if s.get('align') in placed else [x for x in adj[nb] if x in placed]
                     best = (None, {}, None)
@@ -419,8 +631,9 @@ def layout_scheme(qid, si, scheme, spec, png_dir=None):
         q.append(nxt)
 
     for nid, m in placed.items():
-        apply_abbrev(m, nspec.get(nid, {}).get('abbrev'))
-        nodes[nid]['mol'] = mol_block(m)
+        mb = mol_block(expand(m, full[nid], groups[nid]))
+        check(qid, si, nid, mb, nodes[nid]['smiles'])
+        nodes[nid]['mol'] = mb
 
     # structures drawn on an arrow (above its text)
     for key, es in spec.get('edges', {}).items():
@@ -429,14 +642,14 @@ def layout_scheme(qid, si, scheme, spec, png_dir=None):
         if not hit:
             print(f'   ! {qid}/{si}: no edge {key}')
             continue
-        m = mol_from(es['smiles'])
+        fm = mol_from(es['smiles'])
+        m, grp = collapse(fm, es.get('abbrev'))
         depict(m)
         normalise(m)
         if 'orient' in es:
             apply_orient(m, es['orient'])
         m = kekulize_like(m)
-        apply_abbrev(m, es.get('abbrev'))
-        hit[0]['reagent_mol'] = mol_block(m)
+        hit[0]['reagent_mol'] = mol_block(expand(m, fm, grp))
 
     if png_dir:
         write_png(qid, si, scheme, placed, order, png_dir)
@@ -452,7 +665,6 @@ def write_png(qid, si, scheme, placed, order, png_dir):
     o = d.drawOptions()
     o.fixedBondLength = 22
     o.legendFontSize = 18
-    o.prepareMolsBeforeDrawing = False
     d.DrawMolecules([Chem.Mol(m) for m in ms], legends=[lab[k] for k in order])
     d.FinishDrawing()
     os.makedirs(png_dir, exist_ok=True)
@@ -481,6 +693,8 @@ def main(argv):
                 continue
             layout_scheme(q['id'], si, s['scheme'], spec.get(q['id'], {}).get(str(si), {}), png)
         print('ok', q['id'])
+    if PROBLEMS:
+        print(f'{len(PROBLEMS)} structure(s) do not match their SMILES')
     with open(QFILE, 'w', encoding='utf-8', newline='\n') as fh:
         json.dump(qs, fh, ensure_ascii=False, indent=2)
         fh.write('\n')

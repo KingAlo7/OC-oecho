@@ -1,6 +1,6 @@
 /* Service worker for the OC Reaktionen PWA.
    Bump CACHE when the shell changes — activate drops every other cache. */
-const CACHE = 'oc-oecho-v2';
+const CACHE = 'oc-oecho-v3';
 
 /* App shell. Paths are relative to the SW scope, so the same file works on
    GitHub Pages (/OC-oecho/) and on localhost. Ketcher (vendor/, ~26 MB) and
@@ -81,6 +81,21 @@ self.addEventListener('fetch', e => {
         cache.put(req, res.clone());
       }
       return res;
+    })());
+    return;
+  }
+
+  // Data (reactions, quiz): network first, so edited content shows at once;
+  // the cached copy is only the offline fallback.
+  if (url.origin === self.location.origin && /\/data\/[^/]+\.json$/.test(url.pathname)) {
+    e.respondWith((async () => {
+      try {
+        const res = await fetch(req);
+        if (res && res.ok) caches.open(CACHE).then(c => c.put(req, res.clone()));
+        return res;
+      } catch {
+        return (await caches.match(req)) || new Response('[]', { headers: { 'Content-Type': 'application/json' } });
+      }
     })());
     return;
   }

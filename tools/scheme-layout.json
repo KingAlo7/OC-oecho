@@ -41,5 +41,81 @@
         }
       }
     }
+  },
+  "bw52-2026-adrenosteron": {
+    "0": {
+      "anchor": "ADR",
+      "abbrev": [
+        {
+          "smarts": "*-c1ccccc1",
+          "first": 1,
+          "label": "Ph"
+        },
+        {
+          "smarts": "*-OC(=O)[CH3]",
+          "first": 1,
+          "label": "OAc"
+        },
+        {
+          "smarts": "[!R]-C(=O)O[CH3]",
+          "first": 1,
+          "label": "CO2Me"
+        },
+        {
+          "smarts": "[R;!H0]-C(=O)O[CH3]",
+          "first": 1,
+          "label": "CO2Me"
+        },
+        {
+          "smarts": "*-O[CH3]",
+          "first": 1,
+          "label": "OMe"
+        }
+      ],
+      "nodes": {
+        "ADR": {
+          "orient": {
+            "smarts": "C[C;R2]1(CCC(=O)C=C1)",
+            "from": 7,
+            "to": 1,
+            "angle": 90,
+            "side": [
+              2,
+              "up"
+            ]
+          }
+        },
+        "I": {
+          "align": "K",
+          "ring_only": false,
+          "release": "[#6](=O)[#6](-[CH3])=[#6]-[#6]=[#6]-[#0]"
+        },
+        "Yr": {
+          "align": "I"
+        },
+        "C": {
+          "ring_only": false
+        },
+        "K": {
+          "rigid": true,
+          "align": "L"
+        }
+      },
+      "edges": {
+        "B>C": {
+          "smiles": "C=CC(C)=O",
+          "orient": {
+            "smarts": "O=C(C)C=C",
+            "from": 1,
+            "to": 0,
+            "angle": 90,
+            "side": [
+              3,
+              "up"
+            ]
+          }
+        }
+      }
+    }
   }
 }
