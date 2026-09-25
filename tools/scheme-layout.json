@@ -117,5 +117,75 @@
         }
       }
     }
+  },
+  "bw39-2013-grandisol": {
+    "0": {
+      "anchor": "D",
+      "abbrev": [
+        {
+          "smarts": "*-OC1CCCCO1",
+          "first": 1,
+          "label": "OTHP"
+        }
+      ],
+      "nodes": {
+        "D": {
+          "orient": {
+            "smarts": "N#CC1(CC*)CCC1C(C)O",
+            "from": 2,
+            "to": 8,
+            "angle": 90,
+            "side": [
+              6,
+              "up"
+            ]
+          }
+        },
+        "C": {},
+        "B": {
+          "align": "C"
+        },
+        "A": {
+          "align": "B"
+        },
+        "P1": {
+          "explicit_h": "[CH1;R;@,@@]"
+        }
+      }
+    },
+    "5": {
+      "anchor": "M",
+      "nodes": {
+        "M": {
+          "orient": {
+            "smarts": "C1(O)[CH1]2CC[C]2(C)CC=C1",
+            "from": 5,
+            "to": 2,
+            "angle": 90,
+            "side": [
+              0,
+              "down"
+            ]
+          }
+        },
+        "N": {
+          "ring_only": false,
+          "explicit_h": "[CH1;R;@,@@]"
+        },
+        "P2": {
+          "ring_only": false,
+          "explicit_h": "[CH1;R;@,@@]"
+        },
+        "S1": {
+          "free": true,
+          "orient": {
+            "smarts": "C=C",
+            "from": 0,
+            "to": 1,
+            "angle": 90
+          }
+        }
+      }
+    }
   }
 }

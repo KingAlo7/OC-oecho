@@ -9301,33 +9301,36 @@
     "type": "composed",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2013 (BW 39), Aufgabe 5 C",
-    "intro": "Ebenso zur Substanzklasse der Terpene gehört das Grandisol, ein Cyclobutanderivat, an dem einige Strategien zur Synthese des Cyclobutan-Systems studiert wurden. (+)-Grandisol ist das Sexualpheromon des männlichen Baumwollkapselkäfers. Dieser Käfer verursacht jährlich große Schäden z. B. an der amerikanischen Baumwollernte.",
+    "intro": "Ebenso zur Substanzklasse der Terpene gehört das Grandisol, ein Cyclobutanderivat, an dem einige Strategien zur Synthese des Cyclobutan-Systems studiert wurden. (+)-Grandisol ist das Sexualpheromon des männlichen Baumwollkapselkäfers. Dieser Käfer verursacht jährlich großen Schäden z.B. an der amerikanischen Baumwollernte.",
     "sections": [
       {
         "type": "synthesis",
-        "title": "Route 1: klassische Synthese (1970er)",
+        "title": "C. Synthese",
         "scheme": {
           "nodes": [
             {
               "id": "A",
               "label": "A",
               "given": true,
-              "smiles": "C/C=C\\CCCC#N",
-              "explanation": "Hept-5-ennitril (Z) — das Ausgangsmaterial."
+              "smiles": "C/C=C/CCCC#N",
+              "explanation": "Hept-5-ennitril (Z) — das Ausgangsmaterial.",
+              "mol": "\n     RDKit          2D\n\n  8  7  0  0  0  0  0  0  0  0999 V2000\n   -2.7913    1.0200    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2913    1.0201    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5412   -0.2788    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9591   -0.2787    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7092   -1.5776    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9594   -2.8767    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5406   -2.8769    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0406   -2.8771    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  3  0\nM  END\n"
             },
             {
               "id": "B",
               "label": "B",
               "given": false,
-              "smiles": "C/C=C\\CCC(CCOC1CCCCO1)C#N",
-              "explanation": "Deprotonierung in α-Stellung zum Nitril, dann SN2 am Alkylbromid."
+              "smiles": "C/C=C/CCC(CCOC1CCCCO1)C#N",
+              "explanation": "Deprotonierung in α-Stellung zum Nitril, dann SN2 am Alkylbromid.",
+              "mol": "\n     RDKit          2D\n\n 17 17  0  1  0  0  0  0  0  0999 V2000\n   -2.7913    1.0200    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2913    1.0201    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5412   -0.2788    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9591   -0.2787    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7092   -1.5776    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9594   -2.8767    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5406   -2.8769    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2904   -4.1760    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.7904   -4.1763    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.5406   -2.8773    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.0406   -2.8775    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7908   -1.5786    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.0410   -0.2795    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.5410   -0.2792    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.7908   -1.5782    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7096   -4.1756    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.4598   -5.4746    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 12 13  1  0\n 13 14  1  0\n 14 15  1  0\n  6 16  1  0\n 16 17  3  0\n 15 10  1  0\nM  STY  1   1 SUP\nM  SAL   1  7   9  10  11  12  13  14  15\nM  SMT   1 OTHP\nM  END\n"
             },
             {
               "id": "C",
               "label": "C",
               "given": false,
               "smiles": "CC1OC1CCC(CCOC1CCCCO1)C#N",
-              "explanation": "MCPBA epoxidiert die trisubstituierte C=C-Doppelbindung."
+              "explanation": "MCPBA epoxidiert die trisubstituierte C=C-Doppelbindung.",
+              "mol": "\n     RDKit          2D\n\n 18 19  0  1  0  0  0  0  0  0999 V2000\n    0.5193    2.2821    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5412    1.2210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0414    1.2209    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5412   -0.2788    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9591   -0.2787    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7092   -1.5776    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9594   -2.8767    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5406   -2.8769    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2904   -4.1760    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.7904   -4.1763    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.5406   -2.8773    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.7908   -1.5782    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.5410   -0.2792    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.0410   -0.2795    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7908   -1.5786    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.0406   -2.8775    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7096   -4.1756    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.4598   -5.4746    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 12 13  1  0\n 13 14  1  0\n 14 15  1  0\n 15 16  1  0\n  7 17  1  0\n 17 18  3  0\n  4  2  1  0\n 16 11  1  0\nM  STY  1   1 SUP\nM  SAL   1  7  10  11  12  13  14  15  16\nM  SMT   1 OTHP\nM  END\n"
             },
             {
               "id": "D",
@@ -9336,7 +9339,8 @@
               "smiles": "CC(O)C1CCC1(C#N)CCOC1CCCCO1",
               "caption": "(C_14H_23NO_3)",
               "explanation": "Ringschluss: das Nitril-stabilisierte Carbanion öffnet das Epoxid intramolekular — der Cyclobutanring entsteht. Summenformel C14H23NO3.",
-              "note": "C_14H_23NO_3"
+              "note": "C_14H_23NO_3",
+              "mol": "\n     RDKit          2D\n\n 18 19  0  1  0  0  0  0  0  0999 V2000\n    0.1310    3.7307    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5193    2.2821    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9683    1.8938    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5412    1.2210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0414    1.2209    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0411   -0.2791    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5412   -0.2788    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5409   -1.7788    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5406   -3.2787    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9591   -0.2787    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7092   -1.5776    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9594   -2.8767    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5406   -2.8769    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2908   -1.5780    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.7908   -1.5782    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.5406   -2.8773    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.7904   -4.1763    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2904   -4.1760    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  3  0\n  7 10  1  0\n 10 11  1  0\n 11 12  1  0\n 12 13  1  0\n 13 14  1  0\n 14 15  1  0\n 15 16  1  0\n 16 17  1  0\n 17 18  1  0\n  7  4  1  0\n 18 13  1  0\nM  STY  1   1 SUP\nM  SAL   1  7  12  13  14  15  16  17  18\nM  SMT   1 OTHP\nM  END\n"
             },
             {
               "id": "E",
@@ -9345,14 +9349,16 @@
               "smiles": "CC(O)C1CCC1(C=O)CCOC1CCCCO1",
               "caption": "(C_14H_24O_4)",
               "explanation": "DIBAL reduziert das Nitril nur bis zum Imin; wässrige Aufarbeitung liefert den Aldehyd. C14H24O4.",
-              "note": "C_14H_24O_4"
+              "note": "C_14H_24O_4",
+              "mol": "\n     RDKit          2D\n\n 18 19  0  1  0  0  0  0  0  0999 V2000\n    0.1310    3.7307    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5193    2.2821    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9683    1.8938    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5412    1.2210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0414    1.2209    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0411   -0.2791    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5412   -0.2788    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5409   -1.7788    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5406   -3.2787    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9591   -0.2787    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7092   -1.5776    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9594   -2.8767    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5406   -2.8769    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2908   -1.5780    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.7908   -1.5782    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.5406   -2.8773    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.7904   -4.1763    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2904   -4.1760    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  2  0\n  7 10  1  0\n 10 11  1  0\n 11 12  1  0\n 12 13  1  0\n 13 14  1  0\n 14 15  1  0\n 15 16  1  0\n 16 17  1  0\n 17 18  1  0\n  7  4  1  0\n 18 13  1  0\nM  STY  1   1 SUP\nM  SAL   1  7  12  13  14  15  16  17  18\nM  SMT   1 OTHP\nM  END\n"
             },
             {
               "id": "F",
               "label": "F",
               "given": false,
               "smiles": "CC(O)C1CCC1(C=NN)CCOC1CCCCO1",
-              "explanation": "Kondensation des Aldehyds mit Hydrazin zum Hydrazon."
+              "explanation": "Kondensation des Aldehyds mit Hydrazin zum Hydrazon.",
+              "mol": "\n     RDKit          2D\n\n 19 20  0  1  0  0  0  0  0  0999 V2000\n    0.1310    3.7307    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5193    2.2821    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9683    1.8938    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5412    1.2210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0414    1.2209    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0411   -0.2791    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5412   -0.2788    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5409   -1.7788    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5406   -3.2787    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8395   -4.0290    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9591   -0.2787    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7092   -1.5776    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9594   -2.8767    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5406   -2.8769    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2908   -1.5780    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.7908   -1.5782    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.5406   -2.8773    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.7904   -4.1763    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2904   -4.1760    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  2  3\n  9 10  1  0\n  7 11  1  0\n 11 12  1  0\n 12 13  1  0\n 13 14  1  0\n 14 15  1  0\n 15 16  1  0\n 16 17  1  0\n 17 18  1  0\n 18 19  1  0\n  7  4  1  0\n 19 14  1  0\nM  STY  1   1 SUP\nM  SAL   1  7  13  14  15  16  17  18  19\nM  SMT   1 OTHP\nM  END\n"
             },
             {
               "id": "G",
@@ -9361,28 +9367,32 @@
               "smiles": "CC(O)C1CCC1(C)CCOC1CCCCO1",
               "caption": "(C_14H_26O_3)",
               "explanation": "Wolff-Kishner-Reduktion: KOH/H2O, Δ entfernt die Carbonylgruppe vollständig (CHO → CH3). C14H26O3.",
-              "note": "C_14H_26O_3"
+              "note": "C_14H_26O_3",
+              "mol": "\n     RDKit          2D\n\n 17 18  0  1  0  0  0  0  0  0999 V2000\n    0.1310    3.7307    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5193    2.2821    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9683    1.8938    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5412    1.2210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0414    1.2209    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0411   -0.2791    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5412   -0.2788    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5409   -1.7788    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9591   -0.2787    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7092   -1.5776    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9594   -2.8767    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5406   -2.8769    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2908   -1.5780    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.7908   -1.5782    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.5406   -2.8773    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.7904   -4.1763    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2904   -4.1760    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  7  9  1  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 12 13  1  0\n 13 14  1  0\n 14 15  1  0\n 15 16  1  0\n 16 17  1  0\n  7  4  1  0\n 17 12  1  0\nM  STY  1   1 SUP\nM  SAL   1  7  11  12  13  14  15  16  17\nM  SMT   1 OTHP\nM  END\n"
             },
             {
               "id": "H",
               "label": "H",
               "given": false,
               "smiles": "CC(=O)C1CCC1(C)CCOC1CCCCO1",
-              "explanation": "CrO3 oxidiert den sekundären Alkohol zum Methylketon."
+              "explanation": "CrO3 oxidiert den sekundären Alkohol zum Methylketon.",
+              "mol": "\n     RDKit          2D\n\n 17 18  0  1  0  0  0  0  0  0999 V2000\n    0.1310    3.7307    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5193    2.2821    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9683    1.8938    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5412    1.2210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0414    1.2209    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0411   -0.2791    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5412   -0.2788    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5409   -1.7788    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9591   -0.2787    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7092   -1.5776    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9594   -2.8767    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5406   -2.8769    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2908   -1.5780    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.7908   -1.5782    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.5406   -2.8773    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.7904   -4.1763    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2904   -4.1760    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  7  9  1  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 12 13  1  0\n 13 14  1  0\n 14 15  1  0\n 15 16  1  0\n 16 17  1  0\n  7  4  1  0\n 17 12  1  0\nM  STY  1   1 SUP\nM  SAL   1  7  11  12  13  14  15  16  17\nM  SMT   1 OTHP\nM  END\n"
             },
             {
               "id": "I",
               "label": "I",
               "given": false,
               "smiles": "C=C(C)C1CCC1(C)CCOC1CCCCO1",
-              "explanation": "Wittig-Olefinierung mit Ph3P=CH2 liefert die Isopropenylgruppe."
+              "explanation": "Wittig-Olefinierung mit Ph3P=CH2 liefert die Isopropenylgruppe.",
+              "mol": "\n     RDKit          2D\n\n 17 18  0  1  0  0  0  0  0  0999 V2000\n    0.1310    3.7307    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5193    2.2821    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9683    1.8938    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5412    1.2210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0414    1.2209    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0411   -0.2791    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5412   -0.2788    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5409   -1.7788    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9591   -0.2787    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7092   -1.5776    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9594   -2.8767    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5406   -2.8769    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2908   -1.5780    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.7908   -1.5782    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.5406   -2.8773    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.7904   -4.1763    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2904   -4.1760    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  2  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  7  9  1  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 12 13  1  0\n 13 14  1  0\n 14 15  1  0\n 15 16  1  0\n 16 17  1  0\n  7  4  1  0\n 17 12  1  0\nM  STY  1   1 SUP\nM  SAL   1  7  11  12  13  14  15  16  17\nM  SMT   1 OTHP\nM  END\n"
             },
             {
               "id": "P1",
               "label": "Grandisol",
               "given": true,
-              "smiles": "C=C(C)[C@@H]1CC[C@]1(C)CCO",
-              "explanation": "Saure Hydrolyse spaltet den THP-Ether — (±)-Grandisol."
+              "smiles": "C=C(C)[C@H]1CC[C@@]1(C)CCO",
+              "explanation": "Saure Hydrolyse spaltet den THP-Ether — (±)-Grandisol.",
+              "mol": "\n     RDKit          2D\n\n 12 12  0  0  0  0  0  0  0  0999 V2000\n   -1.8402    3.4708    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5412    2.7208    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7579    3.4708    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5412    1.2210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0414    1.2209    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0411   -0.2791    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5412   -0.2788    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5409   -1.7788    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9591   -0.2787    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7092   -1.5776    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9594   -2.8767    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9586    1.2210    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  2  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  1\n  7  9  1  0\n  9 10  1  0\n 10 11  1  0\n  7  4  1  0\n  4 12  1  1\nM  END\n"
             }
           ],
           "edges": [
@@ -9450,21 +9460,46 @@
                 "I"
               ],
               "to": "P1",
-              "reagent_above": "H_2SO_4, H_2O, Δ"
+              "reagent_above": "H_2SO_4, H_2O, Δ",
+              "reagent_below": ""
             }
           ]
         },
-        "body": "In den 1970er Jahren wurde eine klassische Synthese für Grandisol entwickelt.",
+        "body": "In den 1970’er Jahren wurde eine klassische Synthese für Grandisol entwickelt. Sie ist im folgenden Reaktionsschema gezeigt:\n\n5.7. Schreiben Sie die Konstitutionsformeln der Verbindungen B bis I in die entsprechenden Kästchen.",
         "hints": [
-          "MCPBA steht für m-Chlorperbenzoesäure.",
-          "DIBAL steht für Diisobutylaluminiumhydrid.",
-          "Br-CH_2CH_2-O-THP: 2-(2-Bromethoxy)tetrahydropyran, abgekürzt Br-CH_2CH_2-OTHP.",
-          "Im Schritt von C → D erfolgt der Ringschluss."
+          "MCPBA steht für m-Chlorperbenzoesäure",
+          "DIBAL steht für Diisobutylaluminiumhydrid",
+          "Br-CH_2CH_2-O-(Tetrahydropyran-2-yl) = abgekürzt Br-CH_2CH_2-OTHP",
+          "Im Schritt von C → D erfolgt der Ringschluss"
         ]
       },
       {
+        "type": "short_answer",
+        "title": "5.8",
+        "prompt": "Welche Funktion hat THP in der organischen Synthesetechnik?",
+        "expected_answer": "Es handelt sich um eine Schutzgruppe für OH."
+      },
+      {
+        "type": "short_answer",
+        "title": "5.9",
+        "prompt": "Zeichnen Sie den Mechanismus für die Reaktion von C → D.",
+        "expected_answer": "Die Base deprotoniert C in α-Stellung zur Nitrilgruppe. Das Carbanion greift intramolekular das benachbarte Epoxid-C-Atom an (S_N2, Ringöffnung des Epoxids) und schließt so den Cyclobutanring; es entsteht ein Alkoholat, das mit H^+/H_2O zu D protoniert wird."
+      },
+      {
+        "type": "short_answer",
+        "title": "5.10",
+        "prompt": "Ordnen Sie den stereogenen Zentren des (+)-Grandisols die richtigen Stereodescriptoren zu.",
+        "expected_answer": "C-Atom mit H und Isopropenylgruppe: R; quartäres C-Atom mit CH_3-Gruppe: S."
+      },
+      {
+        "type": "short_answer",
+        "title": "5.11",
+        "prompt": "Kreuzen Sie die richtigen Behauptung(en) an.\n• Es entsteht reines (+)-Grandisol.\n• Es entsteht optisch inaktives Material.\n• Es entsteht ein Racemat.\n• Es entsteht ein Diastereomerengemisch.",
+        "expected_answer": "Richtig: „Es entsteht optisch inaktives Material.“ und „Es entsteht ein Racemat.“"
+      },
+      {
         "type": "synthesis",
-        "title": "Route 2: eine andere Strategie",
+        "title": "",
         "scheme": {
           "nodes": [
             {
@@ -9472,50 +9507,56 @@
               "label": "",
               "given": true,
               "smiles": "C=C",
-              "name": "Ethen",
-              "explanation": "Ethen als [2+2]-Partner."
+              "explanation": "Ethen als [2+2]-Partner.",
+              "mol": "\n     RDKit          2D\n\n  2  1  0  0  0  0  0  0  0  0999 V2000\n   -0.0000   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\nM  END\n"
             },
             {
               "id": "S2",
               "label": "",
               "given": true,
               "smiles": "CC1=CC(=O)CCC1",
-              "explanation": "3-Methylcyclohex-2-enon."
+              "explanation": "3-Methylcyclohex-2-enon.",
+              "mol": "\n     RDKit          2D\n\n  8  8  0  0  0  0  0  0  0  0999 V2000\n   -1.8849   -1.9548    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5698   -1.1883    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5698    0.3340    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7506    1.1038    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7516    2.6256    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0680    0.3421    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0717   -1.1818    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7515   -1.9439    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  2  0\n  4  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  2  1  0\nM  END\n"
             },
             {
               "id": "K",
               "label": "K",
               "given": false,
-              "smiles": "O=C1CCCC2(C)CCC12",
-              "explanation": "[2+2]-Photodimerisierung (Cycloaddition) — die Ringverknüpfung ist immer cis."
+              "smiles": "O=C4[C@H]1CC[C@@]1(C)CCC4",
+              "explanation": "[2+2]-Photodimerisierung (Cycloaddition) — die Ringverknüpfung ist immer cis.",
+              "mol": "\n     RDKit          2D\n\n 11 12  0  0  0  0  0  0  0  0999 V2000\n    0.7516    2.6256    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7506    1.1038    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5698    0.3340    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0967    0.3328    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0931   -1.1898    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5698   -1.1883    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9620   -2.6584    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7515   -1.9439    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0717   -1.1818    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0680    0.3421    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0005    1.4728    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  1\n  6  8  1  0\n  8  9  1  0\n  9 10  1  0\n  6  3  1  0\n 10  2  1  0\n  3 11  1  1\nM  END\n"
             },
             {
               "id": "L",
               "label": "L",
               "given": false,
-              "smiles": "O=C1C=CCC2(C)CCC12",
-              "explanation": "α-Bromierung, dann Base-induzierte HBr-Eliminierung liefert das Enon zurück."
+              "smiles": "O=C4[C@H]1CC[C@@]1(C)CC=C4",
+              "explanation": "α-Bromierung, dann Base-induzierte HBr-Eliminierung liefert das Enon zurück.",
+              "mol": "\n     RDKit          2D\n\n 11 12  0  0  0  0  0  0  0  0999 V2000\n    0.7516    2.6256    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7506    1.1038    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5698    0.3340    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0967    0.3328    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0931   -1.1898    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5698   -1.1883    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9620   -2.6584    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7515   -1.9439    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0717   -1.1818    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0680    0.3421    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0005    1.4728    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  1\n  6  8  1  0\n  8  9  1  0\n  9 10  2  0\n  6  3  1  0\n 10  2  1  0\n  3 11  1  1\nM  END\n"
             },
             {
               "id": "M",
               "label": "M",
               "given": true,
-              "smiles": "CC4(O)[C@@H]1CC[C@]1(C)CC=C4",
-              "explanation": "CH3MgBr addiert 1,2 an die Carbonylgruppe; der Angriff erfolgt von oben, weil der Cyclobutanring die Unterseite abschirmt."
+              "smiles": "C[C@]4(O)[C@H]1CC[C@@]1(C)CC=C4",
+              "explanation": "CH3MgBr addiert 1,2 an die Carbonylgruppe; der Angriff erfolgt von oben, weil der Cyclobutanring die Unterseite abschirmt.",
+              "mol": "\n     RDKit          2D\n\n 12 13  0  0  0  0  0  0  0  0999 V2000\n    1.7770    2.2298    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7506    1.1038    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1268    2.3469    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5698    0.3340    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0967    0.3328    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0931   -1.1898    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5698   -1.1883    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9620   -2.6584    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7515   -1.9439    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0717   -1.1818    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0680    0.3421    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0005    1.4728    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  2  3  1  0\n  2  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  1\n  7  9  1  0\n  9 10  1  0\n 10 11  2  0\n  7  4  1  0\n 11  2  1  0\n  4 12  1  1\n  2  1  1  1\nM  END\n"
             },
             {
               "id": "N",
               "label": "N",
               "given": true,
-              "smiles": "CC(=O)[C@@H]1CC[C@]1(C)CC(=O)O",
-              "explanation": "Ozonolyse mit reduktiver Aufarbeitung liefert einen α-Hydroxy-Dialdehyd; Periodat spaltet diesen zu Methylketon + Carbonsäure (unter Abgabe von HCOOH)."
+              "smiles": "CC(=O)[C@H]1CC[C@@]1(C)CC(=O)O",
+              "explanation": "Ozonolyse mit reduktiver Aufarbeitung liefert einen α-Hydroxy-Dialdehyd; Periodat spaltet diesen zu Methylketon + Carbonsäure (unter Abgabe von HCOOH).",
+              "mol": "\n     RDKit          2D\n\n 13 13  0  0  0  0  0  0  0  0999 V2000\n    1.7590    0.6808    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7506    1.1038    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7443    2.6038    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5698    0.3340    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0967    0.3328    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0931   -1.1898    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5698   -1.1883    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9620   -2.6584    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7515   -1.9439    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0717   -1.1818    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.2050   -0.0965    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3707   -1.9318    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0005    1.4728    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  1\n  7  9  1  0\n  9 10  1  0\n 10 11  2  0\n 10 12  1  0\n  7  4  1  0\n  4 13  1  1\nM  END\n"
             },
             {
               "id": "P2",
               "label": "Grandisol",
               "given": true,
-              "smiles": "C=C(C)[C@@H]1CC[C@]1(C)CCO",
-              "explanation": "Wittig-Olefinierung des Methylketons, dann BH3/THF-Reduktion der Carbonsäure zum primären Alkohol."
+              "smiles": "C=C(C)[C@H]1CC[C@@]1(C)CCO",
+              "explanation": "Wittig-Olefinierung des Methylketons, dann BH3/THF-Reduktion der Carbonsäure zum primären Alkohol.",
+              "mol": "\n     RDKit          2D\n\n 12 12  0  0  0  0  0  0  0  0999 V2000\n    1.7590    0.6808    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7506    1.1038    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7443    2.6038    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5698    0.3340    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0967    0.3328    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0931   -1.1898    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5698   -1.1883    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9620   -2.6584    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7515   -1.9439    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0717   -1.1818    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3707   -1.9318    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0005    1.4728    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  2  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  1\n  7  9  1  0\n  9 10  1  0\n 10 11  1  0\n  7  4  1  0\n  4 12  1  1\nM  END\n"
             }
           ],
           "edges": [
@@ -9525,7 +9566,8 @@
                 "S2"
               ],
               "to": "K",
-              "reagent_above": "hν"
+              "reagent_above": "hν",
+              "reagent_below": ""
             },
             {
               "from": [
@@ -9540,15 +9582,15 @@
                 "L"
               ],
               "to": "M",
-              "reagent_above": "1. CH_3MgBr",
-              "reagent_below": "2. H_2O/H^+"
+              "reagent_above": "1.+ CH_3MgBr",
+              "reagent_below": "2. H_2O/H+"
             },
             {
               "from": [
                 "M"
               ],
               "to": "N",
-              "reagent_above": "1. O_3, Zn/HAc",
+              "reagent_above": "1. O_3 , Zn/HAc",
               "reagent_below": "2. NaIO_4"
             },
             {
@@ -9561,13 +9603,25 @@
             }
           ]
         },
-        "body": "Eine weitere Synthese von Grandisol benützt eine andere Strategie zur Bildung des Cyclobutanringes."
+        "body": "Eine weitere Synthese von Grandisol benützt eine andere Strategie zur Bildung des Cyclobutanringes. Die wichtigsten Schritte dieses Reaktionsweges zeigt das folgende Schema:\n\n5.12. Zeichnen Sie die Strukturformeln der Verbindungen K und L."
       },
       {
         "type": "short_answer",
-        "title": "Stereochemischer Ausgang von Route 1 (5.11)",
-        "prompt": "Welche Behauptung(en) treffen auf das Produkt von Route 1 zu? Es entsteht reines (+)-Grandisol / optisch inaktives Material / ein Racemat / ein Diastereomerengemisch. Begründen Sie.",
-        "expected_answer": "Es entsteht ein Racemat und damit optisch inaktives Material. Kein Schritt der Sequenz ist enantioselektiv: der Ringschluss C → D erzeugt die beiden Stereozentren zwar mit definierter relativer Konfiguration (cis), aber ohne Vorzugsseite, also beide Enantiomere zu gleichen Teilen."
+        "title": "5.13",
+        "prompt": "Zu welcher Art von Reaktionen zählt man die Bildung von K?",
+        "expected_answer": "[2+2]-Cycloaddition, Photodimerisierung; Verknüpfung der Ringe immer cis."
+      },
+      {
+        "type": "short_answer",
+        "title": "5.14",
+        "prompt": "Warum erfolgt der Angriff der Methylgruppe bei der Bildung von M fast ausschließlich von oben?",
+        "expected_answer": "Angriff erfolgt von oben, weil die Unterseite durch den Cyclobutanring sterisch blockiert wird."
+      },
+      {
+        "type": "short_answer",
+        "title": "5.15",
+        "prompt": "Zeichnen Sie das Zwischenprodukt, das bei Umsetzung von M mit O_3 und reduktiver Aufarbeitung entsteht und wie dieses in der Folge mit Periodat zu N reagiert.",
+        "expected_answer": "O_3 mit reduktiver Aufarbeitung spaltet die C=C-Doppelbindung: es entsteht der Dialdehyd mit C(OH)(CH_3)–CHO am einen und CH_2–CHO am anderen Cyclobutan-C-Atom. IO_4^- spaltet das α-Hydroxyaldehyd-Fragment zum Methylketon (+ HCOOH), die zweite CHO-Gruppe wird zu COOH oxidiert → N."
       }
     ]
   },

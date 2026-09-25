@@ -35,7 +35,8 @@ Layout spec: tools/scheme-layout.json
               "abbrev": [{"smarts": "*-OC(=O)[CH3]", "first": 1, "label": "OAc"}],
               "ring_only": false,              # chain may map onto a ring (pre-folded precursor)
               "fusion_h": false,               # no explicit H at ring-fusion stereocentres
-              "release": "SMARTS"              # these atoms are laid out anew, not pinned
+              "release": "SMARTS",             # these atoms are laid out anew, not pinned
+              "explicit_h": "SMARTS"           # draw the H on the first atom of each match
             }
           },
           "abbrev": [...], "ring_only": ...     # defaults for all nodes of the scheme
@@ -522,6 +523,11 @@ def layout_scheme(qid, si, scheme, spec, png_dir=None):
             continue
         if nspec.get(nid, {}).get('fusion_h', spec.get('fusion_h', True)):
             m = fusion_h(m)
+        eh = nspec.get(nid, {}).get('explicit_h', spec.get('explicit_h'))
+        if eh:
+            hit = sorted({h[0] for h in m.GetSubstructMatches(Chem.MolFromSmarts(eh))})
+            if hit:
+                m = Chem.AddHs(m, onlyOnAtoms=hit)
         full[nid] = m
         mols[nid], groups[nid] = collapse(m, nspec.get(nid, {}).get('abbrev', spec.get('abbrev')))
     adj = {nid: [] for nid in mols}
