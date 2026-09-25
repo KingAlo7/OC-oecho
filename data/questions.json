@@ -2215,83 +2215,94 @@
     "name": "LW 2017 — Papaverin",
     "difficulty": "C",
     "source": "ÖChO Landeswettbewerb 2017 (LW 43), Problem E",
-    "intro": "Papaverin ist ein Alkaloid des Isochinolin-Typs und besitzt eine direkte krampflösende Wirkung auf die glatte Muskulatur. Es wird z. B. in der Herzchirurgie angewendet. Papaverin ist u. a. im Milchsaft des Schlafmohns enthalten. Nachdem der Österreicher G. Goldschmiedt die Strukturaufklärung durchgeführt hatte, folgte 1908 die erste Totalsynthese durch Pictet und Gams. Wir wollen eine Synthese des Papaverins ausgehend von Vanillin betrachten.",
+    "intro": "Organische Chemie\n\nDie Synthese von Papaverin\nPapaverin ist ein Alkaloid des Isochinolin-Typs und besitzt eine direkte krampflösende Wirkung auf die glatte Muskulatur. Es wird z. B. in der Herzchirurgie angewendet. Papaverin ist u.a. im Milchsaft des Schlafmohns enthalten. Nachdem der Österreicher G. Goldschmiedt die Strukturaufklärung durchgeführt hatte, folgte 1908 die erste Totalsynthese durch Pictet und Gams.\nWir wollen eine Synthese des Papaverins ausgehend von Vanillin betrachten:",
     "sections": [
       {
         "type": "synthesis",
-        "title": "Die Synthese von Papaverin",
+        "title": "a) / d)",
         "scheme": {
           "nodes": [
             {
               "id": "V",
               "label": "Vanillin",
               "given": true,
-              "smiles": "COc1cc(C=O)ccc1O"
+              "smiles": "COc1cc(C=O)ccc1O",
+              "mol": "\n     RDKit          2D\n\n 12 12  0  0  0  0  0  0  0  0999 V2000\n   -3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5980    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    3.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5980   -1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  5  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  1  0\n 10  3  2  0\n  6 12  1  0\nM  END\n"
             },
             {
               "id": "A",
               "label": "A",
               "given": false,
-              "smiles": "O=Cc1ccc(OC)c(OC)c1"
+              "smiles": "O=Cc1ccc(OC)c(OC)c1",
+              "mol": "\n     RDKit          2D\n\n 13 13  0  0  0  0  0  0  0  0999 V2000\n    2.5980    3.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5980   -1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8970   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5980    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  6  9  2  0\n  9 10  1  0\n 10 11  1  0\n  9 12  1  0\n 12  3  2  0\n  2 13  1  0\nM  END\n"
             },
             {
               "id": "B",
               "label": "B",
               "given": false,
               "smiles": "OCc1ccc(OC)c(OC)c1",
-              "caption": "C_9H_12O_3"
+              "caption": "C_9H_12O_3",
+              "mol": "\n     RDKit          2D\n\n 12 12  0  0  0  0  0  0  0  0999 V2000\n    3.8970    0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5980   -1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8970   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5980    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  6  9  2  0\n  9 10  1  0\n 10 11  1  0\n  9 12  1  0\n 12  3  2  0\nM  END\n"
             },
             {
               "id": "C",
               "label": "C",
               "given": false,
-              "smiles": "ClCc1ccc(OC)c(OC)c1"
+              "smiles": "ClCc1ccc(OC)c(OC)c1",
+              "mol": "\n     RDKit          2D\n\n 12 12  0  0  0  0  0  0  0  0999 V2000\n    3.8970    0.7500    0.0000 Cl  0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5980   -1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8970   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5980    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  6  9  2  0\n  9 10  1  0\n 10 11  1  0\n  9 12  1  0\n 12  3  2  0\nM  END\n"
             },
             {
               "id": "D",
               "label": "D",
               "given": true,
-              "smiles": "N#CCc1ccc(OC)c(OC)c1"
+              "smiles": "N#CCc1ccc(OC)c(OC)c1",
+              "mol": "\n     RDKit          2D\n\n 13 13  0  1  0  0  0  0  0  0999 V2000\n    5.1960   -0.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5980   -1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8970   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5980    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  3  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  7 10  2  0\n 10 11  1  0\n 11 12  1  0\n 10 13  1  0\n 13  4  2  0\nM  STY  1   1 SUP\nM  SAL   1  2   2   1\nM  SMT   1 CN\nM  END\n"
             },
             {
               "id": "Ee",
               "label": "E",
               "given": false,
               "smiles": "NCCc1ccc(OC)c(OC)c1",
-              "explanation": "LiAlH_4 reduziert das Nitril zum primären Amin (C_10H_15NO_2)."
+              "explanation": "LiAlH_4 reduziert das Nitril zum primären Amin (C_10H_15NO_2).",
+              "mol": "\n     RDKit          2D\n\n 13 13  0  0  0  0  0  0  0  0999 V2000\n    5.1960    1.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5980   -1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8970   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5980    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  7 10  2  0\n 10 11  1  0\n 11 12  1  0\n 10 13  1  0\n 13  4  2  0\nM  END\n"
             },
             {
               "id": "F",
               "label": "F",
               "given": false,
               "smiles": "OC(=O)Cc1ccc(OC)c(OC)c1",
-              "explanation": "Saure Hydrolyse des Nitrils."
+              "explanation": "Saure Hydrolyse des Nitrils.",
+              "mol": "\n     RDKit          2D\n\n 14 14  0  0  0  0  0  0  0  0999 V2000\n    5.1960    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970   -0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5980   -1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8970   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5980    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n  8 11  2  0\n 11 12  1  0\n 12 13  1  0\n 11 14  1  0\n 14  5  2  0\nM  END\n"
             },
             {
               "id": "Gg",
               "label": "G",
               "given": true,
-              "smiles": "ClC(=O)Cc1ccc(OC)c(OC)c1"
+              "smiles": "ClC(=O)Cc1ccc(OC)c(OC)c1",
+              "mol": "\n     RDKit          2D\n\n 14 14  0  0  0  0  0  0  0  0999 V2000\n    5.1960    1.5000    0.0000 Cl  0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970   -0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5980   -1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8970   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5980    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n  8 11  2  0\n 11 12  1  0\n 12 13  1  0\n 11 14  1  0\n 14  5  2  0\nM  END\n"
             },
             {
               "id": "H",
               "label": "H",
               "given": false,
               "smiles": "O=C(Cc1ccc(OC)c(OC)c1)NCCc1ccc(OC)c(OC)c1",
-              "explanation": "Aminolyse des Säurechlorids → Säureamid."
+              "explanation": "Aminolyse des Säurechlorids → Säureamid.",
+              "mol": "\n     RDKit          2D\n\n 26 27  0  0  0  0  0  0  0  0999 V2000\n    6.1630   -5.8600    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    7.6050   -5.5120    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.6050   -6.9770    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.9070   -7.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.9070   -9.2330    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   10.1860  -10.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   11.4650   -9.2330    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   12.7440   -9.9530    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   14.0470   -9.2330    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   11.4650   -7.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   12.7440   -6.9770    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   14.0470   -7.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   10.1860   -6.9770    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.6740   -4.3720    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    8.6740   -2.9530    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.3950   -2.2560    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.0930   -2.9530    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.0930   -4.4650    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.7670   -5.1860    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4880   -4.4650    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.2090   -5.1630    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9300   -4.4650    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4880   -2.9530    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.2090   -2.2090    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9300   -2.9530    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.7670   -2.2560    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  7 10  2  0\n 10 11  1  0\n 11 12  1  0\n 10 13  1  0\n  2 14  1  0\n 14 15  1  0\n 15 16  1  0\n 16 17  1  0\n 17 18  1  0\n 18 19  2  0\n 19 20  1  0\n 20 21  1  0\n 21 22  1  0\n 20 23  2  0\n 23 24  1  0\n 24 25  1  0\n 23 26  1  0\n 13  4  2  0\n 26 17  2  0\nM  END\n"
             },
             {
               "id": "DHI",
               "label": "",
               "given": true,
               "smiles": "COc1ccc(CC2=NCCc3cc(OC)c(OC)cc32)cc1OC",
-              "explanation": "Bischler-Napieralski-Cyclisierung (POCl_3) → 3,4-Dihydroisochinolin."
+              "explanation": "Bischler-Napieralski-Cyclisierung (POCl_3) → 3,4-Dihydroisochinolin.",
+              "mol": "\n     RDKit          2D\n\n 25 27  0  0  0  0  0  0  0  0999 V2000\n   25.3530  -16.7060    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   24.0590  -17.3530    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   22.7940  -16.7650    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   21.4710  -17.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   20.2350  -16.7650    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   20.2350  -15.2940    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   19.1180  -14.5590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   19.1180  -13.0880    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   20.4410  -12.3530    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   20.4410  -10.9410    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   19.1180  -10.2350    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   17.7940  -10.9410    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   16.4710  -10.2350    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   15.1470  -10.9410    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   13.9710  -10.1470    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   12.7060  -10.8820    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   15.1470  -12.3530    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   13.9710  -13.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   12.7060  -12.3530    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   16.4710  -13.0880    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   17.7940  -12.3530    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   21.4710  -14.5590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   22.7940  -15.2940    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   24.0590  -14.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   25.3530  -15.2350    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 12 13  2  0\n 13 14  1  0\n 14 15  1  0\n 15 16  1  0\n 14 17  2  0\n 17 18  1  0\n 18 19  1  0\n 17 20  1  0\n 20 21  2  0\n  6 22  2  0\n 22 23  1  0\n 23 24  1  0\n 24 25  1  0\n 23  3  2  0\n 21  8  1  0\n 21 12  1  0\nM  END\n"
             },
             {
               "id": "P",
               "label": "Papaverin",
               "given": true,
-              "smiles": "COc1ccc(Cc2nccc3cc(OC)c(OC)cc23)cc1OC"
+              "smiles": "COc1ccc(Cc2nccc3cc(OC)c(OC)cc23)cc1OC",
+              "mol": "\n     RDKit          2D\n\n 25 27  0  0  0  0  0  0  0  0999 V2000\n   25.3530  -16.7060    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   24.0590  -17.3530    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   22.7940  -16.7650    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   21.4710  -17.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   20.2350  -16.7650    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   20.2350  -15.2940    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   19.1180  -14.5590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   19.1180  -13.0880    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   20.4410  -12.3530    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   20.4410  -10.9410    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   19.1180  -10.2350    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   17.7940  -10.9410    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   16.4710  -10.2350    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   15.1470  -10.9410    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   13.9710  -10.1470    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   12.7060  -10.8820    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   15.1470  -12.3530    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   13.9710  -13.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   12.7060  -12.3530    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   16.4710  -13.0880    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   17.7940  -12.3530    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   21.4710  -14.5590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   22.7940  -15.2940    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   24.0590  -14.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   25.3530  -15.2350    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  2  0\n 13 14  1  0\n 14 15  1  0\n 15 16  1  0\n 14 17  2  0\n 17 18  1  0\n 18 19  1  0\n 17 20  1  0\n 20 21  2  0\n  6 22  2  0\n 22 23  1  0\n 23 24  1  0\n 24 25  1  0\n 23  3  2  0\n 21  8  1  0\n 21 12  1  0\nM  END\n"
             }
           ],
           "edges": [
@@ -2300,7 +2311,7 @@
                 "V"
               ],
               "to": "A",
-              "reagent_above": "1. NaOH, 2. (CH_3)_2SO_4",
+              "reagent_above": "1. NaOH\n2. (CH_3)_2SO_4",
               "reagent_below": "S_N"
             },
             {
@@ -2332,21 +2343,24 @@
                 "D"
               ],
               "to": "Ee",
-              "reagent_above": "LiAlH_4"
+              "reagent_above": "LiAlH_4",
+              "reagent_below": ""
             },
             {
               "from": [
                 "D"
               ],
               "to": "F",
-              "reagent_above": "H^+/H_2O"
+              "reagent_above": "H^+/H_2O",
+              "reagent_below": ""
             },
             {
               "from": [
                 "F"
               ],
               "to": "Gg",
-              "reagent_above": "SOCl_2"
+              "reagent_above": "SOCl_2",
+              "reagent_below": ""
             },
             {
               "from": [
@@ -2355,7 +2369,7 @@
               ],
               "to": "H",
               "reagent_above": "Δ",
-              "reagent_below": "-HCl"
+              "reagent_below": "- HCl"
             },
             {
               "from": [
@@ -2370,50 +2384,51 @@
                 "DHI"
               ],
               "to": "P",
-              "reagent_above": "Pt, Δ"
+              "reagent_above": "Pt  Δ",
+              "reagent_below": ""
             }
           ]
         },
-        "body": "D ist Ausgangsmaterial für die zwei Schlüsselbausteine E und G des Papaverins.",
+        "body": "a) Zeichnen Sie Strukturformeln (Konstitutionsformeln) der Verbindungen A, B und C.\nD ist Ausgangmaterial für die zwei Schlüsselbausteine E und G des Papaverins.\nd) Zeichnen Sie die Konstitutionsformeln von E, F und H.",
         "hints": [
-          "E ist ein Amin mit der Zusammensetzung (m/m): 66,3 % C, 8,3 % H, 7,7 % N, Rest O."
+          "Dabei ist E ein Amin mit der Zusammensetzung (m/m): 66,3% C, 8,3% H, 7,7% N, Rest O;"
         ]
       },
       {
         "type": "short_answer",
-        "title": "Reaktionstypen (b)",
-        "prompt": "Was müsste man statt der beiden Fragezeichen (B → C und C → D) als Reaktionstypen unter die Pfeile schreiben?",
-        "expected_answer": "Beide Male S_N (nucleophile Substitution)."
+        "title": "b)",
+        "prompt": "Was müsste man statt der beiden Fragezeichen als Reaktionstypen unter die Pfeile schreiben?",
+        "expected_answer": "S_N (Nucleophile Substitution)"
       },
       {
         "type": "short_answer",
-        "title": "Summenformel von E (c)",
+        "title": "c)",
         "prompt": "Berechnen Sie die Summenformel von E.",
-        "expected_answer": "C_10H_15NO_2"
+        "expected_answer": "C: 66,3/12,01 = 5,520; H: 8,3/1,01 = 8,218; N: 7,7/14,01 = 0,5496; O: 17,7/16 = 1,044; Alle Quotienten durch 0,5496 ⇒ C_10H_15NO_2"
       },
       {
         "type": "multiple_choice",
-        "title": "Stoffklasse von H",
-        "prompt": "Zu welcher Stoffklasse gehört die Verbindung H?",
+        "title": "e)",
+        "prompt": "Kreuzen Sie die richtige Antwort an.",
         "choices": [
           {
             "id": "a",
-            "label": "Ester",
+            "label": "H ist ein Ester.",
             "correct": false
           },
           {
             "id": "b",
-            "label": "sekundäres Amin",
+            "label": "H ist ein sekundäres Amin.",
             "correct": false
           },
           {
             "id": "c",
-            "label": "Säureamid",
+            "label": "H ist ein Säureamid.",
             "correct": true
           },
           {
             "id": "d",
-            "label": "Peptid",
+            "label": "H ist ein Peptid.",
             "correct": false
           }
         ],
