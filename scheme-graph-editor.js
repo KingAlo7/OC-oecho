@@ -756,11 +756,12 @@
             <button class="sg-btn" data-act="zoomin" title="Zoom +">＋</button>
             <button class="sg-btn" data-act="zoomout" title="Zoom -">−</button>
             <span class="sg-zoom-label">100 %</span>
-            <span class="sg-hint">Knoten ziehen · von ⇢-Griff zu Knoten ziehen = Pfeil · Klick = auswählen · G = vorgegeben · Entf = löschen · Strg + Mausrad = Zoom</span>
+            <span class="sg-hint">Knoten ziehen · von ⇢-Griff zu Knoten ziehen = Pfeil · Klick = auswählen · Doppelklick = Ketcher · Klick auf Pfeil = Reagenzien direkt eintippen · G = vorgegeben · Entf = löschen · Strg + Mausrad = Zoom</span>
           </div>` + canvas;
       }
       this.svg = this.container.querySelector('.sg-canvas');
       this.viewport = this.svg.querySelector('.sg-viewport');
+      if (!this.readOnly) this._buildInlineEdit();
       this.zoomLabel = this.container.querySelector('.sg-zoom-label');
       this.toolbar = this.container.querySelector('.sg-toolbar');
     }
@@ -1191,6 +1192,7 @@
       this._placed = [];
       this._lines = [];
       this._labelJobs = [];
+      this._seatOf = new Map();   // edge → { sg, mode }: where its text sits
 
       const usePlan = this._plan && this._isAutoLayout() && this._plan.sig === this._planSig();
       const planned = usePlan ? this._drawPlan(layer) : new Set();
@@ -1253,6 +1255,7 @@
         else this._drawFanIn(layer, i, f);
       });
       this._flushLabels();
+      this._syncInlineEdit();
     }
 
     /* Draw the reactions exactly as planned. Returns the edge indices
@@ -1737,6 +1740,11 @@
        avoid other arrows as well as structures and earlier labels. */
     _placeLabel(segs, edge, g) {
       const m = edgeLabelMetrics(edge);
+      // An empty arrow still gets a seat, so it can be typed on in place.
+      if (segs.length && this._seatOf && !this._seatOf.has(edge)) {
+        const hs = segs.find(sg => sg.dir === 'h') || segs[0];
+        this._seatOf.set(edge, { sg: hs, mode: hs.dir === 'h' ? 'h' : 'vr' });
+      }
       if (!m.above.length && !m.below.length || !segs.length) return null;
       if (this._labelJobs && g) { this._labelJobs.push({ segs, edge, g }); return null; }
       return this._pickSeat(segs, edge);
@@ -1807,6 +1815,9 @@
       }
       if (dry) return best.score;
       if (this._placed) this._placed.push(best.bb);
+      if (this._seatOf) this._seatOf.set(edge, { sg: best.sg, mode: best.mode });
+      // The edge being typed on shows the inputs instead of its text.
+      if (this._editEdge === edge) return null;
       return this._labelEl(best.sg, edge, best.mode);
     }
 
@@ -1878,6 +1889,7 @@
       return { in: i, out: o };
     }
     _applyView() {
+      if (this._inline) requestAnimationFrame(() => this._syncInlineEdit());
       this.viewport.setAttribute('transform',
         `translate(${this.viewX} ${this.viewY}) scale(${this.scale})`);
       if (this.zoomLabel) {
@@ -1954,6 +1966,7 @@
       this.refresh();
       this.select('edge', this.scheme.edges.length - 1);
       this.onChange();
+      this.editEdgeText(this.scheme.edges.length - 1);
       return true;
     }
 
@@ -1971,6 +1984,9 @@
       const e = this.scheme.edges[idx];
       if (!e) return;
       Object.assign(e, patch);
+      // Reagent text changes the plan signature; re-plan so the arrow
+      // keeps its planned route instead of dropping to free routing.
+      if (this._isAutoLayout()) this.autoLayout();
       this.refresh();
       this.onChange();
     }
@@ -1978,15 +1994,108 @@
     select(kind, key) {
       if (!kind) {
         this.selected = null;
+        this._editEdge = null;
         this.refresh();
         this.onSelectNode(null);
         this.onSelectEdge(null);
         return;
       }
       this.selected = kind === 'node' ? { kind, id: key } : { kind, idx: key };
+      this._editEdge = kind === 'edge' ? this.scheme.edges[key] : null;
       this.refresh();
       if (kind === 'node') this.onSelectNode(this._nodeById(key));
       else                 this.onSelectEdge(this.scheme.edges[key], key);
+    }
+
+    /* ─── In-place reagent editing (WYSIWYG) ─────────────────────
+       A selected arrow gets two text fields exactly where its reagent
+       (above) and condition (below) text is drawn. Typing updates the
+       scheme live; the SVG text of that arrow is suppressed meanwhile. */
+    _buildInlineEdit() {
+      if (getComputedStyle(this.container).position === 'static') this.container.style.position = 'relative';
+      const box = document.createElement('div');
+      box.className = 'sg-inline-edit';
+      box.hidden = true;
+      box.innerHTML =
+        '<input class="sg-ie-above" placeholder="Reagenz" spellcheck="false" autocomplete="off">' +
+        '<input class="sg-ie-below" placeholder="Bedingungen" spellcheck="false" autocomplete="off">';
+      this.container.appendChild(box);
+      const [ia, ib] = box.querySelectorAll('input');
+      this._inline = { box, ia, ib };
+      let t = null;
+      const onInput = () => {
+        const e = this._editEdge;
+        if (!e) return;
+        e.reagent_above = ia.value;
+        e.reagent_below = ib.value;
+        this._sizeInline();
+        clearTimeout(t);
+        // Re-planning and re-rendering is too heavy per keystroke.
+        t = setTimeout(() => {
+          if (this._isAutoLayout()) this.autoLayout();
+          this.refresh();
+          this.onChange();
+        }, 160);
+      };
+      ia.addEventListener('input', onInput);
+      ib.addEventListener('input', onInput);
+      const keys = ev => {
+        if (ev.key === 'Enter' && ev.target === ia) { ev.preventDefault(); ib.focus(); }
+        else if (ev.key === 'Enter' || ev.key === 'Escape') { ev.preventDefault(); ev.target.blur(); this.svg.focus(); }
+        else if (ev.key === 'Tab' && !ev.shiftKey && ev.target === ia) { ev.preventDefault(); ib.focus(); }
+      };
+      ia.addEventListener('keydown', keys);
+      ib.addEventListener('keydown', keys);
+      // Keep the canvas from starting a pan/deselect under the fields.
+      box.addEventListener('pointerdown', ev => ev.stopPropagation());
+    }
+
+    _sizeInline() {
+      const { ia, ib } = this._inline;
+      const fs = Math.max(10, Math.min(18, 11.5 * this.scale));
+      for (const el of [ia, ib]) {
+        const len = CT.plain(el.value || el.placeholder).length;
+        el.style.fontSize = (el === ib ? fs * 0.92 : fs) + 'px';
+        el.style.width = Math.max(4, len + 2) + 'ch';
+      }
+    }
+
+    _syncInlineEdit() {
+      const ie = this._inline;
+      if (!ie) return;
+      const e = this._editEdge;
+      const seat = e && this._seatOf && this._seatOf.get(e);
+      if (!e || !seat || !this.scheme.edges.includes(e)) { ie.box.hidden = true; return; }
+      ie.box.hidden = false;
+      if (document.activeElement !== ie.ia) ie.ia.value = e.reagent_above || '';
+      if (document.activeElement !== ie.ib) ie.ib.value = e.reagent_below || '';
+      this._sizeInline();
+      const sg = seat.sg;
+      const mx = (sg.x1 + sg.x2) / 2, my = (sg.y1 + sg.y2) / 2;
+      // SVG elements have no offsetLeft/Top; measure against the host.
+      const hr = this.container.getBoundingClientRect(), cr = this.svg.getBoundingClientRect();
+      const ox = cr.left - hr.left - this.container.clientLeft, oy = cr.top - hr.top - this.container.clientTop;
+      const sx = ox + this.viewX + mx * this.scale;
+      const sy = oy + this.viewY + my * this.scale;
+      const ha = ie.ia.offsetHeight || 22, gap = 3;
+      const place = (el, left, top) => { el.style.left = left + 'px'; el.style.top = top + 'px'; };
+      if (seat.mode === 'h') {
+        place(ie.ia, sx - ie.ia.offsetWidth / 2, sy - gap - ha);
+        place(ie.ib, sx - ie.ib.offsetWidth / 2, sy + gap);
+      } else {
+        const dx = VLABEL_DX * this.scale;
+        const w = Math.max(ie.ia.offsetWidth, ie.ib.offsetWidth);
+        const left = seat.mode === 'vl' ? sx - dx - w : sx + dx;
+        place(ie.ia, left, sy - ha - 1);
+        place(ie.ib, left, sy + 1);
+      }
+    }
+
+    /* Put the caret into the selected arrow's reagent field. */
+    editEdgeText(idx) {
+      if (this.readOnly) return;
+      if (!this._isSelected('edge', idx)) this.select('edge', idx);
+      if (this._inline && !this._inline.box.hidden) this._inline.ia.focus();
     }
 
     focusNode(id) {
@@ -2328,7 +2437,7 @@
       const edgeEl = e.target.closest('.sg-edge');
       if (edgeEl) {
         e.stopPropagation();
-        this.select('edge', parseInt(edgeEl.dataset.edgeIdx, 10));
+        this.editEdgeText(parseInt(edgeEl.dataset.edgeIdx, 10));
       }
     }
 

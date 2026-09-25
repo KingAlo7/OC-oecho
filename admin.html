@@ -360,6 +360,11 @@ select.fi option{background:var(--surface);color:var(--text);}
 .sg-edge-line{stroke:#3a3a35;stroke-width:1.8;}
 .sg-edge.selected .sg-edge-line{stroke:#e2001a;stroke-width:2.6;}
 .sg-edge-hit{cursor:pointer;}
+.sg-inline-edit{position:absolute;left:0;top:0;width:0;height:0;z-index:5;}
+.sg-inline-edit input{position:absolute;box-sizing:content-box;padding:1px 4px;min-width:3ch;text-align:center;font-family:'Segoe UI',system-ui,sans-serif;font-weight:500;color:#3a3a35;background:rgba(255,255,255,0.92);border:1px dashed #e2001a;border-radius:4px;outline:none;line-height:1.25;}
+.sg-inline-edit input.sg-ie-below{color:#6b6a5d;}
+.sg-inline-edit input:focus{border-style:solid;box-shadow:0 0 0 3px rgba(226,0,26,0.12);}
+.sg-inline-edit input::placeholder{color:#b9b7a8;font-style:italic;}
 .sg-edge-label{font:500 11px 'Segoe UI',system-ui,sans-serif;fill:#3a3a35;pointer-events:none;}
 .sg-edge-label.below{fill:#6b6a5d;font-size:10px;}
 .sg-edge-orphan{stroke:#b87a00;}
@@ -582,6 +587,7 @@ select.fi option{background:var(--surface);color:var(--text);}
     </div>
     <div class="ocl-modal-foot">
       <span class="mol-meta" id="ocl-meta">—</span>
+      <span class="mol-meta" style="flex:1;min-width:14rem" title="Superatom-S-Gruppen und Atom-Aliase werden im Quiz als Kürzel gezeichnet">Kürzel (OMe, OTs, TBS …): Ketcher-Vorlagen → <b>Functional Groups</b>, oder Atome markieren → <b>S-Group → Superatom</b> mit eigenem Namen.</span>
       <button class="sec" onclick="closeStructEditor()">Abbrechen</button>
       <button class="pri" onclick="commitStructEditor()">Übernehmen</button>
     </div>
@@ -1286,12 +1292,7 @@ function renderEdgeDetail(e, idx, key, editor) {
         ${editor.scheme.nodes.map(n => `<option value="${x(n.id)}" ${e.to===n.id?'selected':''}>${x(n.label||n.id)}${n.name?' — '+x(n.name):''}</option>`).join('')}
       </select>
     </div>
-    <div class="row2">
-      <div class="field"><label>Reagenz oben</label>
-        <input value="${x(e.reagent_above||'')}" placeholder="z. B. H_2SO_4" oninput="__edgePatch('${x(key)}',${idx},'reagent_above', this.value)"></div>
-      <div class="field"><label>Reagenz unten</label>
-        <input value="${x(e.reagent_below||'')}" placeholder="z. B. Δ" oninput="__edgePatch('${x(key)}',${idx},'reagent_below', this.value)"></div>
-    </div>
+    <div class="helper-text" style="margin:0.2rem 0 0.4rem">Reagenzien und Bedingungen direkt am Pfeil im Schema eintippen (oben / unten). Enter springt nach unten, Esc beendet. LaTeX-Indizes: <code>H_2SO_4</code>, <code>H_3O^+</code>.</div>
     <div class="sg-detail-actions">
       <button class="danger" onclick="_activeEditor.deleteEdge(${idx})">× Pfeil löschen</button>
     </div>`;

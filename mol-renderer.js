@@ -171,6 +171,92 @@ const MolRenderer = (() => {
     return out;
   }
 
+  /* Superatom S-groups — what Ketcher writes for an abbreviation from
+   * its Functional-Groups library (OMe, Ts, TBDMS, Boc, OAc …) or for
+   * any selection turned into a "Superatom" S-group with a custom name:
+   *     M  STY  1   1 SUP
+   *     M  SAL   1  2   5   6
+   *     M  SAP   1  1   5   4   1
+   *     M  SMT   1 OMe
+   * Every atom is still written out, and OCL ignores S-groups, so the
+   * group would be drawn in full. Returns [{ label, atoms, anchor }]
+   * with zero-based atom indices; groups Ketcher marks as expanded
+   * ("M  SDS EXP") are left alone. */
+  function parseSuperatoms(mol) {
+    const groups = new Map(), expanded = new Set();
+    const g = n => { if (!groups.has(n)) groups.set(n, { atoms: [], label: '', anchor: -1, sup: false }); return groups.get(n); };
+    const nums = t => t.trim().split(/\s+/).map(Number);
+    String(mol || '').split(/\r?\n/).forEach(function (line) {
+      let m;
+      if ((m = /^M  STY(.*)$/.exec(line))) {
+        const f = m[1].trim().split(/\s+/);
+        for (let i = 1; i + 1 < f.length; i += 2) if (f[i + 1] === 'SUP') g(Number(f[i])).sup = true;
+      } else if ((m = /^M  SAL\s+(\d+)\s+\d+(.*)$/.exec(line))) {
+        nums(m[2]).forEach(function (a) { if (a) g(Number(m[1])).atoms.push(a - 1); });
+      } else if ((m = /^M  SMT\s+(\d+) (.*)$/.exec(line))) {
+        g(Number(m[1])).label = m[2].trim();
+      } else if ((m = /^M  SAP\s+(\d+)\s+\d+\s+(\d+)/.exec(line))) {
+        const grp = g(Number(m[1]));
+        if (grp.anchor < 0) grp.anchor = Number(m[2]) - 1;
+      } else if ((m = /^M  SDS EXP\s+\d+(.*)$/.exec(line))) {
+        nums(m[1]).forEach(function (n) { expanded.add(n); });
+      }
+    });
+    const out = [];
+    groups.forEach(function (grp, n) {
+      if (grp.sup && grp.label && grp.atoms.length && !expanded.has(n)) out.push(grp);
+    });
+    return out;
+  }
+
+  /* "OMe" bonded to something on its RIGHT reads "MeO" in a textbook:
+     the atom that carries the bond is written next to it. */
+  function _mirrorLabel(label) {
+    const m = /^(CO2|(?:[CNOS]|Si)(?:H\d?)?)([A-Z].*)$/.exec(label);
+    if (!m) return label;
+    return m[1] === 'CO2' ? m[2] + 'O2C' : m[2] + m[1];
+  }
+
+  /* Collapse superatoms to a single labelled atom: the attachment atom
+     keeps its bond and position, the rest of the group is deleted. */
+  function _collapseSuperatoms(m, mol) {
+    const groups = parseSuperatoms(mol);
+    if (!groups.length) return;
+    m.ensureHelperArrays(window.OCL.Molecule.cHelperNeighbours);
+    const drop = [];
+    groups.forEach(function (grp) {
+      const inGrp = new Set(grp.atoms);
+      if (grp.atoms.some(function (a) { return a >= m.getAllAtoms(); })) return;
+      let anchor = inGrp.has(grp.anchor) ? grp.anchor : -1, outer = -1;
+      for (const a of grp.atoms) {
+        for (let k = 0; k < m.getAllConnAtoms(a); k++) {
+          const nb = m.getConnAtom(a, k);
+          if (!inGrp.has(nb) && (anchor < 0 || anchor === a)) { anchor = a; outer = nb; break; }
+        }
+        if (outer >= 0) break;
+      }
+      if (anchor < 0) anchor = grp.atoms[0];
+      let label = grp.label;
+      if (outer >= 0 && m.getAtomX(outer) > m.getAtomX(anchor) + 0.01) label = _mirrorLabel(label);
+      // Atomic number 0 is a pseudo-atom: no implicit H, no element
+      // colour — only the label is drawn, in the bond colour.
+      m.setAtomicNo(anchor, 0);
+      m.setAtomCharge(anchor, 0);
+      m.setAtomCustomLabel(anchor, label);
+      grp.atoms.forEach(function (a) { if (a !== anchor) drop.push(a); });
+    });
+    if (drop.length) m.deleteAtoms(drop);
+  }
+
+  /* Parse a MOL for drawing: aliases first (they are keyed by the
+     original atom order), then superatoms collapse. */
+  function _molFromMolfile(mol, o) {
+    const m = window.OCL.Molecule.fromMolfile(mol);
+    _applyAlias(m, _aliasOpts(mol, o));
+    _collapseSuperatoms(m, mol);
+    return m;
+  }
+
   /* Merge file aliases with any caller-supplied ones (caller wins). */
   function _aliasOpts(mol, o) {
     const fromFile = parseMolAliases(mol);
@@ -188,8 +274,7 @@ const MolRenderer = (() => {
     if (!window.OCL) { _renderError(target, 'OCL not loaded'); return null; }
     const o = Object.assign({}, DEFAULTS, opts || {});
     try {
-      const m = window.OCL.Molecule.fromMolfile(mol);
-      _applyAlias(m, _aliasOpts(mol, o));
+      const m = _molFromMolfile(mol, o);
       const svg = m.toSVG(o.width, o.height, undefined, o);
       return _injectSvg(target, svg);
     } catch (err) {
@@ -461,9 +546,7 @@ const MolRenderer = (() => {
       left = split.reactants;
       right = split.products;
       makeMol = function (molText) {
-        const m = window.OCL.Molecule.fromMolfile(molText);
-        _applyAlias(m, _aliasOpts(molText, o));
-        return m;
+        return _molFromMolfile(molText, o);
       };
       above = o.above || '';
     } else {
@@ -486,8 +569,9 @@ const MolRenderer = (() => {
     const agentCells = [];
     (o.aboveMols || []).filter(Boolean).forEach(function (src) {
       try {
-        const m = isMol(src) ? window.OCL.Molecule.fromMolfile(src) : window.OCL.Molecule.fromSmiles(src);
-        if (isMol(src)) _applyAlias(m, _aliasOpts(src, o)); else _applyAlias(m, o);
+        let m;
+        if (isMol(src)) m = _molFromMolfile(src, o);
+        else { m = window.OCL.Molecule.fromSmiles(src); _applyAlias(m, o); }
         agentCells.push(drawCell(m));
       } catch (err) { /* an unreadable reagent is skipped, not fatal */ }
     });
@@ -571,7 +655,7 @@ const MolRenderer = (() => {
   }
 
   return { ready, drawMol, drawSmiles, drawAuto, drawReaction, reactionSvg, parseReaction,
-           parseMolAliases, splitRxn, isMol, isRxn, rxnSource };
+           parseMolAliases, parseSuperatoms, splitRxn, isMol, isRxn, rxnSource };
 })();
 
 // Expose on window so cross-file consumers (scheme-graph-editor.js,
