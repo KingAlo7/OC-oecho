@@ -363,6 +363,10 @@ select.fi option{background:var(--surface);color:var(--text);}
 .sg-inline-edit{position:absolute;left:0;top:0;width:0;height:0;z-index:5;}
 .sg-inline-edit input{position:absolute;box-sizing:content-box;padding:1px 4px;min-width:3ch;text-align:center;font-family:'Segoe UI',system-ui,sans-serif;font-weight:500;color:#3a3a35;background:rgba(255,255,255,0.92);border:1px dashed #e2001a;border-radius:4px;outline:none;line-height:1.25;}
 .sg-inline-edit input.sg-ie-below{color:#6b6a5d;}
+.sg-ie-tools{position:absolute;display:flex;gap:3px;white-space:nowrap;}
+.sg-ie-tools button{font:600 11px 'Segoe UI',system-ui,sans-serif;padding:2px 6px;border:1px solid var(--border);background:#fff;color:var(--text-soft);border-radius:4px;cursor:pointer;}
+.sg-ie-tools button:hover{border-color:#e2001a;color:#e2001a;}
+.sg-edge-mol-ph{fill:none;stroke:#b9b7a8;stroke-dasharray:3 3;}
 .sg-inline-edit input:focus{border-style:solid;box-shadow:0 0 0 3px rgba(226,0,26,0.12);}
 .sg-inline-edit input::placeholder{color:#b9b7a8;font-style:italic;}
 .sg-edge-label{font:500 11px 'Segoe UI',system-ui,sans-serif;fill:#3a3a35;pointer-events:none;}
@@ -1196,7 +1200,16 @@ function initSynthGraphEditor(scheme, key, q) {
     onChange: () => { mu(); },
     onSelectNode: (n) => renderNodeDetail(n, key, editor),
     onSelectEdge: (e, idx) => renderEdgeDetail(e, idx, key, editor),
-    onRequestStructEdit: (n) => openStructEditorForGraphNode(n, editor)
+    onRequestStructEdit: (n) => openStructEditorForGraphNode(n, editor),
+    // Optional structure drawn above an arrow's text.
+    onRequestEdgeStructEdit: (e, idx) => openStructEditorFor({
+      title: 'Struktur über dem Pfeil (Reaktionsschritt ' + (idx + 1) + ')',
+      load: () => e.reagent_mol || '',
+      save: (mol) => {
+        const i = editor.scheme.edges.indexOf(e);
+        if (i >= 0) editor.updateEdge(i, { reagent_mol: molHasAtoms(mol) ? mol : '' });
+      }
+    })
   });
   if (key === 'main') {
     _activeEditor = editor;
@@ -1292,7 +1305,14 @@ function renderEdgeDetail(e, idx, key, editor) {
         ${editor.scheme.nodes.map(n => `<option value="${x(n.id)}" ${e.to===n.id?'selected':''}>${x(n.label||n.id)}${n.name?' — '+x(n.name):''}</option>`).join('')}
       </select>
     </div>
-    <div class="helper-text" style="margin:0.2rem 0 0.4rem">Reagenzien und Bedingungen direkt am Pfeil im Schema eintippen (oben / unten). Enter springt nach unten, Esc beendet. LaTeX-Indizes: <code>H_2SO_4</code>, <code>H_3O^+</code>.</div>
+    <div class="field"><label>Pfeilform</label>
+      <select onchange="__edgePatch('${x(key)}',${idx},'join', this.value)">
+        <option value="" ${e.join ? '' : 'selected'}>Standard (rechtwinklig)</option>
+        <option value="y" ${e.join === 'y' ? 'selected' : ''}>Y — schräg zusammenlaufend / verzweigend</option>
+      </select>
+      <small style="color:var(--muted2);display:block;margin-top:0.3rem">Y wirkt bei Pfeilen mit mehreren Edukten (A + B → C) und bei Verzweigungen (A → B, A → C).</small>
+    </div>
+    <div class="helper-text" style="margin:0.2rem 0 0.4rem">Reagenzien und Bedingungen direkt am Pfeil im Schema eintippen (oben / unten). Enter springt nach unten, Esc beendet. LaTeX-Indizes: <code>H_2SO_4</code>, <code>H_3O^+</code>. „⌬ Struktur“ neben dem Feld setzt eine Struktur über den Pfeil.</div>
     <div class="sg-detail-actions">
       <button class="danger" onclick="_activeEditor.deleteEdge(${idx})">× Pfeil löschen</button>
     </div>`;
@@ -2637,6 +2657,8 @@ function _serializeScheme(scheme) {
     const o = { from: e.from || [], to: e.to || '' };
     if (e.reagent_above) o.reagent_above = e.reagent_above;
     if (e.reagent_below) o.reagent_below = e.reagent_below;
+    if (e.reagent_mol)   o.reagent_mol = e.reagent_mol;
+    if (e.join)          o.join = e.join;
     return o;
   });
   return out;

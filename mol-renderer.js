@@ -367,7 +367,7 @@ const MolRenderer = (() => {
     const chunks = raw.split(/\\n|\n/).map(function (s) { return s.trim(); }).filter(Boolean);
     for (const chunk of chunks) {
       if (_measure(_plain(chunk), font) <= RXN_MAX_LINE_W) { out.push(chunk); continue; }
-      const atoms = chunk.split(/(?<=[;,])\s+|\s+\/\s+|\s+(?=dann\s)|\s+(?=\d[.)]\s)/)
+      const atoms = chunk.split(/(?<=[;,])\s+|(?<=\s\/)\s+|\s+(?=dann\s)|\s+(?=\d[.)]\s)/)
                          .map(function (s) { return s.trim(); }).filter(Boolean);
       let line = '';
       for (const a of atoms) {
