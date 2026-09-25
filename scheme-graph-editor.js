@@ -90,6 +90,7 @@
   const EMOL_W         = 86;    // structure slot on an arrow (above its text)
   const EMOL_H         = 58;
   const EMOL_GAP       = 4;     // px between that structure and the text below it
+  const EQ_GAP         = 2.5;   // px each half-arrow of an equilibrium sits off the route
   const EMOL_SCALE     = 0.75;  // reagents are drawn smaller than the compounds
   const MIN_FIT        = 0.72;  // don't pick a grid that needs shrinking below this    // px between compound columns with no arrow between them
 
@@ -192,6 +193,12 @@
       blockH: (above.length + below.length) * LABEL_LINE_H + (mol ? EMOL_H + EMOL_GAP : 0),
       shaft: Math.max(ARROW_MIN, Math.min(ARROW_MAX, Math.ceil(w) + LABEL_PAD_X * 2))
     };
+  }
+
+  /* A node without a structure: its `text` (a compound named in words on
+     the sheet, e.g. "Hirsuten") or the editor's placeholder. */
+  function emptyNodeHtml(n) {
+    return n.text ? `<div class="sg-text-node">${chemHtml(String(n.text))}</div>` : '<div class="sg-ph">(leer)</div>';
   }
 
   function sameLabels(a, b) {
@@ -777,6 +784,12 @@
             <marker id="sg-arrow-sel" viewBox="0 0 ${ARROW_HEAD} ${ARROW_HEAD}" refX="${ARROW_HEAD - 1}" refY="${ARROW_HEAD/2}" markerWidth="${ARROW_HEAD}" markerHeight="${ARROW_HEAD}" orient="auto-start-reverse">
               <path d="M0,0 L${ARROW_HEAD},${ARROW_HEAD/2} L0,${ARROW_HEAD} z" fill="#e2001a"/>
             </marker>
+            <marker id="sg-harpoon" viewBox="0 0 ${ARROW_HEAD} ${ARROW_HEAD}" refX="${ARROW_HEAD - 1}" refY="${ARROW_HEAD/2}" markerWidth="${ARROW_HEAD}" markerHeight="${ARROW_HEAD}" orient="auto">
+              <path d="M0,0 L${ARROW_HEAD},${ARROW_HEAD/2} L0,${ARROW_HEAD/2} z" fill="#3a3a35"/>
+            </marker>
+            <marker id="sg-harpoon-sel" viewBox="0 0 ${ARROW_HEAD} ${ARROW_HEAD}" refX="${ARROW_HEAD - 1}" refY="${ARROW_HEAD/2}" markerWidth="${ARROW_HEAD}" markerHeight="${ARROW_HEAD}" orient="auto">
+              <path d="M0,0 L${ARROW_HEAD},${ARROW_HEAD/2} L0,${ARROW_HEAD/2} z" fill="#e2001a"/>
+            </marker>
           </defs>`;
       const canvas = `<svg class="sg-canvas" xmlns="${NS}" tabindex="0">${defs}<g class="sg-viewport"></g></svg>`;
 
@@ -1032,7 +1045,7 @@
           if (!host) continue;
           host.innerHTML = '';
           if (!(n.mol || n.smiles)) {
-            host.innerHTML = '<div class="sg-ph">(leer)</div>';
+            host.innerHTML = emptyNodeHtml(n);
             continue;
           }
           try {
@@ -1135,7 +1148,7 @@
         const t = this._tileSize(n);
         div.innerHTML = `<div class="sg-q" style="width:${t.w}px;height:${t.h}px;font-size:${t.fs}px">${chemHtml(letter.trim() || '?')}</div>`;
       } else if (!(n.mol || n.smiles)) {
-        div.innerHTML = '<div class="sg-ph">(leer)</div>';
+        div.innerHTML = emptyNodeHtml(n);
       }
       fo.appendChild(div);
       g.appendChild(fo);
@@ -1225,7 +1238,7 @@
       div.className = 'sg-struct-host';
       div.setAttribute('data-struct-host', n.id);
       div.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fff;border-radius:4px;';
-      if (!(n.mol || n.smiles)) div.innerHTML = '<div class="sg-ph">(leer)</div>';
+      if (!(n.mol || n.smiles)) div.innerHTML = emptyNodeHtml(n);
       fo.appendChild(div);
       g.appendChild(fo);
 
@@ -1537,6 +1550,8 @@
     }
 
     _addPath(g, d, idx, head, extraCls) {
+      const e = this.scheme.edges[idx];
+      if (head && e && e.equilibrium) return this._addEquilibrium(g, d, idx, extraCls);
       const attrs = { class: 'sg-edge-line' + (extraCls ? ' ' + extraCls : ''), d, fill: 'none' };
       if (this._lines) {
         const v = String(d).match(/-?\d+(?:\.\d+)?/g) || [];
@@ -1546,6 +1561,34 @@
       }
       if (head) attrs['marker-end'] = this._isSelected('edge', idx) ? 'url(#sg-arrow-sel)' : 'url(#sg-arrow)';
       g.appendChild(svg('path', attrs));
+      if (!this.readOnly) {
+        g.appendChild(svg('path', { class: 'sg-edge-hit', d, fill: 'none', stroke: 'transparent', 'stroke-width': 14 }));
+      }
+    }
+
+    /* Equilibrium (edge.equilibrium): two parallel half-arrows, the upper
+       one forward, the lower one back — each shifted off the route. */
+    _addEquilibrium(g, d, idx, extraCls) {
+      const v = (String(d).match(/-?\d+(?:\.\d+)?/g) || []).map(Number);
+      const pts = [];
+      for (let k = 0; k + 1 < v.length; k += 2) pts.push({ x: v[k], y: v[k + 1] });
+      const nrm = (a, b) => {
+        const dx = b.x - a.x, dy = b.y - a.y, l = Math.hypot(dx, dy) || 1;
+        return { x: dy / l, y: -dx / l };
+      };
+      const shift = s => pts.map((p, i) => {
+        const n1 = i > 0 ? nrm(pts[i - 1], p) : null, n2 = i < pts.length - 1 ? nrm(p, pts[i + 1]) : null;
+        let n = n1 || n2;
+        if (n1 && n2 && Math.abs(n1.x - n2.x) + Math.abs(n1.y - n2.y) > 1e-6) n = { x: n1.x + n2.x, y: n1.y + n2.y };
+        return { x: p.x + n.x * s, y: p.y + n.y * s };
+      });
+      const mk = this._isSelected('edge', idx) ? 'url(#sg-harpoon-sel)' : 'url(#sg-harpoon)';
+      for (const P of [shift(EQ_GAP), shift(-EQ_GAP).reverse()]) {
+        g.appendChild(svg('path', { class: 'sg-edge-line' + (extraCls ? ' ' + extraCls : ''), d: this._pathD(P), fill: 'none', 'marker-end': mk }));
+      }
+      if (this._lines) {
+        for (let k = 1; k < pts.length; k++) this._lines.push({ x1: pts[k - 1].x, y1: pts[k - 1].y, x2: pts[k].x, y2: pts[k].y });
+      }
       if (!this.readOnly) {
         g.appendChild(svg('path', { class: 'sg-edge-hit', d, fill: 'none', stroke: 'transparent', 'stroke-width': 14 }));
       }

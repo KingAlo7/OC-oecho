@@ -587,6 +587,17 @@ def check(qid, si, nid, mb, smiles):
     """The molfile must describe exactly the node's structure, stereo included."""
     back = Chem.MolFromMolBlock(mb)
     want = Chem.CanonSmiles(smiles)
+    if back is not None:
+        # a double bond left open in the SMILES is drawn plain (see mol_block),
+        # so it reads back with the drawn E/Z: that is not a mismatch
+        wm = Chem.MolFromSmiles(smiles)
+        hit = back.GetSubstructMatch(wm)
+        if hit:
+            for b in wm.GetBonds():
+                if b.GetBondType() == Chem.BondType.DOUBLE and b.GetStereo() == Chem.BondStereo.STEREONONE:
+                    bb = back.GetBondBetweenAtoms(hit[b.GetBeginAtomIdx()], hit[b.GetEndAtomIdx()])
+                    if bb is not None:
+                        bb.SetStereo(Chem.BondStereo.STEREONONE)
     # (re-canonicalised from the string: wedge flags on non-stereo atoms,
     # e.g. an allene end, can leave state that shifts the atom ranking)
     got = Chem.CanonSmiles(Chem.MolToSmiles(back)) if back is not None else None
@@ -605,7 +616,21 @@ def mol_block(m):
     if any(a.GetChiralTag() != Chem.ChiralType.CHI_UNSPECIFIED for a in m.GetAtoms()):
         m.SetIntProp('_MolFileChiralFlag', 1)
     mb = Chem.MolToMolBlock(m, kekulize=False)
-    return mb
+    return plain_double_bonds(mb)
+
+
+def plain_double_bonds(mb):
+    """RDKit flags a double bond whose E/Z the SMILES leaves open as
+    'either' (3); OpenChemLib then draws it crossed. The sheet draws it
+    plainly in one geometry, so write it as a normal double bond."""
+    lines = mb.split('\n')
+    ci = next(k for k, l in enumerate(lines) if l.rstrip().endswith('V2000'))
+    na, nb = int(lines[ci][0:3]), int(lines[ci][3:6])
+    for k in range(ci + 1 + na, ci + 1 + na + nb):
+        l = lines[k]
+        if l[6:9].strip() == '2' and l[9:12].strip() == '3':
+            lines[k] = l[:9] + '  0' + l[12:]
+    return '\n'.join(lines)
 
 
 # ── main per-scheme routine ──────────────────────────────────────────
