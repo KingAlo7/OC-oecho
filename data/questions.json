@@ -921,86 +921,121 @@
     "name": "LW 2022 — Terpene und Phenylpropanoide: Elemicin",
     "difficulty": "B",
     "source": "ÖChO Landeswettbewerb 2022 (LW 48), Problem E",
-    "intro": "In dieser Aufgabe geht es um Terpene und Phenylpropanoide. Terpene sind aus Isopreneinheiten (Isopren = 2-Methylbuta-1,3-dien) aufgebaut. Sie können in acyclische und cyclische (mit unterschiedlich vielen Ringen) Terpene eingeteilt werden. Manche Terpene sind Kohlenwasserstoffe, andere sind funktionalisiert. Phenylpropanoide sind Verbindungen, die sich vom Phenylpropan (IUPAC: Propylbenzen) ableiten.",
+    "intro": "Organische Chemie – Terpene und Phenylpropanoide\n\nIn dieser Aufgabe geht es um Terpene und Phenylpropanoide. Terpene sind aus Isopreneinheiten (Isopren = 2-Methylbuta-1,3-dien) aufgebaut. Sie können in acyclische und cyclische (mit unterschiedlich vielen Ringen) Terpene eingeteilt werden. Manche Terpene sind Kohlenwasserstoffe, andere sind funktionalisiert.",
     "sections": [
       {
         "type": "synthesis",
-        "title": "E.1 Rund um den Terpenbaustein Isopren",
+        "title": "E.1",
+        "body": "E.1. Rund um den Terpenbaustein Isopren\na) Zeichnen Sie die Konstitutionsformel des Terpenbausteins Isopren (2-Methylbuta-1,3-dien).\nb) Zeichnen Sie die Konstitutionsformel des Reaktionsproduktes, das durch die vollständige katalytische Hydrierung von Isopren entsteht.\nc) Zeichnen Sie die Konfigurationsformel eines cyclischen, chiralen Isomers von Isopren und kennzeichnen Sie das chirale Zentrum mit einem Sternchen (*).",
         "scheme": {
           "nodes": [
             {
               "id": "IS",
-              "label": "Isopren",
+              "label": "",
               "given": false,
-              "smiles": "C=CC(C)=C"
+              "smiles": "C=CC(C)=C",
+              "caption": "a)",
+              "explanation": "Isopren (2-Methylbuta-1,3-dien)",
+              "mol": "\n     RDKit          2D\n\n  5  4  0  0  0  0  0  0  0  0999 V2000\n    2.5980    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  1  0\n  3  5  2  0\nM  END\n"
             },
             {
               "id": "IH",
               "label": "",
               "given": false,
               "smiles": "CCC(C)C",
-              "name": "2-Methylbutan"
+              "caption": "b)",
+              "explanation": "2-Methylbutan",
+              "mol": "\n     RDKit          2D\n\n  5  4  0  0  0  0  0  0  0  0999 V2000\n    2.5980    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  3  5  1  0\nM  END\n"
+            },
+            {
+              "id": "CB",
+              "label": "",
+              "given": false,
+              "smiles": "C[C@H]1C=CC1",
+              "caption": "c)",
+              "explanation": "3-Methylcyclobuten; * chirales Zentrum an C3",
+              "mol": "\n     RDKit          2D\n\n  5  5  0  0  1  0  0  0  0  0999 V2000\n    2.5600    1.0600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.5000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  2  1  0\n  2  1  1  1\nM  END\n"
+            },
+            {
+              "id": "OD",
+              "label": "",
+              "given": true,
+              "text": "oder"
+            },
+            {
+              "id": "CP",
+              "label": "",
+              "given": false,
+              "smiles": "CC1=C[C@@H]1C",
+              "caption": "c)",
+              "explanation": "1,3-Dimethylcyclopropen; * chirales Zentrum an C3",
+              "mol": "\n     RDKit          2D\n\n  5  5  0  0  1  0  0  0  0  0999 V2000\n   -2.0490   -2.0490    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  1  1\n  4  2  1  0\nM  END\n"
             }
           ],
-          "edges": [
-            {
-              "from": [
-                "IS"
-              ],
-              "to": "IH",
-              "reagent_above": "H_2 (vollständige Hydrierung)"
-            }
-          ]
+          "edges": []
         }
       },
       {
         "type": "synthesis",
-        "title": "E.4 Synthese des Phenylpropanoids Elemicin",
+        "title": "E.4 o)",
+        "body": "E.4. Synthese des Phenylpropanoids Elemicin\no) Zeichnen Sie die Konstitutionsformeln der Verbindungen B, C, D, E und F.",
+        "hints": [
+          "Von B ist ein ^1H-NMR Spektrum gegeben: δ ≈ 12,8 ppm (1H), 7,3 ppm (2H), 3,85 ppm (6H), 3,75 ppm (3H).",
+          "F enthält 10 C-Atome\nElementaranalyse (m/m): C: 60,6%  H: 7,1%  O: 32,3%",
+          "X: als Reinstoff bei RT gasförmig, M=36,5g/mol"
+        ],
         "scheme": {
           "nodes": [
             {
               "id": "A",
               "label": "A",
               "given": true,
-              "smiles": "OC(=O)c1cc(O)c(O)c(O)c1"
+              "smiles": "OC(=O)c1cc(O)c(O)c(O)c1",
+              "mol": "\n     RDKit          2D\n\n 12 12  0  0  0  0  0  0  0  0999 V2000\n    3.7500   -1.2990    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.7500    1.2990    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000    2.5980    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000    0.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000   -2.5980    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  1  0\n  6  8  2  0\n  8  9  1  0\n  8 10  1  0\n 10 11  1  0\n 10 12  2  0\n 12  4  1  0\nM  END\n"
             },
             {
               "id": "B",
               "label": "B",
               "given": false,
               "smiles": "OC(=O)c1cc(OC)c(OC)c(OC)c1",
-              "caption": "C_10H_12O_5"
+              "caption": "C_10H_12O_5",
+              "mol": "\n     RDKit          2D\n\n 15 15  0  0  0  0  0  0  0  0999 V2000\n    3.7500   -1.2990    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.7500    1.2990    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000    2.5980    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000    2.5980    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000    0.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000   -2.5980    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000   -2.5980    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  6  9  2  0\n  9 10  1  0\n 10 11  1  0\n  9 12  1  0\n 12 13  1  0\n 13 14  1  0\n 12 15  2  0\n 15  4  1  0\nM  END\n"
             },
             {
               "id": "C",
               "label": "C",
               "given": false,
-              "smiles": "ClC(=O)c1cc(OC)c(OC)c(OC)c1"
+              "smiles": "ClC(=O)c1cc(OC)c(OC)c(OC)c1",
+              "mol": "\n     RDKit          2D\n\n 15 15  0  0  0  0  0  0  0  0999 V2000\n    3.7500   -1.2990    0.0000 Cl  0  0  0  0  0  0  0  0  0  0  0  0\n    3.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.7500    1.2990    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000    2.5980    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000    2.5980    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000    0.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000   -2.5980    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000   -2.5980    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  6  9  2  0\n  9 10  1  0\n 10 11  1  0\n  9 12  1  0\n 12 13  1  0\n 13 14  1  0\n 12 15  2  0\n 15  4  1  0\nM  END\n"
             },
             {
               "id": "D",
               "label": "D",
               "given": false,
-              "smiles": "NC(=O)c1cc(OC)c(OC)c(OC)c1"
+              "smiles": "NC(=O)c1cc(OC)c(OC)c(OC)c1",
+              "mol": "\n     RDKit          2D\n\n 15 15  0  0  0  0  0  0  0  0999 V2000\n    3.7500   -1.2990    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.7500    1.2990    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000    2.5980    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000    2.5980    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000    0.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000   -2.5980    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000   -2.5980    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  6  9  2  0\n  9 10  1  0\n 10 11  1  0\n  9 12  1  0\n 12 13  1  0\n 13 14  1  0\n 12 15  2  0\n 15  4  1  0\nM  END\n"
             },
             {
               "id": "Ee",
               "label": "E",
               "given": false,
-              "smiles": "N#Cc1cc(OC)c(OC)c(OC)c1"
+              "smiles": "N#Cc1cc(OC)c(OC)c(OC)c1",
+              "mol": "\n     RDKit          2D\n\n 14 14  0  0  0  0  0  0  0  0999 V2000\n    4.5000    0.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000    2.5980    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000    2.5980    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000    0.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000   -2.5980    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000   -2.5980    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  3  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  5  8  2  0\n  8  9  1  0\n  9 10  1  0\n  8 11  1  0\n 11 12  1  0\n 12 13  1  0\n 11 14  2  0\n 14  3  1  0\nM  END\n"
             },
             {
               "id": "F",
               "label": "F",
               "given": false,
               "smiles": "OCc1cc(OC)c(OC)c(OC)c1",
-              "explanation": "LiAlH_4 reduziert die Carbonsäure zum primären Alkohol (C_10H_14O_4)."
+              "explanation": "LiAlH_4 reduziert die Carbonsäure zum primären Alkohol (C_10H_14O_4).",
+              "mol": "\n     RDKit          2D\n\n 14 14  0  0  0  0  0  0  0  0999 V2000\n    3.7500   -1.2990    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000    2.5980    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000    2.5980    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000    0.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000   -2.5980    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000   -2.5980    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  5  8  2  0\n  8  9  1  0\n  9 10  1  0\n  8 11  1  0\n 11 12  1  0\n 12 13  1  0\n 11 14  2  0\n 14  3  1  0\nM  END\n"
             },
             {
               "id": "Gg",
               "label": "G",
               "given": true,
-              "smiles": "O=Cc1cc(OC)c(OC)c(OC)c1"
+              "smiles": "O=Cc1cc(OC)c(OC)c(OC)c1",
+              "mol": "\n     RDKit          2D\n\n 15 15  0  0  0  0  0  0  0  0999 V2000\n    3.7500    1.2990    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000    2.5980    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000    2.5980    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000    0.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000   -2.5980    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000   -2.5980    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.7500   -1.2990    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  5  8  2  0\n  8  9  1  0\n  9 10  1  0\n  8 11  1  0\n 11 12  1  0\n 12 13  1  0\n 11 14  2  0\n 14  3  1  0\n  2 15  1  0\nM  END\n"
             }
           ],
           "edges": [
@@ -1009,8 +1044,8 @@
                 "A"
               ],
               "to": "B",
-              "reagent_above": "1) NaOH(aq), (CH_3)_2SO_4",
-              "reagent_below": "2) HCl(aq)"
+              "reagent_above": "1) NaOH_{(aq)},\n(CH_3)_2SO_4",
+              "reagent_below": "2) HCl_{(aq)}"
             },
             {
               "from": [
@@ -1018,7 +1053,7 @@
               ],
               "to": "C",
               "reagent_above": "SOCl_2",
-              "reagent_below": "-SO_2, -HCl"
+              "reagent_below": "-SO_2\n-HCl"
             },
             {
               "from": [
@@ -1041,59 +1076,106 @@
                 "Ee"
               ],
               "to": "Gg",
-              "reagent_above": "+Y"
+              "reagent_above": "+Y",
+              "reagent_below": ""
             },
             {
               "from": [
                 "B"
               ],
               "to": "F",
-              "reagent_above": "LiAlH_4"
+              "reagent_above": "LiAlH_4",
+              "reagent_below": ""
             },
             {
               "from": [
                 "F"
               ],
               "to": "Gg",
-              "reagent_above": "MnO_2"
+              "reagent_above": "MnO_2",
+              "reagent_below": ""
             }
           ]
-        },
-        "hints": [
-          "F enthält 10 C-Atome. Elementaranalyse (m/m): C: 60,6 %, H: 7,1 %, O: 32,3 %.",
-          "X: als Reinstoff bei RT gasförmig, M = 36,5 g/mol.",
-          "^1H-NMR von B: δ ≈ 12,8 ppm (1H), 7,3 ppm (2H), 3,85 ppm (6H), 3,75 ppm (3H)."
-        ]
+        }
+      },
+      {
+        "type": "short_answer",
+        "title": "E.4 n)",
+        "prompt": "Schreiben Sie die Summenformeln von F und X auf. Der Rechenweg muss nicht gezeigt werden.",
+        "expected_answer": "F: C_10H_14O_4\nX: HCl"
+      },
+      {
+        "type": "multiple_choice",
+        "title": "E.4 p)",
+        "prompt": "Wählen Sie für die Umsetzung von E zu G ein geeignetes Reagenz für Y aus und unterstreichen Sie dieses.",
+        "choices": [
+          {
+            "id": "a",
+            "label": "LiAlH_4 (Lithiumaluminiumhydrid)",
+            "correct": false
+          },
+          {
+            "id": "b",
+            "label": "H_2SO_4 (Schwefelsäure)",
+            "correct": false
+          },
+          {
+            "id": "c",
+            "label": "DIBAL-H (Diisobutylaluminiumhydrid)",
+            "correct": true
+          },
+          {
+            "id": "d",
+            "label": "H_2O_2 (Wasserstoffperoxid)",
+            "correct": false
+          },
+          {
+            "id": "e",
+            "label": "Cr_2O_7^{2-} / H^+ (Dichromat, saures Milieu)",
+            "correct": false
+          },
+          {
+            "id": "f",
+            "label": "KMnO_4 (Kaliumpermanganat)",
+            "correct": false
+          }
+        ],
+        "explanation": "DIBAL-H bleibt bei tiefer Temperatur (-78°C) auf der Aldehyd-Stufe stehen — das tetraedrische Iminoalanat-Intermediat ist stabil und gibt erst beim wässrigen Aufarbeiten den Aldehyd frei. LiAlH_4 würde direkt bis zum primären Amin durchreduzieren (kein selektiver Aldehyd-Erhalt). Genau dieselbe Selektivität nutzt man bei Estern → Aldehyden."
       },
       {
         "type": "synthesis",
-        "title": "E.4 Die weiteren Schritte zum Elemicin",
+        "title": "E.4 q)",
+        "body": "Die weiteren Schritte zum Elemicin können so aussehen:\nI und J sind Stellungsisomere (Regioisomere). Verbindung I kann E- oder Z-konfiguriert vorliegen, Verbindung J hingegen nicht.\nq) Zeichnen Sie die Konfigurationsformel der Verbindung H in (R)-Konfiguration, die von I in (E)-Konfiguration sowie die Konstitutionsformel der Verbindung J",
         "scheme": {
           "nodes": [
             {
               "id": "Gg",
               "label": "G",
               "given": true,
-              "smiles": "O=Cc1cc(OC)c(OC)c(OC)c1"
+              "smiles": "O=Cc1cc(OC)c(OC)c(OC)c1",
+              "mol": "\n     RDKit          2D\n\n 15 15  0  0  0  0  0  0  0  0999 V2000\n    3.7500    1.2990    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000    2.5980    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000    2.5980    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000    0.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000   -2.5980    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000   -2.5980    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.7500   -1.2990    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  5  8  2  0\n  8  9  1  0\n  9 10  1  0\n  8 11  1  0\n 11 12  1  0\n 12 13  1  0\n 11 14  2  0\n 14  3  1  0\n  2 15  1  0\nM  END\n"
             },
             {
               "id": "H",
               "label": "H",
               "given": false,
-              "smiles": "CC[C@@H](O)c1cc(OC)c(OC)c(OC)c1"
+              "smiles": "CC[C@@H](O)c1cc(OC)c(OC)c(OC)c1",
+              "mol": "\n     RDKit          2D\n\n 16 16  0  0  1  0  0  0  0  0999 V2000\n    5.2500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.7500    1.2990    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000    2.5980    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000    2.5980    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000    0.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000   -2.5980    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000   -2.5980    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  6\n  3  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  7 10  2  0\n 10 11  1  0\n 11 12  1  0\n 10 13  1  0\n 13 14  1  0\n 14 15  1  0\n 13 16  2  0\n 16  5  1  0\nM  END\n"
             },
             {
               "id": "I",
               "label": "I",
               "given": false,
-              "smiles": "C/C=C/c1cc(OC)c(OC)c(OC)c1"
+              "smiles": "C/C=C/c1cc(OC)c(OC)c(OC)c1",
+              "mol": "\n     RDKit          2D\n\n 15 15  0  0  0  0  0  0  0  0999 V2000\n    5.2500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000    2.5980    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000    2.5980    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000    0.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000   -2.5980    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000   -2.5980    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  6  9  2  0\n  9 10  1  0\n 10 11  1  0\n  9 12  1  0\n 12 13  1  0\n 13 14  1  0\n 12 15  2  0\n 15  4  1  0\nM  END\n"
             },
             {
               "id": "J",
               "label": "J",
               "given": false,
               "smiles": "C=CCc1cc(OC)c(OC)c(OC)c1",
-              "caption": "Elemicin"
+              "caption": "Elemicin",
+              "mol": "\n     RDKit          2D\n\n 15 15  0  0  0  0  0  0  0  0999 V2000\n    5.2500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000    2.5980    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000    2.5980    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000    0.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000   -2.5980    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.0000   -2.5980    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  6  9  2  0\n  9 10  1  0\n 10 11  1  0\n  9 12  1  0\n 12 13  1  0\n 13 14  1  0\n 12 15  2  0\n 15  4  1  0\nM  END\n"
             }
           ],
           "edges": [
@@ -1102,7 +1184,7 @@
                 "Gg"
               ],
               "to": "H",
-              "reagent_above": "1) H_5C_2-Mg-I",
+              "reagent_above": "1) H_5C_2–Mg–I",
               "reagent_below": "2) H^+/H_2O"
             },
             {
@@ -1111,32 +1193,18 @@
               ],
               "to": "I",
               "reagent_above": "Dehydratisierung",
-              "reagent_below": "p-TsOH (Kat.)"
+              "reagent_below": "p-TsOH (Kat.)\n(=para-Toluensulfonsäure)"
             },
             {
               "from": [
                 "I"
               ],
               "to": "J",
-              "reagent_above": "Isomerisierung"
+              "reagent_above": "Isomerisierung",
+              "reagent_below": ""
             }
           ]
-        },
-        "hints": [
-          "I und J sind Stellungsisomere (Regioisomere). Verbindung I kann E- oder Z-konfiguriert vorliegen, Verbindung J hingegen nicht."
-        ]
-      },
-      {
-        "type": "short_answer",
-        "title": "Summenformeln von F und X (n)",
-        "prompt": "Schreiben Sie die Summenformeln von F und X auf.",
-        "expected_answer": "F: C_10H_14O_4; X: HCl"
-      },
-      {
-        "type": "short_answer",
-        "title": "Reagenz Y (p)",
-        "prompt": "Wählen Sie für die Umsetzung von E zu G ein geeignetes Reagenz Y aus: LiAlH_4, H_2SO_4, DIBAL-H, H_2O_2, Cr_2O_7^{2-}/H^+, KMnO_4.",
-        "expected_answer": "DIBAL-H bleibt bei tiefer Temperatur (-78°C) auf der Aldehyd-Stufe stehen — das tetraedrische Iminoalanat-Intermediat ist stabil und gibt erst beim wässrigen Aufarbeiten den Aldehyd frei. LiAlH_4 würde direkt bis zum primären Amin durchreduzieren (kein selektiver Aldehyd-Erhalt). Genau dieselbe Selektivität nutzt man bei Estern → Aldehyden."
+        }
       }
     ],
     "type": "composed"
