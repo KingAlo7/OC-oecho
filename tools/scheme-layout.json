@@ -2105,5 +2105,550 @@
         }
       }
     }
+  },
+  "bw46-2020-conicein": {
+    "0": {
+      "anchor": "F",
+      "abbrev": [
+        {
+          "smarts": "*-c1ccccc1",
+          "first": 1,
+          "label": "Ph"
+        },
+        {
+          "smarts": "*-OS(=O)(=O)[CH3]",
+          "first": 1,
+          "label": "OMs"
+        }
+      ],
+      "nodes": {
+        "F": {
+          "orient": {
+            "smarts": "O=C1CCC2CCC=CN12",
+            "from": 1,
+            "to": 0,
+            "angle": -60
+          }
+        },
+        "E": {
+          "rigid": true,
+          "align": "F"
+        },
+        "Ed": {
+          "free": true
+        }
+      },
+      "edges": {
+        "B>C": {
+          "smiles": "C=CCCC(Cl)=O"
+        }
+      }
+    }
+  },
+  "bw46-2020-bergamoten": {
+    "0": {
+      "abbrev": [
+        {
+          "smarts": "*-c1ccccc1",
+          "first": 1,
+          "label": "Ph"
+        }
+      ]
+    },
+    "1": {
+      "anchor": "Ed",
+      "nodes": {
+        "Ed": {
+          "orient": {
+            "smarts": "CC(=O)CC",
+            "from": 1,
+            "to": 3,
+            "angle": -30
+          }
+        },
+        "F": {
+          "free": true,
+          "perspective": true,
+          "fusion_h": false,
+          "coords": {
+            "smarts": "[#6]1(~[CH3])(~[CH2])~[#6]2~[#6]~[#6]~[#6](=[CH2])~[#6]1~[#6]2(=O)",
+            "xy": [
+              [
+                4.5,
+                -1.525
+              ],
+              [
+                4.958,
+                -0.767
+              ],
+              [
+                3.542,
+                -1.667
+              ],
+              [
+                5.475,
+                -2.358
+              ],
+              [
+                6.817,
+                -2.358
+              ],
+              [
+                7.875,
+                -1.65
+              ],
+              [
+                6.792,
+                -3.275
+              ],
+              [
+                7.5,
+                -3.875
+              ],
+              [
+                5.267,
+                -3.275
+              ],
+              [
+                4.225,
+                -3.792
+              ],
+              [
+                3.417,
+                -4.25
+              ]
+            ]
+          }
+        },
+        "G": {
+          "free": true,
+          "perspective": true,
+          "fusion_h": false,
+          "coords": {
+            "smarts": "[#6]1(~[CH3])(~[CH2])~[#6]2~[#6]~[#6]~[#6](=[CH2])~[#6]1~[#6]2",
+            "xy": [
+              [
+                4.5,
+                -1.525
+              ],
+              [
+                4.958,
+                -0.767
+              ],
+              [
+                3.542,
+                -1.667
+              ],
+              [
+                5.475,
+                -2.358
+              ],
+              [
+                6.817,
+                -2.358
+              ],
+              [
+                7.875,
+                -1.65
+              ],
+              [
+                6.792,
+                -3.275
+              ],
+              [
+                7.5,
+                -3.875
+              ],
+              [
+                5.267,
+                -3.275
+              ],
+              [
+                4.225,
+                -3.792
+              ]
+            ]
+          }
+        }
+      }
+    }
+  },
+  "bw46-2020-aspidospermin": {
+    "0": {
+      "anchor": "RB",
+      "abbrev": [
+        {
+          "smarts": "*-C(=O)OCC",
+          "first": 1,
+          "label": "CO2Et"
+        }
+      ],
+      "explicit_h": "[CH1;$([CH1]([#7;R])[C;R;X4;H0])]",
+      "nodes": {
+        "RB": {
+          "orient": {
+            "smarts": "O=C1C=CC(CC)(CC)CC1",
+            "from": 1,
+            "to": 4,
+            "angle": 0,
+            "side": [
+              2,
+              "up"
+            ]
+          }
+        },
+        "Gc": {
+          "free": true,
+          "fusion_h": false,
+          "orient": {
+            "smarts": "N[CH1]1CC(=O)CC[C]1(CC)",
+            "from": 1,
+            "to": 7,
+            "angle": 0,
+            "side": [
+              0,
+              "up"
+            ]
+          }
+        },
+        "H": {
+          "fusion_h": false
+        },
+        "I": {
+          "fusion_h": false
+        },
+        "J": {
+          "fusion_h": false
+        },
+        "K": {
+          "fusion_h": false
+        },
+        "BU": {
+          "free": true
+        },
+        "D": {
+          "free": true
+        },
+        "Z": {
+          "free": true
+        },
+        "ASP": {
+          "free": true,
+          "orient": {
+            "smarts": "CC(=O)N1[CH1][C;R3]c2ccccc21",
+            "from": 6,
+            "to": 5,
+            "angle": 0,
+            "side": [
+              3,
+              "down"
+            ]
+          }
+        }
+      },
+      "edges": {
+        "BU>A": {
+          "smiles": "C1CCNC1"
+        },
+        "A>B": {
+          "smiles": "C=CC(=O)OCC"
+        },
+        "B>C": {
+          "smiles": "C1CCNC1"
+        },
+        "Gc>H": {
+          "smiles": "ClCC(Cl)=O"
+        }
+      }
+    }
+  },
+  "bw46-2020-prostaglandin-fragment": {
+    "0": {
+      "abbrev": [
+        {
+          "smarts": "*-OCc1ccccc1",
+          "first": 1,
+          "label": "OBn"
+        },
+        {
+          "smarts": "*-C(=O)O[CH3]",
+          "first": 1,
+          "label": "COOR"
+        }
+      ],
+      "anchor": "P",
+      "nodes": {
+        "Ed": {
+          "free": true,
+          "perspective": true,
+          "fusion_h": false,
+          "coords": {
+            "smarts": "[#6]1(~[CH2])~[#6]2~[#6]=[#6]~[#6]1~[#6](~[OH])(~[#6])~[#6]2",
+            "xy": [
+              [
+                3.971,
+                -0.918
+              ],
+              [
+                2.735,
+                -0.265
+              ],
+              [
+                4.5,
+                -2.259
+              ],
+              [
+                2.912,
+                -2.506
+              ],
+              [
+                2.206,
+                -3.671
+              ],
+              [
+                3.971,
+                -3.388
+              ],
+              [
+                5.294,
+                -4.024
+              ],
+              [
+                6.441,
+                -3.618
+              ],
+              [
+                5.294,
+                -5.529
+              ],
+              [
+                5.912,
+                -2.824
+              ]
+            ]
+          }
+        },
+        "A": {
+          "free": true,
+          "perspective": true,
+          "fusion_h": false,
+          "coords": {
+            "smarts": "[#6]1(~[CH2])~[#6]2~[#6]=[#6]~[#6]1~[#6](~[OH])(~[CH2])~[#6]2",
+            "xy": [
+              [
+                3.971,
+                -0.918
+              ],
+              [
+                2.735,
+                -0.265
+              ],
+              [
+                4.5,
+                -2.259
+              ],
+              [
+                2.912,
+                -2.506
+              ],
+              [
+                2.206,
+                -3.671
+              ],
+              [
+                3.971,
+                -3.388
+              ],
+              [
+                5.294,
+                -4.024
+              ],
+              [
+                6.441,
+                -3.618
+              ],
+              [
+                5.294,
+                -5.529
+              ],
+              [
+                5.912,
+                -2.824
+              ]
+            ]
+          }
+        },
+        "B": {
+          "free": true,
+          "perspective": true,
+          "fusion_h": false,
+          "coords": {
+            "smarts": "[#6]1(~[CH2])~[#6]2~[#6]=[#6]~[#6]1~[#6](~[#8])~[#6]2",
+            "xy": [
+              [
+                3.971,
+                -0.918
+              ],
+              [
+                2.735,
+                -0.265
+              ],
+              [
+                4.5,
+                -2.259
+              ],
+              [
+                2.912,
+                -2.506
+              ],
+              [
+                2.206,
+                -3.671
+              ],
+              [
+                3.971,
+                -3.388
+              ],
+              [
+                5.294,
+                -4.024
+              ],
+              [
+                6.18,
+                -5.24
+              ],
+              [
+                5.912,
+                -2.824
+              ]
+            ]
+          }
+        },
+        "P": {
+          "orient": {
+            "smarts": "C1=CC(O)C(CO)C1CC(=O)O",
+            "from": 0,
+            "to": 1,
+            "angle": -100,
+            "side": [
+              7,
+              "up"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "bw46-2020-pericyclic-da": {
+    "0": {
+      "nodes": {
+        "A": {
+          "free": true,
+          "perspective": true,
+          "fusion_h": false,
+          "coords": {
+            "smarts": "[#6]1~[#6]2~[#6]=[#6]~[#6]1~[#6](~[#6])~[#6]2(~[#6])",
+            "xy": [
+              [
+                3.971,
+                -0.918
+              ],
+              [
+                4.5,
+                -2.259
+              ],
+              [
+                2.912,
+                -2.506
+              ],
+              [
+                2.206,
+                -3.671
+              ],
+              [
+                3.971,
+                -3.388
+              ],
+              [
+                5.294,
+                -4.024
+              ],
+              [
+                5.294,
+                -5.524
+              ],
+              [
+                5.912,
+                -2.824
+              ],
+              [
+                5.912,
+                -1.324
+              ]
+            ]
+          }
+        },
+        "D1": {
+          "free": true
+        },
+        "D2": {
+          "free": true
+        },
+        "FA": {
+          "free": true
+        },
+        "B": {
+          "free": true,
+          "orient": {
+            "smarts": "C1=CC(C)C(C(=O)O)C(C(=O)O)C1C",
+            "from": 0,
+            "to": 1,
+            "angle": -90,
+            "side": [
+              2,
+              "up"
+            ]
+          }
+        }
+      }
+    },
+    "1": {
+      "anchor": "En",
+      "abbrev": [
+        {
+          "smarts": "*-c1ccccc1",
+          "first": 1,
+          "label": "Ph"
+        }
+      ],
+      "nodes": {
+        "En": {
+          "orient": {
+            "smarts": "c1cccc(=C)c1=C",
+            "from": 0,
+            "to": 5,
+            "angle": -30
+          }
+        },
+        "C": {
+          "free": true,
+          "orient": {
+            "smarts": "[OH]C1([#6])c2ccccc2C([#6])[#6][#6]1",
+            "from": 9,
+            "to": 1,
+            "angle": 90,
+            "side": [
+              3,
+              "up"
+            ]
+          }
+        }
+      },
+      "edges": {
+        "En>C": {
+          "smiles": "O=C1C=CC(=O)O1"
+        }
+      }
+    }
   }
 }
