@@ -1224,7 +1224,7 @@ function renderNodeDetail(n, key, editor) {
     <div class="row2">
       <div class="field"><label>Beschriftung (unter der Struktur)</label>
         <input id="nd-label" value="${x(n.label||'')}" placeholder="z. B. A" oninput="__patchSelectedNode('${x(key)}','label', this.value)"></div>
-      <div class="field"><label>Name (nur sichtbar wenn vorgegeben/aufgedeckt)</label>
+      <div class="field"><label>Name ${n.given ? '(unter der Struktur)' : '(sichtbar nach Aufdecken)'}</label>
         <input id="nd-name" value="${x(n.name||'')}" placeholder="z. B. Tropinon" oninput="__patchSelectedNode('${x(key)}','name', this.value)"></div>
     </div>
     <div class="field"><label>Angabe-Text unter der Struktur (immer sichtbar, z. B. Summenformel)</label>
@@ -1237,12 +1237,13 @@ function renderNodeDetail(n, key, editor) {
       </div>
       <small style="color:var(--muted2);display:block;margin-top:0.3rem">Vorgegebene Strukturen sind wie im BW-Angabenblatt von Anfang an sichtbar und müssen nicht aufgedeckt werden. Kurzbefehl: <kbd>G</kbd> bei ausgewähltem Knoten.</small>
     </div>
-    <div class="field"><label>Erläuterung (sichtbar nach Reveal)</label>
+    ${n.given ? '' : `
+    <div class="field"><label>Erläuterung (sichtbar nach Aufdecken)</label>
       <textarea id="nd-expl" oninput="__patchSelectedNode('${x(key)}','explanation', this.value)">${x(n.explanation||'')}</textarea></div>
-    <div class="field"><label>Notiz / Hinweis (kursiv)</label>
+    <div class="field"><label>Notiz / Hinweis (kursiv, nach Aufdecken)</label>
       <input id="nd-note" value="${x(n.note||'')}" oninput="__patchSelectedNode('${x(key)}','note', this.value)"></div>
-    <div class="field"><label>Verwandte Reaktion</label>
-      <select id="nd-rel" onchange="__patchSelectedNode('${x(key)}','related_reaction_id', this.value)">${getReactionOptions(n.related_reaction_id||'')}</select></div>
+    <div class="field"><label>Verwandte Reaktion (Link nach Aufdecken)</label>
+      <select id="nd-rel" onchange="__patchSelectedNode('${x(key)}','related_reaction_id', this.value)">${getReactionOptions(n.related_reaction_id||'')}</select></div>`}
     <details style="margin-top:0.4rem">
       <summary style="cursor:pointer;font-size:0.74rem;color:var(--muted);font-weight:600">SMILES / MOL direkt bearbeiten</summary>
       <div class="field" style="margin-top:0.4rem"><label>SMILES (Fallback wenn kein MOL)</label>
@@ -1316,7 +1317,9 @@ window.__edgePatch = function(key, idx, prop, value) {
   const ed = (key === 'main') ? _activeEditor : _composedSectionEditors[parseInt(key.slice(3),10)];
   if (!ed) return;
   ed.updateEdge(idx, { [prop]: value });
-  renderEdgeDetail(ed.scheme.edges[idx], idx, key, ed);
+  // Re-rendering the panel would replace the <input> being typed in and
+  // drop its focus after every character, so text fields stay untouched.
+  if (prop === 'to') renderEdgeDetail(ed.scheme.edges[idx], idx, key, ed);
 };
 window.__edgeAddFrom = function(key, idx, nodeId) {
   if (!nodeId) return;
@@ -1716,15 +1719,17 @@ function nodeCardEditor(n, i) {
           </div>
           <div class="cf-row" style="padding:0.1rem 0">
             <label style="display:flex;gap:0.4rem;align-items:center;font-size:0.82rem;color:var(--text-soft);font-weight:600;cursor:pointer">
-              <input type="checkbox" ${n.given?'checked':''} onchange="updateNodeProp(${i}, 'given', this.checked); rerenderNode(${i})"> Vorgegeben (sofort sichtbar, kein Reveal)
+              <input type="checkbox" ${n.given?'checked':''} onchange="updateNodeProp(${i}, 'given', this.checked); this.closest('.node-card').querySelector('.sought-only').style.display = this.checked ? 'none' : ''; rerenderNode(${i})"> Vorgegeben (sofort sichtbar, kein Reveal)
             </label>
           </div>
+          <div class="sought-only"${n.given ? ' style="display:none"' : ''}>
           <div class="field"><label>Erläuterung (zeigt sich beim Aufdecken)</label>
             <textarea class="fi" oninput="updateNodeProp(${i}, 'explanation', this.value)">${x(n.explanation||'')}</textarea></div>
           <div class="field"><label>Notiz / Hinweis (optional, kursiv)</label>
             <input class="fi" value="${x(n.note||'')}" oninput="updateNodeProp(${i}, 'note', this.value)"></div>
           <div class="field"><label>Verwandte Reaktion (Link)</label>
             <select class="fi" onchange="updateNodeProp(${i}, 'related_reaction_id', this.value)">${getReactionOptions(n.related_reaction_id||'')}</select>
+          </div>
           </div>
           <details style="margin-top:0.5rem">
             <summary style="cursor:pointer;font-size:0.75rem;color:var(--muted);font-weight:600">SMILES / MOL direkt bearbeiten</summary>
@@ -1780,7 +1785,12 @@ window.addNode = function() {
   const used = new Set((_editScheme.nodes||[]).map(n => n.id));
   let next = 'A';
   for (let c = 65; c <= 90; c++) { const ch = String.fromCharCode(c); if (!used.has(ch)) { next = ch; break; } }
-  _editScheme.nodes.push({ id: next, label: next, given: false });
+  // Start from the previous node's structure (usually shares the skeleton).
+  const prev = _editScheme.nodes[_editScheme.nodes.length - 1];
+  const n = { id: next, label: next, given: false };
+  if (prev && prev.mol)    n.mol = prev.mol;
+  if (prev && prev.smiles) n.smiles = prev.smiles;
+  _editScheme.nodes.push(n);
   rerenderNodes();
   mu();
 };
