@@ -1903,6 +1903,13 @@
         x: opts.x != null ? opts.x : 40,
         y: opts.y != null ? opts.y : 40
       };
+      // Start from the previous node's structure: consecutive steps
+      // usually share most of the skeleton, so editing beats redrawing.
+      const prev = this.scheme.nodes[this.scheme.nodes.length - 1];
+      if (opts.inheritStructure !== false && prev) {
+        if (prev.mol)    n.mol = prev.mol;
+        if (prev.smiles) n.smiles = prev.smiles;
+      }
       this.scheme.nodes.push(n);
       this.refresh();
       this.select('node', id);
@@ -2109,13 +2116,6 @@
       this.svg.addEventListener('pointercancel', e => this._onPointerUp(e));
       this.svg.addEventListener('wheel', e => this._onWheel(e), { passive: false });
       this.svg.addEventListener('click', e => this._onClick(e));
-      this.svg.addEventListener('dblclick', e => {
-        if (this.readOnly) return;
-        const nodeEl = e.target.closest('.sg-node');
-        if (!nodeEl) return;
-        const n = this._nodeById(nodeEl.dataset.node);
-        if (n) this.onRequestStructEdit(n);
-      });
       this._keyHandler = e => {
         if (this.readOnly) return;
         if ((e.key === 'Delete' || e.key === 'Backspace') && this.selected && document.activeElement === this.svg) {
@@ -2266,8 +2266,21 @@
         const wasMoved = this.drag.moved;
         const id = this.drag.id;
         this.drag = null;
-        if (wasMoved) this.onChange();
-        else this.select('node', id);
+        if (wasMoved) { this.onChange(); this._lastNodeTap = null; }
+        else {
+          /* select() rebuilds the node's SVG, so the browser's own
+             dblclick never sees two clicks on the same element —
+             detect the double click here instead. */
+          const now = Date.now(), last = this._lastNodeTap;
+          this._lastNodeTap = { id, t: now };
+          if (last && last.id === id && now - last.t < 450) {
+            this._lastNodeTap = null;
+            const n = this._nodeById(id);
+            if (n) this.onRequestStructEdit(n);
+          } else {
+            this.select('node', id);
+          }
+        }
         try { this.svg.releasePointerCapture(e.pointerId); } catch (_) {}
         return;
       }
