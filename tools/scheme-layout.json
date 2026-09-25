@@ -2650,5 +2650,146 @@
         }
       }
     }
+  },
+  "bw47-2021-thymol": {
+    "0": {
+      "anchor": "C",
+      "nodes": {
+        "C": {
+          "orient": {
+            "smarts": "c1(C(C)C)ccc(C)cc1O",
+            "from": 0,
+            "to": 1,
+            "angle": 90
+          }
+        },
+        "B": {
+          "align": "C"
+        }
+      },
+      "edges": {
+        "B>C": {
+          "smiles": "CC(C)Cl",
+          "orient": {
+            "smarts": "ClC(C)C",
+            "from": 1,
+            "to": 0,
+            "angle": 90
+          }
+        }
+      }
+    }
+  },
+  "bw47-2021-capsaicin": {
+    "0": {
+      "abbrev": [
+        {
+          "smarts": "*-c1ccccc1",
+          "first": 1,
+          "label": "Ph"
+        },
+        {
+          "smarts": "c-O[CH3]",
+          "first": 1,
+          "label": "OMe"
+        }
+      ],
+      "anchor": "V",
+      "nodes": {
+        "V": {
+          "orient": {
+            "smarts": "O=Cc1ccc(O)cc1",
+            "from": 5,
+            "to": 1,
+            "angle": 90
+          }
+        },
+        "C": {
+          "free": true
+        },
+        "D": {
+          "align": "C"
+        },
+        "Zs": {
+          "free": true,
+          "orient": {
+            "smarts": "CC(C)C=CCCCCC(=O)O",
+            "from": 1,
+            "to": 10,
+            "angle": -10
+          }
+        }
+      }
+    }
+  },
+  "bw47-2021-carvon": {
+    "0": {
+      "anchor": "I",
+      "nodes": {
+        "I": {
+          "orient": {
+            "smarts": "CC1=CCC(CC1=O)C(=C)C",
+            "from": 4,
+            "to": 1,
+            "angle": 90
+          }
+        },
+        "F": {
+          "abbrev": [
+            {
+              "smarts": "[CH2]-C1(CC)OCCO1",
+              "first": 1,
+              "label": "R"
+            }
+          ]
+        },
+        "Gc": {
+          "rigid": true,
+          "align": "H"
+        }
+      }
+    }
+  },
+  "bw47-2021-coffein": {
+    "0": {
+      "anchor": "U",
+      "nodes": {
+        "U": {
+          "orient": {
+            "smarts": "[#6]1(=O)~[#7]~[#6](=O)~[#6]~[#6]~[#7]1",
+            "from": 3,
+            "to": 7,
+            "angle": 90,
+            "side": [
+              0,
+              "down"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "bw47-2021-yuehchukene": {
+    "0": {
+      "anchor": "S",
+      "explicit_h": "[CH1;R2;$([CH1]([#6;R])([#6;R])[#6;R])]",
+      "nodes": {
+        "S": {
+          "orient": {
+            "smarts": "c1ccc2c(c1)c(C=O)c[nH]2",
+            "from": 0,
+            "to": 6,
+            "angle": 20,
+            "side": [
+              9,
+              "down"
+            ]
+          }
+        },
+        "A": {
+          "ring_only": true
+        }
+      }
+    }
   }
 }
