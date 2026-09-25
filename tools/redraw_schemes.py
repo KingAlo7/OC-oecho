@@ -687,7 +687,7 @@ def layout_scheme(qid, si, scheme, spec, png_dir=None):
                 # and Cy look alike); atoms hidden in a label are skipped
                 inv = {a.GetIntProp('orig'): a.GetIdx() for a in m.GetAtoms()}
                 hitf = full[nid].GetSubstructMatch(patt)
-                pairs = [(inv[h], tuple(p)) for h, p in zip(hitf, s['coords']['xy']) if h in inv]
+                pairs = [(inv[h], tuple(p)) for h, p in zip(hitf, s['coords']['xy']) if h in inv and p is not None]
             else:
                 hit = m.GetSubstructMatch(patt)
                 pairs = [(hit[i], tuple(p)) for i, p in enumerate(s['coords']['xy'])] if hit else []
