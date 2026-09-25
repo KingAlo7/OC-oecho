@@ -41,6 +41,7 @@ Layout spec: tools/scheme-layout.json
               "coords": {..., "full": true},   # match the coords SMARTS on the uncollapsed molecule
               "bond_stereo": [{"smarts": "...", "atoms": [i, j], "stereo": 1 | 6}],
                                                # write these flags as given (allene axes)
+              "no_check": true,                # skip the SMILES self-check (hand-wedged cage)
               "explicit_h": "SMARTS",          # draw the H on the first atom of each match
               "perspective": true              # hand-placed 3D-perspective core: no wedges
                                                # (or a SMARTS: only its atoms lose their wedges)
@@ -797,7 +798,10 @@ def layout_scheme(qid, si, scheme, spec, png_dir=None):
     for nid, m in placed.items():
         mb = mol_block(expand(m, full[nid], groups[nid], nspec.get(nid, {}).get('wedge', spec.get('wedge'))))
         mb = force_bond_stereo(mb, full[nid], nspec.get(nid, {}).get('bond_stereo'))
-        check(qid, si, nid, mb, Chem.MolToSmiles(full[nid]))
+        # a perspective drawing with hand-set wedges (a cage) cannot be read
+        # back as flat wedges: its SMILES stays the reference, no self-check
+        if not nspec.get(nid, {}).get('no_check'):
+            check(qid, si, nid, mb, Chem.MolToSmiles(full[nid]))
         nodes[nid]['mol'] = mb
 
     # structures drawn on an arrow (above its text)

@@ -213,7 +213,8 @@ const MolRenderer = (() => {
      the atom that carries the bond is written next to it. */
   const MIRRORED = {
     COOH: 'HOOC', CO2H: 'HO2C', CHO: 'OHC', CN: 'NC', NO2: 'O2N', SO3H: 'HO3S', SO3Na: 'NaO3S',
-    CONH2: 'H2NOC', MgCl: 'ClMg', MgBr: 'BrMg', SO2Ar: 'ArO2S', SO2Ph: 'PhO2S', ONa: 'NaO'
+    CONH2: 'H2NOC', MgCl: 'ClMg', MgBr: 'BrMg', SO2Ar: 'ArO2S', SO2Ph: 'PhO2S', ONa: 'NaO',
+    OtBu: 'tBuO', OTs: 'TsO', OTf: 'TfO', OAc: 'AcO', NHBoc: 'BocHN', NHAc: 'AcHN', NHTs: 'TsHN'
   };
   function _mirrorLabel(label) {
     if (MIRRORED[label]) return MIRRORED[label];
