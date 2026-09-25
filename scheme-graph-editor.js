@@ -182,9 +182,11 @@
     const wa = Math.max(0, ...above.map(l => measureText(plainChemText(l), LABEL_FONT_ABOVE)));
     const wb = Math.max(0, ...below.map(l => measureText(plainChemText(l), LABEL_FONT_BELOW)));
     const mol = !!(edge && edge.reagent_mol);
+    // reagent_mol_below: the structure hangs under the arrow (after the below text)
+    const molBelow = mol && !!edge.reagent_mol_below;
     const w  = Math.max(wa, wb, mol ? EMOL_W : 0);
     return {
-      above, below, edge, mol,
+      above, below, edge, mol, molBelow,
       any: mol || above.length > 0 || below.length > 0,
       width: w,
       blockH: (above.length + below.length) * LABEL_LINE_H + (mol ? EMOL_H + EMOL_GAP : 0),
@@ -195,7 +197,8 @@
   function sameLabels(a, b) {
     return (a.reagent_above || '').trim() === (b.reagent_above || '').trim() &&
            (a.reagent_below || '').trim() === (b.reagent_below || '').trim() &&
-           (a.reagent_mol || '') === (b.reagent_mol || '');
+           (a.reagent_mol || '') === (b.reagent_mol || '') &&
+           !a.reagent_mol_below === !b.reagent_mol_below;
   }
 
   /* Arrow shape. Default ('') is the orthogonal textbook routing; 'y'
@@ -927,9 +930,10 @@
         if (it.type !== 'h' && it.type !== 'fork' && it.type !== 'stack') continue;
         const m = edgeLabelMetrics(E[it.rx.edges[0]]);
         if (!m.mol) continue;
-        // The structure sits above the text and reaches into the row gap above.
-        const gi = Math.ceil(it.row) - 1;
-        const need = m.above.length * LABEL_LINE_H + EMOL_H + EMOL_GAP + LABEL_GAP - this.NH / 2 + 20;
+        // The structure sits above the text and reaches into the row gap above
+        // (or below the lower text, reaching into the gap below).
+        const gi = m.molBelow ? Math.floor(it.row) : Math.ceil(it.row) - 1;
+        const need = (m.molBelow ? m.below.length : m.above.length) * LABEL_LINE_H + EMOL_H + EMOL_GAP + LABEL_GAP - this.NH / 2 + 20;
         if (gi >= 0 && gi < rowGap.length) rowGap[gi] = Math.max(rowGap[gi], STACK_GAP + 8 + need);
       }
       const rowY = [];
@@ -1892,7 +1896,7 @@
       const up = m.above.map(lineExtent), dn = m.below.map(lineExtent);
       const sum = (arr, lead) => arr.reduce((a, x) => a + x.up + x.down, 0) + lead * Math.max(0, arr.length - 1);
       const mh = m.mol ? EMOL_H + EMOL_GAP : 0;
-      return { hAbove: sum(up, LINE_LEAD) + mh, hBelow: sum(dn, LINE_LEAD + 2), hAll: sum(up.concat(dn), LINE_LEAD) + mh };
+      return { hAbove: sum(up, LINE_LEAD) + (m.molBelow ? 0 : mh), hBelow: sum(dn, LINE_LEAD + 2) + (m.molBelow ? mh : 0), hAll: sum(up.concat(dn), LINE_LEAD) + mh };
     }
 
     _labelBox(seg, mode, m, ext) {
@@ -2040,7 +2044,7 @@
           put(m.above[i], 'above', mx, base, 'middle');
           cursor = base - ex.up - LINE_LEAD;
         }
-        putMol(mx, m.above.length ? cursor + LINE_LEAD - EMOL_GAP : cursor, 'middle');
+        if (!m.molBelow) putMol(mx, m.above.length ? cursor + LINE_LEAD - EMOL_GAP : cursor, 'middle');
         cursor = my + LABEL_GAP;
         for (const txt of m.below) {
           const ex = lineExtent(txt);
@@ -2048,6 +2052,7 @@
           put(txt, 'below', mx, base, 'middle');
           cursor = base + ex.down + LINE_LEAD + 2;
         }
+        if (m.molBelow) putMol(mx, cursor + EMOL_GAP + EMOL_H, 'middle');
       } else {
         const all = [
           ...m.above.map(t => ({ t, cls: 'above' })),
@@ -2059,12 +2064,13 @@
         const anchor = mode === 'vl' ? 'end' : 'start';
         const molH = m.mol ? EMOL_H + EMOL_GAP : 0;
         let cursor = my - (blockH + molH) / 2;
-        if (m.mol) { putMol(x, cursor + EMOL_H, anchor); cursor += molH; }
+        if (m.mol && !m.molBelow) { putMol(x, cursor + EMOL_H, anchor); cursor += molH; }
         all.forEach((it, k) => {
           const base = cursor + ext[k].up;
           put(it.t, it.cls, x, base, anchor);
           cursor = base + ext[k].down + LINE_LEAD;
         });
+        if (m.molBelow) putMol(x, cursor + EMOL_GAP + EMOL_H, anchor);
       }
       return wrap;
     }

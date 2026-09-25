@@ -36,8 +36,14 @@ Layout spec: tools/scheme-layout.json
               "ring_only": false,              # chain may map onto a ring (pre-folded precursor)
               "fusion_h": false,               # no explicit H at ring-fusion stereocentres
               "release": "SMARTS",             # these atoms are laid out anew, not pinned
+              "pin_all": true,                 # keep every common atom pinned (no re-fanning)
+              "wedge": ["SMARTS"],             # wedge the bond between the first two atoms
+              "coords": {..., "full": true},   # match the coords SMARTS on the uncollapsed molecule
+              "bond_stereo": [{"smarts": "...", "atoms": [i, j], "stereo": 1 | 6}],
+                                               # write these flags as given (allene axes)
               "explicit_h": "SMARTS",          # draw the H on the first atom of each match
               "perspective": true              # hand-placed 3D-perspective core: no wedges
+                                               # (or a SMARTS: only its atoms lose their wedges)
             }
           },
           "abbrev": [...], "ring_only": ...     # defaults for all nodes of the scheme
@@ -48,7 +54,8 @@ Layout spec: tools/scheme-layout.json
     }
 Nodes without an explicit spec are aligned to the placed neighbour with
 the largest common substructure. Structures on arrows (edge.reagent_mol) are written from
-    "edges": {"<from id>><to id>": {"smiles": "...", "orient": {...}, "abbrev": [...]}}
+    "edges": {"<from id>><to id>": {"smiles": "...", "orient": {...}, "abbrev": [...],
+                                    "below": true}}      # drawn under the arrow text
 in the same section spec; other arrows are left alone.
 """
 import json, math, sys, os
@@ -264,15 +271,25 @@ def _mcs(ref, m, timeout, ring_only, any_atom):
     q = Chem.MolFromSmarts(res.smartsString)
     best = {}
     ra = ref.GetSubstructMatches(q, useChirality=False, uniquify=False, maxMatches=5000)
-    ma = m.GetSubstructMatch(q)
-    if not ma:
+    ma_all = m.GetSubstructMatches(q, useChirality=False, uniquify=False, maxMatches=500)
+    if not ma_all:
         return {}
-    # prefer the ref match whose element identities agree most with m
-    score_best = -1
-    for r in ra:
-        s = sum(ref.GetAtomWithIdx(i).GetAtomicNum() == m.GetAtomWithIdx(j).GetAtomicNum() for i, j in zip(r, ma))
-        if s > score_best:
-            score_best, best = s, dict(zip(r, ma))
+    if len(ra) * len(ma_all) > 100000:
+        ma_all = ma_all[:1]
+    qb = [(b.GetBeginAtomIdx(), b.GetEndAtomIdx()) for b in q.GetBonds()]
+    # prefer the pair of matches whose elements, then bond orders, then
+    # degrees agree most (so e.g. the acetyl of an ester maps onto the
+    # acetyl of a ketone, not its O-ethyl part)
+    score_best = None
+    for ma in ma_all:
+        for r in ra:
+            s_el = sum(ref.GetAtomWithIdx(i).GetAtomicNum() == m.GetAtomWithIdx(j).GetAtomicNum() for i, j in zip(r, ma))
+            s_bd = sum(ref.GetBondBetweenAtoms(r[x], r[y]).GetBondType() == m.GetBondBetweenAtoms(ma[x], ma[y]).GetBondType()
+                       for x, y in qb)
+            s_dg = sum(ref.GetAtomWithIdx(i).GetDegree() == m.GetAtomWithIdx(j).GetDegree() for i, j in zip(r, ma))
+            sc = (s_el, s_bd, s_dg)
+            if score_best is None or sc > score_best:
+                score_best, best = sc, dict(zip(r, ma))
     # an explicit H only ever stands in for another H
     return {i: j for i, j in best.items()
             if (ref.GetAtomWithIdx(i).GetAtomicNum() == 1) == (m.GetAtomWithIdx(j).GetAtomicNum() == 1)}
@@ -410,10 +427,11 @@ def collapse(m, abbrevs):
     return mc, groups
 
 
-def expand(mc, full, groups):
+def expand(mc, full, groups, prefer=None):
     """Full molecule with mc's coordinates and Kekulé bonds; the atoms
     hidden in a group get a local layout and a superatom S-group, which
-    the viewer collapses back to the label."""
+    the viewer collapses back to the label. `prefer`: SMARTS list whose
+    first two atoms (stereocentre, neighbour) name the bond to wedge."""
     fm = Chem.Mol(full)
     Chem.Kekulize(fm, clearAromaticFlags=True)
     hidden = set(a for g in groups for a in g['atoms'])
@@ -450,6 +468,14 @@ def expand(mc, full, groups):
     Chem.WedgeMolBonds(wc, wc.GetConformer())
     want = [(b.GetBeginAtom().GetIntProp('orig'), b.GetEndAtom().GetIntProp('orig'))
             for b in wc.GetBonds() if b.GetBondDir() in (Chem.BondDir.BEGINWEDGE, Chem.BondDir.BEGINDASH)]
+    forced = {}
+    for sm in prefer or []:
+        for hit in full.GetSubstructMatches(Chem.MolFromSmarts(sm)):
+            c, n = hit[0], hit[1]
+            if full.GetAtomWithIdx(c).GetChiralTag() != Chem.ChiralType.CHI_UNSPECIFIED:
+                forced.setdefault(c, []).append(n)
+    if forced:   # (a centre may get two, e.g. a bold H and a hashed OH)
+        want = [(i, j) for i, j in want if i not in forced] + [(c, n) for c, ns in forced.items() for n in ns]
     canon = lambda x: Chem.CanonSmiles(Chem.MolToSmiles(x))   # kekulé-insensitive
     ref_smi = canon(full)
     for i, j in want:
@@ -490,6 +516,32 @@ def expand(mc, full, groups):
         # no SAP line: RDKit's own reader rejects the one it writes, and the
         # viewer finds the attachment from the group's outside bond anyway
     return fm
+
+
+def force_bond_stereo(mb, full, specs):
+    """Write wedge flags that RDKit cannot derive itself (e.g. the axial
+    chirality of an allene, drawn with a hashed and a bold bond at one
+    end): each spec {"smarts", "atoms": [i, j], "stereo": 1 (bold) | 6
+    (hashed)} marks the bond hit[i]-hit[j], starting at hit[i]."""
+    if not specs:
+        return mb
+    lines = mb.split('\n')
+    ci = next(k for k, l in enumerate(lines) if l.rstrip().endswith('V2000'))
+    na, nb = int(lines[ci][0:3]), int(lines[ci][3:6])
+    lines[ci] = lines[ci][:12] + '  1' + lines[ci][15:]     # chiral flag (see mol_block)
+    for sp in specs:
+        hit = full.GetSubstructMatch(Chem.MolFromSmarts(sp['smarts']))
+        if not hit:
+            print('   ! bond_stereo pattern not found:', sp['smarts'])
+            continue
+        i, j = hit[sp['atoms'][0]] + 1, hit[sp['atoms'][1]] + 1
+        for k in range(ci + 1 + na, ci + 1 + na + nb):
+            l = lines[k]
+            a1, a2 = int(l[0:3]), int(l[3:6])
+            if {a1, a2} == {i, j}:
+                lines[k] = f'{i:3d}{j:3d}' + l[6:9] + f'{sp["stereo"]:3d}' + l[12:]
+                break
+    return '\n'.join(lines)
 
 
 def bad_double_bonds(m):
@@ -535,7 +587,9 @@ def check(qid, si, nid, mb, smiles):
     """The molfile must describe exactly the node's structure, stereo included."""
     back = Chem.MolFromMolBlock(mb)
     want = Chem.CanonSmiles(smiles)
-    got = Chem.MolToSmiles(back) if back is not None else None
+    # (re-canonicalised from the string: wedge flags on non-stereo atoms,
+    # e.g. an allene end, can leave state that shifts the atom ranking)
+    got = Chem.CanonSmiles(Chem.MolToSmiles(back)) if back is not None else None
     if got != want:
         print(f'   !! {qid}/{si}/{nid}: molfile gives {got}, SMILES is {want}')
         PROBLEMS.append((qid, si, nid))
@@ -545,6 +599,11 @@ PROBLEMS = []
 
 
 def mol_block(m):
+    # chiral flag: the drawn configuration is meant as drawn — without it
+    # OpenChemLib treats a lone stereocentre as racemic and drops its wedge
+    m = Chem.Mol(m)
+    if any(a.GetChiralTag() != Chem.ChiralType.CHI_UNSPECIFIED for a in m.GetAtoms()):
+        m.SetIntProp('_MolFileChiralFlag', 1)
     mb = Chem.MolToMolBlock(m, kekulize=False)
     return mb
 
@@ -574,7 +633,10 @@ def layout_scheme(qid, si, scheme, spec, png_dir=None):
         if ns.get('perspective') and 'coords' in ns:
             # a hand-drawn perspective core shows endo/exo by its geometry;
             # wedges computed as if it were flat would contradict it
-            hit = m.GetSubstructMatch(Chem.MolFromSmarts(ns['coords']['smarts']))
+            # (a SMARTS instead of true limits this to the atoms it matches,
+            # so e.g. wedged ring substituents next to the core keep theirs)
+            pat = ns['perspective'] if isinstance(ns['perspective'], str) else ns['coords']['smarts']
+            hit = m.GetSubstructMatch(Chem.MolFromSmarts(pat))
             for a in hit:
                 m.GetAtomWithIdx(a).SetChiralTag(Chem.ChiralType.CHI_UNSPECIFIED)
         full[nid] = m
@@ -594,14 +656,22 @@ def layout_scheme(qid, si, scheme, spec, png_dir=None):
         s = nspec.get(nid, {})
         if 'coords' in s:
             patt = Chem.MolFromSmarts(s['coords']['smarts'])
-            hit = m.GetSubstructMatch(patt)
-            if not hit:
+            if s['coords'].get('full'):
+                # matched on the full molecule (collapsed labels such as Ph
+                # and Cy look alike); atoms hidden in a label are skipped
+                inv = {a.GetIntProp('orig'): a.GetIdx() for a in m.GetAtoms()}
+                hitf = full[nid].GetSubstructMatch(patt)
+                pairs = [(inv[h], tuple(p)) for h, p in zip(hitf, s['coords']['xy']) if h in inv]
+            else:
+                hit = m.GetSubstructMatch(patt)
+                pairs = [(hit[i], tuple(p)) for i, p in enumerate(s['coords']['xy'])] if hit else []
+            if not pairs:
                 print(f'   ! {qid}/{si}/{nid}: coords pattern not found')
                 depict(m)
                 normalise(m)
             else:
                 # hand-placed core (e.g. a perspective drawing): kept exactly
-                m = pinned_depiction(m, {hit[i]: tuple(p) for i, p in enumerate(s['coords']['xy'])})
+                m = pinned_depiction(m, dict(pairs))
         else:
             depict(m)
             normalise(m)
@@ -620,12 +690,21 @@ def layout_scheme(qid, si, scheme, spec, png_dir=None):
         if len(amap) < 3:
             return None, amap
         rpts = xy(ref)
-        loose = released(mols[rid], m, amap)
+        # pin_all: even substituents around a changed centre stay where they
+        # were (the sheet then only adds the new group)
+        loose = set() if s_.get('pin_all') else released(mols[rid], m, amap)
         if s_.get('release'):
             for hit in m.GetSubstructMatches(Chem.MolFromSmarts(s_['release'])):
                 loose |= set(hit)
         cm = {j: rpts[i] for i, j in amap.items() if j not in loose}
         m0 = m
+        if len(cm) < 2:
+            # (almost) nothing may stay put: own layout, turned as a whole
+            # onto the common atoms so the molecule keeps its direction
+            depict(m)
+            normalise(m)
+            superpose(m, {j: rpts[i] for i, j in amap.items()})
+            return kekulize_like(m, ref_kek[rid], amap), amap
         m = pinned_depiction(m0, cm)
         # a pinned chain can force the wrong E/Z: free that side and retry
         for _ in range(4):
@@ -691,7 +770,8 @@ def layout_scheme(qid, si, scheme, spec, png_dir=None):
         q.append(nxt)
 
     for nid, m in placed.items():
-        mb = mol_block(expand(m, full[nid], groups[nid]))
+        mb = mol_block(expand(m, full[nid], groups[nid], nspec.get(nid, {}).get('wedge', spec.get('wedge'))))
+        mb = force_bond_stereo(mb, full[nid], nspec.get(nid, {}).get('bond_stereo'))
         check(qid, si, nid, mb, Chem.MolToSmiles(full[nid]))
         nodes[nid]['mol'] = mb
 
@@ -710,6 +790,10 @@ def layout_scheme(qid, si, scheme, spec, png_dir=None):
             apply_orient(m, es['orient'])
         m = kekulize_like(m)
         hit[0]['reagent_mol'] = mol_block(expand(m, fm, grp))
+        if es.get('below'):
+            hit[0]['reagent_mol_below'] = True
+        else:
+            hit[0].pop('reagent_mol_below', None)
 
     if png_dir:
         write_png(qid, si, scheme, placed, order, png_dir)
