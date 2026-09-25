@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#c2c5a6">
-<title>OC Referenz — Export</title>
+<title>OC Reaktionen — Export</title>
 <link rel="icon" type="image/svg+xml" href="./assets/logo.svg">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="OC Referenz">
+<meta name="apple-mobile-web-app-title" content="OC Reaktionen">
 <script src="./pwa.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/openchemlib/dist/openchemlib-full.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -213,7 +213,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
         <path fill="#ff0000" d="M 153.27953,54.242684 141.3862,76.472852 73.360897,76.250643 39.904024,139.16308 16.228467,139.27419 v 13.11599 l 23.452832,0.22273 34.124015,62.80081 68.025306,0.11111 11.33781,21.56406 10.67067,-6.55826 -11.67113,-22.11958 33.79071,-62.80082 -34.12402,-62.801331 12.11554,-21.897371 z m -12.0804,35.318258 30.29893,56.472008 -30.37747,56.07874 -60.322938,0.1571 -30.220377,-56.35367 30.220377,-56.27563 z m 13.04727,56.216728 -22.51801,41.95092 3.81166,2.31872 22.518,-41.87289 c 0,0 2.9e-4,-0.0192 -3.81165,-2.39675 z"/>
       </svg>
     </div>
-    <span class="brand-name">OC Referenz</span>
+    <span class="brand-name">OC Reaktionen</span>
     <span class="brand-sub">Export</span>
   </div>
   <a href="./index.html" class="back-link">← Zurück</a>
@@ -461,7 +461,6 @@ const DETAIL_FIELDS = [
   {key:'mechanism',       label:'Mechanismus'},
   {key:'stereochemistry', label:'Stereochemie'},
   {key:'kinetics',        label:'Kinetik'},
-  {key:'seen_in',         label:'Vorkommen im Quiz'},
 ];
 
 /* ════════════════════════════════════════════════════════════════
@@ -1014,7 +1013,7 @@ function buildLatex(selectedReactions, withImages) {
   const adjustboxPkg = withImages ? '\\usepackage[export]{adjustbox}' : '% adjustbox not needed (no images)';
 
   return '% =============================================================\n' +
-'%   OC Referenz — Reaktionskompendium\n' +
+'%   OC Reaktionen — Reaktionskompendium\n' +
 '%   Generiert ' + today + '\n' +
 '%   Kompilieren mit: pdflatex oc-reference.tex\n' +
 '% =============================================================\n\n' +
@@ -1088,7 +1087,7 @@ linespreadCmd + '\n\n' +
 '\\fancyhf{}\n' +
 '\\renewcommand{\\headrulewidth}{0.3pt}\n' +
 '\\renewcommand{\\headrule}{\\color{ocborder}\\hrule width\\headwidth height\\headrulewidth}\n' +
-'\\fancyhead[L]{\\small\\color{ocmuted}OC Referenz}\n' +
+'\\fancyhead[L]{\\small\\color{ocmuted}OC Reaktionen}\n' +
 '\\fancyhead[R]{\\small\\color{ocmuted}ÖChO}\n' +
 '\\fancyfoot[C]{\\small\\color{ocmuted}\\thepage}\n\n' +
 (twocol ? '\\usepackage{multicol}\n' : '') +

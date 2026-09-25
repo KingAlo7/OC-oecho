@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#c2c5a6">
-<title>OC Referenz — Admin</title>
+<title>OC Reaktionen — Admin</title>
 <link rel="icon" type="image/svg+xml" href="./assets/logo.svg">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="OC Referenz">
+<meta name="apple-mobile-web-app-title" content="OC Reaktionen">
 <script src="./pwa.js" defer></script>
 
 <script src="https://cdn.jsdelivr.net/npm/openchemlib/dist/openchemlib-full.js"></script>
@@ -434,18 +434,18 @@ select.fi option{background:var(--surface);color:var(--text);}
 <body>
 
 <header>
-  <a href="./index.html" class="brand brand-home" title="Zur Startseite — Referenz">
+  <a href="./index.html" class="brand brand-home" title="Zur Startseite — Reaktionen">
     <div class="brand-logo">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="14 52 174 187">
         <path fill="#ff0000" d="M 153.27953,54.242684 141.3862,76.472852 73.360897,76.250643 39.904024,139.16308 16.228467,139.27419 v 13.11599 l 23.452832,0.22273 34.124015,62.80081 68.025306,0.11111 11.33781,21.56406 10.67067,-6.55826 -11.67113,-22.11958 33.79071,-62.80082 -34.12402,-62.801331 12.11554,-21.897371 z m -12.0804,35.318258 30.29893,56.472008 -30.37747,56.07874 -60.322938,0.1571 -30.220377,-56.35367 30.220377,-56.27563 z m 13.04727,56.216728 -22.51801,41.95092 3.81166,2.31872 22.518,-41.87289 c 0,0 2.9e-4,-0.0192 -3.81165,-2.39675 z"/>
       </svg>
     </div>
-    <span class="brand-name">OC Referenz</span>
+    <span class="brand-name">OC Reaktionen</span>
     <span class="brand-sub">Admin</span>
   </a>
   <span class="mode-badge" id="mode-badge">…</span>
   <div class="hnav">
-    <a href="./index.html">Referenz</a>
+    <a href="./index.html">Reaktionen</a>
     <a href="./quiz.html">Quiz</a>
     <a href="./export.html">Export</a>
   </div>
@@ -916,12 +916,16 @@ const SECTION_TYPE_LABEL = Object.fromEntries(SECTION_TYPES.map(t => [t.id, t.la
 
 function renderQList(qstr='') {
   const f = (qstr || '').toLowerCase();
-  const cats = [...new Set(questions.map(q => q.category||'Unkategorisiert'))].sort();
+  // Syntheses first, then theory; alphabetical inside each group.
+  const ORDER = ['Mehrstufige Synthesen', 'Theorie'];
+  const all = [...new Set(questions.map(q => q.category||'Theorie'))];
+  const cats = [...ORDER.filter(c => all.includes(c)), ...all.filter(c => !ORDER.includes(c)).sort()];
   const html = cats.map(cat => {
     const items = questions.map((q,i)=>({q,i})).filter(({q}) =>
-      (q.category||'Unkategorisiert')===cat && (!f
+      (q.category||'Theorie')===cat && (!f
         || (q.name||'').toLowerCase().includes(f)
-        || (q.id||'').toLowerCase().includes(f)));
+        || (q.id||'').toLowerCase().includes(f)))
+      .sort((a, b) => (a.q.name||'').localeCompare(b.q.name||'', 'de', { numeric: true, sensitivity: 'base' }));
     if (!items.length) return '';
     return `<div class="cat-hdr">${x(cat)} <span>${items.length}</span></div>`
       + items.map(({q,i}) => {
@@ -965,9 +969,10 @@ function getReactionOptions(selectedId) {
 }
 
 function buildQForm(q) {
-  const cats = [...new Set(questions.map(r => r.category||'Unkategorisiert'))].sort();
-  const catOpts = cats.map(c => `<option value="${x(c)}"${q.category===c?' selected':''}>${x(c)}</option>`).join('')
-                + `<option value="__new__">— Neue Kategorie —</option>`;
+  // Exactly two categories.
+  const cats = ['Mehrstufige Synthesen', 'Theorie'];
+  if (q.category && !cats.includes(q.category)) cats.push(q.category);
+  const catOpts = cats.map(c => `<option value="${x(c)}"${q.category===c?' selected':''}>${x(c)}</option>`).join('');
 
   document.getElementById('q-edit-panel').innerHTML = `
     <div class="fsec">
@@ -2738,10 +2743,9 @@ async function saveQ() {
 }
 
 function newQ() {
-  const cats = [...new Set(questions.map(q => q.category||'Theoriefragen'))];
   const q = {
     id: 'q-'+Date.now(),
-    category: cats[0]||'Theoriefragen',
+    category: 'Mehrstufige Synthesen',
     name: 'Neue Frage',
     type: 'composed',
     sections: [{ type: 'synthesis', title: 'Schema', scheme: { nodes: [], edges: [] } }]

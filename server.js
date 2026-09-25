@@ -22,7 +22,7 @@ app.get('/api/questions',  (_, res) => res.json(read('questions.json')));
 app.post('/api/questions', (req, res) => { write('questions.json', req.body); res.json({ ok: true }); });
 
 app.listen(PORT, () => {
-  console.log(`\n  OC Referenz   →  http://localhost:${PORT}`);
+  console.log(`\n  OC Reaktionen   →  http://localhost:${PORT}`);
   console.log(`  Quiz          →  http://localhost:${PORT}/quiz.html`);
   console.log(`  Admin         →  http://localhost:${PORT}/admin.html`);
   console.log(`  Export        →  http://localhost:${PORT}/export.html`);

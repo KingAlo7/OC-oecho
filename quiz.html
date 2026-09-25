@@ -11,7 +11,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="OC Referenz">
+<meta name="apple-mobile-web-app-title" content="OC Reaktionen">
 <script src="./pwa.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/openchemlib/dist/openchemlib-full.js"></script>
 <script src="./chem-text.js"></script>
@@ -477,7 +477,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 
 <header>
   <button class="hamburger" onclick="toggleSidebar()" aria-label="Menü">☰</button>
-  <a href="./index.html" class="brand brand-home" title="Zur Startseite — Reaktions-Referenz">
+  <a href="./index.html" class="brand brand-home" title="Zur Startseite — Reaktionen">
     <div class="brand-logo">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="14 52 174 187"><path fill="#ff0000" d="M 153.27953,54.242684 141.3862,76.472852 73.360897,76.250643 39.904024,139.16308 16.228467,139.27419 v 13.11599 l 23.452832,0.22273 34.124015,62.80081 68.025306,0.11111 11.33781,21.56406 10.67067,-6.55826 -11.67113,-22.11958 33.79071,-62.80082 -34.12402,-62.801331 12.11554,-21.897371 z m -12.0804,35.318258 30.29893,56.472008 -30.37747,56.07874 -60.322938,0.1571 -30.220377,-56.35367 30.220377,-56.27563 z m 13.04727,56.216728 -22.51801,41.95092 3.81166,2.31872 22.518,-41.87289 c 0,0 2.9e-4,-0.0192 -3.81165,-2.39675 z"/></svg>
     </div>
@@ -488,7 +488,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
     <span class="search-icon">⌕</span>
     <input id="search" type="text" placeholder="Fragen suchen…" oninput="globalSearch(this.value)" autocomplete="off">
   </div>
-  <a href="./index.html" class="nav-link muted">Referenz</a>
+  <a href="./index.html" class="nav-link muted">Reaktionen</a>
   <a href="./admin.html" class="nav-link muted">Admin</a>
   <div class="header-right">
     <span class="count-badge" id="count-badge">— Fragen</span>
@@ -581,22 +581,25 @@ function qVisible(q) {
   return !q.difficulty || diffFilter.has(q.difficulty);
 }
 
+/* Two categories: multi-step syntheses first, everything else is theory.
+   Within a category the list is alphabetical ("BW 2016 — …" < "LW 2017 — …"). */
+const CAT_ORDER = ['Mehrstufige Synthesen', 'Theorie'];
+const byName = (a, b) => (a.name || '').localeCompare(b.name || '', 'de', { numeric: true, sensitivity: 'base' });
+
 function buildSidebar() {
-  // Group questions by primary type instead of free-form category.
   const groups = {};
   for (const q of questions) {
-    const t = qPrimaryType(q);
-    (groups[t] = groups[t] || []).push(q);
+    const c = q.category || 'Theorie';
+    (groups[c] = groups[c] || []).push(q);
   }
-  // Render in the canonical order, then any unknown types alphabetically.
   const orderedTypes = [
-    ...TYPE_GROUP_ORDER.filter(t => groups[t]),
-    ...Object.keys(groups).filter(t => !TYPE_GROUP_ORDER.includes(t)).sort()
+    ...CAT_ORDER.filter(c => groups[c]),
+    ...Object.keys(groups).filter(c => !CAT_ORDER.includes(c)).sort()
   ];
 
   document.getElementById('cat-list').innerHTML = orderedTypes.map(typeKey => {
-    const items = groups[typeKey];
-    const label = TYPE_GROUP_LABEL[typeKey] || typeKey;
+    const items = groups[typeKey].slice().sort(byName);
+    const label = typeKey;
     const visibleN = items.filter(qVisible).length;
     return `<div class="cat-group" data-cat="${x(typeKey)}"${visibleN===0?' style="display:none"':''}>
       <div class="cat-header" onclick="toggleCat(this)">
@@ -647,7 +650,7 @@ function showWelcome() {
     <div class="welcome">
       <div class="welcome-logo">${LOGO_SVG}</div>
       <h1>OC <span class="red">Quiz</span></h1>
-      <p>Interaktive Aufgaben rund um organische Chemie: mehrstufige Synthesen mit schrittweisem Lösungspfad, Regioselektivität, Mechanismen und Theorie. Jede Lösung verlinkt zurück auf die passende Reaktion in der Referenz.</p>
+      <p>Interaktive Aufgaben rund um organische Chemie: mehrstufige Synthesen mit schrittweisem Lösungspfad, Regioselektivität, Mechanismen und Theorie. Jede Lösung verlinkt zurück auf die passende Reaktion unter Reaktionen.</p>
       <div class="welcome-stats">${statsHtml}</div>
     </div>`;
 }

@@ -1,7 +1,7 @@
 {
-  "name": "OC Referenz — ÖChO",
-  "short_name": "OC Referenz",
-  "description": "Referenz und Quiz zu Reaktionen der Organischen Chemie für die Österreichische Chemieolympiade.",
+  "name": "OC Reaktionen — ÖChO",
+  "short_name": "OC Reaktionen",
+  "description": "Reaktionen und Quiz der Organischen Chemie für die Österreichische Chemieolympiade.",
   "lang": "de",
   "dir": "ltr",
   "id": "./",

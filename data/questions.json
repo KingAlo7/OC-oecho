@@ -2,7 +2,7 @@
   {
     "id": "stork-cantharidin-1951",
     "category": "Mehrstufige Synthesen",
-    "name": "Cantharidin — Stork (1951)",
+    "name": "BW 2022 — Cantharidin (Stork 1951)",
     "type": "composed",
     "difficulty": "D",
     "source": "ÖChO Bundeswettbewerb 2022 (BW 48), Aufgabe 2 B — nach Stork, G. et al. J. Am. Chem. Soc. 1951, 73, 4501.",
@@ -287,7 +287,7 @@
   },
   {
     "id": "regio-hbr-propen-markownikow",
-    "category": "Regioselektivität",
+    "category": "Theorie",
     "name": "HBr-Addition an Propen",
     "difficulty": "A",
     "type": "composed",
@@ -321,7 +321,7 @@
   },
   {
     "id": "theorie-sn1-vs-sn2",
-    "category": "Theoriefragen",
+    "category": "Theorie",
     "name": "Faktoren SN1 vs SN2",
     "difficulty": "B",
     "type": "composed",
@@ -335,7 +335,7 @@
   },
   {
     "id": "mechanismus-aldol-base",
-    "category": "Mechanismen",
+    "category": "Theorie",
     "name": "Aldol-Addition (basisch) — Acetaldehyd",
     "difficulty": "B",
     "type": "composed",
@@ -376,7 +376,7 @@
   {
     "id": "lw50-2024-rohypnol",
     "category": "Mehrstufige Synthesen",
-    "name": "Rohypnol (Flunitrazepam) — LW 2024",
+    "name": "LW 2024 — Rohypnol (Flunitrazepam)",
     "type": "composed",
     "difficulty": "C",
     "source": "ÖChO Landeswettbewerb 2024 (LW 50), Problem D.2",
@@ -626,7 +626,7 @@
   {
     "id": "lw49-2023-tazaroten",
     "category": "Mehrstufige Synthesen",
-    "name": "Tazaroten (Aknecreme) — LW 2023",
+    "name": "LW 2023 — Tazaroten (Aknecreme)",
     "difficulty": "C",
     "source": "ÖChO Landeswettbewerb 2023 (LW 49), Problem E",
     "intro": "Gegen Schuppenflechte oder Akne kann Tazaroten (Handelsnamen Zorac® oder Tazorac®) als Creme verschrieben werden. Die Creme enthält üblicherweise 0,05 % (m/m) Tazaroten, der inaktiven Vorstufe des Wirkstoffes. In dieser Aufgabe geht es um die Synthese von Tazaroten ausgehend von 2-Chlor-5-methylpyridin. Im Reaktionsschema sind nicht alle Nebenprodukte (z. B. H_2O, HCl) angegeben.",
@@ -902,7 +902,7 @@
   {
     "id": "lw48-2022-elemicin",
     "category": "Mehrstufige Synthesen",
-    "name": "Terpene und Phenylpropanoide: Elemicin — LW 2022",
+    "name": "LW 2022 — Terpene und Phenylpropanoide: Elemicin",
     "difficulty": "B",
     "source": "ÖChO Landeswettbewerb 2022 (LW 48), Problem E",
     "intro": "In dieser Aufgabe geht es um Terpene und Phenylpropanoide. Terpene sind aus Isopreneinheiten (Isopren = 2-Methylbuta-1,3-dien) aufgebaut. Sie können in acyclische und cyclische (mit unterschiedlich vielen Ringen) Terpene eingeteilt werden. Manche Terpene sind Kohlenwasserstoffe, andere sind funktionalisiert. Phenylpropanoide sind Verbindungen, die sich vom Phenylpropan (IUPAC: Propylbenzen) ableiten.",
@@ -1128,7 +1128,7 @@
   {
     "id": "lw51-2025-cyclohexylethanol",
     "category": "Mehrstufige Synthesen",
-    "name": "1-Cyclohexylethanol — LW 2025",
+    "name": "LW 2025 — 1-Cyclohexylethanol",
     "difficulty": "A",
     "source": "ÖChO Landeswettbewerb 2025 (LW 51), Problem E.1",
     "intro": "Zwei Synthesen. Und so macht man das Cyclohexylethanol: 1. Phenol A (C_6H_6O) wird vollständig zu B hydriert. 2. B wird mit Schwefelsäure behandelt, es bildet sich der Kohlenwasserstoff C. 3. Wird C mit einer sauren Chromat-Lösung erwärmt, entsteht D (C_6H_10O). 4. D wird mit PBr_3 zu E umgesetzt. 5. E wird mit Magnesium und weiter mit der Verbindung X (in Ether) zum 1-Cyclohexylethanol umgesetzt (Grignard-Reaktion).",
@@ -1283,7 +1283,7 @@
   {
     "id": "lw51-2025-sildenafil",
     "category": "Mehrstufige Synthesen",
-    "name": "Sildenafil (Viagra) — LW 2025",
+    "name": "LW 2025 — Sildenafil (Viagra)",
     "difficulty": "D",
     "source": "ÖChO Landeswettbewerb 2025 (LW 51), Problem E.2",
     "intro": "Der Arzneistoff Sildenafil (ursprünglich gegen Herzbeschwerden entwickelt, aber diesbezüglich wirkungslos) erlangte große Bekanntheit, als er 1998 von Pfizer (USA) unter „Viagra\" als Abhilfe bei erektiler Dysfunktion auf den Markt kam. Tipp: Lassen Sie sich bei diesem Reaktionsschema nicht von den großen Strukturen abschrecken. Die Reaktionen sind Ihnen vermutlich wohlbekannt!",
@@ -1536,7 +1536,7 @@
   {
     "id": "lw45-2019-phenylacetylen-routen",
     "category": "Mehrstufige Synthesen",
-    "name": "Ein Student der organischen Chemie — LW 2019",
+    "name": "LW 2019 — Ein Student der organischen Chemie",
     "difficulty": "B",
     "source": "ÖChO Landeswettbewerb 2019 (LW 45), Problem E",
     "intro": "Ein Student, nennen wir ihn in Anlehnung an einen großen deutschen Chemiker des 19. Jahrhunderts Justus, findet in einem Lehrbuch für organische Synthesen seines Großvaters aus dem Jahr 1922 eine Vorschrift für die Synthese der Verbindung X und probiert sie sofort aus.",
@@ -1939,7 +1939,7 @@
   {
     "id": "lw42-2015-phellandral",
     "category": "Mehrstufige Synthesen",
-    "name": "(−)-Phellandral — LW 2016",
+    "name": "LW 2016 — (−)-Phellandral",
     "difficulty": "C",
     "source": "ÖChO Landeswettbewerb 2016 (LW 42)",
     "intro": "(−)-Phellandral ist ein Terpen des Eukalyptusöls. Es wird durch Tollens-Reagenz (ammoniakalische Silbernitratlösung) zur (−)-Phellandrensäure oxidiert, die unter Aufnahme von nur 1 mol Wasserstoff in Dihydrophellandrensäure übergeht. Um die Struktur von Phellandral zu bestimmen, wurde eine Totalsynthese durchgeführt.",
@@ -2178,7 +2178,7 @@
   {
     "id": "lw43-2017-papaverin",
     "category": "Mehrstufige Synthesen",
-    "name": "Papaverin — LW 2017",
+    "name": "LW 2017 — Papaverin",
     "difficulty": "C",
     "source": "ÖChO Landeswettbewerb 2017 (LW 43), Problem E",
     "intro": "Papaverin ist ein Alkaloid des Isochinolin-Typs und besitzt eine direkte krampflösende Wirkung auf die glatte Muskulatur. Es wird z. B. in der Herzchirurgie angewendet. Papaverin ist u. a. im Milchsaft des Schlafmohns enthalten. Nachdem der Österreicher G. Goldschmiedt die Strukturaufklärung durchgeführt hatte, folgte 1908 die erste Totalsynthese durch Pictet und Gams. Wir wollen eine Synthese des Papaverins ausgehend von Vanillin betrachten.",
@@ -2391,7 +2391,7 @@
   {
     "id": "lw44-2018-oxybuprocain",
     "category": "Mehrstufige Synthesen",
-    "name": "Oxybuprocain — LW 2018",
+    "name": "LW 2018 — Oxybuprocain",
     "difficulty": "C",
     "source": "ÖChO Landeswettbewerb 2018 (LW 44), Problem E",
     "intro": "Drei organische Aufgaben. Oxybuprocain (C_17H_28N_2O_3) ist ein wirksames Lokalanästhetikum, das vor allem in der Augenheilkunde und bei Erkrankungen im Hals-Nasen-Ohren-Bereich Verwendung findet. Es liegt dann wegen der besseren Wasserlöslichkeit als Hydrochlorid vor.",
@@ -2670,7 +2670,7 @@
   {
     "id": "lw50-2024-ghb-gbl",
     "category": "Mehrstufige Synthesen",
-    "name": "GHB → GBL (Lactonbildung) — LW 2024",
+    "name": "LW 2024 — GHB → GBL (Lactonbildung)",
     "difficulty": "A",
     "source": "ÖChO Landeswettbewerb 2024 (LW 50), Problem D.1 g/h",
     "intro": "GHB (Gamma-Hydroxybuttersäure, 4-Hydroxybutansäure) wirkt in geringer Dosis enthemmend, in höherer Dosis sedierend. Durch intramolekulare Veresterung entsteht GBL (Gammabutyrolacton).",
@@ -2712,7 +2712,7 @@
   {
     "id": "bw50-2024-merrilacton",
     "category": "Mehrstufige Synthesen",
-    "name": "Merrilacton A — BW 2024",
+    "name": "BW 2024 — Merrilacton A",
     "difficulty": "D",
     "source": "ÖChO Bundeswettbewerb 2024 (BW 50), Aufgabe 2 B",
     "intro": "Von natürlichen Wirkstoffen gegen neurodegenerative Erkrankungen: Merrilacton.",
@@ -2965,7 +2965,7 @@
   {
     "id": "bw50-2024-vitamin-e",
     "category": "Mehrstufige Synthesen",
-    "name": "Vitamin E — Seitenketten-Synthese (BW 2024)",
+    "name": "BW 2024 — Vitamin E — Seitenketten-Synthese",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2024 (BW 50), Aufgabe 2 C",
     "intro": "Vitamin E — auch gegen neurodegenerative Erkrankungen.",
@@ -3163,7 +3163,7 @@
   {
     "id": "bw50-2024-tyr-asp-dipeptid",
     "category": "Mehrstufige Synthesen",
-    "name": "Tyr-Asp Dipeptid — BW 2024",
+    "name": "BW 2024 — Tyr-Asp Dipeptid",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2024 (BW 50), Aufgabe 2 D",
     "intro": "Der Forschung ist es gelungen, die Rolle des Dipeptids (Tyr-Asp) bei der Wirkung auf eine bessere Resistenz bei Pflanzen gegenüber oxidativem und Salzstress zu beschreiben. Das Dipeptid veranlasst eine Modulation des pflanzlichen Glucosestoffwechsels in Richtung der Produktion von NADPH.",
@@ -3422,7 +3422,7 @@
   {
     "id": "bw51-2025-sapropterin",
     "category": "Mehrstufige Synthesen",
-    "name": "Sapropterin (BH4-Analogon) — BW 2025",
+    "name": "BW 2025 — Sapropterin (BH4-Analogon)",
     "difficulty": "D",
     "source": "ÖChO Bundeswettbewerb 2025 (BW 51), Aufgabe 4 B",
     "intro": "Sapropterin ist ein synthetisches Analogon von Tetrahydrobiopterin, einem wichtigen Co-Faktor für Enzyme, die Phenylalanin abbauen. Es wird zur Behandlung bestimmter Formen der Phenylketonurie (PKU) eingesetzt, bei denen eine Restaktivität der Phenylalaninhydroxylase vorhanden ist. Durch die Einnahme können der Phenylalaninspiegel im Blut gesenkt und die Diätanforderungen für PKU-Patienten möglicherweise erleichtert werden.",
@@ -3596,7 +3596,7 @@
   {
     "id": "bw51-2025-farnesol",
     "category": "Mehrstufige Synthesen",
-    "name": "Farnesol — BW 2025",
+    "name": "BW 2025 — Farnesol",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2025 (BW 51), Aufgabe 4 D",
     "intro": "Farnesol wurde um 1905 nach dem Farnese-Akazienbaum (Vachellia farnesiana) benannt, da die Substanz in der Essenz von dessen Blüten identifiziert wurde. Gleich mehrere Wege — Strukturaufklärung und Synthese — führen hier zur Struktur des Farnesols.",
@@ -3877,7 +3877,7 @@
   {
     "id": "bw51-2025-phenylketonurie",
     "category": "Mehrstufige Synthesen",
-    "name": "Phenylketonurie — Stoffwechselpfade von Phenylalanin (BW 2025)",
+    "name": "BW 2025 — Phenylketonurie — Stoffwechselpfade von Phenylalanin",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2025 (BW 51), Aufgabe 4 A",
     "intro": "Phenylketonurie (PKU) ist eine erbliche Stoffwechselstörung, die die Verarbeitung der Aminosäure Phenylalanin A beeinträchtigt. Ohne Behandlung akkumuliert diese im Körper und kann schwere neurologische Schäden verursachen. Durch frühes Screening und eine gezielte Diät lässt sich die Erkrankung jedoch effektiv kontrollieren, sodass Betroffene ein weitgehend normales Leben führen können. Hier einige Stoffwechselpfade.",
@@ -4166,7 +4166,7 @@
   {
     "id": "bw51-2025-fettsaeure-biosynthese",
     "category": "Mehrstufige Synthesen",
-    "name": "Fettsäure-Biosynthese (Palmitinsäure) — BW 2025",
+    "name": "BW 2025 — Fettsäure-Biosynthese (Palmitinsäure)",
     "difficulty": "B",
     "source": "ÖChO Bundeswettbewerb 2025 (BW 51), Aufgabe 5",
     "intro": "Die Fettsäurebiosynthese ist ein anaboler Prozess im Cytosol, bei dem Fettsäuren durch schrittweise Verlängerung aus C_2-Einheiten synthetisiert werden. In Eukaryoten und vielen Bakterien erfolgt die Synthese an einem Multienzymkomplex.",
@@ -4381,7 +4381,7 @@
   {
     "id": "bw49-2023-methylorange",
     "category": "Mehrstufige Synthesen",
-    "name": "Methylorange (Azokupplung) — BW 2023",
+    "name": "BW 2023 — Methylorange (Azokupplung)",
     "difficulty": "B",
     "source": "Ergänzungsaufgabe — im BW 2023 (BW 49) kommt Methylorange nur als Titrationsindikator in Aufgabe 1 vor, nicht als Synthese.",
     "intro": "Methylorange ist ein Azofarbstoff.",
@@ -4476,7 +4476,7 @@
   {
     "id": "bw49-2023-ibuprofen",
     "category": "Mehrstufige Synthesen",
-    "name": "Ibuprofen — BW 2023",
+    "name": "BW 2023 — Ibuprofen",
     "difficulty": "B",
     "source": "ÖChO Bundeswettbewerb 2023 (BW 49), Aufgabe 7 A",
     "intro": "Medien berichteten im Juli 2022 von Lieferengpässen bei Medikamenten für Kinder, vor allem an Fiebersäften mit den Wirkstoffen Ibuprofen und Paracetamol. In dieser Aufgabe beschäftigen Sie sich am Papier mit der Synthese von Ibuprofen (C_13H_18O_2).",
@@ -4605,7 +4605,7 @@
   {
     "id": "bw49-2023-benzocain",
     "category": "Mehrstufige Synthesen",
-    "name": "Benzocain — BW 2023",
+    "name": "BW 2023 — Benzocain",
     "difficulty": "B",
     "source": "ÖChO Bundeswettbewerb 2023 (BW 49), Aufgabe 7 B",
     "intro": "Benzocain gehört zur Wirkstoffgruppe der Lokalanästhetika. Es findet Einsatz in zahlreichen OTC-Präparaten zur Linderung schmerzhafter Beschwerden im Mund- und Rachenbereich. Ein Syntheseweg ausgehend vom Toluen (Methylbenzen) ist hier gezeigt.",
@@ -4725,7 +4725,7 @@
   {
     "id": "bw49-2023-lidocain",
     "category": "Mehrstufige Synthesen",
-    "name": "Lidocain — BW 2023",
+    "name": "BW 2023 — Lidocain",
     "difficulty": "B",
     "source": "ÖChO Bundeswettbewerb 2023 (BW 49), Aufgabe 7 C",
     "intro": "Lidocain gehört ebenfalls zur Wirkstoffgruppe der Lokalanästhetika. Es wirkt lokalanästhetisch, schmerzlindernd, antiarrhythmisch und juckreizlindernd. Die Effekte beruhen auf der Hemmung des Einstroms von Natriumionen in die Neuronen über spannungsabhängige Natriumkanäle.",
@@ -4800,7 +4800,7 @@
   {
     "id": "bw49-2023-porphyrin",
     "category": "Mehrstufige Synthesen",
-    "name": "Porphyrin — elektrochemische Cyclisierung (BW 2023)",
+    "name": "BW 2023 — Porphyrin — elektrochemische Cyclisierung",
     "difficulty": "D",
     "source": "ÖChO Bundeswettbewerb 2023 (BW 49), Aufgabe 8 B",
     "intro": "Porphyrine (von altgriech. porphyrá, Purpurfarbstoff) sind Farbstoffe aus vier Pyrrol-Ringen, die durch vier Methingruppen zu einem Gesamtcyclus verknüpft sind. 1993 schlug Smith einen Mechanismus zur elektrochemischen Synthese von Porphyrinen vor.",
@@ -4868,7 +4868,7 @@
   {
     "id": "bw48-2022-butanon-reaktionen",
     "category": "Mehrstufige Synthesen",
-    "name": "Einige Reaktionen aus der organischen Chemie — BW 2022",
+    "name": "BW 2022 — Einige Reaktionen aus der organischen Chemie",
     "type": "composed",
     "difficulty": "B",
     "source": "ÖChO Bundeswettbewerb 2022 (BW 48), Aufgabe 2 A",
@@ -5090,7 +5090,7 @@
   {
     "id": "bw48-2022-z-jasmon",
     "category": "Mehrstufige Synthesen",
-    "name": "(Z)-Jasmon — BW 2022",
+    "name": "BW 2022 — (Z)-Jasmon",
     "type": "composed",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2022 (BW 48), Aufgabe 2 E",
@@ -5227,7 +5227,7 @@
   {
     "id": "bw48-2022-lysergsaeure-myers-allen",
     "category": "Mehrstufige Synthesen",
-    "name": "Lysergsäure — Synthese des Allens G (BW 2022)",
+    "name": "BW 2022 — Lysergsäure — Synthese des Allens G",
     "difficulty": "D",
     "source": "ÖChO Bundeswettbewerb 2022 (BW 48), Aufgabe 4 B",
     "intro": "Die erste Totalsynthese (racemischer) Lysergsäure gelang Woodward bereits 1956. 2011 veröffentlichten Fujii und Ohno eine enantioselektive Synthese mit einer Palladium-katalysierten Domino-Cyclisierung als Schlüsselschritt. Ausgangsmaterial dieses Schlüsselschritts ist das chirale Allen G, das mithilfe der 1996 von Myers entwickelten Methode aus dem Propargylalkohol E hergestellt werden kann.",
@@ -5340,8 +5340,8 @@
   },
   {
     "id": "bw48-2022-self-splicing-thioester",
-    "category": "Mechanismen",
-    "name": "Self-Splicing bei Proteinen — BW 2022",
+    "category": "Theorie",
+    "name": "BW 2022 — Self-Splicing bei Proteinen",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2022 (BW 48), Aufgabe 2 C",
     "intro": "Protein „self-splicing\" wurde 1990 erstmalig entdeckt. Dabei werden Thioester-Intermediate A gebildet. Es wird heutzutage auch in der Peptidsynthese verwendet.",
@@ -5378,7 +5378,7 @@
   {
     "id": "bw47-2021-thymol",
     "category": "Mehrstufige Synthesen",
-    "name": "Aromastoff in Oregano aus p-Cymol — BW 2021",
+    "name": "BW 2021 — Aromastoff in Oregano aus p-Cymol",
     "type": "composed",
     "difficulty": "B",
     "source": "ÖChO Bundeswettbewerb 2021 (BW 47), Aufgabe 2 A",
@@ -5491,7 +5491,7 @@
   {
     "id": "bw47-2021-capsaicin",
     "category": "Mehrstufige Synthesen",
-    "name": "Scharfstoff der Chili aus Vanillin — BW 2021",
+    "name": "BW 2021 — Scharfstoff der Chili aus Vanillin",
     "type": "composed",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2021 (BW 47), Aufgabe 2 B",
@@ -5647,7 +5647,7 @@
   {
     "id": "bw47-2021-carvon",
     "category": "Mehrstufige Synthesen",
-    "name": "Inhaltsstoff des Kümmels — BW 2021",
+    "name": "BW 2021 — Inhaltsstoff des Kümmels",
     "type": "composed",
     "difficulty": "D",
     "source": "ÖChO Bundeswettbewerb 2021 (BW 47), Aufgabe 2 C",
@@ -5815,7 +5815,7 @@
   {
     "id": "bw46-2020-conicein",
     "category": "Mehrstufige Synthesen",
-    "name": "Conicein — pericyclische Synthese (BW 2020)",
+    "name": "BW 2020 — Conicein — pericyclische Synthese",
     "type": "composed",
     "difficulty": "D",
     "source": "ÖChO Bundeswettbewerb 2020 (BW 46), Aufgabe 5 A",
@@ -5999,7 +5999,7 @@
   {
     "id": "bw46-2020-bergamoten",
     "category": "Mehrstufige Synthesen",
-    "name": "β-trans-Bergamoten (Pheromon) — BW 2020",
+    "name": "BW 2020 — β-trans-Bergamoten (Pheromon)",
     "type": "composed",
     "difficulty": "D",
     "source": "ÖChO Bundeswettbewerb 2020 (BW 46), Aufgabe 5 B",
@@ -6234,7 +6234,7 @@
   {
     "id": "bw46-2020-aspidospermin",
     "category": "Mehrstufige Synthesen",
-    "name": "Aspidospermin (Stork-Synthese, 1963) — BW 2020",
+    "name": "BW 2020 — Aspidospermin (Stork-Synthese, 1963)",
     "difficulty": "E",
     "source": "ÖChO Bundeswettbewerb 2020 (BW 46), Aufgabe 5 C",
     "intro": "In dieser Aufgabe geht es um die Synthese von Aspidospermin, einem monoterpenoiden Indolalkaloid (Stork, G.; Dolfini, J. E. J. Am. Chem. Soc. 1963, 85, 2872). Aspidospermin ist eines von über 100 bekannten Aspidosperma-Alkaloiden und wurde erstmalig aus dem in Chile beheimateten Quebrachobaum isoliert.",
@@ -6494,7 +6494,7 @@
   {
     "id": "bw46-2020-prostaglandin-fragment",
     "category": "Mehrstufige Synthesen",
-    "name": "Prostaglandin-Fragment (Corey 1975) — BW 2020",
+    "name": "BW 2020 — Prostaglandin-Fragment (Corey 1975)",
     "type": "composed",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2020 (BW 46), Aufgabe 5 D",
@@ -6612,8 +6612,8 @@
   },
   {
     "id": "bw46-2020-pericyclic-da",
-    "category": "Pericyclische Reaktionen",
-    "name": "Zum organischen Abschluss wird es rein pericyclisch — BW 2020",
+    "category": "Theorie",
+    "name": "BW 2020 — Zum organischen Abschluss wird es rein pericyclisch",
     "type": "composed",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2020 (BW 46), Aufgabe 5 E",
@@ -6779,7 +6779,7 @@
   {
     "id": "bw45-2019-abscisinsaeure",
     "category": "Mehrstufige Synthesen",
-    "name": "Abscisinsäure (ABA) — Pflanzenhormon-Synthese (BW 2019)",
+    "name": "BW 2019 — Abscisinsäure (ABA) — Pflanzenhormon-Synthese",
     "type": "composed",
     "difficulty": "D",
     "source": "ÖChO Bundeswettbewerb 2019 (BW 45), Aufgabe 2 A",
@@ -7113,7 +7113,7 @@
   {
     "id": "bw45-2019-twistan",
     "category": "Mehrstufige Synthesen",
-    "name": "Twistan-Synthese — Käfig-Kohlenwasserstoff (BW 2019)",
+    "name": "BW 2019 — Twistan-Synthese — Käfig-Kohlenwasserstoff",
     "type": "composed",
     "source": "ÖChO Bundeswettbewerb 2019 (BW 45), Aufgabe 2 B",
     "intro": "Twistan gehört zu den polycyclischen Verbindungen, einer Verbindungsklasse, bei der die Kohlenstoffatome in mehreren Ringen angeordnet sind. Der wunderschön verdrillte Kohlenwasserstoff Twistan heißt systematisch Tricyclo[4.4.0.0^{3,8}]decan. Die Teilschritte der Synthese sind in der folgenden Abbildung dargestellt.",
@@ -7363,7 +7363,7 @@
   {
     "id": "bw44-2018-lactid-pla",
     "category": "Mehrstufige Synthesen",
-    "name": "Lactid → Polylactid (PLA) — BW 2018",
+    "name": "BW 2018 — Lactid → Polylactid (PLA)",
     "difficulty": "B",
     "source": "ÖChO Bundeswettbewerb 2018 (BW 44), Aufgabe 3 A",
     "intro": "Polylactide, kurz PLA, sind Polymere, die durch ROP (ring opening polymerisation) gebildet werden können. Erstmalig beschrieben wurden Polylactide 1845 von Théophile-Jules Pelouze. Die aus PLA herstellbaren Thermoplaste erfreuen sich wegen ihrer biologischen Abbaubarkeit wachsender Beliebtheit. Ein Verfahren zur Herstellung von PLA aus Lactiden wurde 1932 entwickelt und 1954 von der Firma DuPont patentiert.",
@@ -7509,7 +7509,7 @@
   {
     "id": "bw44-2018-kaffeesaeure",
     "category": "Mehrstufige Synthesen",
-    "name": "Kaffeesäure & Kaffeesäure-Ester — BW 2018",
+    "name": "BW 2018 — Kaffeesäure & Kaffeesäure-Ester",
     "type": "composed",
     "difficulty": "D",
     "source": "ÖChO Bundeswettbewerb 2018 (BW 44), Aufgabe 3 B",
@@ -7803,7 +7803,7 @@
   {
     "id": "bw44-2018-colchicin",
     "category": "Mehrstufige Synthesen",
-    "name": "Colchicin-Totalsynthese (Übersicht) — BW 2018",
+    "name": "BW 2018 — Colchicin-Totalsynthese (Übersicht)",
     "difficulty": "E",
     "source": "ÖChO Bundeswettbewerb 2018 (BW 44), Aufgabe 3 C",
     "intro": "Colchicin, das Hauptalkaloid der Herbstzeitlosen, ist einer der prominentesten Naturstoffe. Einerseits potentes Pflanzengift, besitzt es andererseits großes pharmazeutisches Potential, da es als Mitose-Hemmstoff die Ausbildung des Spindelapparates inhibiert. Die Reaktionsfolge in dieser Aufgabe geht auf Woodward (1963) zurück. Ein besonderes Merkmal dieser Synthese ist die sehr frühe strategische Einführung der Stickstofffunktionalität am C-7.",
@@ -8135,7 +8135,7 @@
   {
     "id": "bw43-2017-atropin",
     "category": "Mehrstufige Synthesen",
-    "name": "Atropin — BW 2017",
+    "name": "BW 2017 — Atropin",
     "type": "composed",
     "difficulty": "D",
     "source": "ÖChO Bundeswettbewerb 2017 (BW 43), Aufgabe 1 A",
@@ -8480,7 +8480,7 @@
   {
     "id": "bw43-2017-ferruginin",
     "category": "Mehrstufige Synthesen",
-    "name": "Ferruginin — Tropan-Alkaloid (BW 2017)",
+    "name": "BW 2017 — Ferruginin — Tropan-Alkaloid",
     "type": "composed",
     "source": "ÖChO Bundeswettbewerb 2017 (BW 43), Aufgabe 1 B",
     "intro": "In dieser Aufgabe geht es um Tropan-Alkaloide, Derivate des Tropans, einem bicyclischen Amin mit dem IUPAC-Namen 8-Methyl-8-aza-bicyclo[3.2.1]octan. Diese Tropan-Alkaloide werden von Pflanzen, vor allem Nachtschattengewächsen, zum Schutz vor Fressfeinden gebildet. Tropan-Derivate haben auch pharmazeutische Bedeutung erlangt. Daher beschäftigt sich die Wissenschaft schon seit rund 100 Jahren mit verschiedenen Synthesen dieser Alkaloide. Im zweiten Teil geht es um Ferruginin, einen Agonisten nikotinischer Acetylcholinrezeptoren.",
@@ -8746,7 +8746,7 @@
   {
     "id": "bw42-2016-prontosil",
     "category": "Mehrstufige Synthesen",
-    "name": "Prontosil — BW 2016",
+    "name": "BW 2016 — Prontosil",
     "type": "composed",
     "difficulty": "B",
     "source": "ÖChO Bundeswettbewerb 2016 (BW 42), Aufgabe 1 A",
@@ -8891,7 +8891,7 @@
   {
     "id": "bw42-2016-chloramphenicol",
     "category": "Mehrstufige Synthesen",
-    "name": "Chloramphenicol — Breitband-Antibiotikum (BW 2016)",
+    "name": "BW 2016 — Chloramphenicol — Breitband-Antibiotikum",
     "type": "composed",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2016 (BW 42), Aufgabe 1 B",
@@ -9048,7 +9048,7 @@
   {
     "id": "bw42-2016-trimethoprim",
     "category": "Mehrstufige Synthesen",
-    "name": "Trimethoprim — BW 2016",
+    "name": "BW 2016 — Trimethoprim",
     "type": "composed",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2016 (BW 42), Aufgabe 1 C",
@@ -9183,7 +9183,7 @@
   {
     "id": "bw42-2016-penicillin-v",
     "category": "Mehrstufige Synthesen",
-    "name": "Penicillin V — BW 2016",
+    "name": "BW 2016 — Penicillin V",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2016 (BW 42), Aufgabe 1 D",
     "intro": "Die österreichische Sandoz GmbH mit ihrem Werk in Tirol ist der größte Hersteller von Antibiotika und der einzige bedeutende Produzent von Penicillin in der westlichen Welt. Die Firma deckt etwa zwei Drittel der weltweiten Produktion an Penicillin V ab, dem säurestabilen Penicillin, das 1951 von zwei Kundler Wissenschaftlern entdeckt worden ist. Dieses Penicillin V sowie drei weitere Antibiotika geben in dieser Aufgabe einen kleinen Einblick in Synthesewege der organischen Chemie.",
@@ -9279,7 +9279,7 @@
   {
     "id": "bw39-2013-grandisol",
     "category": "Mehrstufige Synthesen",
-    "name": "Grandisol — BW 2013",
+    "name": "BW 2013 — Grandisol",
     "type": "composed",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2013 (BW 39), Aufgabe 5 C",
@@ -9556,7 +9556,7 @@
   {
     "id": "bw47-2021-coffein",
     "category": "Mehrstufige Synthesen",
-    "name": "Kaffee-Inhaltsstoff aus Uracil — BW 2021",
+    "name": "BW 2021 — Kaffee-Inhaltsstoff aus Uracil",
     "type": "composed",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2021 (BW 47), Aufgabe 2 D",
@@ -9693,8 +9693,8 @@
   },
   {
     "id": "bw47-2021-yuehchukene",
-    "category": "Pericyclische Reaktionen",
-    "name": "Yuehchukene — Nazarov-Cyclisierung (BW 2021)",
+    "category": "Theorie",
+    "name": "BW 2021 — Yuehchukene — Nazarov-Cyclisierung",
     "type": "composed",
     "difficulty": "D",
     "source": "ÖChO Bundeswettbewerb 2021 (BW 47), Aufgabe 5 B",
@@ -9751,8 +9751,8 @@
   },
   {
     "id": "bw49-2023-hirsuten",
-    "category": "Pericyclische Reaktionen",
-    "name": "Hirsuten — Cyclisierungen & Pericyclen (BW 2023)",
+    "category": "Theorie",
+    "name": "BW 2023 — Hirsuten — Cyclisierungen & Pericyclen",
     "type": "composed",
     "difficulty": "D",
     "source": "ÖChO Bundeswettbewerb 2023 (BW 49), Aufgabe 8 C",
@@ -9901,7 +9901,7 @@
   {
     "id": "bw52-2026-maillard-zucker",
     "category": "Mehrstufige Synthesen",
-    "name": "Maillard-Reaktion & Zuckerrätsel — BW 2026",
+    "name": "BW 2026 — Maillard-Reaktion & Zuckerrätsel",
     "type": "composed",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2026 (BW 52), Aufgabe 4 A, B, F",
@@ -10162,7 +10162,7 @@
   {
     "id": "bw52-2026-xylit",
     "category": "Mehrstufige Synthesen",
-    "name": "Xylit — Stoffwechselweg aus UDP-Glucose (BW 2026)",
+    "name": "BW 2026 — Xylit — Stoffwechselweg aus UDP-Glucose",
     "type": "composed",
     "difficulty": "C",
     "source": "ÖChO Bundeswettbewerb 2026 (BW 52), Aufgabe 4 C",
@@ -10306,7 +10306,7 @@
   {
     "id": "bw52-2026-adrenosteron",
     "category": "Mehrstufige Synthesen",
-    "name": "Totalsynthese von (+)-Adrenosteron — BW 2026",
+    "name": "BW 2026 — Totalsynthese von (+)-Adrenosteron",
     "type": "composed",
     "difficulty": "D",
     "source": "ÖChO Bundeswettbewerb 2026 (BW 52), Aufgabe 4 D",
@@ -10564,7 +10564,7 @@
   {
     "id": "bw52-2026-thymol-kuemmel",
     "category": "Mehrstufige Synthesen",
-    "name": "Thymol aus Benzaldehyd — BW 2026",
+    "name": "BW 2026 — Thymol aus Benzaldehyd",
     "type": "composed",
     "difficulty": "B",
     "source": "ÖChO Bundeswettbewerb 2026 (BW 52), Aufgabe 4 E",
@@ -10650,7 +10650,7 @@
   {
     "id": "lw52-2026-fentanyl-diphenhydramin",
     "category": "Mehrstufige Synthesen",
-    "name": "Fentanyl, Benzocain & Diphenhydramin — LW 2026",
+    "name": "LW 2026 — Fentanyl, Benzocain & Diphenhydramin",
     "type": "composed",
     "difficulty": "B",
     "source": "ÖChO Landeswettbewerb 2026 (LW 52), Probleme D, E, F",
@@ -10995,7 +10995,7 @@
   {
     "id": "bw50-2024-warmup-bromierung",
     "category": "Mehrstufige Synthesen",
-    "name": "Bromierung von Alkenen & zwei Reaktionen — BW 2024",
+    "name": "BW 2024 — Bromierung von Alkenen & zwei Reaktionen",
     "type": "composed",
     "difficulty": "B",
     "source": "ÖChO Bundeswettbewerb 2024 (BW 50), Aufgabe 2 A",

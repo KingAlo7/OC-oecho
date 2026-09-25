@@ -1,4 +1,4 @@
-/* Service worker for the OC Referenz PWA.
+/* Service worker for the OC Reaktionen PWA.
    Bump CACHE when the shell changes — activate drops every other cache. */
 const CACHE = 'oc-oecho-v2';
 

@@ -1,8 +1,8 @@
-# OC Referenz + Quiz
+# OC Reaktionen + Quiz
 
 Interaktives Nachschlagewerk für organische Chemie auf IChO-Niveau, mit Quiz-Modus für mehrstufige Synthesen, Mechanismen und Regioselektivität. Schwerpunkt sind die Organik-Aufgaben der ÖChO-Bundeswettbewerbe. Gerendert wird durchgehend mit OpenChemLib, gezeichnet mit Ketcher, Layout-Optimierung über RDKit-JS.
 
-> **Reaktionsbibliothek:** `data/reactions.json` wird von `tools/build-reaction-library.js` erzeugt und enthält 88 Reaktionen in 11 Kategorien — alle Namensreaktionen und alle klar unterscheidbaren unbenannten Reaktionstypen, die in den Quizzes (ÖChO LW/BW 2013–2026) vorkommen. Jeder Eintrag zeigt die **allgemeinste Form** mit R₁, R₂, Ar, X, Nu, E; `substituents` sagt, wofür die Platzhalter stehen, `seen_in` nennt die Angaben, in denen die Reaktion auftaucht. Neu bauen mit:
+> **Reaktionsbibliothek:** `data/reactions.json` wird von `tools/build-reaction-library.js` erzeugt und enthält 88 Reaktionen in 11 Kategorien — alle Namensreaktionen und alle klar unterscheidbaren unbenannten Reaktionstypen, die in den Quizzes (ÖChO LW/BW 2013–2026) vorkommen. Jeder Eintrag zeigt die **allgemeinste Form** mit R₁, R₂, Ar, X, Nu, E; `substituents` sagt, wofür die Platzhalter stehen (`seen_in` nennt die Angaben, in denen die Reaktion auftaucht — wird nicht angezeigt). Neu bauen mit:
 >
 > ```bash
 > node tools/build-reaction-library.js
@@ -14,7 +14,7 @@ Interaktives Nachschlagewerk für organische Chemie auf IChO-Niveau, mit Quiz-Mo
 
 ## Funktionen
 
-### Reaktionsreferenz (`index.html`)
+### Reaktionen (`index.html`)
 - Kategorisierte Seitenleiste mit aufklappbaren Gruppen und Volltextsuche
 - Reaktionsstrukturen via OpenChemLib; der Pfeil samt Reagenz-Beschriftung wird von `mol-renderer.js` gesetzt
 - Schwierigkeits-Filter (A — Einsteiger / B — JÖChO / C — BW / D — Spezial)
@@ -129,7 +129,7 @@ node server.js
 
 ## Datenschemas
 
-### `data/reactions.json` — Reaktionsreferenz
+### `data/reactions.json` — Reaktionen
 
 Array von Reaktionsobjekten, gerendert via OpenChemLib. Pflichtfelder: `id`, `category`, `name`. Häufige Felder:
 
