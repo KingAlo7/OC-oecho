@@ -1,6 +1,6 @@
 /* Service worker for the OC Referenz PWA.
    Bump CACHE when the shell changes — activate drops every other cache. */
-const CACHE = 'oc-oecho-v1';
+const CACHE = 'oc-oecho-v2';
 
 /* App shell. Paths are relative to the SW scope, so the same file works on
    GitHub Pages (/OC-oecho/) and on localhost. Ketcher (vendor/, ~26 MB) and
@@ -12,6 +12,7 @@ const SHELL = [
   './export.html',
   './404.html',
   './pwa.js',
+  './chem-text.js',
   './mol-renderer.js',
   './scheme-graph-editor.js',
   './manifest.webmanifest',

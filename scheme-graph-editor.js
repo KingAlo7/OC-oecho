@@ -132,45 +132,34 @@
     return out;
   }
 
-  const CHEM_SRC = '([_^])(?:\\{([^}]*)\\}|([A-Za-z0-9+\\-]))';
+  /* Sub/superscript parsing lives in chem-text.js (window.ChemText). */
+  const CT = window.ChemText;
 
   /* "CH_3CH_2MgBr" / "[Ag(NH_3)_2]^{+}" → text with real sub/superscripts.
      Uses dy (honoured everywhere) instead of baseline-shift. */
   function setChemText(textEl, str) {
-    const s = String(str == null ? '' : str);
-    const re = new RegExp(CHEM_SRC, 'g');
-    let last = 0, m, shift = 0;
-    const plain = (txt) => {
-      const t = svg('tspan', shift ? { dy: -shift } : {});
-      shift = 0;
-      t.textContent = txt;
-      textEl.appendChild(t);
-    };
-    while ((m = re.exec(s)) !== null) {
-      if (m.index > last) plain(s.slice(last, m.index));
-      const d = m[1] === '_' ? SUB_DROP : -SUP_RISE;
-      const t = svg('tspan', { dy: d - shift, 'font-size': '76%' });
-      shift = d;
-      t.textContent = m[2] != null ? m[2] : m[3];
-      textEl.appendChild(t);
-      last = re.lastIndex;
+    let shift = 0;
+    for (const k of CT.tokenize(str)) {
+      if (k.t === 'text') {
+        const t = svg('tspan', shift ? { dy: -shift } : {});
+        shift = 0;
+        t.textContent = k.v;
+        textEl.appendChild(t);
+      } else {
+        const d = k.t === 'sub' ? SUB_DROP : -SUP_RISE;
+        const t = svg('tspan', { dy: d - shift, 'font-size': '76%' });
+        shift = d;
+        t.textContent = k.v;
+        textEl.appendChild(t);
+      }
     }
-    if (last < s.length) plain(s.slice(last));
     return textEl;
   }
 
-  function chemFlags(str) {
-    const s = String(str == null ? '' : str);
-    return {
-      sub: /_(\{|[A-Za-z0-9+\-])/.test(s),
-      sup: /\^(\{|[A-Za-z0-9+\-])/.test(s)
-    };
-  }
+  function chemFlags(str) { return CT.flags(str); }
 
   /* The markup is invisible on screen, so measure what the reader sees. */
-  function plainChemText(str) {
-    return String(str == null ? '' : str).replace(/[_^]\{([^}]*)\}/g, '$1').replace(/[_^]/g, '');
-  }
+  function plainChemText(str) { return CT.plain(str); }
 
   /* Vertical extent of one label line relative to its baseline. */
   function lineExtent(txt) {
@@ -2380,11 +2369,7 @@
   function r1(v) { return Math.round(v * 10) / 10; }
 
   /* "D^-" / "H_2" for an HTML tile. */
-  function chemHtml(str) {
-    const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-    return esc(str).replace(new RegExp(CHEM_SRC, 'g'), (m, k, a, b) =>
-      (k === '_' ? '<sub>' : '<sup>') + (a != null ? a : b) + (k === '_' ? '</sub>' : '</sup>'));
-  }
+  function chemHtml(str) { return CT.html(str); }
 
   function cssEsc(s) {
     return String(s || '').replace(/(["\\\.\#\:\[\]\(\)\,\>\+\~\*\=\^\$\|\!\?])/g, '\\$1');

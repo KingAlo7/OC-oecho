@@ -14,6 +14,7 @@
 <meta name="apple-mobile-web-app-title" content="OC Referenz">
 <script src="./pwa.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/openchemlib/dist/openchemlib-full.js"></script>
+<script src="./chem-text.js"></script>
 <script src="./mol-renderer.js"></script>
 <style>
 :root {
@@ -410,6 +411,9 @@ header{
 <script>
 let reactions = [];
 let activeId  = null;
+
+/* Escaped text with LaTeX-lite sub/superscripts (S_N2, C_12H_22O_11, Fe^3+). */
+const ct = s => ChemText.html(s == null ? '' : s);
 let diffFilter = new Set(['A','B','C','D']);  // visible difficulties; empty difficulty always shown
 
 const CAT_ICONS = {
@@ -471,7 +475,7 @@ function buildSidebar() {
           const badge = d ? `<span class="diff-badge diff-${d}" title="${diffLabel(d)}">${d}</span>` : '';
           const hidden = !rxnVisible(r) ? ' hidden' : '';
           const diffCls = d ? ' diff-'+d : '';
-          return `<div class="rxn-link${diffCls}${hidden}" id="link-${r.id}" onclick="showReaction('${r.id}')">${badge}<span class="rxn-name">${r.name}</span></div>`;
+          return `<div class="rxn-link${diffCls}${hidden}" id="link-${r.id}" onclick="showReaction('${r.id}')">${badge}<span class="rxn-name">${ct(r.name)}</span></div>`;
         }).join('')}
       </div>
     </div>`;
@@ -569,23 +573,23 @@ function showReaction(id) {
   const detailsHtml = DETAIL_FIELDS.filter(f => r[f.key]).map(f => `
     <div class="detail-row">
       <div class="detail-label">${f.label}</div>
-      <div class="detail-value">${r[f.key]}</div>
+      <div class="detail-value">${ct(r[f.key])}</div>
     </div>`).join('');
 
   const keyPointsHtml = (r.key_points||[]).length ? `
     <div class="section-head">Schlüsselpunkte</div>
-    <ul class="key-points">${(r.key_points).map(p=>`<li>${p}</li>`).join('')}</ul>` : '';
+    <ul class="key-points">${(r.key_points).map(p=>`<li>${ct(p)}</li>`).join('')}</ul>` : '';
 
   document.getElementById('main').innerHTML = `
     <div class="rxn-page">
       <div class="rxn-breadcrumb">
         <span class="cat-name" onclick="openCategory('${r.category}')">${r.category}</span>
         <span class="sep">›</span>
-        <span>${r.name}</span>
+        <span>${ct(r.name)}</span>
       </div>
 
-      <h1 class="rxn-title">${r.name}</h1>
-      ${r.subtitle ? `<div class="rxn-subtitle">${r.subtitle}</div>` : ''}
+      <h1 class="rxn-title">${ct(r.name)}</h1>
+      ${r.subtitle ? `<div class="rxn-subtitle">${ct(r.subtitle)}</div>` : ''}
       <div class="rxn-drawing">${drawingHtml}</div>
 
       ${detailsHtml ? `<div class="rxn-details">${detailsHtml}</div>` : ''}
@@ -594,11 +598,11 @@ function showReaction(id) {
 
       <div class="rxn-nav">
         <button class="nav-btn" onclick="${prev?`showReaction('${prev.id}')`:'void 0'}" ${prev?'':'disabled'}>
-          ← <span class="nav-btn-label">${prev?.name||''}</span>
+          ← <span class="nav-btn-label">${ct(prev?.name)}</span>
         </button>
         <span style="font-size:0.76rem;color:var(--muted)">${idx+1} / ${catItems.length}</span>
         <button class="nav-btn" onclick="${next?`showReaction('${next.id}')`:'void 0'}" ${next?'':'disabled'}>
-          <span class="nav-btn-label">${next?.name||''}</span> →
+          <span class="nav-btn-label">${ct(next?.name)}</span> →
         </button>
       </div>
     </div>`;
@@ -611,7 +615,8 @@ function showReaction(id) {
       if (!host) return;
       MolRenderer.drawReaction(drawing, host, {
         above: r.reagent_label || '',
-        below: r.reagent_label_below || ''
+        below: r.reagent_label_below || '',
+        aboveMols: r.reagent_mols || []
       });
     }).catch(err => console.error('MolRenderer:', err));
   }

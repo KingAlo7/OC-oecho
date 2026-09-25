@@ -263,17 +263,16 @@ const MolRenderer = (() => {
   /* LaTeX-lite: H_2SO_4 renders with a real subscript, ^+ with a
      superscript — the notation the reaction data already uses. */
   function _sub(text) {
-    return String(text == null ? '' : text)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-      .replace(/_\{([^}]+)\}/g,  function (m, t) { return '<tspan baseline-shift="sub" font-size="80%">' + t + '</tspan>'; })
-      .replace(/\^\{([^}]+)\}/g, function (m, t) { return '<tspan baseline-shift="super" font-size="80%">' + t + '</tspan>'; })
-      .replace(/_([A-Za-z0-9+\-])/g,  function (m, t) { return '<tspan baseline-shift="sub" font-size="80%">' + t + '</tspan>'; })
-      .replace(/\^([A-Za-z0-9+\-])/g, function (m, t) { return '<tspan baseline-shift="super" font-size="80%">' + t + '</tspan>'; });
+    return window.ChemText.tokenize(text).map(function (k) {
+      var v = window.ChemText.esc(k.v);
+      return k.t === 'text' ? v
+        : '<tspan baseline-shift="' + (k.t === 'sub' ? 'sub' : 'super') + '" font-size="80%">' + v + '</tspan>';
+    }).join('');
   }
 
   /* Width estimate ignores the markup, matching what the eye sees. */
   function _plain(text) {
-    return String(text == null ? '' : text).replace(/[_^]\{?([^}]*)\}?/g, '$1');
+    return window.ChemText.plain(text);
   }
 
   function _wrap(text, font) {
@@ -296,35 +295,88 @@ const MolRenderer = (() => {
     return out;
   }
 
+  /* Place a rendered child SVG at (x, y), optionally resized to w × h.
+     The child keeps its viewBox, so a new width/height scales it. The
+     size is also pinned as inline style: page CSS such as
+     `.rxn-drawing svg{height:auto}` reaches nested <svg>s too and would
+     otherwise override the attributes and shift the child. */
+  function _nest(svgText, x, y, w, h) {
+    return String(svgText).replace(/^\s*<svg\b([^>]*)>/, function (m, attrs) {
+      const aw = attrs.match(/\swidth="([\d.]+)/), ah = attrs.match(/\sheight="([\d.]+)/);
+      const W = w != null ? w : (aw ? +aw[1] : null);
+      const H = h != null ? h : (ah ? +ah[1] : null);
+      attrs = attrs.replace(/\s(width|height|style)="[^"]*"/g, '');
+      const size = W != null && H != null
+        ? ' width="' + W + '" height="' + H + '" style="width:' + W + 'px;height:' + H + 'px;max-width:none"'
+        : '';
+      return '<svg x="' + x + '" y="' + y + '"' + size + attrs + '>';
+    });
+  }
+
+  /* Reagent structures above the arrow are drawn smaller than the
+     reactants, the way printed schemes do it. */
+  const RXN_AGENT_SCALE = 0.75;
+
   /* Build the arrow as its own inline SVG so it sits in the flex row
-     next to the structures. */
-  function _arrow(above, below) {
+     next to the structures. `mols` are pre-rendered cells ({svg, w, h})
+     stacked in a row above the text label. */
+  function _arrow(above, below, mols) {
+    mols = mols || [];
     const aLines = _wrap(above, RXN_LABEL_FONT_ABOVE);
     const bLines = _wrap(below, RXN_LABEL_FONT_BELOW);
-    const widest = Math.max.apply(null, [0]
+
+    const PLUS_W = 14, sc = RXN_AGENT_SCALE;
+    const molW = mols.reduce(function (a, c) { return a + c.w * sc; }, 0) + Math.max(0, mols.length - 1) * PLUS_W;
+    const molH = mols.length ? Math.max.apply(null, mols.map(function (c) { return c.h * sc; })) + 4 : 0;
+
+    const widest = Math.max.apply(null, [molW]
       .concat(aLines.map(function (l) { return _measure(_plain(l), RXN_LABEL_FONT_ABOVE); }))
       .concat(bLines.map(function (l) { return _measure(_plain(l), RXN_LABEL_FONT_BELOW); })));
     const shaft = Math.max(RXN_MIN_SHAFT, Math.ceil(widest) + 22);
     const w = shaft + 8;
-    const topH = aLines.length * RXN_LINE_H + 8;
-    const botH = bLines.length * RXN_LINE_H + 8;
+    /* Stacked lines with sub/superscripts need extra leading, or a
+       subscript collides with the superscript of the line below. */
+    const tall = function (ls) {
+      return ls.length > 1 && ls.some(function (l) { const f = window.ChemText.flags(l); return f.sub || f.sup; });
+    };
+    const lhA = tall(aLines) ? RXN_LINE_H + 3 : RXN_LINE_H;
+    const lhB = tall(bLines) ? RXN_LINE_H + 3 : RXN_LINE_H;
+    // A subscript on the line nearest the shaft needs clearance from it.
+    const gapA = aLines.length && window.ChemText.flags(aLines[aLines.length - 1]).sub ? 9 : 6;
+    const topH = molH + aLines.length * lhA + gapA + 2;
+    const botH = bLines.length * lhB + 8;
     const h = topH + botH + 12;
     const cy = topH + 6;
     const cx = w / 2;
 
     let txt = '';
+    if (mols.length) {
+      const textH = aLines.length * lhA;
+      const rowBottom = cy - gapA - (aLines.length ? textH + 2 : 0);
+      let mx = cx - molW / 2;
+      mols.forEach(function (c, i) {
+        if (i) {
+          txt += '<text x="' + (mx + PLUS_W / 2) + '" y="' + (rowBottom - (molH - 4) / 2 + 4) +
+            '" text-anchor="middle" style="font:400 13px \'Segoe UI\',system-ui,sans-serif;fill:#3a3a35">+</text>';
+          mx += PLUS_W;
+        }
+        const cw = c.w * sc, ch = c.h * sc;
+        txt += _nest(c.svg, mx, rowBottom - (molH - 4) / 2 - ch / 2, cw, ch);
+        mx += cw;
+      });
+    }
     aLines.forEach(function (l, i) {
-      const y = cy - 6 - (aLines.length - 1 - i) * RXN_LINE_H;
+      const y = cy - gapA - (aLines.length - 1 - i) * lhA;
       txt += '<text x="' + cx + '" y="' + y + '" text-anchor="middle" style="font:' + RXN_LABEL_FONT_ABOVE + ';fill:#3a3a35">' + _sub(l) + '</text>';
     });
     bLines.forEach(function (l, i) {
-      const y = cy + 6 + RXN_LINE_H * 0.82 + i * RXN_LINE_H;
+      const y = cy + 6 + RXN_LINE_H * 0.82 + i * lhB;
       txt += '<text x="' + cx + '" y="' + y + '" text-anchor="middle" style="font:' + RXN_LABEL_FONT_BELOW + ';fill:#6b6a5d">' + _sub(l) + '</text>';
     });
 
     const x1 = 4, x2 = 4 + shaft;
     return {
-      w: w, h: h,
+      w: w, h: h, cy: cy,
       svg: '<svg class="rxn-arrow" xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h +
         '" viewBox="0 0 ' + w + ' ' + h + '" overflow="visible">' +
         '<line x1="' + x1 + '" y1="' + cy + '" x2="' + (x2 - 7) + '" y2="' + cy + '" stroke="#3a3a35" stroke-width="1.6"/>' +
@@ -429,23 +481,38 @@ const MolRenderer = (() => {
     }
 
     addSide(left, makeMol);
-    const arrow = _arrow(above, o.below);
-    cells.push({ kind: 'svg', svg: arrow.svg, w: arrow.w, h: arrow.h });
+
+    /* Structures drawn above the arrow (opts.aboveMols: MOL or SMILES). */
+    const agentCells = [];
+    (o.aboveMols || []).filter(Boolean).forEach(function (src) {
+      try {
+        const m = isMol(src) ? window.OCL.Molecule.fromMolfile(src) : window.OCL.Molecule.fromSmiles(src);
+        if (isMol(src)) _applyAlias(m, _aliasOpts(src, o)); else _applyAlias(m, o);
+        agentCells.push(drawCell(m));
+      } catch (err) { /* an unreadable reagent is skipped, not fatal */ }
+    });
+
+    const arrow = _arrow(above, o.below, agentCells);
+    cells.push({ kind: 'svg', svg: arrow.svg, w: arrow.w, h: arrow.h, mid: arrow.cy });
     addSide(right, makeMol);
 
     const gap = 6;
     const totalW = cells.reduce(function (a, c) { return a + c.w; }, 0) + gap * (cells.length - 1);
-    const totalH = Math.max.apply(null, cells.map(function (c) { return c.h; }));
+    /* Structures are centred on the arrow shaft, which sits lower than
+       the arrow cell's middle when reagents are stacked above it. */
+    const midOf = function (c) { return c.mid != null ? c.mid : c.h / 2; };
+    const midY = Math.max.apply(null, cells.map(midOf));
+    const totalH = midY + Math.max.apply(null, cells.map(function (c) { return c.h - midOf(c); }));
 
     let x = 0, body = '';
     for (const c of cells) {
-      const y = (totalH - c.h) / 2;
+      const y = midY - midOf(c);
       if (c.kind === 'plus') {
-        body += '<text x="' + (x + c.w / 2) + '" y="' + (totalH / 2 + 5) +
+        body += '<text x="' + (x + c.w / 2) + '" y="' + (midY + 5) +
           '" text-anchor="middle" style="font:400 16px \'Segoe UI\',system-ui,sans-serif;fill:#3a3a35">+</text>';
       } else {
         // Nest the child SVG; it keeps its own coordinate system.
-        body += c.svg.replace(/^\s*<svg\b/, '<svg x="' + x + '" y="' + y + '"');
+        body += _nest(c.svg, x, y);
       }
       x += c.w + gap;
     }

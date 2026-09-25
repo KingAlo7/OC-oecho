@@ -15,6 +15,7 @@
 <script src="./pwa.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/openchemlib/dist/openchemlib-full.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="./chem-text.js"></script>
 <script src="./mol-renderer.js"></script>
 <style>
 :root{
@@ -675,7 +676,7 @@ function redrawPreview() {
       return;
     }
     svg = MolRenderer.drawReaction(drawing, frame, Object.assign(
-      { above: r.reagent_label || '', below: r.reagent_label_below || '' },
+      { above: r.reagent_label || '', below: r.reagent_label_below || '', aboveMols: r.reagent_mols || [] },
       buildRendererOverrides(r)
     ));
     if (!svg) return;
@@ -756,7 +757,7 @@ function buildSelector() {
           return '<label class="rxn-row" data-diff="' + d + '">' +
             '<input type="checkbox" class="rxn-cb" value="' + escapeAttr(r.id) + '" onchange="updateCount()" checked>' +
             badge +
-            '<span class="rxn-name">' + escapeAttr(r.name) + '</span>' +
+            '<span class="rxn-name">' + ChemText.html(r.name) + '</span>' +
           '</label>';
         }).join('') +
       '</div>' +
@@ -827,9 +828,18 @@ window.updateCount = updateCount;
  * LaTeX escaping and helpers
  * ════════════════════════════════════════════════════════════════ */
 
+/* Text fields: LaTeX-lite sub/superscripts (H_2SO_4, Fe^3+) become
+   \textsubscript / \textsuperscript; everything else is escaped. */
 function esc(str) {
   if (!str) return '';
-  return str
+  return ChemText.tokenize(str).map(k =>
+    k.t === 'text' ? escRaw(k.v)
+      : (k.t === 'sub' ? '\\textsubscript{' : '\\textsuperscript{') + escRaw(k.v) + '}').join('');
+}
+
+function escRaw(str) {
+  if (!str) return '';
+  return String(str)
     .replace(/\\/g, '\\textbackslash{}')
     .replace(/&/g, '\\&')
     .replace(/%/g, '\\%')
@@ -877,7 +887,7 @@ function smilesScheme(r) {
   const reactants = (parts[0]||'').split('.').join(' + ');
   const products  = (parts[2]||'').split('.').join(' + ');
   const reagent   = esc(r.reagent_label || parts[1] || '');
-  return '{\\small\\texttt{' + esc(reactants) + '}}\\;$\\xrightarrow{\\text{' + reagent + '}}$\\;{\\small\\texttt{' + esc(products) + '}}';
+  return '{\\small\\texttt{' + escRaw(reactants) + '}}\\;$\\xrightarrow{\\text{' + reagent + '}}$\\;{\\small\\texttt{' + escRaw(products) + '}}';
 }
 
 function reactionBlock(r, withImage) {
@@ -1113,7 +1123,7 @@ function reactionToPng(r) {
     let svg;
     try {
       svg = MolRenderer.drawReaction(drawing, wrap, Object.assign(
-        { above: r.reagent_label || '', below: r.reagent_label_below || '' },
+        { above: r.reagent_label || '', below: r.reagent_label_below || '', aboveMols: r.reagent_mols || [] },
         buildRendererOverrides(r)
       ));
       if (!svg) throw new Error('kein SVG');
