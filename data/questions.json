@@ -1941,28 +1941,36 @@
     "category": "Mehrstufige Synthesen",
     "name": "LW 2016 — (−)-Phellandral",
     "difficulty": "C",
-    "source": "ÖChO Landeswettbewerb 2016 (LW 42)",
-    "intro": "(−)-Phellandral ist ein Terpen des Eukalyptusöls. Es wird durch Tollens-Reagenz (ammoniakalische Silbernitratlösung) zur (−)-Phellandrensäure oxidiert, die unter Aufnahme von nur 1 mol Wasserstoff in Dihydrophellandrensäure übergeht. Um die Struktur von Phellandral zu bestimmen, wurde eine Totalsynthese durchgeführt.",
+    "source": "ÖChO Landeswettbewerb 2016 (LW 42) — Übungsfassung Mariazell 2018",
+    "intro": "(–)-Phellandral ist ein Terpen des Eukalyptusöls. Es wird durch Tollens-Reagenz (ammonialkalische Silbernitratlösung) zur (–)-Phellandrensäure oxidiert, die unter Aufnahme von nur 1 mol Wasserstoff in Dihydrophellandrensäure übergeht.\n\nDie Elementaranalyse von Phellandral liefert folgende Werte: 78,95 % C, 10,50 % H, der Rest ist Sauerstoff. Die Molmasse liegt unter 200 g/mol.\n\nUm die Struktur von Phellandral zu bestimmen, wurde eine Totalsynthese durchgeführt.",
     "sections": [
       {
         "type": "synthesis",
-        "title": "Synthese-Schema",
+        "title": "Zeichnen Sie die Konstitutionsformeln der Verbindungen A – K und markieren Sie in der Strukturformel von K (Phellandral) das chirale Zentrum mit *.",
         "scheme": {
           "nodes": [
             {
               "id": "Bz",
-              "label": "Benzol",
+              "label": "",
               "given": true,
               "smiles": "c1ccccc1",
-              "explanation": "Ausgangsmaterial."
+              "mol": "\n     RDKit          2D\n\n  6  6  0  0  0  0  0  0  0  0999 V2000\n   -0.1180   -1.1590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1810   -0.4090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1809    1.0909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1180    1.8409    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4171    1.0909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4172   -0.4091    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  2  0\n  6  1  1  0\nM  END\n"
+            },
+            {
+              "id": "iPrCl",
+              "label": "",
+              "given": true,
+              "smiles": "CC(C)Cl",
+              "mol": "\n     RDKit          2D\n\n  4  3  0  0  0  0  0  0  0  0999 V2000\n    1.2991   -0.7499    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -0.0001    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2991   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 Cl  0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  1  0\nM  END\n"
             },
             {
               "id": "A",
               "label": "A",
               "given": false,
               "smiles": "CC(C)c1ccccc1",
-              "explanation": "Friedel-Crafts-Alkylierung von Benzol mit 2-Propanol bzw. Propen / AlCl_3 (SE).",
-              "related_reaction_id": "friedel-crafts-alkyl"
+              "explanation": "Friedel-Crafts-Alkylierung von Benzen mit 2-Chlorpropan / AlCl_3 (SE), HCl wird abgespalten.",
+              "related_reaction_id": "friedel-crafts-alkyl",
+              "mol": "\n     RDKit          2D\n\n  9  9  0  0  0  0  0  0  0  0999 V2000\n    1.1810   -3.4090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1182   -2.6591    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4172   -3.4091    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1180   -1.1590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1810   -0.4090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1809    1.0909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1180    1.8409    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4171    1.0909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4172   -0.4091    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  9  4  1  0\nM  END\n"
             },
             {
               "id": "B",
@@ -1971,7 +1979,8 @@
               "smiles": "OS(=O)(=O)c1ccc(C(C)C)cc1",
               "explanation": "Sulfonierung des Aromaten (SO_3/H_2SO_4 — SE). Der Iso-propyl-Rest dirigiert para.",
               "related_reaction_id": "arom-sulfonierung",
-              "caption": "C_9H_12O_3S"
+              "caption": "C_9H_12O_3S",
+              "mol": "\n     RDKit          2D\n\n 13 13  0  0  0  0  0  0  0  0999 V2000\n   -0.1180    4.8409    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1180    3.3409    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0\n    1.3820    3.3409    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.6180    3.3409    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1180    1.8409    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1809    1.0909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1810   -0.4090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1180   -1.1590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1182   -2.6591    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1810   -3.4090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4172   -3.4091    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4172   -0.4091    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4171    1.0909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  2  0\n  2  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  2  0\n  8  9  1  0\n  9 10  1  0\n  9 11  1  0\n  8 12  1  0\n 12 13  2  0\n 13  5  1  0\nM  END\n"
             },
             {
               "id": "C",
@@ -1979,7 +1988,8 @@
               "given": false,
               "smiles": "Oc1ccc(C(C)C)cc1",
               "explanation": "Alkalischmelze: Verschmelzen mit NaOH ergibt das Phenolat, nach Ansäuerung das Phenol (SN: -SO_3 → -OH).",
-              "caption": "C_9H_12O"
+              "caption": "C_9H_12O",
+              "mol": "\n     RDKit          2D\n\n 10 10  0  0  0  0  0  0  0  0999 V2000\n   -0.1180    3.3409    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1180    1.8409    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1809    1.0909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1810   -0.4090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1180   -1.1590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1182   -2.6591    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1810   -3.4090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4172   -3.4091    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4172   -0.4091    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4171    1.0909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  1  0\n  6  8  1  0\n  5  9  1  0\n  9 10  2  0\n 10  2  1  0\nM  END\n"
             },
             {
               "id": "D",
@@ -1987,39 +1997,43 @@
               "given": false,
               "smiles": "OC1CCC(C(C)C)CC1",
               "explanation": "Katalytische Vollhydrierung des Aromaten (H_2/Kat., Reduktion).",
-              "caption": "C_9H_16O"
+              "mol": "\n     RDKit          2D\n\n 10 10  0  0  0  0  0  0  0  0999 V2000\n   -0.1180    3.3409    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1180    1.8409    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1809    1.0909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1810   -0.4090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1180   -1.1590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1182   -2.6591    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1810   -3.4090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4172   -3.4091    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4172   -0.4091    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4171    1.0909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  6  8  1  0\n  5  9  1  0\n  9 10  1  0\n 10  2  1  0\nM  END\n"
             },
             {
               "id": "E",
               "label": "E",
               "given": false,
               "smiles": "O=C1CCC(C(C)C)CC1",
-              "explanation": "Oxidation des Alkohols zum Keton (z. B. Cr_2O_7^{2-}/H^+ oder PCC)."
+              "explanation": "Oxidation des Alkohols zum Keton (z. B. Cr_2O_7^{2-}/H^+ oder PCC).",
+              "caption": "C_9H_16O",
+              "mol": "\n     RDKit          2D\n\n 10 10  0  0  0  0  0  0  0  0999 V2000\n   -0.1180    3.3409    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1180    1.8409    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1809    1.0909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1810   -0.4090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1180   -1.1590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1182   -2.6591    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1810   -3.4090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4172   -3.4091    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4172   -0.4091    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4171    1.0909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  6  8  1  0\n  5  9  1  0\n  9 10  1  0\n 10  2  1  0\nM  END\n"
             },
             {
               "id": "F",
               "label": "F",
               "given": false,
               "smiles": "OC1(C#N)CCC(C(C)C)CC1",
-              "explanation": "Nukleophile Addition von HCN ans Keton — Cyanhydrin-Bildung (A_N).",
-              "caption": "C_10H_17NO"
+              "explanation": "Nucleophile Addition von HCN (aus KCN, H^+) an das Keton — Cyanhydrin (AN).",
+              "caption": "C_10H_17NO",
+              "mol": "\n     RDKit          2D\n\n 12 12  0  0  0  0  0  0  0  0999 V2000\n    0.8462    2.9900    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1180    1.8409    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0822    2.9900    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0464    4.1391    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1809    1.0909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1810   -0.4090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1180   -1.1590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1182   -2.6591    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1810   -3.4090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4172   -3.4091    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4172   -0.4091    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4171    1.0909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  3  0\n  2  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  8 10  1  0\n  7 11  1  0\n 11 12  1  0\n 12  2  1  0\nM  END\n"
             },
             {
               "id": "G",
               "label": "G",
               "given": false,
               "smiles": "CC(=O)OC1(C#N)CCC(C(C)C)CC1",
-              "note": "Hier tritt das Stereozentrum am C1 zum ersten Mal auf — F→G ist nicht stereoselektiv, zwei Enantiomere entstehen.",
-              "explanation": "Acetylierung der tertiären OH-Gruppe (Essigsäureanhydrid).",
-              "caption": "C_12H_19NO_2"
+              "explanation": "Veresterung der tertiären OH-Gruppe mit Essigsäureanhydrid (Acetat), Essigsäure wird abgespalten.",
+              "caption": "C_12H_19NO_2",
+              "mol": "\n     RDKit          2D\n\n 15 15  0  0  0  0  0  0  0  0999 V2000\n    3.2875    3.8786    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.3234    2.7295    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8364    1.3200    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8462    2.9900    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1180    1.8409    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0822    2.9900    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0464    4.1391    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1809    1.0909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1810   -0.4090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1180   -1.1590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1182   -2.6591    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1810   -3.4090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4172   -3.4091    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4172   -0.4091    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4171    1.0909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  3  0\n  5  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 11 13  1  0\n 10 14  1  0\n 14 15  1  0\n 15  5  1  0\nM  END\n"
             },
             {
               "id": "H",
               "label": "H",
               "given": false,
               "smiles": "N#CC1=CCC(C(C)C)CC1",
-              "explanation": "Pyrolytische cis-Eliminierung der Acetyl-Gruppe → α,β-ungesättigtes Nitril.",
-              "related_reaction_id": "ester-pyrolyse"
+              "explanation": "Thermische cis-Eliminierung von Essigsäure → α,β-ungesättigtes Nitril. Hier entsteht das chirale C-Atom (C4: Isopropyl, H, Ringseite mit und ohne Doppelbindung).",
+              "related_reaction_id": "ester-pyrolyse",
+              "mol": "\n     RDKit          2D\n\n 11 11  0  0  0  0  0  0  0  0999 V2000\n   -0.1183    4.8408    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1182    3.3408    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1180    1.8409    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1809    1.0909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1810   -0.4090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1180   -1.1590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1182   -2.6591    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1810   -3.4090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4172   -3.4091    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4172   -0.4091    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4171    1.0909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  3  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  7  9  1  0\n  6 10  1  0\n 10 11  1  0\n 11  3  1  0\nM  END\n"
             },
             {
               "id": "I",
@@ -2027,7 +2041,8 @@
               "given": false,
               "smiles": "OC(=O)C1=CCC(C(C)C)CC1",
               "explanation": "Hydrolyse des Nitrils zur Carbonsäure (H_2SO_4 / H_2O, Hy).",
-              "caption": "C_10H_16O_2"
+              "caption": "C_10H_16O_2",
+              "mol": "\n     RDKit          2D\n\n 12 12  0  0  0  0  0  0  0  0999 V2000\n   -1.4173    4.0907    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1182    3.3408    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1808    4.0909    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1180    1.8409    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1809    1.0909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1810   -0.4090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1180   -1.1590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1182   -2.6591    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1810   -3.4090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4172   -3.4091    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4172   -0.4091    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4171    1.0909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  8 10  1  0\n  7 11  1  0\n 11 12  1  0\n 12  4  1  0\nM  END\n"
             },
             {
               "id": "J",
@@ -2035,7 +2050,8 @@
               "given": false,
               "smiles": "ClC(=O)C1=CCC(C(C)C)CC1",
               "explanation": "SOCl_2 wandelt Carbonsäure in das Säurechlorid um.",
-              "caption": "C_10H_15ClO"
+              "caption": "C_10H_15ClO",
+              "mol": "\n     RDKit          2D\n\n 12 12  0  0  0  0  0  0  0  0999 V2000\n   -1.4173    4.0907    0.0000 Cl  0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1182    3.3408    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1808    4.0909    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1180    1.8409    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1809    1.0909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1810   -0.4090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1180   -1.1590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1182   -2.6591    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1810   -3.4090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4172   -3.4091    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4172   -0.4091    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4171    1.0909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  8 10  1  0\n  7 11  1  0\n 11 12  1  0\n 12  4  1  0\nM  END\n"
             },
             {
               "id": "K",
@@ -2044,13 +2060,15 @@
               "smiles": "O=CC1=CC[C@@H](C(C)C)CC1",
               "note": "Natürliches (−)-Phellandral hat S-Konfiguration am chiralen C4.",
               "explanation": "Rosenmund-Reduktion (H_2/Pd-BaSO_4, Chinolin-S) reduziert das Säurechlorid selektiv zum Aldehyd.",
-              "caption": "Phellandral"
+              "caption": "Phellandral",
+              "mol": "\n     RDKit          2D\n\n 11 11  0  0  0  0  0  0  0  0999 V2000\n    1.1809    4.0908    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1182    3.3408    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1180    1.8409    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1809    1.0909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1810   -0.4090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1180   -1.1590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1182   -2.6591    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1810   -3.4090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4172   -3.4091    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4172   -0.4091    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4171    1.0909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  1\n  7  8  1  0\n  7  9  1  0\n  6 10  1  0\n 10 11  1  0\n 11  3  1  0\nM  END\n"
             }
           ],
           "edges": [
             {
               "from": [
-                "Bz"
+                "Bz",
+                "iPrCl"
               ],
               "to": "A",
               "reagent_above": "AlCl_3"
@@ -2096,7 +2114,8 @@
                 "F"
               ],
               "to": "G",
-              "reagent_above": "(CH_3CO)_2O"
+              "reagent_above": "",
+              "reagent_mol": "\n     RDKit          2D\n\n  7  6  0  0  0  0  0  0  0  0999 V2000\n   -2.5983   -0.8570    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.1072    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2989    1.3928    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -0.8570    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.1072    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980   -0.8573    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2991    1.3928    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  5  6  1  0\n  5  7  2  0\nM  END\n"
             },
             {
               "from": [
@@ -2130,24 +2149,23 @@
           ]
         },
         "hints": [
-          "Die Elementaranalyse von Phellandral liefert folgende Werte: 78,95 % C, 10,50 % H, der Rest ist Sauerstoff. Die Molmasse liegt unter 200 g/mol.",
-          "Alle Strukturen sind monocyclisch.",
+          "Alle Strukturen sind monocylisch.",
           "B ist das sterisch weniger gehinderte Produkt (das andere Konstitutionsisomere wird nicht weiter verwendet).",
           "C gibt mit Fe^{3+}-Ionen eine Farbreaktion.",
-          "E reagiert mit 2,4-Dinitrophenylhydrazin.",
+          "E reagiert mit 2,4-Dinitrophenylhydrazin",
           "I heißt mit dem Trivialnamen Phellandrensäure."
         ]
       },
       {
         "type": "short_answer",
-        "title": "Erstes chirales Zentrum (6)",
-        "prompt": "In welchem Syntheseschritt tritt die Chiralität zum ersten Mal auf?",
-        "expected_answer": "Im Schritt G→H bzw. genauer: in F→G entsteht das stereogene C1 (das tertiäre C-Atom mit OH/CN/CH_2/CH_2). Da das Edukt F achiral und das Reagenz Ac_2O ohne Chiralitätsinformation ist, läuft die Acetylierung beider Enantiotopen-Flächen gleich schnell ab — beide Enantiomere von G (und damit später beide Enantiomere von Phellandral) entstehen im 1:1-Verhältnis. Die Trennung in (−)- und (+)-Phellandral erfordert eine zusätzliche Racematspaltung."
+        "title": "Chiralität (6)",
+        "prompt": "In welchem Syntheseschritt tritt die Chiralität zum 1. Mal auf?",
+        "expected_answer": "Bei G → H (thermische Eliminierung). F und G sind achiral (C1 trägt zwei gleiche Ringseiten, C4 ebenso). Erst die Doppelbindung C1=C2 in H macht die beiden Ringseiten an C4 verschieden: C4 trägt Isopropyl, H, die Ringseite mit Doppelbindung und die Ringseite ohne Doppelbindung → chirales Zentrum. Da ohne chirale Information gearbeitet wird, entsteht das Racemat."
       },
       {
         "type": "multiple_choice",
         "title": "Hydrierung der Phellandrensäure (9)",
-        "prompt": "Die katalytische Hydrierung von (−)-Phellandrensäure liefert ein Gemisch aus 2 optisch inaktiven Isomeren. In welchem stereochemischen Verhältnis stehen die beiden Isomeren?",
+        "prompt": "Die katalytische Hydrierung von (–)-Phellandrensäure liefert ein Gemisch aus 2 optisch inaktiven Isomeren. In welchem stereochemischen Verhältnis stehen die beiden Isomeren?",
         "choices": [
           {
             "id": "a",

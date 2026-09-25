@@ -1,0 +1,45 @@
+{
+  "lw42-2015-phellandral": {
+    "0": {
+      "anchor": "K",
+      "nodes": {
+        "K": {
+          "orient": {
+            "smarts": "O=CC1=CCC(C(C)C)CC1",
+            "from": 2,
+            "to": 5,
+            "angle": -90,
+            "side": [
+              3,
+              "up"
+            ]
+          }
+        },
+        "iPrCl": {
+          "free": true,
+          "orient": {
+            "smarts": "ClC(C)C",
+            "from": 1,
+            "to": 0,
+            "angle": 90
+          }
+        }
+      },
+      "edges": {
+        "F>G": {
+          "smiles": "CC(=O)OC(C)=O",
+          "orient": {
+            "smarts": "O=C(C)OC(=O)C",
+            "from": 1,
+            "to": 4,
+            "angle": 0,
+            "side": [
+              0,
+              "up"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

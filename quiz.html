@@ -134,6 +134,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .q-actionbar button{background:var(--surface);border:1px solid var(--border);color:var(--text-soft);padding:0.3rem 0.75rem;border-radius:7px;font-size:0.76rem;cursor:pointer;font-family:inherit;transition:all 0.15s;white-space:nowrap;}
 .q-actionbar button:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
 .sec-hints{margin:0.2rem 0 0.8rem;background:#fffbe8;border-left:3px solid var(--accent2);border-radius:0 6px 6px 0;padding:0.55rem 0.9rem;font-size:0.86rem;line-height:1.6;color:var(--text-soft);}
+.q-section-synthesis > .sec-hints{margin:0.9rem 0 0.8rem;}
 .sec-hints-head{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent2);margin-bottom:0.2rem;}
 .sec-hints ul{list-style:none;display:flex;flex-direction:column;gap:0.15rem;}
 .sec-hints li{padding-left:1em;text-indent:-1em;}
@@ -144,7 +145,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .q-type-badge{font-size:0.66rem;padding:0.1rem 0.5rem;border-radius:4px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent);font-weight:700;letter-spacing:0.05em;text-transform:uppercase;}
 .q-title{font-size:1.55rem;font-weight:700;margin-bottom:0.2rem;line-height:1.3;letter-spacing:-0.02em;}
 .q-source{font-size:0.78rem;color:var(--muted);font-style:italic;margin-bottom:1rem;}
-.q-intro{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;font-size:0.9rem;line-height:1.7;color:var(--text-soft);margin-bottom:1.2rem;}
+.q-intro{white-space:pre-line;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;font-size:0.9rem;line-height:1.7;color:var(--text-soft);margin-bottom:1.2rem;}
 .q-hints{margin-bottom:1.5rem;}
 .q-hints-head{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin-bottom:0.6rem;display:flex;align-items:center;gap:0.5rem;cursor:pointer;user-select:none;}
 .q-hints-head::after{content:'';flex:1;height:1px;background:var(--border);}
@@ -1149,11 +1150,14 @@ function renderSection(section, parentQid, idx) {
   if (!section || typeof section !== 'object') return '';
   const subQ = Object.assign({}, section, { id: parentQid + '__s' + idx });
   const hints = Array.isArray(section.hints) ? section.hints.filter(Boolean) : [];
-  const header = (section.title || section.body || hints.length) ? `
+  const hintsHtml = hints.length ? `<div class="sec-hints"><div class="sec-hints-head">Hinweise</div><ul>${hints.map(h => `<li>${renderLatexLabel(h)}</li>`).join('')}</ul></div>` : '';
+  // A scheme's hints are read against the drawing, so they sit under it.
+  const hintsBelow = section.type === 'synthesis';
+  const header = (section.title || section.body || (hints.length && !hintsBelow)) ? `
     <div class="section-header">
       ${section.title ? `<h2 class="section-title">${renderLatexLabel(section.title)}</h2>` : ''}
       ${section.body ? `<div class="section-body">${renderLatexLabel(section.body)}</div>` : ''}
-      ${hints.length ? `<div class="sec-hints"><div class="sec-hints-head">Hinweise</div><ul>${hints.map(h => `<li>${renderLatexLabel(h)}</li>`).join('')}</ul></div>` : ''}
+      ${hintsBelow ? '' : hintsHtml}
     </div>` : '';
   let inner = '';
   switch (section.type) {
@@ -1164,7 +1168,7 @@ function renderSection(section, parentQid, idx) {
     case 'intro':           inner = ''; break; // header carries the prose
     default:                inner = `<div style="color:var(--muted);padding:1rem;font-size:0.85rem">Unbekannter Section-Typ: <code>${x(section.type||'?')}</code></div>`;
   }
-  return `<section class="q-section q-section-${x(section.type||'unknown')}">${header}${inner}</section>`;
+  return `<section class="q-section q-section-${x(section.type||'unknown')}">${header}${inner}${hintsBelow ? hintsHtml : ''}</section>`;
 }
 
 function showQuestion(id) {
@@ -1226,8 +1230,9 @@ function showQuestion(id) {
       <h1 class="q-title">${renderLatexLabel(q.name)}</h1>
       ${q.source ? `<div class="q-source">${renderLatexLabel(q.source)}</div>` : ''}
       ${q.intro ? `<div class="q-intro">${renderLatexLabel(q.intro)}</div>` : ''}
-      ${hintsHtml}
+      ${hasScheme ? '' : hintsHtml}
       ${body}
+      ${hasScheme ? hintsHtml : ''}
     </div></div>`;
   if (hasScheme) setTimeout(() => updateQuizProgress(q.id), 30);
 
