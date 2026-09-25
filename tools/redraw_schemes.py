@@ -56,6 +56,7 @@ Layout spec: tools/scheme-layout.json
 Nodes without an explicit spec are aligned to the placed neighbour with
 the largest common substructure. Structures on arrows (edge.reagent_mol) are written from
     "edges": {"<from id>><to id>": {"smiles": "...", "orient": {...}, "abbrev": [...],
+                                    "coords": {"smarts": "...", "xy": [...]},  # as for nodes (full)
                                     "below": true}}      # drawn under the arrow text
 in the same section spec; other arrows are left alone.
 """
@@ -813,8 +814,19 @@ def layout_scheme(qid, si, scheme, spec, png_dir=None):
             continue
         fm = mol_from(es['smiles'])
         m, grp = collapse(fm, es.get('abbrev'))
-        depict(m)
-        normalise(m)
+        pairs = []
+        if 'coords' in es:
+            # hand template, matched on the full molecule like a node's
+            inv = {a.GetIntProp('orig'): a.GetIdx() for a in m.GetAtoms()}
+            hitf = fm.GetSubstructMatch(Chem.MolFromSmarts(es['coords']['smarts']))
+            pairs = [(inv[h], tuple(p)) for h, p in zip(hitf, es['coords']['xy']) if h in inv and p is not None]
+            if not pairs:
+                print(f'   ! {qid}/{si}: coords pattern not found on arrow {key}')
+        if pairs:
+            m = pinned_depiction(m, dict(pairs))
+        else:
+            depict(m)
+            normalise(m)
         if 'orient' in es:
             apply_orient(m, es['orient'])
         m = kekulize_like(m)
