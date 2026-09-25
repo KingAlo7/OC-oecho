@@ -15,6 +15,7 @@
 <script src="./pwa.js" defer></script>
 
 <script src="https://cdn.jsdelivr.net/npm/openchemlib/dist/openchemlib-full.js"></script>
+<script src="./chem-text.js"></script>
 <script src="./mol-renderer.js"></script>
 <script src="./rdkit-helper.js"></script>
 <script src="./scheme-graph-editor.js"></script>
@@ -159,7 +160,7 @@ select.fi option{background:var(--surface);color:var(--text);}
    text fields ARE the reagent labels, so the editor looks like the
    thing it produces. */
 .rxn-wys{background:#fff;border:1px solid var(--border);border-radius:8px;padding:0.9rem 0.8rem;box-shadow:var(--shadow-sm);overflow-x:auto;}
-.rxn-row{display:flex;align-items:center;gap:0.45rem;min-height:132px;width:max-content;min-width:100%;justify-content:center;}
+.rxn-wys-row{display:flex;align-items:center;gap:0.45rem;min-height:132px;width:max-content;min-width:100%;justify-content:center;}
 .rxn-side{display:flex;align-items:center;gap:0.45rem;}
 .rxn-box{position:relative;width:150px;height:118px;border:1px dashed var(--border);border-radius:8px;background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .15s,background .15s;padding:4px;}
 .rxn-box:hover{border-color:var(--accent);background:var(--accent-soft);}
@@ -173,6 +174,11 @@ select.fi option{background:var(--surface);color:var(--text);}
 .rxn-plus{font-size:1.15rem;color:var(--muted);user-select:none;}
 .rxn-add{width:26px;height:26px;border-radius:50%;border:1px dashed var(--border);background:var(--surface);color:var(--muted);font-size:0.9rem;line-height:1;cursor:pointer;padding:0;flex:none;}
 .rxn-add:hover{border-color:var(--accent);color:var(--accent);border-style:solid;}
+.rxn-agents{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0.3rem;margin-bottom:2px;}
+.rxn-box.agent{width:96px;height:74px;}
+.rxn-box.agent svg{max-height:66px;}
+.rxn-add-agent{border:1px dashed var(--border);background:var(--surface);color:var(--muted);font-size:0.7rem;border-radius:6px;padding:0.12rem 0.45rem;cursor:pointer;font-family:inherit;}
+.rxn-add-agent:hover{border-color:var(--accent);color:var(--accent);border-style:solid;}
 .rxn-arrow-col{display:flex;flex-direction:column;align-items:center;gap:2px;flex:none;padding:0 0.2rem;}
 .rxn-arrow-col input{width:168px;text-align:center;background:var(--surface);color:var(--text);border:1px solid transparent;border-radius:6px;padding:0.24rem 0.4rem;font-size:0.78rem;font-family:inherit;}
 .rxn-arrow-col input:hover{border-color:var(--border);}
@@ -481,7 +487,6 @@ select.fi option{background:var(--surface);color:var(--text);}
             <button class="bxs" onclick="newQ()">＋ Neu</button>
             <button class="bxs sec" onclick="dupQ()">Kop.</button>
             <button class="bxs sec" onclick="importQ()">Import</button>
-            <button class="bxs sec" onclick="diagnoseOCR()" title="Prüft, welche OCR-Backends installiert sind">OCR?</button>
           </div>
         </div>
         <div class="list-scroll" id="q-list"></div>
@@ -656,7 +661,7 @@ function renderList(q='') {
       + items.map(({r,i}) => {
           const d = r.difficulty;
           const badge = d ? `<span class="diff-badge diff-${d}">${d}</span>` : '';
-          return `<div class="rxn-row${selRxn===i?' active':''}${d?' diff-row-'+d:''}" onclick="selFn(${i})">${badge}${x(r.name)}</div>`;
+          return `<div class="rxn-row${selRxn===i?' active':''}${d?' diff-row-'+d:''}" onclick="selFn(${i})">${badge}${ChemText.html(r.name)}</div>`;
         }).join('');
   }).join('') || '<div style="padding:1rem;color:var(--muted);font-size:0.82rem">Keine Treffer</div>';
 }
@@ -710,7 +715,7 @@ function buildForm(r) {
     <input type="hidden" id="f-rxn" value="${x(r.reaction_rxn||'')}">
     <input type="hidden" id="f-smi" value="${x(r.reaction_smiles||'')}">
     <div class="rxn-wys" id="rxn-wys"></div>
-    <div class="helper-text" style="margin-top:0.5rem">Klick auf ein Feld öffnet Ketcher für diese eine Struktur. „＋“ fügt einen weiteren Reaktanten bzw. ein weiteres Produkt hinzu. Die Beschriftungen am Pfeil verstehen LaTeX-Indizes: <code>H_2SO_4</code>, <code>[Ag(NH_3)_2]^{1+}</code>.</div>
+    <div class="helper-text" style="margin-top:0.5rem">Klick auf ein Feld öffnet Ketcher für diese eine Struktur. „＋“ fügt einen weiteren Reaktanten bzw. ein weiteres Produkt hinzu, „＋ Struktur“ eine Reagenz-Struktur über dem Pfeil (zusätzlich zum Text). Die Beschriftungen am Pfeil verstehen LaTeX-Indizes: <code>H_2SO_4</code>, <code>C_12H_22O_11</code>, <code>Fe^3+</code>, <code>[Ag(NH_3)_2]^{+}</code>.</div>
     <div class="smi-prev" id="smi-prev" style="margin-top:0.7rem"></div>
   </div>
 
@@ -764,16 +769,16 @@ function drawP(src, label, labelBelow) {
   const b = document.getElementById('smi-prev');
   if (!b) return;
   src = (src || '').trim();
-  if (!src) { b.innerHTML = '<div class="smi-ph">Noch keine Zeichnung — „Struktur zeichnen“ öffnet Ketcher</div>'; return; }
+  if (!src && !_rxnComp.agents.length) { b.innerHTML = '<div class="smi-ph">Noch keine Zeichnung — „Struktur zeichnen“ öffnet Ketcher</div>'; return; }
   b.innerHTML = '<div class="smi-ph">Rendern…</div>';
   MolRenderer.ready().then(() => {
     const host = document.getElementById('smi-prev');
     if (!host) return;
     if (MolRenderer.isRxn(src)) {
-      MolRenderer.drawReaction(src, host, { above: label, below: labelBelow });
-    } else if (src.includes('>') || label || labelBelow) {
+      MolRenderer.drawReaction(src, host, { above: label, below: labelBelow, aboveMols: _rxnComp.agents });
+    } else if (src.includes('>') || label || labelBelow || _rxnComp.agents.length) {
       MolRenderer.drawReaction(src.includes('>') ? src : src + '>>', host,
-        { above: label, below: labelBelow, width: 190, height: 150 });
+        { above: label, below: labelBelow, aboveMols: _rxnComp.agents, width: 190, height: 150 });
     } else {
       MolRenderer.drawAuto(src, host, { width: 240, height: 180 });
     }
@@ -787,6 +792,7 @@ function collect() {
   s('reaktionstyp',g('f-rtyp')); s('transformation',g('f-trans'));
   s('reaction_rxn',g('f-rxn')); s('reaction_smiles',g('f-smi'));
   s('reagent_label',g('f-rl')); s('reagent_label_below',g('f-rlb'));
+  if (_rxnComp.agents.length) r.reagent_mols = _rxnComp.agents.slice();
   s('conditions',g('f-cond')); s('stereochemistry',g('f-stereo'));
   const kps=getKPs(); if(kps.length) r.key_points=kps;
   return r;
@@ -913,7 +919,7 @@ function renderQList(qstr='') {
           const badge = d ? `<span class="diff-badge diff-${d}">${d}</span>` : '';
           const nSec = (q.sections || []).length;
           const typeTag = nSec ? `<span class="q-type-tag">${nSec} Abschnitt${nSec===1?'':'e'}</span>` : '';
-          return `<div class="rxn-row${selQ===i?' active':''}${d?' diff-row-'+d:''}" onclick="selQFn(${i})">${badge}${x(q.name||'(unbenannt)')}${typeTag}</div>`;
+          return `<div class="rxn-row${selQ===i?' active':''}${d?' diff-row-'+d:''}" onclick="selQFn(${i})">${badge}${ChemText.html(q.name||'(unbenannt)')}${typeTag}</div>`;
         }).join('');
   }).join('') || '<div style="padding:1rem;color:var(--muted);font-size:0.82rem">Keine Treffer</div>';
   const list = document.getElementById('q-list');
@@ -1247,7 +1253,6 @@ function renderNodeDetail(n, key, editor) {
     <div class="sg-detail-actions">
       <button class="primary" onclick="openStructEditorForGraphNode(_activeEditor._nodeById('${x(n.id)}'), _activeEditor)">✎ Struktur (Ketcher)</button>
       <button onclick="bakeNodeLayoutById('${x(n.id)}', _activeEditor)" title="RDKit-CoordGen Koordinaten neu berechnen">Layout neu</button>
-      <button onclick="openOCRForGraphNode('${x(n.id)}', _activeEditor)" title="Strukturbild hochladen (OCR mit DECIMER)">OCR…</button>
       <button class="danger" onclick="_activeEditor.deleteNode('${x(n.id)}')">× Knoten löschen</button>
     </div>`;
 }
@@ -1370,7 +1375,7 @@ window.addEventListener('keydown', ev => {
   toast(n.given ? 'Knoten ' + (n.label || n.id) + ' ist jetzt vorgegeben' : 'Knoten ' + (n.label || n.id) + ' ist jetzt gesucht');
 });
 
-/* ── Bridge: Ketcher / OCR / RDKit-bake from graph node ─────── */
+/* ── Bridge: Ketcher / RDKit-bake from graph node ─────── */
 
 window.openStructEditorForGraphNode = async function(node, editor) {
   if (!node) return;
@@ -1425,32 +1430,6 @@ window.bakeNodeLayoutById = async function(id, editor) {
   } catch (e) { toast('RDKit-Fehler: ' + e.message, 'err'); }
 };
 
-window.openOCRForGraphNode = async function(id, editor) {
-  if (!editor) return;
-  // Trigger file picker, send to /ocr endpoint, fill node.smiles/mol on success
-  const inp = document.createElement('input');
-  inp.type = 'file'; inp.accept = 'image/*';
-  inp.onchange = async () => {
-    const f = inp.files && inp.files[0];
-    if (!f) return;
-    const fd = new FormData();
-    fd.append('image', f);
-    try {
-      toast('OCR läuft…');
-      const r = await fetch('/api/ocr', { method:'POST', body: fd });
-      if (!r.ok) { toast('OCR fehlgeschlagen: ' + r.status, 'err'); return; }
-      const j = await r.json();
-      if (j.smiles || j.mol) {
-        editor.updateNode(id, { smiles: j.smiles || '', mol: j.mol || '' });
-        toast('OCR ✓ — Struktur eingelesen');
-      } else {
-        toast('OCR: keine Struktur erkannt', 'err');
-      }
-    } catch (e) { toast('OCR-Fehler: ' + e.message, 'err'); }
-  };
-  inp.click();
-};
-
 /* ── Composed-question editor with section tabs ───────────────── */
 
 function renderComposedQEditor(q) {
@@ -1480,7 +1459,7 @@ function renderComposedSecTabs() {
   if (!tabs) return;
   tabs.innerHTML = _composedSections.map((s, i) => `
     <button class="sec-tab${i===_composedActiveSec?' active':''}" onclick="switchComposedSection(${i})">
-      <span>${i+1}. ${x(s.title || _sectionTypeLabel(s.type))}</span>
+      <span>${i+1}. ${ChemText.html(s.title || _sectionTypeLabel(s.type))}</span>
       <span class="sec-type-tag">${x(_sectionTypeShort(s.type))}</span>
       <span class="sec-x" onclick="event.stopPropagation();removeComposedSection(${i})" title="Abschnitt löschen">×</span>
     </button>
@@ -1726,7 +1705,6 @@ function nodeCardEditor(n, i) {
           <div class="node-preview-actions">
             <button onclick="openStructEditor(${i})">${hasStruct?'Bearbeiten':'Zeichnen'}</button>
             <button onclick="bakeNodeLayout(${i})" title="Mit RDKit-CoordGen Koordinaten neu berechnen — beste Qualität für verbrückte Polycyclen">Layout neu</button>
-            <button onclick="openOCRForNode(${i})" title="Strukturbild hochladen — OCR mit DECIMER (Server-seitig)">OCR…</button>
           </div>
         </div>
         <div>
@@ -2070,8 +2048,10 @@ window.removeEdgeFrom = function(i, j) {
    cached here to survive a re-render triggered while typing. */
 let _rxnLabelCache = { above: '', below: '' };
 
-/* { reactants: [molfile], products: [molfile] } for the open record. */
-let _rxnComp = { reactants: [], products: [] };
+/* { reactants: [molfile], products: [molfile], agents: [molfile] } for the
+   open record. `agents` are drawn above the arrow and stored separately
+   as `reagent_mols`, so the RXN file stays reactants → products. */
+let _rxnComp = { reactants: [], products: [], agents: [] };
 
 /* Split an RXN V2000 back into its component MOL blocks. The counts line
    is the 5th line of the header ("  2  1"); everything after is one
@@ -2130,6 +2110,7 @@ function syncRxnFields() {
 
 function initRxnEditor(r) {
   _rxnComp = parseRxnComponents(r && r.reaction_rxn);
+  _rxnComp.agents = Array.isArray(r && r.reagent_mols) ? r.reagent_mols.filter(Boolean) : [];
   renderRxnEditor();
 }
 
@@ -2139,6 +2120,7 @@ function renderRxnEditor() {
   // A cancelled "new component" leaves a hole; an empty component means nothing.
   _rxnComp.reactants = _rxnComp.reactants.filter(Boolean);
   _rxnComp.products  = _rxnComp.products.filter(Boolean);
+  _rxnComp.agents    = _rxnComp.agents.filter(Boolean);
 
   const side = (name) => {
     const list = _rxnComp[name];
@@ -2159,7 +2141,7 @@ function renderRxnEditor() {
     const id = 'rxnbox-' + name + '-' + i;
     const filled = !!mol;
     const label = name === 'reactants' ? 'Reaktant' : 'Produkt';
-    return '<div class="rxn-box ' + (filled ? 'filled' : 'empty') + '" id="' + id + '"' +
+    return '<div class="rxn-box ' + (filled ? 'filled' : 'empty') + (name === 'agents' ? ' agent' : '') + '" id="' + id + '"' +
       ' title="Klick: in Ketcher zeichnen"' +
       ' onclick="editRxnComponent(\'' + name + '\',' + i + ')">' +
       (filled
@@ -2175,9 +2157,13 @@ function renderRxnEditor() {
   const below = rlb ? rlb.value : (_rxnLabelCache.below || '');
 
   host.innerHTML =
-    '<div class="rxn-row">' +
+    '<div class="rxn-wys-row">' +
       side('reactants') +
       '<div class="rxn-arrow-col">' +
+        '<div class="rxn-agents">' +
+          _rxnComp.agents.map((m, i) => (i ? '<span class="rxn-plus">+</span>' : '') + box('agents', i, m)).join('') +
+          '<button class="rxn-add-agent" title="Struktur über dem Pfeil (Ketcher)" onclick="addRxnComponent(\'agents\')">＋ Struktur</button>' +
+        '</div>' +
         '<input class="fi" id="f-rl" value="' + x(above) + '" placeholder="Reagenzien, z. B. H_2SO_4" ' +
           'oninput="_rxnLabelCache.above=this.value;mu();schedP()">' +
         '<svg class="rxn-shaft" viewBox="0 0 172 11" xmlns="http://www.w3.org/2000/svg">' +
@@ -2191,7 +2177,7 @@ function renderRxnEditor() {
 
   // Draw each filled box from its MOL, so the boxes show the real geometry.
   MolRenderer.ready().then(() => {
-    for (const name of ['reactants', 'products']) {
+    for (const name of ['reactants', 'products', 'agents']) {
       _rxnComp[name].forEach((m, i) => {
         const el = document.getElementById('rxnbox-' + name + '-' + i);
         if (!el || !m) return;
@@ -2223,7 +2209,7 @@ window.editRxnComponent = function(side, i) {
   _rxnLabelCache.above = document.getElementById('f-rl')?.value || _rxnLabelCache.above;
   _rxnLabelCache.below = document.getElementById('f-rlb')?.value || _rxnLabelCache.below;
   openStructEditorFor({
-    title: (side === 'reactants' ? 'Reaktant' : 'Produkt') + ' ' + (idx + 1) + ' zeichnen (Ketcher)',
+    title: ({ reactants: 'Reaktant', products: 'Produkt', agents: 'Reagenz über dem Pfeil' })[side] + ' ' + (idx + 1) + ' zeichnen (Ketcher)',
     load: () => _rxnComp[side][idx] || '',
     save: (mol) => {
       // An empty canvas still yields a MOL header; only keep it when the
@@ -2444,88 +2430,6 @@ window.bakeAllLayouts = async function() {
   mu();
   toast(`Layouts neu berechnet: ${ok} ✓${fail?', '+fail+' ✗':''}`, fail?'err':'ok');
 };
-
-window.diagnoseOCR = async function() {
-  try {
-    const res = await fetch('/api/ocr/diagnose');
-    const j = await res.json();
-    if (j.error) {
-      alert('OCR-Diagnose fehlgeschlagen:\n\n' + j.error + (j.hint ? '\n\n' + j.hint : ''));
-      return;
-    }
-    const mods = j.modules || {};
-    const lines = [
-      'Python: ' + (j.python_version || '?') + '  ('+(j.python_path||'?')+')',
-      'Platform: ' + (j.platform || '?'),
-      '',
-      'Backends:'
-    ];
-    Object.keys(mods).forEach(k => {
-      const m = mods[k];
-      lines.push('  ' + (m.ok?'✓':'✗') + ' ' + k + (m.version?' v'+m.version:'') + (m.error?'  — '+m.error:''));
-    });
-    lines.push('  ' + (j.osra_binary?'✓':'✗') + ' osra-Binary');
-    lines.push('');
-    lines.push(j.primary_backend_ready
-      ? '→ OCR einsatzbereit (DECIMER + RDKit installiert).'
-      : '→ Primärer Pfad fehlt. Installation: py -3.10 -m pip install decimer rdkit');
-    alert(lines.join('\n'));
-  } catch (e) {
-    alert('OCR-Diagnose nicht erreichbar: ' + e.message + '\n(Läuft der Node-Server?)');
-  }
-};
-
-window.openOCRForNode = function(nodeIdx) {
-  // Lazily create a hidden file input and trigger it
-  let inp = document.getElementById('_ocr-file');
-  if (!inp) {
-    inp = document.createElement('input');
-    inp.type = 'file'; inp.accept = 'image/*'; inp.id = '_ocr-file';
-    inp.style.display = 'none';
-    document.body.appendChild(inp);
-  }
-  inp.onchange = async () => {
-    const f = inp.files && inp.files[0];
-    if (!f) return;
-    const reader = new FileReader();
-    reader.onload = async () => {
-      toast('OCR läuft… (kann beim ersten Mal lange dauern)', 'ok');
-      try {
-        const res = await fetch('/api/ocr', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ data_base64: reader.result })
-        });
-        const j = await res.json();
-        if (!res.ok || j.error) {
-          toast('OCR fehlgeschlagen: ' + (j.error || res.statusText) + (j.hint ? ' — ' + j.hint : ''), 'err');
-          return;
-        }
-        if (j.mol) {
-          _editScheme.nodes[nodeIdx].mol = j.mol;
-          rerenderNode(nodeIdx);
-          toast('OCR erfolgreich ✓', 'ok');
-          mu();
-        } else if (j.smiles) {
-          _editScheme.nodes[nodeIdx].smiles = j.smiles;
-          _editScheme.nodes[nodeIdx].mol = '';
-          rerenderNode(nodeIdx);
-          toast('OCR erfolgreich — SMILES (RDKit fehlt, kein MOL): '+j.smiles, 'ok');
-          mu();
-        } else {
-          toast('OCR lieferte weder MOL noch SMILES zurück', 'err');
-        }
-      } catch (e) {
-        toast('OCR-Fehler: ' + e.message, 'err');
-      } finally {
-        inp.value = '';
-      }
-    };
-    reader.readAsDataURL(f);
-  };
-  inp.click();
-};
-
 
 /* — Multiple choice editor — */
 function renderMCQEditor(q) {

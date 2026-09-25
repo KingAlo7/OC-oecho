@@ -35,10 +35,10 @@ Jede Frage ist eine **Aufgabe aus Abschnitten** (`type: "composed"`) — so wie 
 Die ganze Aufgabe steht auf **einem Blatt**: eine Fortschrittsleiste oben (Aufdecken/Zurücksetzen für alle Schemata), Zoom-Knöpfe rechts neben jedem Schema, Hinweise aus der Angabe direkt über dem jeweiligen Abschnitt.
 
 ### Admin (`admin.html`)
-- Tab **Reaktionen** — Editor für `data/reactions.json`. Das Reaktionsschema wird **WYSIWYG** bearbeitet: Reaktanten-Boxen links, Produkt-Boxen rechts, dazwischen ein Pfeil, dessen beide Textfelder direkt `reagent_label` / `reagent_label_below` sind. Klick auf eine Box öffnet Ketcher für genau diese Komponente; „＋“ fügt eine weitere hinzu. Gespeichert wird als RXN-Datei, die Geometrie bleibt 1:1 erhalten
+- Tab **Reaktionen** — Editor für `data/reactions.json`. Das Reaktionsschema wird **WYSIWYG** bearbeitet: Reaktanten-Boxen links, Produkt-Boxen rechts, dazwischen ein Pfeil, dessen beide Textfelder direkt `reagent_label` / `reagent_label_below` sind. Klick auf eine Box öffnet Ketcher für genau diese Komponente; „＋“ fügt eine weitere hinzu; „＋ Struktur“ über dem Pfeil setzt Reagenz-Strukturen (`reagent_mols`) zusätzlich zum Text. Gespeichert wird als RXN-Datei, die Geometrie bleibt 1:1 erhalten
 - Tab **Quiz** — Editor für `data/questions.json`:
   - Abschnitts-Reiter (`＋ Abschnitt` → Typ aus der Liste wählen)
-  - Graph-Editor mit Ketcher pro Struktur, OCR-Button und OCL-Live-Preview
+  - Graph-Editor mit Ketcher pro Struktur und OCL-Live-Preview
   - Kanten-Editor mit `from[]`, `to`, Reagenz-Beschriftung über/unter dem Pfeil
   - **Vorgegeben / Gesucht** je Knoten — Schalter im Detailpanel oder Taste <kbd>G</kbd>; **✓ Ausgangsstoffe vorgeben** markiert alle Strukturen ohne eingehenden Pfeil
   - Pro Knoten: Beschriftung (leer = keine), Name (erst nach dem Aufdecken sichtbar) und **Angabe-Text unter der Struktur** (`caption`, immer sichtbar, z. B. Summenformel)
@@ -54,13 +54,12 @@ Die ganze Aufgabe steht auf **einem Blatt**: eine Fortschrittsleiste oben (Aufde
 | Schicht | Wahl | Anmerkung |
 |---|---|---|
 | Deployment | GitHub Pages | Statisch, kein Build, automatisch bei Push nach `main` |
-| Lokaler Server | Node.js + Express | Nur für Admin-Schreibzugriff (Reactions/Questions/OCR-Sidecar) |
+| Lokaler Server | Node.js + Express | Nur für Admin-Schreibzugriff (Reactions/Questions) |
 | Frontend | Vanilla JS + HTML | Kein Build, kein Bundler, kein Framework |
 | Daten | JSON in `data/` | Menschenlesbar, git-freundlich |
 | Renderer (überall) | OpenChemLib v8 (CDN, ~500 KB) | MOL/SMILES → SVG, läuft auch auf Pages; `mol-renderer.js` setzt Pfeil + Beschriftung |
 | Layout-Optimierung | RDKit-JS (CDN, ~4 MB, lazy) | CoordGen-2D-Layout, nur Admin |
 | Struktur-Editor | Ketcher 3.12 (vendor/, ~26 MB committed) | EPAM, eingebettet via iframe, lädt auf Lokal + Pages |
-| OCR (optional) | DECIMER + RDKit (Python) | Lokaler Sidecar, nur Admin |
 
 **Pages-Bundle** = OCL (500 KB) + HTML/CSS/JS — keine WASM. Ketcher liegt im Repo und wird nur im Admin geladen.
 
@@ -77,7 +76,7 @@ OC-oecho/
 ├── mol-renderer.js         ← OpenChemLib-Wrapper (MOL/SMILES/Reaktion → SVG)
 ├── scheme-graph-editor.js  ← SVG-Schema-Editor + Quiz-Viewer (Reaktions-Layout, Pfeil-Routing)
 ├── rdkit-helper.js         ← Lazy-Loader für RDKit-JS (Admin-Layout-Optimierung)
-├── server.js               ← Express-Server + /api/questions + /api/ocr
+├── server.js               ← Express-Server + /api/reactions + /api/questions
 ├── package.json
 ├── .gitignore              ← schließt vendor/ aus
 │
@@ -86,7 +85,6 @@ OC-oecho/
 │   └── questions.json      ← Quizfragen
 │
 ├── tools/
-│   ├── ocr.py              ← Python-Sidecar: Bild → MOL via DECIMER/OSRA/MolScribe
 │   └── source-audit-2026*.js ← Abgleich aller Aufgaben mit den Original-Angaben (BW 39–52, LW 43–52)
 │
 ├── vendor/
@@ -127,28 +125,6 @@ node server.js
 | `http://localhost:3000/admin.html` | Admin (Reaktionen + Quiz + Commit) |
 | `http://localhost:3000/export.html` | Druckansicht |
 
-### Optional: Strukturerkennung (OCR)
-
-Der „OCR…"-Button pro Quiz-Knoten ruft einen lokalen Python-Sidecar auf. **Optional** — ohne OCR funktioniert alles andere; Strukturen werden im Ketcher-Editor gezeichnet oder per SMILES eingegeben.
-
-DECIMER benötigt TensorFlow und unterstützt **nur Python 3.10 oder 3.11** (nicht 3.12+, nicht 3.14):
-
-```powershell
-# Python 3.10 von python.org installieren (PATH ankreuzen)
-py -3.10 -m pip install --upgrade pip
-py -3.10 -m pip install decimer rdkit
-```
-
-Beim ersten Aufruf lädt DECIMER ein Modell (~250 MB) nach `%USERPROFILE%\.data\DECIMER-V2\`.
-
-**Diagnose:** Im Admin auf der „Quiz"-Liste den **OCR?**-Button klicken — meldet Python-Version und Modul-Status. Oder per CLI:
-
-```bash
-python tools/ocr.py --diagnose
-```
-
-Alternativ-Backends: `molscribe` (~500 MB), `osra` (klassische CV, leichter).
-
 ---
 
 ## Datenschemas
@@ -167,8 +143,9 @@ Array von Reaktionsobjekten, gerendert via OpenChemLib. Pflichtfelder: `id`, `ca
 | `transformation` | `string` | Kurzformel der Umsetzung (`R-X → R-OH`) |
 | `reaction_rxn` | `string` | **Zeichnung.** RXN-V2000-Datei aus Ketcher — ein `$MOL`-Block je Komponente, mit den exakt gezeichneten Koordinaten |
 | `reaction_smiles` | `string` | Abgeleiteter Such-/Dedup-Schlüssel. Koordinatenfrei, wird **nicht** gerendert, solange `reaction_rxn` vorhanden ist |
-| `reagent_label` | `string` | LaTeX-Syntax über Pfeil (`H_2SO_4`, `[Ag(NH_3)_2]^{1+}`) |
+| `reagent_label` | `string` | LaTeX-Syntax über Pfeil (`H_2SO_4`, `C_12H_22O_11`, `Fe^3+`, `[Ag(NH_3)_2]^{+}`) — gilt überall, siehe `chem-text.js` |
 | `reagent_label_below` | `string` | LaTeX-Syntax unter Pfeil |
+| `reagent_mols` | `string[]` | Optional: MOL-Blöcke, die (verkleinert) über dem Pfeil gezeichnet werden, über `reagent_label` |
 | `conditions` | `string` | Reaktionsbedingungen |
 | `stereochemistry` | `string` | Stereochemischer Ausgang |
 | `key_points` | `string[]` | Mechanismusstichpunkte |
@@ -374,7 +351,7 @@ Drei Bibliotheken arbeiten zusammen, um sowohl gute Layouts als auch ein leichtg
 
 `.github/workflows/pages.yml` deployt automatisch bei Push nach `main`. Kein Build-Schritt — alle Frontend-Dateien sind statisch.
 
-Auf Pages **nicht verfügbar**: `/api/*` (kein Node-Server) und DECIMER-OCR (kein Python). Der **Ketcher-Editor funktioniert auf Pages** (das vendor-Bundle ist committet). Lokal speichern (`POST /api/questions`) geht nur mit laufendem `node server.js`; das Direct-Push aus dem Commit-Tab funktioniert auch auf Pages über die GitHub-API.
+Auf Pages **nicht verfügbar**: `/api/*` (kein Node-Server). Der **Ketcher-Editor funktioniert auf Pages** (das vendor-Bundle ist committet). Lokal speichern (`POST /api/questions`) geht nur mit laufendem `node server.js`; das Direct-Push aus dem Commit-Tab funktioniert auch auf Pages über die GitHub-API.
 
 ---
 

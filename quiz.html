@@ -14,6 +14,7 @@
 <meta name="apple-mobile-web-app-title" content="OC Referenz">
 <script src="./pwa.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/openchemlib/dist/openchemlib-full.js"></script>
+<script src="./chem-text.js"></script>
 <script src="./mol-renderer.js"></script>
 <script src="./scheme-graph-editor.js"></script>
 <style>
@@ -600,7 +601,7 @@ function buildSidebar() {
     return `<div class="cat-group" data-cat="${x(typeKey)}"${visibleN===0?' style="display:none"':''}>
       <div class="cat-header" onclick="toggleCat(this)">
         <span class="cat-arrow">▶</span>
-        <span>${x(label)}</span>
+        <span>${renderLatexLabel(label)}</span>
         <span class="cat-count">${visibleN}</span>
       </div>
       <div class="cat-items">
@@ -609,7 +610,7 @@ function buildSidebar() {
           const badge = d ? `<span class="diff-badge diff-${d}">${d}</span>` : '';
           const hidden = !qVisible(q) ? ' hidden' : '';
           const diffCls = d ? ' diff-'+d : '';
-          return `<div class="q-link${diffCls}${hidden}" id="link-${x(q.id)}" onclick="showQuestion('${x(q.id)}')">${badge}<span class="q-name">${x(q.name)}</span></div>`;
+          return `<div class="q-link${diffCls}${hidden}" id="link-${x(q.id)}" onclick="showQuestion('${x(q.id)}')">${badge}<span class="q-name">${renderLatexLabel(q.name)}</span></div>`;
         }).join('')}
       </div>
     </div>`;
@@ -707,13 +708,13 @@ function relatedLink(id) {
   if (!id) return '';
   const r = reactionsIdx[id];
   const label = r ? r.name : id;
-  return `<a class="related-link" href="./index.html#${x(id)}" title="${r ? x(r.category) : ''}">→ ${x(label)}</a>`;
+  return `<a class="related-link" href="./index.html#${x(id)}" title="${r ? x(r.category) : ''}">→ ${renderLatexLabel(label)}</a>`;
 }
 
 function explanationToggle(slot, expl) {
   if (!expl) return '';
   return `<button class="expl-toggle" onclick="toggleExpl('${slot}')">Erläuterung</button>
-    <div class="expl-body" id="expl-${slot}">${x(expl)}</div>`;
+    <div class="expl-body" id="expl-${slot}">${renderLatexLabel(expl)}</div>`;
 }
 window.toggleExpl = function(slot) {
   const el = document.getElementById('expl-'+slot);
@@ -759,8 +760,8 @@ function renderComposedScheme(q, scheme) {
     const slot = q.id + '-n-' + n.id;
     return `<div class="composed-info" id="info-${x(slot)}">
       <button class="composed-info-close" onclick="closeNodeInfo('${x(slot)}')">×</button>
-      <div class="composed-info-head">${x(n.label || n.id)} aufgedeckt</div>
-      ${n.name ? `<div class="composed-info-name">${x(n.name)}</div>` : ''}
+      <div class="composed-info-head">${renderLatexLabel(n.label || n.id)} aufgedeckt</div>
+      ${n.name ? `<div class="composed-info-name">${renderLatexLabel(n.name)}</div>` : ''}
       ${n.explanation ? `<div class="composed-info-expl">${renderLatexLabel(n.explanation)}</div>` : ''}
       ${n.note ? `<div class="composed-info-expl" style="font-style:italic;color:var(--muted)">${renderLatexLabel(n.note)}</div>` : ''}
       <div class="composed-info-actions">${relatedLink(n.related_reaction_id)}</div>
@@ -861,8 +862,8 @@ function renderComposedSchemeLegacy(q, scheme) {
     if (n.given) {
       return `<div class="flow-node given" id="node-${x(slot)}">
         <div class="struct" id="struct-${x(slot)}" data-input="${x(n.mol || n.smiles || '')}" data-ismol="${n.mol?1:0}"></div>
-        <div class="label">${x(n.label || n.id)}</div>
-        <div class="name">${x(n.name || '')}</div>
+        <div class="label">${renderLatexLabel(n.label || n.id)}</div>
+        <div class="name">${renderLatexLabel(n.name || '')}</div>
       </div>`;
     }
     // Embed the structure data on the DOM so revealNode doesn't need to
@@ -872,8 +873,8 @@ function renderComposedSchemeLegacy(q, scheme) {
                 data-input="${x(n.mol || n.smiles || '')}" data-ismol="${n.mol?1:0}"
                 onclick="revealNode('${x(slot)}')">
       <div class="struct"><span>?</span></div>
-      <div class="label">${x(n.label || n.id)}</div>
-      <div class="name">${x(n.name || '')}</div>
+      <div class="label">${renderLatexLabel(n.label || n.id)}</div>
+      <div class="name">${renderLatexLabel(n.name || '')}</div>
       <div class="info-btn" onclick="event.stopPropagation();openNodeInfo('${x(slot)}')">i</div>
     </div>`;
   }
@@ -917,10 +918,10 @@ function renderComposedSchemeLegacy(q, scheme) {
     const slot = q.id + '-n-' + n.id;
     return `<div class="composed-info" id="info-${x(slot)}">
       <button class="composed-info-close" onclick="closeNodeInfo('${x(slot)}')">×</button>
-      <div class="composed-info-head">${x(n.label || n.id)} aufgedeckt</div>
-      ${n.name ? `<div class="composed-info-name">${x(n.name)}</div>` : ''}
-      ${n.explanation ? `<div class="composed-info-expl">${x(n.explanation)}</div>` : ''}
-      ${n.note ? `<div class="composed-info-expl" style="font-style:italic;color:var(--muted)">${x(n.note)}</div>` : ''}
+      <div class="composed-info-head">${renderLatexLabel(n.label || n.id)} aufgedeckt</div>
+      ${n.name ? `<div class="composed-info-name">${renderLatexLabel(n.name)}</div>` : ''}
+      ${n.explanation ? `<div class="composed-info-expl">${renderLatexLabel(n.explanation)}</div>` : ''}
+      ${n.note ? `<div class="composed-info-expl" style="font-style:italic;color:var(--muted)">${renderLatexLabel(n.note)}</div>` : ''}
       <div class="composed-info-actions">${relatedLink(n.related_reaction_id)}</div>
     </div>`;
   }).join('');
@@ -960,12 +961,7 @@ async function renderAllStructures(qid) {
 /* LaTeX-style sub/superscript for reagent labels shown as HTML
    (the SVG renderers do their own tspan-based version). */
 function renderLatexLabel(s) {
-  if (!s) return '';
-  return x(s)
-    .replace(/_\{([^}]+)\}/g, (_, t) => '<sub>'+t+'</sub>')
-    .replace(/\^\{([^}]+)\}/g, (_, t) => '<sup>'+t+'</sup>')
-    .replace(/_([A-Za-z0-9+\-=])/g,  (_, t) => '<sub>'+t+'</sub>')
-    .replace(/\^([A-Za-z0-9+\-=])/g, (_, t) => '<sup>'+t+'</sup>');
+  return s ? ChemText.html(s) : '';
 }
 
 window.revealNode = function(slot) {
@@ -1037,7 +1033,7 @@ function renderMCQ(q) {
     const marker = String.fromCharCode(65+i);
     return `<div class="mcq-choice" data-correct="${c.correct?1:0}" data-i="${i}" onclick="pickMCQ(this, '${q.id}')">
       <div class="marker">${marker}</div>
-      <div class="lbl">${x(c.label||'')}</div>
+      <div class="lbl">${renderLatexLabel(c.label||'')}</div>
       <div class="struct">${structHtml}</div>
     </div>`;
   }).join('');
@@ -1048,11 +1044,11 @@ function renderMCQ(q) {
   return `
     <div class="step-body">
       ${givenHtml}
-      <div class="step-prompt">${x(q.prompt||'')}</div>
+      <div class="step-prompt">${renderLatexLabel(q.prompt||'')}</div>
       <div class="mcq-choices">${choicesHtml}</div>
       <div class="answer-block" id="mcq-ab-${q.id}">
         <div class="answer-head" id="mcq-head-${q.id}">→ Lösung</div>
-        ${q.explanation ? `<div class="answer-note">${x(q.explanation)}</div>` : ''}
+        ${q.explanation ? `<div class="answer-note">${renderLatexLabel(q.explanation)}</div>` : ''}
         <div class="answer-extra">${relatedLink(q.related_reaction_id)}</div>
       </div>
     </div>`;
@@ -1075,7 +1071,7 @@ window.pickMCQ = function(el, qid) {
 function renderShortAnswer(q) {
   return `
     <div class="step-body">
-      <div class="step-prompt">${x(q.prompt||'')}</div>
+      <div class="step-prompt">${renderLatexLabel(q.prompt||'')}</div>
       <textarea class="sa-area" id="sa-${q.id}" placeholder="Antwort hier eingeben…"></textarea>
       <div style="margin-top:0.7rem;display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap">
         <button class="reveal-btn" onclick="revealSA('${q.id}')">Musterlösung anzeigen</button>
@@ -1083,7 +1079,7 @@ function renderShortAnswer(q) {
       </div>
       <div class="sa-expected" id="sa-exp-${q.id}">
         <div class="sa-expected-head">Musterlösung</div>
-        ${x(q.expected_answer||'')}
+        ${renderLatexLabel(q.expected_answer||'')}
       </div>
     </div>`;
 }
@@ -1102,9 +1098,9 @@ function renderMechanism(q) {
       <div class="mech-step" id="mech-step-${slot}">
         <div class="mech-step-head">
           <span class="mech-step-num">${i+1}</span>
-          <span class="mech-step-name">${x(s.name||'')}</span>
+          <span class="mech-step-name">${renderLatexLabel(s.name||'')}</span>
         </div>
-        <div class="mech-step-prompt">${x(s.prompt||'')}</div>
+        <div class="mech-step-prompt">${renderLatexLabel(s.prompt||'')}</div>
         <button class="reveal-btn" onclick="revealMech('${slot}')">Zwischenstufe anzeigen</button>
         <div class="answer-block">
           <div class="answer-head">Struktur</div>
@@ -1117,12 +1113,12 @@ function renderMechanism(q) {
   return `
     <div class="step-body">
       ${givenHtml}
-      <div class="step-prompt">${x(q.prompt||'')}</div>
+      <div class="step-prompt">${renderLatexLabel(q.prompt||'')}</div>
       ${stepsHtml}
       ${q.explanation ? `
         <div class="answer-block" style="display:block;margin-top:1rem">
           <div class="answer-head">Zusammenfassung</div>
-          <div class="answer-note">${x(q.explanation)}</div>
+          <div class="answer-note">${renderLatexLabel(q.explanation)}</div>
           <div class="answer-extra">${relatedLink(q.related_reaction_id)}</div>
         </div>` : `<div style="margin-top:1rem">${relatedLink(q.related_reaction_id)}</div>`}
     </div>`;
@@ -1152,7 +1148,7 @@ function renderSection(section, parentQid, idx) {
   const hints = Array.isArray(section.hints) ? section.hints.filter(Boolean) : [];
   const header = (section.title || section.body || hints.length) ? `
     <div class="section-header">
-      ${section.title ? `<h2 class="section-title">${x(section.title)}</h2>` : ''}
+      ${section.title ? `<h2 class="section-title">${renderLatexLabel(section.title)}</h2>` : ''}
       ${section.body ? `<div class="section-body">${renderLatexLabel(section.body)}</div>` : ''}
       ${hints.length ? `<div class="sec-hints"><div class="sec-hints-head">Hinweise</div><ul>${hints.map(h => `<li>${renderLatexLabel(h)}</li>`).join('')}</ul></div>` : ''}
     </div>` : '';
@@ -1221,12 +1217,12 @@ function showQuestion(id) {
       <div class="q-breadcrumb">
         <span class="cat-name">${x(q.category)}</span>
         <span class="sep">›</span>
-        <span>${x(q.name)}</span>
+        <span>${renderLatexLabel(q.name)}</span>
         ${q.difficulty ? `<span class="diff-badge diff-${q.difficulty}">${q.difficulty}</span>` : ''}
       </div>
-      <h1 class="q-title">${x(q.name)}</h1>
-      ${q.source ? `<div class="q-source">${x(q.source)}</div>` : ''}
-      ${q.intro ? `<div class="q-intro">${x(q.intro)}</div>` : ''}
+      <h1 class="q-title">${renderLatexLabel(q.name)}</h1>
+      ${q.source ? `<div class="q-source">${renderLatexLabel(q.source)}</div>` : ''}
+      ${q.intro ? `<div class="q-intro">${renderLatexLabel(q.intro)}</div>` : ''}
       ${hintsHtml}
       ${body}
     </div></div>`;
