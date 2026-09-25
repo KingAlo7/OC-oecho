@@ -1555,26 +1555,91 @@
     "name": "LW 2019 — Ein Student der organischen Chemie",
     "difficulty": "B",
     "source": "ÖChO Landeswettbewerb 2019 (LW 45), Problem E",
-    "intro": "Ein Student, nennen wir ihn in Anlehnung an einen großen deutschen Chemiker des 19. Jahrhunderts Justus, findet in einem Lehrbuch für organische Synthesen seines Großvaters aus dem Jahr 1922 eine Vorschrift für die Synthese der Verbindung X und probiert sie sofort aus.",
+    "intro": "Ein Student der organischen Chemie",
     "sections": [
       {
         "type": "synthesis",
-        "title": "E.1 Eine Synthese aus Großvaters Buch",
+        "title": "E.1 a)",
+        "body": "E.1. Eine Synthese aus Großvaters Buch\nEin Student, nennen wir ihn in Anlehnung an einen großen deutschen Chemiker des 19. Jahrhunderts Justus, findet in einem Lehrbuch für organische Synthesen seines Großvaters aus dem Jahr 1922 eine Vorschrift für die Synthese der Verbindung X und probiert sie sofort aus:\nEr bringt 100 g 1-Brom-2-phenylethen mit 150 g heißer KOH bei 200°C zur Reaktion. Die entstehende gelbliche Flüssigkeit wird kontinuierlich abdestilliert. Nach Aufarbeitung erhält Justus 37,0 g der Verbindung X, welche laut Elementaranalyse 94,08 % C aber kein Heteroatom enthält.\na) Zeichnen Sie alle möglichen Konfigurationsformeln von 1-Brom-2-phenylethen und zusätzlich alle isomeren Strukturen der Verbindungen, die einen Benzenring enthalten.",
+        "scheme": {
+          "nodes": [
+            {
+              "id": "I1",
+              "label": "",
+              "given": false,
+              "smiles": "Br/C=C/c1ccccc1",
+              "explanation": "(E)-1-Brom-2-phenylethen",
+              "mol": "\n     RDKit          2D\n\n  9  9  0  0  0  0  0  0  0  0999 V2000\n    5.1960    1.5000    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  9  4  1  0\nM  END\n"
+            },
+            {
+              "id": "I2",
+              "label": "",
+              "given": false,
+              "smiles": "Br/C=C\\c1ccccc1",
+              "explanation": "(Z)-1-Brom-2-phenylethen",
+              "mol": "\n     RDKit          2D\n\n  9  9  0  0  0  0  0  0  0  0999 V2000\n    3.8970   -0.7500    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  9  4  1  0\nM  END\n"
+            },
+            {
+              "id": "I3",
+              "label": "",
+              "given": false,
+              "smiles": "BrC(=C)c1ccccc1",
+              "explanation": "1-Brom-1-phenylethen",
+              "mol": "\n     RDKit          2D\n\n  9  9  0  0  0  0  0  0  0  0999 V2000\n    2.5980    3.0000    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  9  4  1  0\nM  END\n"
+            },
+            {
+              "id": "I4",
+              "label": "",
+              "given": false,
+              "smiles": "C=Cc1ccccc1Br",
+              "explanation": "1-Brom-2-ethenylbenzen",
+              "mol": "\n     RDKit          2D\n\n  9  9  0  0  0  0  0  0  0  0999 V2000\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980   -1.5000    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  2  0\n  8  9  1  0\n  8  3  1  0\nM  END\n"
+            },
+            {
+              "id": "I5",
+              "label": "",
+              "given": false,
+              "smiles": "C=Cc1cccc(Br)c1",
+              "explanation": "1-Brom-3-ethenylbenzen",
+              "mol": "\n     RDKit          2D\n\n  9  9  0  0  0  0  0  0  0  0999 V2000\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -3.0000    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  1  0\n  7  9  2  0\n  9  3  1  0\nM  END\n"
+            },
+            {
+              "id": "I6",
+              "label": "",
+              "given": false,
+              "smiles": "C=Cc1ccc(Br)cc1",
+              "explanation": "1-Brom-4-ethenylbenzen",
+              "mol": "\n     RDKit          2D\n\n  9  9  0  0  0  0  0  0  0  0999 V2000\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5980   -1.5000    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  1  0\n  6  8  2  0\n  8  9  1  0\n  9  3  2  0\nM  END\n"
+            }
+          ],
+          "edges": []
+        }
+      },
+      {
+        "type": "short_answer",
+        "title": "E.1 b)",
+        "prompt": "Berechnen Sie die Summenformel von X.",
+        "expected_answer": "94,08/12,01 : 5,92/1,01 = 7,83 : 5,86 = 1,34 : 1 = 4 : 3 ⇒ C_4H_3\nEs muss aber mindestens ein Benzenring im Molekül sein ⇒ C_8H_6"
+      },
+      {
+        "type": "synthesis",
+        "title": "E.1 c)",
+        "body": "c) Zeichnen Sie die Strukturformel von X und benennen Sie die Verbindung nach IUPAC.",
         "scheme": {
           "nodes": [
             {
               "id": "P1",
               "label": "",
-              "given": false,
-              "smiles": "Br/C=C/c1ccccc1",
-              "caption": "1-Brom-2-phenylethen"
+              "given": true,
+              "text": "1-Brom-2-phenylethen"
             },
             {
               "id": "X",
               "label": "X",
               "given": false,
               "smiles": "C#Cc1ccccc1",
-              "name": "Ethinylbenzen (Phenylacetylen)"
+              "explanation": "Phenylethin oder Ethinylbenzen",
+              "mol": "\n     RDKit          2D\n\n  8  8  0  0  0  0  0  0  0  0999 V2000\n    4.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  3  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  2  0\n  8  3  1  0\nM  END\n"
             }
           ],
           "edges": [
@@ -1587,46 +1652,48 @@
               "reagent_below": "200 °C"
             }
           ]
-        },
-        "hints": [
-          "Er bringt 100 g 1-Brom-2-phenylethen mit 150 g heißer KOH bei 200 °C zur Reaktion. Die entstehende gelbliche Flüssigkeit wird kontinuierlich abdestilliert. Nach Aufarbeitung erhält Justus 37,0 g der Verbindung X, welche laut Elementaranalyse 94,08 % C, aber kein Heteroatom enthält."
-        ]
+        }
       },
       {
         "type": "short_answer",
-        "title": "Summenformel und Name von X (b, c)",
-        "prompt": "Berechnen Sie die Summenformel von X und benennen Sie X nach IUPAC.",
-        "expected_answer": "C_8H_6; Ethinylbenzen (Phenylacetylen)."
+        "title": "E.1 c) — Name",
+        "prompt": "Benennen Sie X nach IUPAC.",
+        "expected_answer": "Phenylethin oder Ethinylbenzen"
       },
       {
         "type": "synthesis",
-        "title": "E.2 Alternative Synthesewege — Weg 1",
+        "title": "E.2 d)",
+        "body": "E.2. Alternative Synthesewege\nAnschließend versucht Justus eine andere Synthese für die Verbindung X durchzuführen:\nd) Zeichnen Sie Strukturformeln für die Verbindungen A und B.",
         "scheme": {
           "nodes": [
             {
               "id": "Bz",
               "label": "",
               "given": true,
-              "smiles": "c1ccccc1"
+              "smiles": "c1ccccc1",
+              "mol": "\n     RDKit          2D\n\n  6  6  0  0  0  0  0  0  0  0999 V2000\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  1  2  0\nM  END\n"
             },
             {
               "id": "A",
               "label": "A",
               "given": false,
-              "smiles": "CC(=O)c1ccccc1"
+              "smiles": "CC(=O)c1ccccc1",
+              "mol": "\n     RDKit          2D\n\n  9  9  0  0  0  0  0  0  0  0999 V2000\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    3.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  9  4  1  0\nM  END\n"
             },
             {
               "id": "B",
               "label": "B",
               "given": false,
               "smiles": "CC(Cl)(Cl)c1ccccc1",
-              "caption": "54,9 % C, enthält -CH_3"
+              "caption": "54,9% C\nenthält -CH_3",
+              "mol": "\n     RDKit          2D\n\n 10 10  0  0  0  0  0  0  0  0999 V2000\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8480    2.7990    0.0000 Cl  0  0  0  0  0  0  0  0  0  0  0  0\n    3.3480    2.7990    0.0000 Cl  0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  1  0\n  2  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  2  0\n  8  9  1  0\n  9 10  2  0\n 10  5  1  0\nM  END\n"
             },
             {
               "id": "X",
               "label": "X",
-              "given": false,
-              "smiles": "C#Cc1ccccc1"
+              "given": true,
+              "smiles": "C#Cc1ccccc1",
+              "mol": "\n     RDKit          2D\n\n  8  8  0  0  0  0  0  0  0  0999 V2000\n    3.8970    2.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  3  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  2  0\n  8  3  1  0\nM  END\n"
             }
           ],
           "edges": [
@@ -1635,8 +1702,9 @@
                 "Bz"
               ],
               "to": "A",
-              "reagent_above": "CH_3COCl",
-              "reagent_below": "AlCl_3"
+              "reagent_above": "",
+              "reagent_below": "AlCl_3",
+              "reagent_mol": "\n     RDKit          2D\n\n  4  3  0  0  0  0  0  0  0  0999 V2000\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 Cl  0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  2  0\nM  END\n"
             },
             {
               "from": [
@@ -1659,62 +1727,58 @@
       },
       {
         "type": "synthesis",
-        "title": "E.2 Alternative Synthesewege — Weg 2",
+        "title": "E.2 e)",
+        "body": "Eine weitere Variante für die Synthese von X, ebenso ausgehend von Benzen, verläuft nach folgendem Schema:\ne) Zeichnen Sie Strukturformeln für die Verbindungen D, E, F und G.",
         "scheme": {
           "nodes": [
             {
               "id": "Bz",
               "label": "",
               "given": true,
-              "smiles": "c1ccccc1"
+              "smiles": "c1ccccc1",
+              "mol": "\n     RDKit          2D\n\n  6  6  0  0  0  0  0  0  0  0999 V2000\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  1  2  0\nM  END\n"
             },
             {
               "id": "D",
               "label": "D",
               "given": false,
-              "smiles": "Brc1ccccc1"
+              "smiles": "Brc1ccccc1",
+              "mol": "\n     RDKit          2D\n\n  7  7  0  0  0  0  0  0  0  0999 V2000\n    2.5980    1.5000    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  7  2  1  0\nM  END\n"
             },
             {
               "id": "Ee",
               "label": "E",
               "given": false,
-              "smiles": "Br[Mg]c1ccccc1"
+              "smiles": "Br[Mg]c1ccccc1",
+              "mol": "\n     RDKit          2D\n\n  8  8  0  1  0  0  0  0  0  0999 V2000\n    3.8970    2.2500    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 Mg  0  0  0  0  0  2  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  2  0\n  8  3  1  0\nM  STY  1   1 SUP\nM  SAL   1  2   2   1\nM  SMT   1 MgBr\nM  END\n"
             },
             {
               "id": "F",
               "label": "F",
               "given": false,
-              "smiles": "CC(O)c1ccccc1"
+              "smiles": "CC(O)c1ccccc1",
+              "mol": "\n     RDKit          2D\n\n  9  9  0  0  0  0  0  0  0  0999 V2000\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    3.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  9  4  1  0\nM  END\n"
             },
             {
               "id": "St",
               "label": "Styren",
               "given": true,
-              "smiles": "C=Cc1ccccc1"
+              "smiles": "C=Cc1ccccc1",
+              "mol": "\n     RDKit          2D\n\n  8  8  0  0  0  0  0  0  0  0999 V2000\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  2  0\n  8  3  1  0\nM  END\n"
             },
             {
               "id": "Gg",
               "label": "G",
               "given": false,
-              "smiles": "BrCC(Br)c1ccccc1"
+              "smiles": "BrCC(Br)c1ccccc1",
+              "mol": "\n     RDKit          2D\n\n 10 10  0  0  0  0  0  0  0  0999 V2000\n    3.8970   -0.7500    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    3.0000    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  3  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  2  0\n  8  9  1  0\n  9 10  2  0\n 10  5  1  0\nM  END\n"
             },
             {
               "id": "X",
               "label": "X",
-              "given": false,
-              "smiles": "C#Cc1ccccc1"
-            },
-            {
-              "id": "H1",
-              "label": "H_1",
-              "given": false,
-              "smiles": "COC(CBr)c1ccccc1"
-            },
-            {
-              "id": "H2",
-              "label": "H_2",
-              "given": false,
-              "smiles": "BrC(COC)c1ccccc1"
+              "given": true,
+              "smiles": "C#Cc1ccccc1",
+              "mol": "\n     RDKit          2D\n\n  8  8  0  0  0  0  0  0  0  0999 V2000\n    3.8970    2.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  3  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  2  0\n  8  3  1  0\nM  END\n"
             }
           ],
           "edges": [
@@ -1731,15 +1795,17 @@
                 "D"
               ],
               "to": "Ee",
-              "reagent_above": "Mg"
+              "reagent_above": "Mg",
+              "reagent_below": ""
             },
             {
               "from": [
                 "Ee"
               ],
               "to": "F",
-              "reagent_above": "+ CH_3CHO",
-              "reagent_below": "dann H^+/H_2O"
+              "reagent_above": "",
+              "reagent_below": "dann H^+/H_2O",
+              "reagent_mol": "\n     RDKit          2D\n\n  4  3  0  0  0  0  0  0  0  0999 V2000\n    1.2990   -0.7500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  2  0\nM  END\n"
             },
             {
               "from": [
@@ -1764,7 +1830,52 @@
               "to": "X",
               "reagent_above": "KOH",
               "reagent_below": "in EtOH"
+            }
+          ]
+        }
+      },
+      {
+        "type": "short_answer",
+        "title": "E.2 f)",
+        "prompt": "Nach welchen Mechanismen verlaufen die folgenden Reaktionen? (Abkürzung schreiben!)\nBenzen → D:\nStyren → G:",
+        "expected_answer": "Benzen → D: S_E\nStyren → G: A_E",
+        "explanation": "Benzen → D: elektrophile aromatische Substitution (Br^+ greift den Aromaten an, H^+ wird abgespalten). Styren → G: elektrophile Addition von Br_2 an die C=C-Doppelbindung (vicinales Dibromid)."
+      },
+      {
+        "type": "short_answer",
+        "title": "E.2 g)",
+        "prompt": "In einem ersten Versuch hatte Justus die Bromierung von Styren in Methanol statt Cyclohexan als Lösungsmittel durchgeführt. Statt des Produktes G erhielt er dabei fast ausschließlich zwei Konstitutionsisomere H_1 und H_2, mit folgenden, für beide Verbindungen recht ähnlichen ^1H-NMR-Daten: 3,2 ppm, s, 3H; 3,8 ppm, m, 1H; 4,0 ppm, m, 1H; 4,7 ppm, t, 1 H; 7,4 ppm, m, 5 H.\nDie Elementaranalyse von H lautet: 50,20% C, 5,10% H, 37,15% Br, Rest O.\ng) Berechnen Sie die Summenformel von H.",
+        "expected_answer": "50,20/12,01 : 5,10/1,01 : 37,15/79,9 : 7,55/16,00 = 4,18 : 5,05 : 0,46 : 0,47 = 9 : 11 : 1 : 1 ⇒ C_9H_11BrO"
+      },
+      {
+        "type": "synthesis",
+        "title": "E.2 h)",
+        "body": "h) Zeichnen Sie die Strukturformeln von H_1 und H_2.",
+        "scheme": {
+          "nodes": [
+            {
+              "id": "St",
+              "label": "Styren",
+              "given": true,
+              "smiles": "C=Cc1ccccc1",
+              "mol": "\n     RDKit          2D\n\n  8  8  0  0  0  0  0  0  0  0999 V2000\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  2  0\n  8  3  1  0\nM  END\n"
             },
+            {
+              "id": "H1",
+              "label": "H_1",
+              "given": false,
+              "smiles": "COC(CBr)c1ccccc1",
+              "mol": "\n     RDKit          2D\n\n 11 11  0  0  0  0  0  0  0  0999 V2000\n    3.8970    3.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    3.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970   -0.7500    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  3  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  2  0\n 11  6  1  0\nM  END\n"
+            },
+            {
+              "id": "H2",
+              "label": "H_2",
+              "given": false,
+              "smiles": "COCC(Br)c1ccccc1",
+              "mol": "\n     RDKit          2D\n\n 11 11  0  0  0  0  0  0  0  0999 V2000\n    2.5980   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970   -0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    3.0000    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  4  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  2  0\n 11  6  1  0\nM  END\n"
+            }
+          ],
+          "edges": [
             {
               "from": [
                 "St"
@@ -1782,43 +1893,71 @@
               "reagent_below": "in Methanol"
             }
           ]
-        },
-        "hints": [
-          "In einem ersten Versuch führte Justus die Bromierung von Styren in Methanol statt Cyclohexan durch und erhielt fast ausschließlich zwei Konstitutionsisomere H_1 und H_2.",
-          "^1H-NMR (für beide ähnlich): 3,2 ppm (s, 3H); 3,8 ppm (m, 1H); 4,0 ppm (m, 1H); 4,7 ppm (t, 1H); 7,4 ppm (m, 5H). Elementaranalyse von H: 50,20 % C, 5,10 % H, 37,15 % Br, Rest O."
-        ]
+        }
       },
       {
         "type": "synthesis",
-        "title": "E.3 Als der Ausgangsstoff zur Neige geht",
+        "title": "E.2 i)",
+        "body": "i) Zeichnen Sie die Konfigurationsformel eines der beiden entstehenden Isomeren (H_1 oder H_2) in der R-Konfiguration.",
+        "scheme": {
+          "nodes": [
+            {
+              "id": "H1R",
+              "label": "H_1",
+              "given": false,
+              "smiles": "CO[C@@H](CBr)c1ccccc1",
+              "mol": "\n     RDKit          2D\n\n 11 11  0  0  1  0  0  0  0  0999 V2000\n    3.8970    3.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    3.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970   -0.7500    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  3  4  1  0\n  4  5  1  0\n  3  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  2  0\n 11  6  1  0\n  3  2  1  1\nM  END\n"
+            },
+            {
+              "id": "OD",
+              "label": "",
+              "given": true,
+              "text": "oder"
+            },
+            {
+              "id": "H2R",
+              "label": "H_2",
+              "given": false,
+              "smiles": "COC[C@H](Br)c1ccccc1",
+              "mol": "\n     RDKit          2D\n\n 11 11  0  0  1  0  0  0  0  0999 V2000\n    2.5980   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970   -0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    3.0000    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  1\n  4  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  2  0\n 11  6  1  0\nM  END\n"
+            }
+          ],
+          "edges": []
+        }
+      },
+      {
+        "type": "synthesis",
+        "title": "E.3 j)",
+        "body": "E.3. Als der Ausgangsstoff zur Neige geht\nJustus möchte die erste Synthese (Teil E.1.) optimieren, besitzt aber kein Ausgangsmaterial mehr. Er beschließt also, 1-Brom-2-phenylethen selbst zu synthetisieren, auch weil die Verbindung sehr angenehm nach Hyazinthen riecht.\nAusgangsmaterial für seine Synthese ist die Zimtsäure (3-Phenylpropensäure).\nj) Zeichnen Sie Strukturformeln der Verbindungen K und L.",
         "scheme": {
           "nodes": [
             {
               "id": "Zs",
               "label": "",
               "given": true,
-              "smiles": "OC(=O)/C=C/c1ccccc1"
+              "smiles": "OC(=O)/C=C/c1ccccc1",
+              "mol": "\n     RDKit          2D\n\n 11 11  0  0  0  0  0  0  0  0999 V2000\n    6.4950    0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1960    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1960    3.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  2  0\n 11  6  1  0\nM  END\n"
             },
             {
               "id": "K",
               "label": "K",
               "given": false,
               "smiles": "OC(=O)C(Br)C(Br)c1ccccc1",
-              "explanation": "anti-Addition von Br_2 → Gemisch der Stereoisomere (2 Enantiomerenpaare möglich)."
+              "mol": "\n     RDKit          2D\n\n 13 13  0  0  0  0  0  0  0  0999 V2000\n    6.4950    0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1960    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1960    3.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970   -0.7500    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    3.0000    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  4  6  1  0\n  6  7  1  0\n  6  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  2  0\n 13  8  1  0\nM  END\n"
             },
             {
               "id": "L",
               "label": "L",
               "given": false,
               "smiles": "OC(=O)/C(Br)=C/c1ccccc1",
-              "caption": "2-Brom-3-phenylprop-2-ensäure"
+              "caption": "2-Brom-3-phenylprop-2-ensäure",
+              "mol": "\n     RDKit          2D\n\n 12 12  0  0  0  0  0  0  0  0999 V2000\n    6.4950    0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1960    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1960    3.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970   -0.7500    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  4  6  2  0\n  6  7  1  0\n  7  8  2  0\n  8  9  1  0\n  9 10  2  0\n 10 11  1  0\n 11 12  2  0\n 12  7  1  0\nM  END\n"
             },
             {
               "id": "P1",
               "label": "",
-              "given": false,
-              "smiles": "Br/C=C/c1ccccc1",
-              "caption": "1-Brom-2-phenylethen"
+              "given": true,
+              "text": "1-Brom-2-phenylethen"
             }
           ],
           "edges": [
@@ -1827,7 +1966,8 @@
                 "Zs"
               ],
               "to": "K",
-              "reagent_above": "Br_2, CCl_4"
+              "reagent_above": "Br_2, CCl_4",
+              "reagent_below": ""
             },
             {
               "from": [
@@ -1846,49 +1986,91 @@
               "reagent_below": "- CO_2"
             }
           ]
-        },
-        "body": "Justus möchte die erste Synthese (Teil E.1) optimieren, besitzt aber kein Ausgangsmaterial mehr. Er beschließt also, 1-Brom-2-phenylethen selbst zu synthetisieren, auch weil die Verbindung sehr angenehm nach Hyazinthen riecht. Ausgangsmaterial für seine Synthese ist die Zimtsäure (3-Phenylpropensäure).",
-        "hints": [
-          "Justus stellt fest, dass sein Produkt K ein Gemisch ist. Käufliche Zimtsäure ist (E)-3-Phenylpropensäure (trans-3-Phenylpropensäure). Wird diese mit Br_2 umgesetzt, sind theoretisch 4 Additionsprodukte möglich."
-        ]
+        }
       },
       {
         "type": "synthesis",
-        "title": "E.3 Synthese des heterocyclischen Aromaten O",
+        "title": "E.3 k)",
+        "body": "Als Justus feststellt, dass sein Produkt K ein Gemisch ist, beginnt er über die Stereochemie der Reaktion nachzudenken. Käufliche Zimtsäure ist (E)-3-Phenylpropensäure (trans-3-Phenylpropensäure). Wird diese mit Br_2 umgesetzt, sind theoretisch 4 Additionsprodukte möglich.\nk) Zeichnen Sie Konfigurationsformeln der isomeren Additionsprodukte von K und schreiben Sie bei einer der Formeln zu den Asymmetriezentren die entsprechenden Konfigurationen mit Hilfe der Stereodescriptoren R und S.",
         "scheme": {
           "nodes": [
             {
-              "id": "X",
-              "label": "X",
+              "id": "K1",
+              "label": "",
               "given": false,
-              "smiles": "C#Cc1ccccc1",
-              "caption": "2 X"
+              "smiles": "O=C(O)[C@@H](Br)[C@H](Br)c1ccccc1",
+              "caption": "(2R,3R)",
+              "mol": "\n     RDKit          2D\n\n 13 13  0  0  1  0  0  0  0  0999 V2000\n    5.1960    3.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1960    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4950    0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970   -0.7500    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    3.0000    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  2  4  1  0\n  4  5  1  1\n  4  6  1  0\n  6  7  1  1\n  6  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  2  0\n 13  8  1  0\nM  END\n"
+            },
+            {
+              "id": "K2",
+              "label": "",
+              "given": false,
+              "smiles": "O=C(O)[C@H](Br)[C@@H](Br)c1ccccc1",
+              "caption": "(2S,3S)",
+              "mol": "\n     RDKit          2D\n\n 13 13  0  0  1  0  0  0  0  0999 V2000\n    5.1960    3.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1960    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4950    0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970   -0.7500    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    3.0000    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  2  4  1  0\n  4  5  1  6\n  4  6  1  0\n  6  7  1  6\n  6  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  2  0\n 13  8  1  0\nM  END\n"
+            },
+            {
+              "id": "K3",
+              "label": "",
+              "given": false,
+              "smiles": "O=C(O)[C@H](Br)[C@H](Br)c1ccccc1",
+              "caption": "(2S,3R)",
+              "mol": "\n     RDKit          2D\n\n 13 13  0  0  1  0  0  0  0  0999 V2000\n    5.1960    3.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1960    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4950    0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970   -0.7500    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    3.0000    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  2  4  1  0\n  4  5  1  6\n  4  6  1  0\n  6  7  1  1\n  6  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  2  0\n 13  8  1  0\nM  END\n"
+            },
+            {
+              "id": "K4",
+              "label": "",
+              "given": false,
+              "smiles": "O=C(O)[C@@H](Br)[C@@H](Br)c1ccccc1",
+              "caption": "(2R,3S)",
+              "mol": "\n     RDKit          2D\n\n 13 13  0  0  1  0  0  0  0  0999 V2000\n    5.1960    3.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1960    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4950    0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970   -0.7500    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    3.0000    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  2  4  1  0\n  4  5  1  1\n  4  6  1  0\n  6  7  1  6\n  6  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  2  0\n 13  8  1  0\nM  END\n"
+            }
+          ],
+          "edges": []
+        }
+      },
+      {
+        "type": "synthesis",
+        "title": "E.3 l)",
+        "body": "Als Abschluss seines organisch präparativen Praktikums soll Justus die Synthese des heterozyclischen Aromaten O aus der Verbindung X durchführen:\nM zeigt im ^1H-NMR-Spektrum nur Protonen im Aromatenbereich. Das ^1H-NMR-Spektrum von N zeigt neben aromatischen Protonen ein Singulett bei δ = 3,5 ppm, das Intensitätsverhältnis von Aromaten-H zu Aliphaten-H ist 5:2.\nl) Zeichnen Sie Konstitutionsformeln der Verbindungen M, N und O.",
+        "scheme": {
+          "nodes": [
+            {
+              "id": "X2",
+              "label": "",
+              "given": true,
+              "text": "2 X"
             },
             {
               "id": "M",
               "label": "M",
               "given": false,
-              "smiles": "C(#Cc1ccccc1)C#Cc1ccccc1"
+              "smiles": "c1ccc(cc1)C#CC#Cc1ccccc1",
+              "explanation": "1,4-Diphenylbuta-1,3-diin",
+              "mol": "\n     RDKit          2D\n\n 16 17  0  0  0  0  0  0  0  0999 V2000\n   -3.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.2500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   10.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.7500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.2500    1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  2  0\n  4  7  1  0\n  7  8  3  0\n  8  9  1  0\n  9 10  3  0\n 10 11  1  0\n 11 12  2  0\n 12 13  1  0\n 13 14  2  0\n 14 15  1  0\n 15 16  2  0\n  6  1  1  0\n 16 11  1  0\nM  END\n"
             },
             {
               "id": "Nn",
               "label": "N",
               "given": false,
               "smiles": "O=C(CCC(=O)c1ccccc1)c1ccccc1",
-              "caption": "C_16H_14O_2"
+              "caption": "C_16H_14O_2",
+              "mol": "\n     RDKit          2D\n\n 18 19  0  0  0  0  0  0  0  0999 V2000\n    5.1960   -1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1960    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    2.2500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -2.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5980   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5980   -0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4950    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4950    2.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.7940    3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.0930    2.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.0930    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.7940    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  2  0\n  5  7  1  0\n  7  8  2  0\n  8  9  1  0\n  9 10  2  0\n 10 11  1  0\n 11 12  2  0\n  2 13  1  0\n 13 14  2  0\n 14 15  1  0\n 15 16  2  0\n 16 17  1  0\n 17 18  2  0\n 12  7  1  0\n 18 13  1  0\nM  END\n"
             },
             {
               "id": "O",
               "label": "O",
               "given": false,
               "smiles": "c1ccc(-c2ccc(-c3ccccc3)o2)cc1",
-              "caption": "C_16H_12O"
+              "caption": "C_16H_12O",
+              "mol": "\n     RDKit          2D\n\n 17 19  0  0  0  0  0  0  0  0999 V2000\n    5.4950   -1.7830    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1820   -0.3160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.7560    0.1470    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.6410   -0.8570    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2140   -0.3940    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500    1.0320    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500    1.0320    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2140   -0.3940    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.6410   -0.8570    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.9540   -2.3240    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.3800   -2.7870    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.4950   -1.7830    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.1820   -0.3160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.7560    0.1470    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.2760    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9540   -2.3240    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.3800   -2.7870    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  2  0\n  8  9  1  0\n  9 10  2  0\n 10 11  1  0\n 11 12  2  0\n 12 13  1  0\n 13 14  2  0\n  8 15  1  0\n  4 16  1  0\n 16 17  2  0\n 17  1  1  0\n 15  5  1  0\n 14  9  1  0\nM  END\n"
             }
           ],
           "edges": [
             {
               "from": [
-                "X"
+                "X2"
               ],
               "to": "M",
               "reagent_above": "Pyridin, -2 e^-",
@@ -1907,47 +2089,11 @@
                 "Nn"
               ],
               "to": "O",
-              "reagent_above": "P_2O_5"
+              "reagent_above": "P_2O_5",
+              "reagent_below": ""
             }
           ]
-        },
-        "hints": [
-          "M zeigt im ^1H-NMR-Spektrum nur Protonen im Aromatenbereich. Das ^1H-NMR-Spektrum von N zeigt neben aromatischen Protonen ein Singulett bei δ = 3,5 ppm; das Intensitätsverhältnis von Aromaten-H zu Aliphaten-H ist 5:2."
-        ]
-      },
-      {
-        "type": "multiple_choice",
-        "title": "Mechanismen Benzen → D und Styren → G (f)",
-        "prompt": "Nach welchen Mechanismen verlaufen die Reaktionen Benzen → D und Styren → G?",
-        "choices": [
-          {
-            "id": "a",
-            "label": "beide S_E",
-            "correct": false
-          },
-          {
-            "id": "b",
-            "label": "beide A_E",
-            "correct": false
-          },
-          {
-            "id": "c",
-            "label": "D: S_E, G: A_E",
-            "correct": true
-          },
-          {
-            "id": "d",
-            "label": "D: A_E, G: S_E",
-            "correct": false
-          }
-        ],
-        "explanation": "Benzol → D: elektrophile aromatische Substitution (Br^+ greift Aromaten an, Wasserstoff wird verdrängt). Styrol → G: elektrophile Addition (Br_2 addiert an die C=C-Doppelbindung — vicinales Dibromid)."
-      },
-      {
-        "type": "short_answer",
-        "title": "Summenformel von H (g)",
-        "prompt": "Berechnen Sie die Summenformel von H.",
-        "expected_answer": "C_9H_11BrO"
+        }
       }
     ],
     "type": "composed"

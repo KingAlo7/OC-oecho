@@ -105,6 +105,8 @@
   const PH_SIZE = 54;                    // "?" placeholder footprint
   const V_LABEL_H = 15;                  // label line under a structure
   const V_NAME_H  = 13;                  // name line under the label
+  const TEXT_NODE_FONT = "600 15px 'Segoe UI', system-ui, sans-serif";   // .sg-text-node
+  const textNodeWidth = n => Math.ceil(measureText(plainChemText(n.text), TEXT_NODE_FONT)) + 6;
 
   /* Canvas-based text measurement: synchronous and side-effect free. */
   let _measureCtx = null;
@@ -863,8 +865,15 @@
         if (r) { mw = Math.max(mw, r.w); mh = Math.max(mh, r.h); }
       }
       if (!mw || !mh) return false;
+      // a text-only node (a compound given by name) keeps its name on one
+      // line: the cells grow to fit it instead of the name running into
+      // the arrow
+      let tw = 0;
+      for (const n of this.scheme.nodes) {
+        if (!(n.mol || n.smiles) && n.text) tw = Math.max(tw, textNodeWidth(n) + 8);
+      }
       const f = Math.min(1, CELL_MAX_W / mw, CELL_MAX_H / mh);
-      const nw = Math.max(V_FO_W, Math.ceil(mw * f)) + (NODE_W - V_FO_W);
+      const nw = Math.max(V_FO_W, Math.ceil(mw * f), tw) + (NODE_W - V_FO_W);
       const nh = Math.max(V_FO_H, Math.ceil(mh * f)) + (NODE_H - V_FO_H);
       const c = this._cell;
       const changed = !c || c.nw !== nw || c.nh !== nh || Math.abs(c.f - f) > 1e-3;
@@ -1195,7 +1204,11 @@
     }
     _footprint(n) {
       if (this._isHidden(n)) { const t = this._tileSize(n); return { w: t.w, h: t.h }; }
-      return this._mb.get(n.id) || { w: PH_SIZE, h: PH_SIZE };
+      const mb = this._mb.get(n.id);
+      if (mb) return mb;
+      // arrows stop at the ends of a name, not inside it
+      if (n.text && !(n.mol || n.smiles)) return { w: textNodeWidth(n), h: 22 };
+      return { w: PH_SIZE, h: PH_SIZE };
     }
     _textBlockH(n) {
       const hidden = this._isHidden(n);
