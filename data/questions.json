@@ -396,105 +396,120 @@
     "type": "composed",
     "difficulty": "C",
     "source": "ÖChO Landeswettbewerb 2024 (LW 50), Problem D.2",
-    "intro": "K.-o.-Tropfen — Nomenklatur, Isomerie & organische Synthese. Als K.-o.-Tropfen werden sedierend wirkende Substanzen bezeichnet, die, in Getränke oder Drogen gemischt, Menschen betäuben. Einige solcher Substanzen werden besser therapeutisch als Schlaf- oder Beruhigungsmittel benutzt. Das folgende Reaktionsschema zeigt die Synthese von Rohypnol.",
+    "intro": "K. o.-Tropfen – Nomenklatur, Isomerie & organische Synthese\n\nAls K. o.-Tropfen werden sedierend wirkende Substanzen bezeichnet, die, in Getränke oder Drogen gemischt, Menschen betäuben (knock out). Nach Erwachen können sich die Opfer meist nicht mehr an die Ereignisse erinnern.\nWährend eine geringe Dosis von z.B. GHB (Gamma-Hydroxybuttersäure, Liquid Ecstasy) enthemmend und stimulierend wirkt, kommt es bei höherer Dosierung zu Koordinationsstörungen, Schwindel, dann Müdigkeit oder gar Bewusstlosigkeit. Bei Überdosierung kann es zum Tod durch Atemlähmung kommen.\n„Vorsicht vor K. o.-Tropfen. Sei achtsam, hilf und sprich´s an. Ob in Bars oder auf Festen: Täter mischen K. o.-Tropfen in Getränke, um ihre Opfer damit zu betäuben. Die Betroffenen sind meistens Frauen und Mädchen….“ (Bundesministerium für Soziales, Gesundheit, Pflege und Konsumentenschutz am 20.4.2023)\nIn dieser Aufgabe werden einige solcher Substanzen beleuchtet, die besser therapeutisch als Schlaf- oder Beruhigungsmittel benutzt werden.",
     "sections": [
       {
         "type": "synthesis",
-        "title": "D.2 Synthese von Rohypnol",
+        "title": "k)",
+        "body": "D.2. Synthese von Rohypnol\nDas folgende Reaktionsschema zeigt die Synthese von Rohypnol:\nk) Zeichnen Sie die Konstitutionsformeln der Verbindungen A bis I.",
         "scheme": {
           "nodes": [
             {
               "id": "FT",
               "label": "",
               "given": true,
-              "smiles": "Cc1ccccc1F"
+              "smiles": "Cc1ccccc1F",
+              "mol": "\n     RDKit          2D\n\n  8  8  0  0  0  0  0  0  0  0999 V2000\n    2.5980   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 F   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  7  2  1  0\nM  END\n"
             },
             {
               "id": "A",
               "label": "A",
               "given": false,
               "smiles": "BrCc1ccccc1F",
-              "caption": "C_7H_6BrF"
+              "caption": "C_7H_6BrF",
+              "mol": "\n     RDKit          2D\n\n  9  9  0  0  0  0  0  0  0  0999 V2000\n    3.8970   -0.7500    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 F   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  2  0\n  8  9  1  0\n  8  3  1  0\nM  END\n"
             },
             {
               "id": "B",
               "label": "B",
               "given": false,
               "smiles": "N#CCc1ccccc1F",
-              "caption": "C_8H_6FN"
+              "caption": "C_8H_6FN",
+              "mol": "\n     RDKit          2D\n\n 10 10  0  0  0  0  0  0  0  0999 V2000\n    5.1960    0.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 F   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  3  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  9 10  1  0\n  9  4  1  0\nM  END\n"
             },
             {
               "id": "C",
               "label": "C",
               "given": false,
               "smiles": "OC(=O)Cc1ccccc1F",
-              "caption": "C_8H_7FO_2"
+              "caption": "C_8H_7FO_2",
+              "mol": "\n     RDKit          2D\n\n 11 11  0  0  0  0  0  0  0  0999 V2000\n    5.1960   -1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 F   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  2  0\n  8  9  1  0\n  9 10  2  0\n 10 11  1  0\n 10  5  1  0\nM  END\n"
             },
             {
               "id": "D",
               "label": "D",
               "given": false,
               "smiles": "ClC(=O)Cc1ccccc1F",
-              "caption": "C_8H_6ClFO"
+              "caption": "C_8H_6ClFO",
+              "mol": "\n     RDKit          2D\n\n 11 11  0  0  0  0  0  0  0  0999 V2000\n    5.1960   -1.5000    0.0000 Cl  0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 F   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  2  0\n  8  9  1  0\n  9 10  2  0\n 10 11  1  0\n 10  5  1  0\nM  END\n"
             },
             {
               "id": "Ee",
               "label": "E",
               "given": false,
               "smiles": "O=C(Cc1ccccc1F)c1ccccc1",
-              "caption": "C_14H_11FO"
+              "caption": "C_14H_11FO",
+              "mol": "\n     RDKit          2D\n\n 16 17  0  0  0  0  0  0  0  0999 V2000\n    3.8970    0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 F   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1960   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4950   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.7940   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.7940   -3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4950   -3.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1960   -3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  9 10  1  0\n  2 11  1  0\n 11 12  2  0\n 12 13  1  0\n 13 14  2  0\n 14 15  1  0\n 15 16  2  0\n  9  4  1  0\n 16 11  1  0\nM  END\n"
             },
             {
               "id": "F",
               "label": "F",
               "given": false,
               "smiles": "C(=NNc1ccccc1)(Cc1ccccc1F)c1ccccc1",
-              "caption": "C_20H_17FN_2"
+              "caption": "C_20H_17FN_2",
+              "mol": "\n     RDKit          2D\n\n 23 25  0  0  0  0  0  0  0  0999 V2000\n    3.8970   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1960    1.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1960    3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    3.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    5.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1960    6.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4950    5.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4950    3.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 F   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1960   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4950   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.7940   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.7940   -3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4950   -3.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1960   -3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  1 10  1  0\n 10 11  1  0\n 11 12  2  0\n 12 13  1  0\n 13 14  2  0\n 14 15  1  0\n 15 16  2  0\n 16 17  1  0\n  1 18  1  0\n 18 19  2  0\n 19 20  1  0\n 20 21  2  0\n 21 22  1  0\n 22 23  2  0\n  9  4  1  0\n 16 11  1  0\n 23 18  1  0\nM  END\n"
             },
             {
               "id": "IN",
               "label": "",
               "given": true,
               "smiles": "Fc1ccccc1-c1c(-c2ccccc2)[nH]c2ccccc12",
-              "explanation": "Fischer-Indolsynthese aus dem Phenylhydrazon F."
+              "explanation": "Fischer-Indolsynthese aus dem Phenylhydrazon F.",
+              "mol": "\n     RDKit          2D\n\n 22 25  0  0  0  0  0  0  0  0999 V2000\n    4.0340   -1.6890    0.0000 F   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0960   -2.1950    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7820   -1.4450    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4690   -2.1950    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4690   -3.7150    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7820   -4.4650    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0960   -3.7150    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4090   -4.4650    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.5970   -5.9660    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4710   -7.0360    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0080   -6.6230    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9380   -7.6920    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.3130   -9.1930    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8140   -9.5680    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8840   -8.4990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.9660   -5.9660    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    6.7920   -4.9720    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.3110   -4.6530    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.7620   -3.2270    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.7300   -2.1010    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.2480   -2.4020    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8160   -3.8460    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  2  0\n 13 14  1  0\n 14 15  2  0\n  9 16  1  0\n 16 17  1  0\n 17 18  2  0\n 18 19  1  0\n 19 20  2  0\n 20 21  1  0\n 21 22  2  0\n  7  2  1  0\n 22  8  1  0\n 15 10  1  0\n 22 17  1  0\nM  END\n"
             },
             {
               "id": "Gg",
               "label": "G",
               "given": false,
               "smiles": "OC(=O)c1ccccc1",
-              "explanation": "Ozonolyse der Indol-C2=C3-Bindung und oxidative Aufarbeitung → Benzoesäure + 2-Amino-2´-fluorbenzophenon."
+              "explanation": "Ozonolyse der Indol-C2=C3-Bindung und oxidative Aufarbeitung → Benzoesäure + 2-Amino-2´-fluorbenzophenon.",
+              "mol": "\n     RDKit          2D\n\n  9  9  0  1  0  0  0  0  0  0999 V2000\n    2.5980   -3.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970   -0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  9  4  1  0\nM  STY  1   1 SUP\nM  SAL   1  3   2   3   1\nM  SMT   1 COOH\nM  END\n"
             },
             {
               "id": "AB",
               "label": "",
               "given": true,
-              "smiles": "Nc1ccccc1C(=O)c1ccccc1F"
+              "smiles": "Nc1ccccc1C(=O)c1ccccc1F",
+              "mol": "\n     RDKit          2D\n\n 16 17  0  0  0  0  0  0  0  0999 V2000\n   23.0000  -19.9310    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   23.0000  -18.5170    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   24.3100  -17.7590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   24.3100  -16.2070    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   23.0000  -15.4480    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   21.6550  -16.2070    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   21.6550  -17.7590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   20.3450  -18.5520    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   20.3450  -19.9310    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   18.8970  -17.7590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   17.5860  -18.5170    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   16.2760  -17.7590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   16.2760  -16.2070    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   17.5860  -15.4480    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   18.8970  -16.2070    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   20.1720  -15.4480    0.0000 F   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  8 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  2  0\n 13 14  1  0\n 14 15  2  0\n 15 16  1  0\n  7  2  1  0\n 15 10  1  0\nM  END\n"
             },
             {
               "id": "H",
               "label": "H",
               "given": false,
-              "smiles": "BrCC(=O)Nc1ccccc1C(=O)c1ccccc1F"
+              "smiles": "BrCC(=O)Nc1ccccc1C(=O)c1ccccc1F",
+              "mol": "\n     RDKit          2D\n\n 20 21  0  0  0  0  0  0  0  0999 V2000\n   12.4140  -26.8280    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n   12.4140  -28.2760    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   11.0340  -29.0340    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   11.0340  -30.5170    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    9.7590  -28.2760    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    9.7590  -26.8280    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   11.0340  -26.0340    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   11.0340  -24.5520    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.7590  -23.7930    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.4480  -24.5520    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.4480  -26.0340    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.0690  -26.8280    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.0690  -28.2760    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.6900  -26.0340    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4140  -26.8280    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.1030  -26.0340    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.1030  -24.5520    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4140  -23.7930    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.6900  -24.5520    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8970  -23.7930    0.0000 F   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  2  0\n 12 14  1  0\n 14 15  2  0\n 15 16  1  0\n 16 17  2  0\n 17 18  1  0\n 18 19  2  0\n 19 20  1  0\n 11  6  1  0\n 19 14  1  0\nM  END\n"
             },
             {
               "id": "GA",
               "label": "",
               "given": true,
-              "smiles": "NCC(=O)Nc1ccccc1C(=O)c1ccccc1F"
+              "smiles": "NCC(=O)Nc1ccccc1C(=O)c1ccccc1F",
+              "mol": "\n     RDKit          2D\n\n 20 21  0  0  0  0  0  0  0  0999 V2000\n   12.4140  -26.8280    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   12.4140  -28.2760    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   11.0340  -29.0340    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   11.0340  -30.5170    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    9.7590  -28.2760    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    9.7590  -26.8280    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   11.0340  -26.0340    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   11.0340  -24.5520    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.7590  -23.7930    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.4480  -24.5520    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.4480  -26.0340    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.0690  -26.8280    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.0690  -28.2760    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.6900  -26.0340    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4140  -26.8280    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.1030  -26.0340    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.1030  -24.5520    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4140  -23.7930    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.6900  -24.5520    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8970  -23.7930    0.0000 F   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  2  0\n 12 14  1  0\n 14 15  2  0\n 15 16  1  0\n 16 17  2  0\n 17 18  1  0\n 18 19  2  0\n 19 20  1  0\n 11  6  1  0\n 19 14  1  0\nM  END\n"
             },
             {
               "id": "I",
               "label": "I",
               "given": false,
-              "smiles": "O=C1CN=C(c1ccccc1F)c2ccccc2N1",
-              "explanation": "Intramolekulare Iminbildung (A_N, dann -H_2O) → 1,4-Benzodiazepin-2-on."
+              "smiles": "O=C1CN=C(c2ccccc2F)c2ccccc2N1",
+              "explanation": "Intramolekulare Iminbildung (A_N, dann -H_2O) → 1,4-Benzodiazepin-2-on.",
+              "mol": "\n     RDKit          2D\n\n 19 21  0  0  0  0  0  0  0  0999 V2000\n    9.0430   -8.8180    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1610   -8.1050    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.6600   -8.4990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4030   -7.5980    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4030   -6.0600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.0900   -5.3100    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8140   -6.0600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.4630   -5.3100    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.4630   -3.7900    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8140   -3.0390    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.0900   -3.7900    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.0660   -3.2830    0.0000 F   0  0  0  0  0  0  0  0  0  0  0  0\n    6.5670   -5.1030    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.0980   -3.6960    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.0920   -2.5330    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.5930   -2.8140    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.0990   -4.2590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.0680   -5.4030    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.5370   -6.7170    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n  5 13  1  0\n 13 14  2  0\n 14 15  1  0\n 15 16  2  0\n 16 17  1  0\n 17 18  2  0\n 18 19  1  0\n 19  2  1  0\n 11  6  1  0\n 18 13  1  0\nM  END\n"
             },
             {
               "id": "RO",
               "label": "Rohypnol",
               "given": true,
-              "smiles": "CN1C(=O)CN=C(c1ccccc1F)c2cc([N+](=O)[O-])ccc21"
+              "smiles": "CN1C(=O)CN=C(c2ccccc2F)c2cc([N+](=O)[O-])ccc21",
+              "mol": "\n     RDKit          2D\n\n 23 25  0  1  0  0  0  0  0  0999 V2000\n    9.9440   -6.7170    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.5370   -6.7170    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1610   -8.1050    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.0430   -8.8180    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    6.6600   -8.4990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4030   -7.5980    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4030   -6.0600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.0900   -5.3100    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8140   -6.0600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.4630   -5.3100    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.4630   -3.7900    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8140   -3.0390    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.0900   -3.7900    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.0660   -3.2830    0.0000 F   0  0  0  0  0  0  0  0  0  0  0  0\n    6.5670   -5.1030    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.0980   -3.6960    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.0920   -2.5330    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.7540   -1.2200    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    5.3090   -0.8175    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    7.8250   -0.1698    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    8.5930   -2.8140    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.0990   -4.2590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.0680   -5.4030    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  2  0\n 13 14  1  0\n  7 15  1  0\n 15 16  1  0\n 16 17  2  0\n 17 18  1  0\n 18 19  2  0\n 18 20  1  0\n 17 21  1  0\n 21 22  2  0\n 22 23  1  0\n 23  2  1  0\n 13  8  1  0\n 23 15  2  0\nM  CHG  2  18   1  20  -1\nM  STY  1   1 SUP\nM  SAL   1  3  18  19  20\nM  SMT   1 NO2\nM  END\n"
             }
           ],
           "edges": [
@@ -511,42 +526,48 @@
                 "A"
               ],
               "to": "B",
-              "reagent_above": "NaCN"
+              "reagent_above": "NaCN",
+              "reagent_below": ""
             },
             {
               "from": [
                 "B"
               ],
               "to": "C",
-              "reagent_above": "H_2SO_4"
+              "reagent_above": "H_2SO_4",
+              "reagent_below": ""
             },
             {
               "from": [
                 "C"
               ],
               "to": "D",
-              "reagent_above": "SOCl_2"
+              "reagent_above": "SOCl_2",
+              "reagent_below": ""
             },
             {
               "from": [
                 "D"
               ],
               "to": "Ee",
-              "reagent_above": "Benzen / AlCl_3"
+              "reagent_above": "Benzen / AlCl_3",
+              "reagent_below": ""
             },
             {
               "from": [
                 "Ee"
               ],
               "to": "F",
-              "reagent_above": "Phenylhydrazin"
+              "reagent_above": "Phenylhydrazin",
+              "reagent_below": ""
             },
             {
               "from": [
                 "F"
               ],
               "to": "IN",
-              "reagent_above": "(mehrere Stufen)"
+              "reagent_above": "",
+              "reagent_below": ""
             },
             {
               "from": [
@@ -569,73 +590,50 @@
                 "AB"
               ],
               "to": "H",
-              "reagent_above": "Br-CH_2-CO-Br"
+              "reagent_above": "",
+              "reagent_below": "",
+              "reagent_mol": "\n     RDKit          2D\n\n  5  4  0  0  0  0  0  0  0  0999 V2000\n    2.5980    0.0000    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\nM  END\n"
             },
             {
               "from": [
                 "H"
               ],
               "to": "GA",
-              "reagent_above": "NH_3"
+              "reagent_above": "NH_3",
+              "reagent_below": ""
             },
             {
               "from": [
                 "GA"
               ],
               "to": "I",
-              "reagent_above": "Iminbildung",
-              "reagent_below": "intramolekular"
+              "reagent_above": "Iminbildung\nintramolekular",
+              "reagent_below": ""
             },
             {
               "from": [
                 "I"
               ],
               "to": "RO",
-              "reagent_above": "(mehrere Stufen)"
+              "reagent_above": "(mehrere Stufen)",
+              "reagent_below": ""
             }
           ]
         }
       },
       {
-        "type": "multiple_choice",
-        "title": "Reaktionsmechanismus der Bildung von A (i)",
-        "prompt": "Nach welchem Reaktionsmechanismus läuft die Bildung von A ab?",
-        "choices": [
-          {
-            "id": "a",
-            "label": "S_R (radikalische Substitution)",
-            "correct": true
-          },
-          {
-            "id": "b",
-            "label": "S_N1",
-            "correct": false
-          },
-          {
-            "id": "c",
-            "label": "S_N2",
-            "correct": false
-          },
-          {
-            "id": "d",
-            "label": "A_E (elektrophile Addition)",
-            "correct": false
-          }
-        ],
-        "related_reaction_id": "alkan-halogenierung",
-        "explanation": "Benzyl-CH-Bindungen sind besonders bromierbar — das Benzylradikal ist mesomeriestabilisiert. Klassische radikalische Bromierung (NBS oder Br_2/Δ/hν)."
+        "type": "short_answer",
+        "title": "i)",
+        "prompt": "Nach welchen Reaktionsmechanismen laufen folgende Reaktionen des Reaktionsschemas ab (z.B. A_E für elektrophile Addition)?\nBildung von A:\nA → B:\nBildung von I:",
+        "expected_answer": "Bildung von A: S_R\nA → B: S_N\nBildung von I: A_N",
+        "explanation": "Die benzylische C–H-Bindung wird radikalisch bromiert (das Benzylradikal ist mesomeriestabilisiert); Cyanid substituiert das Bromid nucleophil; die Iminbildung beginnt mit der nucleophilen Addition des Amins an die Carbonylgruppe."
       },
       {
         "type": "short_answer",
-        "title": "Von I zu Rohypnol (j)",
+        "title": "j)",
         "prompt": "Welche Reagenzien sind notwendig, um aus I Rohypnol zu synthetisieren?",
-        "expected_answer": "1. HNO_3/H_2SO_4 — elektrophile aromatische Nitrierung in 7-Position. 2. CH_3I (oder ein anderes Methylhalogenid) — N-Methylierung am Amid-N. Ergebnis: 7-Nitro-1-methyl-Benzodiazepinon = Flunitrazepam."
-      },
-      {
-        "type": "short_answer",
-        "title": "Mechanismen A → B und Bildung von I (i)",
-        "prompt": "Nach welchen Mechanismen verlaufen A → B und die Bildung von I?",
-        "expected_answer": "A → B: S_N; Bildung von I: A_N (Iminbildung)."
+        "expected_answer": "HNO_3/H_2SO_4\nCH_3I (allgemein Methylhalogenid)",
+        "explanation": "HNO_3/H_2SO_4\nCH_3I (allgemein Methylhalogenid)"
       }
     ]
   },
@@ -3109,11 +3107,11 @@
     "name": "LW 2024 — GHB → GBL (Lactonbildung)",
     "difficulty": "A",
     "source": "ÖChO Landeswettbewerb 2024 (LW 50), Problem D.1 g/h",
-    "intro": "GHB (Gamma-Hydroxybuttersäure, 4-Hydroxybutansäure) wirkt in geringer Dosis enthemmend, in höherer Dosis sedierend. Durch intramolekulare Veresterung entsteht GBL (Gammabutyrolacton).",
+    "intro": "K. o.-Tropfen – Nomenklatur, Isomerie & organische Synthese\n\nAls K. o.-Tropfen werden sedierend wirkende Substanzen bezeichnet, die, in Getränke oder Drogen gemischt, Menschen betäuben (knock out). Nach Erwachen können sich die Opfer meist nicht mehr an die Ereignisse erinnern.\nWährend eine geringe Dosis von z.B. GHB (Gamma-Hydroxybuttersäure, Liquid Ecstasy) enthemmend und stimulierend wirkt, kommt es bei höherer Dosierung zu Koordinationsstörungen, Schwindel, dann Müdigkeit oder gar Bewusstlosigkeit. Bei Überdosierung kann es zum Tod durch Atemlähmung kommen.\n„Vorsicht vor K. o.-Tropfen. Sei achtsam, hilf und sprich´s an. Ob in Bars oder auf Festen: Täter mischen K. o.-Tropfen in Getränke, um ihre Opfer damit zu betäuben. Die Betroffenen sind meistens Frauen und Mädchen….“ (Bundesministerium für Soziales, Gesundheit, Pflege und Konsumentenschutz am 20.4.2023)\nIn dieser Aufgabe werden einige solcher Substanzen beleuchtet, die besser therapeutisch als Schlaf- oder Beruhigungsmittel benutzt werden.\n\nD.1 Temazepam und GHB (4-Hydroxybutansäure)",
     "sections": [
       {
         "type": "synthesis",
-        "title": "D.1 g/h GHB und GBL",
+        "title": "g) / h)",
         "scheme": {
           "nodes": [
             {
@@ -3121,13 +3119,15 @@
               "label": "GHB",
               "given": false,
               "smiles": "OCCCC(=O)O",
-              "caption": "4-Hydroxybutansäure"
+              "caption": "4-Hydroxybutansäure",
+              "mol": "\n     RDKit          2D\n\n  7  6  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1960    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1960   -1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4950    0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  2  0\n  5  7  1  0\nM  END\n"
             },
             {
               "id": "GBL",
               "label": "GBL",
               "given": false,
-              "smiles": "O=C1CCCO1"
+              "smiles": "O=C1CCCO1",
+              "mol": "\n     RDKit          2D\n\n  6  6  0  0  0  0  0  0  0  0999 V2000\n    2.6410   -0.8580    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2140   -0.3940    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.2760    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2140   -0.3940    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500    1.0320    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500    1.0320    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  2  1  0\nM  END\n"
             }
           ],
           "edges": [
@@ -3140,7 +3140,8 @@
               "reagent_below": "-H_2O"
             }
           ]
-        }
+        },
+        "body": "g) Zeichnen Sie die Konstitutionsformel von 4-Hydroxybutansäure.\nh) Durch intramolekulare Veresterung entsteht GBL (Gammahydroxybutyrolacton). Zeichnen Sie den intramolekularen Ester von 4-Hydroxybutansäure."
       }
     ],
     "type": "composed"
