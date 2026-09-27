@@ -7400,7 +7400,7 @@
         {
           "smarts": "*-O-[Si](-[CH3])(-[CH3])-C(-[CH3])(-[CH3])-[CH3]",
           "first": 1,
-          "label": "TDBMS"
+          "label": "OTBDMS"
         },
         {
           "smarts": "[#8]-C(=O)-O-[CH3]",

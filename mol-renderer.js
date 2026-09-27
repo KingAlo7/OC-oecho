@@ -210,23 +210,51 @@ const MolRenderer = (() => {
   }
 
   /* "OMe" bonded to something on its RIGHT reads "MeO" in a textbook:
-     the atom that carries the bond is written next to it. */
-  const MIRRORED = {
-    COOH: 'HOOC', CO2H: 'HO2C', CHO: 'OHC', CN: 'NC', NO2: 'O2N', SO3H: 'HO3S', SO3Na: 'NaO3S',
-    CONH2: 'H2NOC', MgCl: 'ClMg', MgBr: 'BrMg', SO2Ar: 'ArO2S', SO2Ph: 'PhO2S', ONa: 'NaO',
-    OtBu: 'tBuO', OTs: 'TsO', OTf: 'TfO', OAc: 'AcO', NHBoc: 'BocHN', NHAc: 'AcHN', NHTs: 'TsHN',
-    CH3: 'H3C', COOR: 'ROOC', COOMe: 'MeOOC', COOEt: 'EtOOC', COCl: 'ClOC', OSO2Me: 'MeSO2O'
-  };
-  function _mirrorLabel(label) {
-    if (MIRRORED[label]) return MIRRORED[label];
-    const m = /^(CO2)([a-z].*)$/.exec(label) || /^(CO2|(?:[CNOS]|Si)(?:H\d?)?)([A-Z].*)$/.exec(label);   // CO2tBu → tBuO2C
-    if (!m) return label;
-    return m[1] === 'CO2' ? m[2] + 'O2C' : m[2] + m[1];
-  }
+     the atom that carries the bond is written next to it. Spellings the
+     general rule below would not pick: */
+  const MIRRORED = { OSO2Me: 'MeSO2O' };
 
   /* Two-letter element symbols a label may start or end with ("MgBr",
      "SiMe3", "ClMg"); every other label is split after one letter. */
   const LABEL_ELEMENT2 = /^(?:Cl|Br|Si|Mg|Li|Na|Al|Zn|Sn|Cu|Se|Hg|Pd|Ti|Cs)$/;
+  /* One-letter symbols a formula label is spelled from (R, X, Y, Z stand
+     in for a group). Followed by a small letter they start an
+     abbreviation instead ("Ph", "Bn", "Cy") — unless that is the prefix
+     of the next group ("OtBu", "OiPr"). */
+  const LABEL_ELEMENT1 = /^[BCFHIKNOPSRXYZ]$/;
+  const LABEL_PREFIX = /^(?:t|i|n|s|c|sec|tert)[A-Z]/;
+
+  /* Mirror a formula label: "CO2Me" → "MeO2C", "CH2OH" → "HOH2C",
+     "NHBoc" → "BocHN", "B(OH)2" → "(HO)2B". The label is read as element
+     symbols with their counts up to the first abbreviation or bracket;
+     that rest moves to the front as one piece (mirrored inside a bracket)
+     and the symbols follow in reverse. A run of lone capitals is one
+     abbreviation as soon as one of them is no element ("OTHP", "OPMB"),
+     and a label that is an abbreviation from its first letter ("Ph",
+     "Boc") comes back unchanged. */
+  function _mirrorLabel(label) {
+    const s = String(label);
+    if (MIRRORED[s]) return MIRRORED[s];
+    const units = [];
+    let i = 0;
+    while (i < s.length) {
+      let sym = LABEL_ELEMENT2.test(s.slice(i, i + 2)) ? s.slice(i, i + 2) : '';
+      if (!sym && LABEL_ELEMENT1.test(s[i]) && (!/[a-z]/.test(s[i + 1] || '') || LABEL_PREFIX.test(s.slice(i + 1)))) {
+        const run = /^(?:[A-Z](?![a-z])[0-9]*)*/.exec(s.slice(i))[0].replace(/[0-9]/g, '');
+        if (!units.length || run.split('').every(function (c) { return LABEL_ELEMENT1.test(c); })) sym = s[i];
+      }
+      if (!sym) break;
+      let j = i + sym.length;
+      while (j < s.length && /[0-9]/.test(s[j])) j++;
+      units.push(s.slice(i, j));
+      i = j;
+    }
+    let rest = s.slice(i);
+    if (rest && !/^[A-Za-z(]/.test(rest)) return s;     // "FS-Synthase": not a formula
+    const br = /^\((.*)\)([0-9]*)$/.exec(rest);
+    if (br) rest = '(' + _mirrorLabel(br[1]) + ')' + br[2];
+    return rest + units.reverse().join('');
+  }
 
   /* Split a label around the symbol that stands on the attachment atom:
      the first one ("OMe" → O | Me, "MgBr" → Mg | Br), or the last one
@@ -245,8 +273,25 @@ const MolRenderer = (() => {
     return { pre: body.slice(0, -k), anchor: body.slice(-k), post: count };
   }
 
+  /* The two ways a label can sit on its atom: "L" runs to the right from
+     the attachment atom ("OMe", "CO2Me"), "R" ends at it ("MeO", "MeO2C").
+     `sym` is that atom's element. A formula label starting with it is
+     mirrored for "R"; an abbreviation that does not ("Ph", "Boc") keeps
+     its spelling and just ends at the bond. A label the file already
+     spells mirrored ("MeO2C" on its C) only gets "R" — that is how an
+     author pins the side by hand. */
+  function _labelCands(label, sym) {
+    const L = _splitLabel(label, false), R = _splitLabel(label, true);
+    if (L.anchor === sym) {
+      // "Cbz" on its C starts with the symbol but has no mirror image
+      const M = _splitLabel(_mirrorLabel(label), true);
+      if (M.anchor === sym) return { L: L, R: M };
+    } else if (R.anchor === sym) return { R: R };
+    return { L: L, R: R };
+  }
+
   /* Label parts OCL does not draw itself, per collapsed molecule:
-     [{ atom, pre, anchor, post }] (see _placeLabels). */
+     [{ atom, cands: { L?, R? }, natural }] (see _placeLabels). */
   const _labelParts = new WeakMap();
 
   /* Collapse superatoms to a single labelled atom: the attachment atom
@@ -257,7 +302,7 @@ const MolRenderer = (() => {
      label on its atom, which puts the bond under the middle of the text.
      So OCL only gets that one symbol, which it centres and clips the
      bonds around correctly; the rest of the label is written beside it
-     once the SVG exists. */
+     once the SVG exists, on whichever side is free (see _placeLabels). */
   function _collapseSuperatoms(m, mol) {
     const groups = parseSuperatoms(mol);
     if (!groups.length) return;
@@ -275,16 +320,23 @@ const MolRenderer = (() => {
         if (outer >= 0) break;
       }
       if (anchor < 0) anchor = grp.atoms[0];
-      let label = grp.label;
-      const right = outer >= 0 && m.getAtomX(outer) > m.getAtomX(anchor) + 0.01;
-      if (right) label = _mirrorLabel(label);
-      const part = _splitLabel(label, right);
+      const cands = _labelCands(grp.label, m.getAtomLabel(anchor));
+      // The natural side is away from the bond; a bond within ~6° of
+      // vertical leaves both sides open and the label reads left to right.
+      let dx = 0;
+      if (outer >= 0) {
+        const ux = m.getAtomX(outer) - m.getAtomX(anchor), uy = m.getAtomY(outer) - m.getAtomY(anchor);
+        dx = ux / (Math.hypot(ux, uy) || 1);
+      }
+      const natural = cands.L && (dx <= 0.1 || !cands.R) ? 'L' : 'R';
+      const part = cands[natural];
       // Atomic number 0 is a pseudo-atom: no implicit H, no element
       // colour — only the label is drawn, in the bond colour.
       m.setAtomicNo(anchor, 0);
       m.setAtomCharge(anchor, 0);
       m.setAtomCustomLabel(anchor, part.anchor);
-      if (part.pre || part.post) parts.push(Object.assign({ atom: anchor }, part));
+      const more = function (k) { return k && (k.pre || k.post); };
+      if (more(cands.L) || more(cands.R)) parts.push({ atom: anchor, cands: cands, natural: natural });
       grp.atoms.forEach(function (a) { if (a !== anchor) drop.push(a); });
     });
     // deleteAtoms renumbers what is left and returns old → new indices
@@ -298,6 +350,10 @@ const MolRenderer = (() => {
   const LABEL_SUB_SIZE = 9 / 14;
   const LABEL_SUB_DROP = 3.33 / 14;
 
+  function _escText(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
   /* Label text as <tspan>s, digits set as subscripts. */
   function _labelTspans(text, fs) {
     const drop = +(fs * LABEL_SUB_DROP).toFixed(2);
@@ -305,9 +361,8 @@ const MolRenderer = (() => {
     let out = '', low = false;
     String(text).split(/(\d+)/).forEach(function (run, i) {
       if (!run) return;
-      const esc = run.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      if (i % 2) { out += '<tspan dy="' + drop + '" font-size="' + small + '">' + esc + '</tspan>'; low = true; }
-      else { out += '<tspan' + (low ? ' dy="-' + drop + '"' : '') + '>' + esc + '</tspan>'; low = false; }
+      if (i % 2) { out += '<tspan dy="' + drop + '" font-size="' + small + '">' + _escText(run) + '</tspan>'; low = true; }
+      else { out += '<tspan' + (low ? ' dy="-' + drop + '"' : '') + '>' + _escText(run) + '</tspan>'; low = false; }
     });
     return out;
   }
@@ -320,49 +375,143 @@ const MolRenderer = (() => {
     return w;
   }
 
+  /* A numeric attribute of an SVG tag, or null. */
+  function _num(tag, name) {
+    const m = new RegExp('\\s' + name + '="(-?[\\d.]+)"').exec(tag);
+    return m ? +m[1] : null;
+  }
+
+  /* Do boxes [x0, y0, x1, y1] come closer than `pad`? */
+  function _near(a, b, pad) {
+    return a[0] - pad < b[2] && b[0] - pad < a[2] && a[1] - pad < b[3] && b[1] - pad < a[3];
+  }
+
+  /* How much of segment [ax, ay, bx, by] runs inside box [left, top, right, bottom]. */
+  function _clipLen(s, b) {
+    const dx = s[2] - s[0], dy = s[3] - s[1];
+    const p = [-dx, dx, -dy, dy], q = [s[0] - b[0], b[2] - s[0], s[1] - b[1], b[3] - s[1]];
+    let t0 = 0, t1 = 1;
+    for (let i = 0; i < 4; i++) {
+      if (p[i] === 0) { if (q[i] < 0) return 0; continue; }
+      const r = q[i] / p[i];
+      if (p[i] < 0) { if (r > t0) t0 = r; } else if (r < t1) t1 = r;
+      if (t0 > t1) return 0;
+    }
+    return (t1 - t0) * Math.hypot(dx, dy);
+  }
+
+  /* What a label running to one side pays, per thing in its way: another
+     label or atom symbol, or a bond stroke; and a little for leaving the
+     side its bond points away from. Its own bond starts right at the
+     symbol, so grazing a corner of the text with it costs less — in full
+     only once it runs 0.6 of the font size through the text. */
+  const SIDE_COST = { text: 1, bond: 0.8, ownFull: 0.6, unnatural: 0.3 };
+
   /* Write the rest of every collapsed label next to the symbol OCL drew
      for it. OCL's hit circles ("molN:Atom:I") give each atom's centre,
-     and the symbol is the matching <text> closest to it. The part after
-     the symbol joins that <text> as tspans; the part before it is a
-     second <text> ending exactly where the symbol begins — so the symbol
-     never moves and neither step depends on font metrics. The viewBox
-     then grows to take in the added text (a cropped drawing keeps its
-     scale; a fixed-size one shrinks to fit). Returns the parts it could
-     not place as `missed`. */
+     and the symbol is the matching <text> closest to it.
+
+     Each label then takes the side ("OMe" or "MeO") that runs into the
+     least — other labels, atom symbols and bond strokes, all as they
+     actually stand in this SVG — preferring the side away from its bond;
+     two passes let neighbouring labels settle around each other.
+
+     The part after the symbol joins that <text> as tspans; the part
+     before it is a second <text> ending exactly where the symbol begins.
+     The viewBox then grows to take in the added text (a cropped drawing
+     keeps its scale; a fixed-size one shrinks to fit). Returns the parts
+     it could not place as `missed`. */
   function _placeLabels(svg, parts, o) {
     const at = {};
     (svg.match(/<circle\b[^>]*>/g) || []).forEach(function (tag) {
-      const id = /\bid="[^"]*:Atom:(\d+)"/.exec(tag);
-      const cx = /\bcx="(-?[\d.]+)"/.exec(tag), cy = /\bcy="(-?[\d.]+)"/.exec(tag);
-      if (id && cx && cy) at[id[1]] = { x: +cx[1], y: +cy[1] };
+      const id = /\sid="[^"]*:Atom:(\d+)"/.exec(tag), cx = _num(tag, 'cx'), cy = _num(tag, 'cy');
+      if (id && cx != null && cy != null) at[id[1]] = { x: cx, y: cy };
     });
     const texts = [];
     const re = /<text\b([^>]*)>([^<]*)<\/text>/g;
     let t;
     while ((t = re.exec(svg))) {
-      const x = /\sx="(-?[\d.]+)"/.exec(t[1]), y = /\sy="(-?[\d.]+)"/.exec(t[1]);
-      const fs = /\sfont-size="([\d.]+)"/.exec(t[1]);
-      if (x && y) texts.push({ from: t.index, to: re.lastIndex, attrs: t[1], body: t[2], x: +x[1], y: +y[1], fs: fs ? +fs[1] : 14 });
+      const x = _num(t[1], 'x'), y = _num(t[1], 'y'), fs = _num(t[1], 'font-size') || 14;
+      if (x == null || y == null) continue;
+      const w = _measure(t[2], fs + 'px sans-serif');
+      texts.push({ from: t.index, to: re.lastIndex, attrs: t[1], body: t[2], x: x, y: y, fs: fs,
+                   box: [x, y - 0.75 * fs, x + w, y + 0.25 * fs] });
     }
-    const edits = [], boxes = [], missed = [];
+    // bond strokes: plain <line>s (OCL's hit lines carry class="event") and wedge outlines
+    const segs = [];
+    (svg.match(/<line\b[^>]*>/g) || []).forEach(function (tag) {
+      if (/\sclass="event"/.test(tag)) return;
+      const s = [_num(tag, 'x1'), _num(tag, 'y1'), _num(tag, 'x2'), _num(tag, 'y2')];
+      if (s.every(function (v) { return v != null; })) segs.push(s);
+    });
+    (svg.match(/<polygon\b[^>]*>/g) || []).forEach(function (tag) {
+      const pts = /\spoints="([^"]*)"/.exec(tag);
+      const v = pts ? pts[1].trim().split(/[\s,]+/).map(Number) : [];
+      for (let i = 0; i + 1 < v.length; i += 2) {
+        const j = (i + 2) % v.length;
+        if (v.length >= 4) segs.push([v[i], v[i + 1], v[j], v[j + 1]]);
+      }
+    });
+
+    const found = [], missed = [];
     parts.forEach(function (p) {
-      const c = at[p.atom];
+      const c = at[p.atom], sym = p.cands[p.natural].anchor;
       let best = null, bd = Infinity;
       if (c) texts.forEach(function (tx) {
         const d = (tx.x - c.x) * (tx.x - c.x) + (tx.y - c.y) * (tx.y - c.y);
-        if (tx.body === p.anchor && d < bd) { best = tx; bd = d; }
+        if (tx.body === sym && d < bd) { best = tx; bd = d; }
       });
-      if (!best || edits.some(function (e) { return e.tx === best; })) { missed.push(p); return; }
-      const fs = best.fs;
-      let html = '<text' + best.attrs + '>' + best.body + _labelTspans(p.post, fs) + '</text>';
-      if (p.pre) html = '<text' + best.attrs + ' text-anchor="end">' + _labelTspans(p.pre, fs) + '</text>' + html;
-      edits.push({ tx: best, html: html });
-      const top = best.y - fs * 0.8, bottom = best.y + fs * 0.35;
-      if (p.pre) boxes.push([best.x - _labelWidth(p.pre, fs), top, best.x, bottom]);
-      if (p.post) {
-        const x0 = best.x + _labelWidth(p.anchor, fs);
-        boxes.push([x0, top, x0 + _labelWidth(p.post, fs), bottom]);
-      }
+      if (!best || found.some(function (f) { return f.tx === best; })) { missed.push(p); return; }
+      const fs = best.fs, top = best.y - 0.75 * fs, bottom = best.y + 0.3 * fs, geo = {};
+      Object.keys(p.cands).forEach(function (s) {
+        const k = p.cands[s], wa = _labelWidth(k.anchor, fs);
+        // the symbol OCL drew stays put; another one ("h" of a mirrored "Ph") is centred on the atom
+        const ax = k.anchor === best.body ? best.x : c.x - wa / 2;
+        const x0 = ax - _labelWidth(k.pre, fs), x1 = ax + wa + _labelWidth(k.post, fs);
+        const ext = [];
+        if (k.pre) ext.push([x0, top, ax, bottom]);
+        if (k.post) ext.push([ax + wa, top, x1, bottom]);
+        geo[s] = { k: k, ax: ax, ext: ext, box: [x0, top, x1, bottom] };
+      });
+      found.push({ p: p, tx: best, c: c, geo: geo, side: p.natural });
+    });
+
+    const own = new Set(found.map(function (f) { return f.tx; }));
+    const cost = function (f, s) {
+      let c = s === f.p.natural ? 0 : SIDE_COST.unnatural;
+      const full = SIDE_COST.ownFull * f.tx.fs, reach = 0.9 * f.tx.fs;
+      f.geo[s].ext.forEach(function (r) {
+        texts.forEach(function (tx) { if (!own.has(tx) && _near(r, tx.box, 1)) c += SIDE_COST.text; });
+        found.forEach(function (g) { if (g !== f && _near(r, g.geo[g.side].box, 1)) c += SIDE_COST.text; });
+        segs.forEach(function (sg) {
+          const len = _clipLen(sg, r);
+          if (len <= 1) return;
+          const mine = Math.min(Math.hypot(sg[0] - f.c.x, sg[1] - f.c.y), Math.hypot(sg[2] - f.c.x, sg[3] - f.c.y)) < reach;
+          c += SIDE_COST.bond * (mine ? Math.min(1, len / full) : 1);
+        });
+      });
+      return c;
+    };
+    for (let pass = 0; pass < 2; pass++) {
+      found.forEach(function (f) {
+        let side = f.side, bc = cost(f, side);
+        Object.keys(f.geo).forEach(function (s) {
+          const c = cost(f, s);
+          if (c < bc - 1e-9) { side = s; bc = c; }
+        });
+        f.side = side;
+      });
+    }
+
+    const edits = [], boxes = [];
+    found.forEach(function (f) {
+      const g = f.geo[f.side], k = g.k, fs = f.tx.fs;
+      const attrs = k.anchor === f.tx.body ? f.tx.attrs
+        : f.tx.attrs.replace(/\sx="[^"]*"/, ' x="' + +g.ax.toFixed(2) + '"');
+      let html = '<text' + attrs + '>' + _escText(k.anchor) + _labelTspans(k.post, fs) + '</text>';
+      if (k.pre) html = '<text' + attrs + ' text-anchor="end">' + _labelTspans(k.pre, fs) + '</text>' + html;
+      edits.push({ tx: f.tx, html: html });
+      boxes.push([g.box[0], f.tx.y - fs * 0.8, g.box[2], f.tx.y + fs * 0.35]);
     });
     edits.sort(function (a, b) { return b.tx.from - a.tx.from; }).forEach(function (e) {
       svg = svg.slice(0, e.tx.from) + e.html + svg.slice(e.tx.to);
@@ -404,7 +553,10 @@ const MolRenderer = (() => {
     if (!parts) return svg;
     const r = _placeLabels(svg, parts, o);
     if (!r.missed.length) return r.svg;
-    r.missed.forEach(function (p) { if (p.atom >= 0) m.setAtomCustomLabel(p.atom, p.pre + p.anchor + p.post); });
+    r.missed.forEach(function (p) {
+      const k = p.cands[p.natural];
+      if (p.atom >= 0) m.setAtomCustomLabel(p.atom, k.pre + k.anchor + k.post);
+    });
     _labelParts.set(m, parts.filter(function (p) { return r.missed.indexOf(p) < 0; }));
     return _svgOf(m, w, h, o);
   }
@@ -816,7 +968,7 @@ const MolRenderer = (() => {
   }
 
   return { ready, drawMol, drawSmiles, drawAuto, drawReaction, reactionSvg, parseReaction,
-           parseMolAliases, parseSuperatoms, splitRxn, isMol, isRxn, rxnSource };
+           parseMolAliases, parseSuperatoms, mirrorLabel: _mirrorLabel, splitRxn, isMol, isRxn, rxnSource };
 })();
 
 // Expose on window so cross-file consumers (scheme-graph-editor.js,

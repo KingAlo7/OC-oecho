@@ -77,6 +77,8 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .sidebar::-webkit-scrollbar{width:6px;}
 .sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
 .sidebar-top{padding:0.85rem;border-bottom:1px solid var(--border);flex-shrink:0;}
+.sidebar-foot{margin-top:auto;padding:0.9rem 1rem;font-size:0.72rem;color:var(--muted2);text-decoration:none;flex-shrink:0;}
+.sidebar-foot:hover{color:var(--accent);}
 .sidebar-label{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted2);padding:0 0.25rem;margin-bottom:0.4rem;}
 .diff-filter{display:flex;gap:0.3rem;margin-top:0.4rem;}
 .diff-pill{flex:1;padding:0.32rem 0;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-size:0.72rem;font-weight:700;text-align:center;border-radius:5px;cursor:pointer;transition:all 0.12s;user-select:none;}
@@ -512,6 +514,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
       <div class="sidebar-label" style="margin-top:0.85rem">Kategorien</div>
     </div>
     <div id="cat-list"></div>
+    <a class="sidebar-foot" href="./lizenzen.html">Lizenzen und Hinweise</a>
   </nav>
 
   <main class="main" id="main"></main>

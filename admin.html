@@ -17,6 +17,7 @@
 <script src="https://cdn.jsdelivr.net/npm/openchemlib/dist/openchemlib-full.js"></script>
 <script src="./chem-text.js"></script>
 <script src="./mol-renderer.js"></script>
+<script src="./ketcher-ui.js"></script>
 <script src="./rdkit-helper.js"></script>
 <script src="./scheme-graph-editor.js"></script>
 <style>
@@ -332,28 +333,35 @@ select.fi option{background:var(--surface);color:var(--text);}
 .fork-btn:hover{background:var(--green);color:#fff;}
 
 /* ── SchemeGraphEditor (drag-and-drop visual graph editor) ─────── */
-.sg-host{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow-sm);}
-.sg-toolbar{display:flex;align-items:center;gap:0.4rem;padding:0.5rem 0.7rem;background:var(--surface2);border-bottom:1px solid var(--border);flex-wrap:wrap;}
-.sg-btn{background:var(--surface);border:1px solid var(--border);color:var(--text-soft);padding:0.32rem 0.7rem;border-radius:6px;font-size:0.76rem;cursor:pointer;font-family:inherit;font-weight:600;}
-.sg-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
-.sg-zoom-label{font-size:0.7rem;color:var(--muted);font-family:ui-monospace,monospace;padding:0 0.3rem;}
-.sg-hint{font-size:0.7rem;color:var(--muted2);margin-left:auto;font-style:italic;max-width:60%;text-align:right;}
-.sg-canvas{display:block;width:100%;height:520px;background:repeating-linear-gradient(0deg,#fdfcf6 0,#fdfcf6 19px,#f3f2e8 19px,#f3f2e8 20px),repeating-linear-gradient(90deg,#fdfcf6 0,#fdfcf6 19px,#f3f2e8 19px,#f3f2e8 20px);cursor:grab;outline:none;touch-action:none;user-select:none;}
+/* Styled like the reaction form's WYSIWYG row (.rxn-wys / .rxn-box): a
+   plain white box, structures in white frames — solid = vorgegeben,
+   dashed = gesucht (a filled vs. an empty .rxn-box) — red only on
+   hover and selection. */
+.sg-host{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#fff;box-shadow:var(--shadow-sm);}
+.sg-toolbar{display:flex;align-items:center;gap:0.35rem;padding:0.55rem 0.7rem;background:var(--surface);border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.sg-btn{font-size:0.76rem;padding:0.32rem 0.65rem;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font-family:inherit;font-weight:600;transition:all 0.15s;}
+.sg-btn:hover{background:var(--surface2);border-color:var(--muted);}
+.sg-btn[data-act="add"]{border-style:dashed;color:var(--muted);}
+.sg-btn[data-act="add"]:hover{background:var(--surface);border-style:solid;border-color:var(--accent);color:var(--accent);}
+.sg-zoom-label{font-size:0.72rem;color:var(--muted);font-family:ui-monospace,'Cascadia Code',monospace;padding:0 0.3rem;}
+.sg-hint{font-size:0.7rem;color:var(--muted2);margin-left:auto;max-width:60%;text-align:right;line-height:1.5;}
+.sg-canvas{display:block;width:100%;height:520px;background:#fff;cursor:grab;outline:none;touch-action:none;user-select:none;}
 .sg-canvas:focus{box-shadow:inset 0 0 0 2px var(--accent-soft);}
 .sg-canvas:active{cursor:grabbing;}
 
 .sg-node{cursor:grab;}
 .sg-node:active{cursor:grabbing;}
-.sg-node-bg{fill:#ffffff;stroke:#cfceb8;stroke-width:1.5;}
-.sg-node.given .sg-node-bg{fill:#f3f3ec;}
-.sg-node-given{font:600 9px 'Segoe UI',system-ui,sans-serif;fill:#3f7d3f;letter-spacing:0.04em;pointer-events:none;}
-.sg-node.hidden .sg-node-bg{fill:#fffbe8;stroke:#e2001a;stroke-dasharray:4 3;}
-.sg-node.selected .sg-node-bg{stroke:#e2001a;stroke-width:2.5;stroke-dasharray:none;filter:drop-shadow(0 2px 8px rgba(226,0,26,0.25));}
+.sg-node-bg{fill:#fff;stroke:var(--border2);stroke-width:1;stroke-dasharray:5 4;vector-effect:non-scaling-stroke;transition:stroke 0.15s;}
+.sg-node.given .sg-node-bg{stroke-dasharray:none;}
+.sg-node:hover .sg-node-bg{stroke:var(--accent);}
+.sg-node-given{font:600 9px 'Segoe UI',system-ui,sans-serif;fill:var(--green);letter-spacing:0.04em;pointer-events:none;}
+.sg-node.selected .sg-node-bg{stroke:var(--accent);stroke-width:1.5;stroke-dasharray:none;filter:drop-shadow(0 0 4px rgba(226,0,26,0.22));}
 .sg-node-label{font:bold 12px 'Segoe UI',system-ui,sans-serif;fill:#e2001a;letter-spacing:0.02em;pointer-events:none;}
 .sg-node-name{font:11px 'Segoe UI',system-ui,sans-serif;fill:#6b6a5d;pointer-events:none;}
 .sg-node-deg{font:600 9px 'Segoe UI',system-ui,sans-serif;fill:#9a9889;pointer-events:none;}
-.sg-handle{fill:#5a8a2a;stroke:#fff;stroke-width:2;cursor:crosshair;transition:r 0.12s,fill 0.12s;}
-.sg-handle:hover{fill:#3d6818;r:9;}
+.sg-handle{fill:#fff;stroke:var(--muted2);stroke-width:1.2;cursor:crosshair;transition:r 0.12s,fill 0.12s,stroke 0.12s;}
+.sg-node:hover .sg-handle{stroke:var(--accent);}
+.sg-handle:hover{fill:var(--accent);stroke:var(--accent);r:9;}
 .sg-ph{font:italic 11px 'Segoe UI',system-ui,sans-serif;color:#9a9889;}
 .sg-text-node{font:600 15px 'Segoe UI',system-ui,sans-serif;color:#2b2b27;white-space:nowrap;}
 .sg-err{font:600 10px sans-serif;color:#c91020;}
@@ -376,43 +384,51 @@ select.fi option{background:var(--surface);color:var(--text);}
 .sg-edge-draft{stroke:#5a8a2a;stroke-width:2;stroke-dasharray:6 3;pointer-events:none;}
 
 /* Sections (composed questions) */
-.sec-tabs{display:flex;gap:0.3rem;border-bottom:1px solid var(--border);padding:0 0.5rem;overflow-x:auto;flex-wrap:nowrap;}
-.sec-tab{padding:0.5rem 0.85rem;border:none;background:none;color:var(--text-soft);font-size:0.8rem;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;font-family:inherit;white-space:nowrap;display:flex;align-items:center;gap:0.4rem;}
-.sec-tab:hover{color:var(--accent);}
-.sec-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
-.sec-tab .sec-type-tag{font-size:0.62rem;padding:0.05rem 0.35rem;border-radius:3px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);font-weight:700;text-transform:uppercase;}
-.sec-tab .sec-x{background:none;border:none;color:var(--muted2);cursor:pointer;padding:0 0.15rem;font-size:0.9rem;line-height:1;}
+/* Section switcher: wrapping pills (no scroll strip, so "＋ Abschnitt"
+   and its menu are never clipped); the open one is marked like a
+   selected list row. */
+.sec-tabs{display:flex;flex-wrap:wrap;align-items:center;gap:0.4rem;margin-bottom:0.9rem;}
+.sec-tab{display:inline-flex;align-items:center;gap:0.4rem;padding:0.32rem 0.45rem 0.32rem 0.7rem;border:1px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text-soft);font-size:0.8rem;font-weight:500;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all 0.15s;}
+.sec-tab:hover{border-color:var(--muted);background:var(--surface2);color:var(--text);}
+.sec-tab.active{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:600;}
+.sec-tab .sec-type-tag{font-size:0.6rem;padding:0.04rem 0.38rem;border-radius:20px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);font-weight:600;}
+.sec-tab.active .sec-type-tag{background:var(--surface);border-color:var(--accent);color:var(--accent);}
+.sec-tab .sec-x{color:var(--muted2);cursor:pointer;padding:0 0.15rem;font-size:0.9rem;line-height:1;}
 .sec-tab .sec-x:hover{color:var(--red);}
-.sec-tab-add{padding:0.5rem 0.7rem;border:1px dashed var(--border2);border-radius:5px;background:var(--surface);color:var(--muted);font-size:0.74rem;font-weight:600;cursor:pointer;margin-left:0.5rem;flex-shrink:0;align-self:center;font-family:inherit;}
-.sec-tab-add:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
-.sec-body{padding:0.85rem 0;}
-.sec-meta{display:flex;gap:0.5rem;margin-bottom:0.7rem;}
-.sec-angabe{margin:0 0 0.7rem;border:1px solid var(--border);border-radius:6px;padding:0.45rem 0.7rem;background:var(--surface2);}
-.sec-angabe summary{cursor:pointer;font-size:0.76rem;font-weight:600;color:var(--muted);}
-.sec-angabe textarea{width:100%;font-family:inherit;font-size:0.84rem;padding:0.4rem 0.6rem;border:1px solid var(--border);border-radius:5px;resize:vertical;}
-.sec-angabe .field{margin-top:0.45rem;}
-.sec-angabe label{display:block;font-size:0.7rem;font-weight:600;color:var(--muted);margin-bottom:0.2rem;}
-.sec-scheme-actions{display:flex;gap:0.4rem;justify-content:flex-end;margin-bottom:0.45rem;}
-.sec-scheme-actions button{font-size:0.76rem;padding:0.3rem 0.7rem;border:1px solid var(--border);border-radius:6px;background:var(--surface);cursor:pointer;color:var(--text-soft);}
-.sec-scheme-actions button:hover{border-color:var(--accent);color:var(--accent);}
-.sec-meta input{flex:1;font-size:0.86rem;padding:0.4rem 0.7rem;border:1px solid var(--border);border-radius:6px;font-family:inherit;}
-.sec-meta input:focus{outline:none;border-color:var(--accent);}
+.sec-tab-add{border:1px dashed var(--border);border-radius:7px;background:var(--surface);color:var(--muted);font-size:0.76rem;font-weight:600;padding:0.32rem 0.7rem;cursor:pointer;font-family:inherit;transition:all 0.15s;}
+.sec-tab-add:hover{border-color:var(--accent);color:var(--accent);border-style:solid;}
+.sec-body{padding:0.3rem 0 0;}
+.sec-meta{display:flex;gap:0.5rem;margin-bottom:0.75rem;}
+.sec-meta input{flex:1;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:7px;padding:0.45rem 0.7rem;font-size:0.85rem;font-family:inherit;transition:all 0.15s;}
+.sec-meta input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+.sec-angabe{margin:0 0 0.9rem;}
+.sec-angabe summary{cursor:pointer;font-size:0.74rem;font-weight:600;color:var(--muted);}
+.sec-angabe .field{margin-top:0.6rem;}
+.sec-angabe textarea{width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:7px;padding:0.45rem 0.7rem;font-size:0.85rem;font-family:inherit;line-height:1.55;resize:vertical;transition:all 0.15s;}
+.sec-angabe textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+.sec-scheme-actions{display:flex;gap:0.4rem;justify-content:flex-end;margin-bottom:0.5rem;}
+.sec-scheme-actions button{font-size:0.76rem;padding:0.32rem 0.65rem;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font-family:inherit;font-weight:600;transition:all 0.15s;}
+.sec-scheme-actions button:hover{background:var(--surface2);border-color:var(--muted);}
+/* Nested .fsec cards (MC / short answer / mechanism) sit flat inside the
+   Abschnitte card: same red headings, no second frame. */
+.sec-body .fsec{background:none;border:none;box-shadow:none;padding:0;margin-bottom:1.4rem;}
 
-/* Selected node/edge detail panel beneath graph */
-.sg-detail{margin-top:0.85rem;padding:0.9rem 1rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;}
-.sg-detail-head{font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent);margin-bottom:0.55rem;display:flex;align-items:center;gap:0.5rem;}
+/* Selected node/edge: fields and buttons exactly like the reaction form */
+.sg-detail{margin-top:0.9rem;padding:1.1rem 1.2rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;}
+.sg-detail-head{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;}
+.sg-detail-head span{text-transform:none;letter-spacing:0;}
+.sg-detail-head::after{content:'';flex:1;height:1px;background:var(--border);}
 .sg-detail-empty{color:var(--muted);font-style:italic;font-size:0.82rem;}
-.sg-detail .row2{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;}
-.sg-detail .field{margin-bottom:0.55rem;}
-.sg-detail label{display:block;font-size:0.7rem;font-weight:600;color:var(--muted);margin-bottom:0.2rem;text-transform:uppercase;letter-spacing:0.04em;}
-.sg-detail input, .sg-detail textarea, .sg-detail select{width:100%;font-size:0.84rem;padding:0.4rem 0.6rem;border:1px solid var(--border);border-radius:5px;font-family:inherit;background:#fff;}
-.sg-detail textarea{min-height:60px;resize:vertical;}
-.sg-detail input:focus, .sg-detail textarea:focus, .sg-detail select:focus{outline:none;border-color:var(--accent);}
-.sg-detail-actions{display:flex;gap:0.4rem;margin-top:0.6rem;flex-wrap:wrap;}
-.sg-detail-actions button{font-size:0.76rem;padding:0.35rem 0.7rem;border:1px solid var(--border);background:var(--surface);color:var(--text-soft);border-radius:5px;cursor:pointer;font-family:inherit;font-weight:600;}
-.sg-detail-actions button.primary{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
-.sg-detail-actions button.danger{border-color:var(--red);color:var(--red);background:var(--red-soft);}
-.sg-detail-actions button:hover{filter:brightness(0.95);}
+.sg-detail input, .sg-detail textarea, .sg-detail select{width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:7px;padding:0.45rem 0.7rem;font-size:0.85rem;font-family:inherit;transition:all 0.15s;}
+.sg-detail textarea{min-height:60px;resize:vertical;line-height:1.55;}
+.sg-detail input:focus, .sg-detail textarea:focus, .sg-detail select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+.sg-detail-actions{display:flex;gap:0.4rem;margin-top:0.9rem;flex-wrap:wrap;}
+.sg-detail-actions button{font-size:0.76rem;padding:0.32rem 0.65rem;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font-family:inherit;font-weight:600;transition:all 0.15s;}
+.sg-detail-actions button:hover{background:var(--surface2);border-color:var(--muted);}
+.sg-detail-actions button.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+.sg-detail-actions button.primary:hover{background:#c2001a;border-color:#c2001a;}
+.sg-detail-actions button.danger{background:var(--surface);border-color:var(--red);color:var(--red);}
+.sg-detail-actions button.danger:hover{background:var(--red-soft);}
 
 /* OCL editor modal */
 .ocl-modal{position:fixed;inset:0;background:rgba(20,18,12,0.55);z-index:200;display:none;align-items:center;justify-content:center;padding:1.5rem;}
@@ -449,6 +465,7 @@ select.fi option{background:var(--surface);color:var(--text);}
     <a href="./index.html">Reaktionen</a>
     <a href="./quiz.html">Quiz</a>
     <a href="./export.html">Export</a>
+    <a href="./lizenzen.html">Lizenzen</a>
   </div>
 </header>
 
@@ -592,7 +609,7 @@ select.fi option{background:var(--surface);color:var(--text);}
     </div>
     <div class="ocl-modal-foot">
       <span class="mol-meta" id="ocl-meta">—</span>
-      <span class="mol-meta" style="flex:1;min-width:14rem" title="Superatom-S-Gruppen und Atom-Aliase werden im Quiz als Kürzel gezeichnet">Kürzel (OMe, OTs, TBS …): Ketcher-Vorlagen → <b>Functional Groups</b>, oder Atome markieren → <b>S-Group → Superatom</b> mit eigenem Namen.</span>
+      <span class="mol-meta" style="flex:1;min-width:14rem" title="Superatom-S-Gruppen und Atom-Aliase werden im Quiz als Kürzel gezeichnet">Kürzel (OMe, CO₂Me, OTBDMS …): Knopf <b>FG</b> rechts unter <b>PT</b>. Im Quiz steht jedes Kürzel von selbst auf der freien Seite.<br><a href="./lizenzen.html#ketcher" target="_blank" rel="noopener" style="color:inherit">Ketcher © EPAM Systems · Apache License 2.0</a></span>
       <button class="sec" onclick="closeStructEditor()">Abbrechen</button>
       <button class="pri" onclick="commitStructEditor()">Übernehmen</button>
     </div>
@@ -1423,6 +1440,7 @@ window.openStructEditorForGraphNode = async function(node, editor) {
   const iframe = document.getElementById('ketcher-iframe');
   iframe.src = KETCHER_URL;
   await _waitForKetcher(iframe);
+  KetcherUI.install(iframe);
   try {
     const k = iframe.contentWindow.ketcher;
     try {
@@ -2258,7 +2276,8 @@ window.editRxnComponent = function(side, i) {
   });
 };
 
-const KETCHER_URL = './vendor/ketcher/standalone/index.html';
+// Ketcher with only the tools this admin uses (see ketcher-ui.js)
+const KETCHER_URL = KetcherUI.src('./vendor/ketcher/standalone/index.html');
 
 window.openStructEditor = async function(nodeIdx) {
   _activeNodeIdx = nodeIdx;
@@ -2273,6 +2292,7 @@ window.openStructEditor = async function(nodeIdx) {
   // Always re-set src so we get a fresh state per open
   iframe.src = KETCHER_URL;
   await _waitForKetcher(iframe);
+  KetcherUI.install(iframe);
   try {
     const k = iframe.contentWindow.ketcher;
     // Apply our default render preferences: hide explicit "CH3" labels at
@@ -2336,8 +2356,7 @@ window.closeStructEditor = function() {
 };
 
 /* When set, the modal commits here instead of to a quiz node.
-   { title, load(): string, save(mol, smiles, rxn) } — `rxn` is '' when the
-   canvas holds a single structure rather than a reaction. */
+   { title, load(): string, save(mol) } */
 let _structTarget = null;
 
 /* Open Ketcher on an arbitrary structure (used by the reaction form). */
@@ -2351,6 +2370,7 @@ window.openStructEditorFor = async function(target) {
   const iframe = document.getElementById('ketcher-iframe');
   iframe.src = KETCHER_URL;
   await _waitForKetcher(iframe);
+  KetcherUI.install(iframe);
   try {
     const k = iframe.contentWindow.ketcher;
     try {
@@ -2377,13 +2397,9 @@ window.commitStructEditor = async function() {
     const iframe0 = document.getElementById('ketcher-iframe');
     const k0 = iframe0 && iframe0.contentWindow && iframe0.contentWindow.ketcher;
     if (k0) {
-      let mol = '', smiles = '', rxn = '';
-      // getRxn only succeeds when the canvas actually holds a reaction
-      // (structures either side of an arrow); it throws otherwise.
-      try { rxn    = await k0.getRxn('v2000'); }    catch (e) { console.warn('getRxn:', e); }
-      try { mol    = await k0.getMolfile('v2000'); } catch (e) { console.warn('getMolfile:', e); }
-      try { smiles = await k0.getSmiles(); }        catch (e) { console.warn('getSmiles:', e); }
-      try { _structTarget.save(mol, smiles, rxn); } catch (e) { console.error('struct save:', e); }
+      let mol = '';
+      try { mol = await k0.getMolfile('v2000'); } catch (e) { console.warn('getMolfile:', e); }
+      try { _structTarget.save(mol); } catch (e) { console.error('struct save:', e); }
     }
     _structTarget = null;
     closeStructEditor();

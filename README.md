@@ -39,6 +39,7 @@ Die ganze Aufgabe steht auf **einem Blatt**: eine Fortschrittsleiste oben (Aufde
 - Tab **Quiz** — Editor für `data/questions.json`:
   - Abschnitts-Reiter (`＋ Abschnitt` → Typ aus der Liste wählen)
   - Graph-Editor mit Ketcher pro Struktur und OCL-Live-Preview
+  - **Kürzel** in Ketcher über den Knopf **FG** rechts unter **PT**: rund 130 Gruppen (OMe, CO₂Me, NHBoc, OTBDMS, MgBr, Platzhalter wie R₁ …), Suche, eigene Kürzel. Klick auf ein Atom ersetzt es durch die Gruppe, Ziehen von einem Atom hängt sie an. Gespeichert wird eine Superatom-S-Gruppe; **⇄** fügt die gespiegelte Schreibweise ein (MeO₂C)
   - Kanten-Editor mit `from[]`, `to`, Reagenz-Beschriftung über/unter dem Pfeil
   - **Vorgegeben / Gesucht** je Knoten — Schalter im Detailpanel oder Taste <kbd>G</kbd>; **✓ Ausgangsstoffe vorgeben** markiert alle Strukturen ohne eingehenden Pfeil
   - Pro Knoten: Beschriftung (leer = keine), Name (erst nach dem Aufdecken sichtbar) und **Angabe-Text unter der Struktur** (`caption`, immer sichtbar, z. B. Summenformel)
@@ -73,7 +74,10 @@ OC-oecho/
 ├── quiz.html               ← Quiz-Viewer (Multi-Typ)
 ├── export.html             ← Druckansicht
 ├── admin.html              ← Admin-Bereich (Reaktionen + Quiz + Commit)
+├── lizenzen.html           ← Lizenzen und Hinweise der Drittsoftware (auf der Website verlinkt)
+├── THIRD-PARTY-NOTICES.txt ← alle Hinweise und Lizenztexte der Drittsoftware
 ├── mol-renderer.js         ← OpenChemLib-Wrapper (MOL/SMILES/Reaktion → SVG)
+├── ketcher-ui.js           ← Ketcher im Admin: nur benötigte Werkzeuge + Kürzel-Auswahl „FG“
 ├── scheme-graph-editor.js  ← SVG-Schema-Editor + Quiz-Viewer (Reaktions-Layout, Pfeil-Routing)
 ├── rdkit-helper.js         ← Lazy-Loader für RDKit-JS (Admin-Layout-Optimierung)
 ├── server.js               ← Express-Server + /api/reactions + /api/questions
@@ -88,7 +92,10 @@ OC-oecho/
 │   └── source-audit-2026*.js ← Abgleich aller Aufgaben mit den Original-Angaben (BW 39–52, LW 43–52)
 │
 ├── vendor/
-│   └── ketcher/standalone/ ← Ketcher 3.12 Build (committed, ~26 MB)
+│   └── ketcher/
+│       ├── standalone/     ← Ketcher 3.12 Build (committed, ~26 MB, unverändert)
+│       ├── LICENSE.txt     ← Apache License 2.0 (aus dem Ketcher-Repository)
+│       └── NOTICE.txt      ← NOTICE von Ketcher (Pflichtangabe)
 │
 └── .github/workflows/
     └── pages.yml
@@ -315,7 +322,11 @@ Drei Bibliotheken arbeiten zusammen, um sowohl gute Layouts als auch ein leichtg
 
 **Stereochemie-Anzeige:** OCL würde standardmäßig Annotationen wie „unknown chirality", „abs", „rac" auf den Rendern einblenden. Wir setzen `suppressChiralText`, `suppressCIPParity`, `suppressESR`, `noStereoProblem` alle auf `true` in `mol-renderer.js`, damit die Anzeige textbuchsauber bleibt.
 
+**Kürzel (Superatome):** Eine Superatom-S-Gruppe wird als ihr Name gezeichnet — das Atom, an dem die Bindung hängt, steht auf dem Bindungsende (**O**Me, **C**O₂Me), Ziffern tiefgestellt. Die Seite wählt `mol-renderer.js` selbst: weg von der Bindung, und gespiegelt (MeO, MeO₂C), wenn auf der anderen Seite ein Atom, eine Beschriftung oder eine Bindung im Weg ist. Ein gespiegelt geschriebener Name („MeO2C“) steht immer links vom Atom.
+
 **Ketcher-Einstellungen:** Beim Öffnen des Editors werden `hideTerminalLabels: true`, `hideImplicitHydrogen: true`, `showStereoFlags: false` gesetzt, damit terminale Methylgruppen als Skelettendpunkte erscheinen und keine Stereo-Flags überlagert werden.
+
+**Ketcher-Werkzeuge:** Ketcher bearbeitet hier immer genau eine Struktur, gespeichert wird im Admin. Werkzeuge für Dateien, Reaktionen, Mapping, Abfragen, R-Gruppen, S-Gruppen, Formen, Text, Bilder und den Makromolekül-Modus sind deshalb ausgeblendet (`?hiddenControls=` plus ein paar CSS-Regeln, Liste in `ketcher-ui.js`). Übrig bleiben Neu, Öffnen (SMILES/MOL einfügen), Kopieren/Einfügen, Rückgängig, Clean Up, Dearomatisieren, CIP (R/S prüfen), berechnete Werte (Summenformel), Zoom, die Zeichenwerkzeuge, Atome, Periodensystem, **FG** und die Ring-/Strukturvorlagen.
 
 ---
 
@@ -352,6 +363,21 @@ Drei Bibliotheken arbeiten zusammen, um sowohl gute Layouts als auch ein leichtg
 `.github/workflows/pages.yml` deployt automatisch bei Push nach `main`. Kein Build-Schritt — alle Frontend-Dateien sind statisch.
 
 Auf Pages **nicht verfügbar**: `/api/*` (kein Node-Server). Der **Ketcher-Editor funktioniert auf Pages** (das vendor-Bundle ist committet). Lokal speichern (`POST /api/questions`) geht nur mit laufendem `node server.js`; das Direct-Push aus dem Commit-Tab funktioniert auch auf Pages über die GitHub-API.
+
+---
+
+## Lizenzen und Drittsoftware
+
+| Komponente | Lizenz | Wie eingebunden |
+|---|---|---|
+| Ketcher 3.12.0 (EPAM Systems) samt Indigo, Miew u. a. | Apache 2.0 | im Repo unter `vendor/ketcher/`, auf der Website ausgeliefert |
+| OpenChemLib JS | BSD 3-Clause | zur Laufzeit von jsDelivr |
+| RDKit.js | BSD 3-Clause | zur Laufzeit von unpkg (nur Admin) |
+| JSZip 3.10.1 | MIT (dual MIT/GPLv3) | zur Laufzeit von cdnjs (Export) |
+
+Ketcher wird mitverteilt, deshalb gilt die Apache-2.0-Pflicht, Lizenz und NOTICE beizulegen: `vendor/ketcher/LICENSE.txt` und `vendor/ketcher/NOTICE.txt` (unverändert aus dem Ketcher-Repository, Tag `v3.12.0`) liegen neben dem unveränderten Build. Alle Hinweise und Lizenztexte stehen gesammelt in `THIRD-PARTY-NOTICES.txt`; `lizenzen.html` zeigt sie auf der Website und ist von jeder Seite aus verlinkt (Seitenleiste, Kopfzeile, Ketcher-Dialog). Da der ganze Repo-Inhalt deployt wird, liegen diese Dateien auch auf der Website — auch wenn das Repository privat ist.
+
+**Neue Drittsoftware oder ein Ketcher-Update:** Eintrag in `THIRD-PARTY-NOTICES.txt` und `lizenzen.html` ergänzen bzw. Version, NOTICE-Text und die Namen der `*.LICENSE.txt`-Dateien des Builds nachziehen (Schritte in `vendor/ketcher/README.md`).
 
 ---
 
