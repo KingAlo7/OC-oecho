@@ -184,7 +184,7 @@ select.fi option{background:var(--surface);color:var(--text);}
 .rxn-arrow-col input{width:168px;text-align:center;background:var(--surface);color:var(--text);border:1px solid transparent;border-radius:6px;padding:0.24rem 0.4rem;font-size:0.78rem;font-family:inherit;}
 .rxn-arrow-col input:hover{border-color:var(--border);}
 .rxn-arrow-col input:focus{outline:none;background:#fff;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
-.rxn-arrow-col input.below{font-size:0.74rem;color:var(--muted);}
+.rxn-arrow-col input.below{font-size:0.74rem;}
 .rxn-shaft{width:172px;height:11px;flex:none;}
 
 .act-bar{display:flex;gap:0.5rem;padding:1.2rem 0 0;border-top:1px solid var(--border);margin-top:1rem;flex-wrap:wrap;}
@@ -371,7 +371,6 @@ select.fi option{background:var(--surface);color:var(--text);}
 .sg-edge-hit{cursor:pointer;}
 .sg-inline-edit{position:absolute;left:0;top:0;width:0;height:0;z-index:5;}
 .sg-inline-edit input{position:absolute;box-sizing:content-box;padding:1px 4px;min-width:3ch;text-align:center;font-family:'Segoe UI',system-ui,sans-serif;font-weight:500;color:#3a3a35;background:rgba(255,255,255,0.92);border:1px dashed #e2001a;border-radius:4px;outline:none;line-height:1.25;}
-.sg-inline-edit input.sg-ie-below{color:#6b6a5d;}
 .sg-ie-tools{position:absolute;display:flex;gap:3px;white-space:nowrap;}
 .sg-ie-tools button{font:600 11px 'Segoe UI',system-ui,sans-serif;padding:2px 6px;border:1px solid var(--border);background:#fff;color:var(--text-soft);border-radius:4px;cursor:pointer;}
 .sg-ie-tools button:hover{border-color:#e2001a;color:#e2001a;}
@@ -379,25 +378,30 @@ select.fi option{background:var(--surface);color:var(--text);}
 .sg-inline-edit input:focus{border-style:solid;box-shadow:0 0 0 3px rgba(226,0,26,0.12);}
 .sg-inline-edit input::placeholder{color:#b9b7a8;font-style:italic;}
 .sg-edge-label{font:500 11px 'Segoe UI',system-ui,sans-serif;fill:#3a3a35;pointer-events:none;}
-.sg-edge-label.below{fill:#6b6a5d;font-size:10px;}
+.sg-edge-label.below{font-size:10px;}
 .sg-edge-orphan{stroke:#b87a00;}
 .sg-edge-draft{stroke:#5a8a2a;stroke-width:2;stroke-dasharray:6 3;pointer-events:none;}
 
-/* Sections (composed questions) */
-/* Section switcher: wrapping pills (no scroll strip, so "＋ Abschnitt"
-   and its menu are never clipped); the open one is marked like a
-   selected list row. */
-.sec-tabs{display:flex;flex-wrap:wrap;align-items:center;gap:0.4rem;margin-bottom:0.9rem;}
-.sec-tab{display:inline-flex;align-items:center;gap:0.4rem;padding:0.32rem 0.45rem 0.32rem 0.7rem;border:1px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text-soft);font-size:0.8rem;font-weight:500;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all 0.15s;}
-.sec-tab:hover{border-color:var(--muted);background:var(--surface2);color:var(--text);}
-.sec-tab.active{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:600;}
-.sec-tab .sec-type-tag{font-size:0.6rem;padding:0.04rem 0.38rem;border-radius:20px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);font-weight:600;}
-.sec-tab.active .sec-type-tag{background:var(--surface);border-color:var(--accent);color:var(--accent);}
+/* Sections (composed questions): the Abschnitte card is framed in the
+   accent colour with a faintly tinted header; the section switcher is a
+   row of folder tabs on that header, the open one joined to the white
+   panel below it. Tabs wrap instead of scrolling, so "＋ Abschnitt" and
+   its menu are never clipped. */
+.fsec.fsec-sections{padding:0;border:1.5px solid #f0a3ac;box-shadow:0 1px 3px rgba(226,0,26,0.08);}
+.fsec-sections > .fsec-title{margin:0;padding:0.95rem 1.3rem 0.2rem;background:#fdf1f2;border-radius:9px 9px 0 0;}
+.fsec-sections > .fsec-title::after{background:#f5c8ce;}
+.fsec-sections > .helper-text{padding:0 1.3rem 1rem;}
+.sec-tabs{display:flex;flex-wrap:wrap;align-items:flex-end;gap:2px;margin:0;padding:0.5rem 1.1rem 0;background:#fdf1f2;border-bottom:1.5px solid #f0a3ac;}
+.sec-tab{display:inline-flex;align-items:center;gap:0.45rem;margin-bottom:-1.5px;padding:0.5rem 0.55rem 0.45rem 0.85rem;border:1.5px solid transparent;border-bottom:0;border-radius:5px 5px 0 0;background:transparent;color:var(--muted);font-size:0.8rem;font-weight:500;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background 0.12s,color 0.12s;}
+.sec-tab:hover{background:rgba(255,255,255,0.7);color:var(--text);}
+.sec-tab.active{background:var(--surface);border-color:#f0a3ac;box-shadow:inset 0 3px 0 var(--accent);color:var(--accent);font-weight:600;padding-bottom:calc(0.45rem + 1.5px);}
+.sec-tab .sec-type-tag{font-size:0.6rem;padding:0.05rem 0.32rem;border-radius:3px;background:rgba(0,0,0,0.05);color:var(--muted);font-weight:700;letter-spacing:0.03em;}
+.sec-tab.active .sec-type-tag{background:var(--accent-soft);color:var(--accent);}
 .sec-tab .sec-x{color:var(--muted2);cursor:pointer;padding:0 0.15rem;font-size:0.9rem;line-height:1;}
 .sec-tab .sec-x:hover{color:var(--red);}
-.sec-tab-add{border:1px dashed var(--border);border-radius:7px;background:var(--surface);color:var(--muted);font-size:0.76rem;font-weight:600;padding:0.32rem 0.7rem;cursor:pointer;font-family:inherit;transition:all 0.15s;}
-.sec-tab-add:hover{border-color:var(--accent);color:var(--accent);border-style:solid;}
-.sec-body{padding:0.3rem 0 0;}
+.sec-tab-add{margin:0 0 0.3rem 0.4rem;border:1.5px dashed #f0a3ac;border-radius:5px;background:transparent;color:var(--accent);font-size:0.76rem;font-weight:600;padding:0.3rem 0.7rem;cursor:pointer;font-family:inherit;transition:all 0.15s;}
+.sec-tab-add:hover{background:var(--surface);border-style:solid;}
+.sec-body{padding:1rem 1.3rem 0.4rem;}
 .sec-meta{display:flex;gap:0.5rem;margin-bottom:0.75rem;}
 .sec-meta input{flex:1;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:7px;padding:0.45rem 0.7rem;font-size:0.85rem;font-family:inherit;transition:all 0.15s;}
 .sec-meta input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
@@ -1328,12 +1332,13 @@ function renderEdgeDetail(e, idx, key, editor) {
         ${editor.scheme.nodes.map(n => `<option value="${x(n.id)}" ${e.to===n.id?'selected':''}>${x(n.label||n.id)}${n.name?' — '+x(n.name):''}</option>`).join('')}
       </select>
     </div>
-    <div class="field"><label>Pfeilform</label>
-      <select onchange="__edgePatch('${x(key)}',${idx},'join', this.value)">
-        <option value="" ${e.join ? '' : 'selected'}>Standard (rechtwinklig)</option>
-        <option value="y" ${e.join === 'y' ? 'selected' : ''}>Y — schräg zusammenlaufend / verzweigend</option>
+    <div class="field"><label>Pfeiltyp</label>
+      <select onchange="__edgeKind('${x(key)}',${idx}, this.value)">
+        <option value="" ${!e.join && !e.equilibrium ? 'selected' : ''}>→ Reaktionspfeil (rechtwinklig)</option>
+        <option value="y" ${e.join === 'y' && !e.equilibrium ? 'selected' : ''}>→ Y — schräg zusammenlaufend / verzweigend</option>
+        <option value="eq" ${e.equilibrium ? 'selected' : ''}>⇌ Gleichgewicht (immer eine gerade Linie)</option>
       </select>
-      <small style="color:var(--muted2);display:block;margin-top:0.3rem">Y wirkt bei Pfeilen mit mehreren Edukten (A + B → C) und bei Verzweigungen (A → B, A → C).</small>
+      <small style="color:var(--muted2);display:block;margin-top:0.3rem">Y wirkt bei Pfeilen mit mehreren Edukten (A + B → C) und bei Verzweigungen (A → B, A → C). Ein Gleichgewicht knickt nie ab: stehen die beiden Verbindungen nicht in einer Zeile oder Spalte, läuft es schräg.</small>
     </div>
     <div class="helper-text" style="margin:0.2rem 0 0.4rem">Reagenzien und Bedingungen direkt am Pfeil im Schema eintippen (oben / unten). Enter springt nach unten, Esc beendet. LaTeX-Indizes: <code>H_2SO_4</code>, <code>H_3O^+</code>. „⌬ Struktur“ neben dem Feld setzt eine Struktur über den Pfeil.</div>
     <div class="sg-detail-actions">
@@ -1364,6 +1369,12 @@ window.__edgePatch = function(key, idx, prop, value) {
   // Re-rendering the panel would replace the <input> being typed in and
   // drop its focus after every character, so text fields stay untouched.
   if (prop === 'to') renderEdgeDetail(ed.scheme.edges[idx], idx, key, ed);
+};
+/* Arrow type: plain / Y / equilibrium (stored as `join` and `equilibrium`). */
+window.__edgeKind = function(key, idx, kind) {
+  const ed = (key === 'main') ? _activeEditor : _composedSectionEditors[parseInt(key.slice(3),10)];
+  if (!ed) return;
+  ed.updateEdge(idx, { join: kind === 'y' ? 'y' : '', equilibrium: kind === 'eq' });
 };
 window.__edgeAddFrom = function(key, idx, nodeId) {
   if (!nodeId) return;
@@ -1482,11 +1493,11 @@ window.bakeNodeLayoutById = async function(id, editor) {
 
 function renderComposedQEditor(q) {
   return `
-    <div class="fsec">
+    <div class="fsec fsec-sections">
       <div class="fsec-title">Abschnitte (composed)</div>
       <div class="sec-tabs" id="sec-tabs"></div>
       <div id="sec-body" class="sec-body"></div>
-      <div class="helper-text" style="margin-top:0.4rem">Jeder Abschnitt wird im Quiz als eigene Karte gerendert. Synthese-Abschnitte nutzen den visuellen Graph-Editor unten; andere Typen behalten ihre Formularansicht.</div>
+      <div class="helper-text">Jeder Abschnitt wird im Quiz als eigene Karte gerendert. Synthese-Abschnitte nutzen den visuellen Graph-Editor unten; andere Typen behalten ihre Formularansicht.</div>
     </div>`;
 }
 
@@ -2671,6 +2682,7 @@ function _serializeScheme(scheme) {
     if (n.explanation) o.explanation = n.explanation;
     if (n.note)        o.note = n.note;
     if (n.related_reaction_id) o.related_reaction_id = n.related_reaction_id;
+    if (n.text)        o.text = n.text;
     if (typeof n.x === 'number') o.x = Math.round(n.x);
     if (typeof n.y === 'number') o.y = Math.round(n.y);
     return o;
@@ -2680,7 +2692,9 @@ function _serializeScheme(scheme) {
     if (e.reagent_above) o.reagent_above = e.reagent_above;
     if (e.reagent_below) o.reagent_below = e.reagent_below;
     if (e.reagent_mol)   o.reagent_mol = e.reagent_mol;
+    if (e.reagent_mol && e.reagent_mol_below) o.reagent_mol_below = true;
     if (e.join)          o.join = e.join;
+    if (e.equilibrium)   o.equilibrium = true;
     return o;
   });
   return out;
