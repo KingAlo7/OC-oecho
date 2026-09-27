@@ -368,12 +368,18 @@ select.fi option{background:var(--surface);color:var(--text);}
 
 .sg-edge-line{stroke:#3a3a35;stroke-width:1.8;}
 .sg-edge.selected .sg-edge-line{stroke:#e2001a;stroke-width:2.6;}
+.sg-curve{stroke:#3a3a35;stroke-width:1.8;fill:none;}
+.sg-edge.selected .sg-curve{stroke:#e2001a;}
+.sg-plus{font:500 17px 'Segoe UI',system-ui,sans-serif;fill:#3a3a35;pointer-events:none;}
+.sg-edge.selected .sg-plus{fill:#e2001a;}
 .sg-edge-hit{cursor:pointer;}
 .sg-inline-edit{position:absolute;left:0;top:0;width:0;height:0;z-index:5;}
 .sg-inline-edit input{position:absolute;box-sizing:content-box;padding:1px 4px;min-width:3ch;text-align:center;font-family:'Segoe UI',system-ui,sans-serif;font-weight:500;color:#3a3a35;background:rgba(255,255,255,0.92);border:1px dashed #e2001a;border-radius:4px;outline:none;line-height:1.25;}
 .sg-ie-tools{position:absolute;display:flex;gap:3px;white-space:nowrap;}
 .sg-ie-tools button{font:600 11px 'Segoe UI',system-ui,sans-serif;padding:2px 6px;border:1px solid var(--border);background:#fff;color:var(--text-soft);border-radius:4px;cursor:pointer;}
 .sg-ie-tools button:hover{border-color:#e2001a;color:#e2001a;}
+.sg-ie-tools button.on{border-color:#e2001a;color:#e2001a;background:#fff5f6;}
+.sg-inline-edit input.sg-ie-cin,.sg-inline-edit input.sg-ie-cout{border-style:dotted;}
 .sg-edge-mol-ph{fill:none;stroke:#b9b7a8;stroke-dasharray:3 3;}
 .sg-inline-edit input:focus{border-style:solid;box-shadow:0 0 0 3px rgba(226,0,26,0.12);}
 .sg-inline-edit input::placeholder{color:#b9b7a8;font-style:italic;}
@@ -1234,7 +1240,10 @@ function initSynthGraphEditor(scheme, key, q) {
       load: () => e.reagent_mol || '',
       save: (mol) => {
         const i = editor.scheme.edges.indexOf(e);
-        if (i >= 0) editor.updateEdge(i, { reagent_mol: molHasAtoms(mol) ? mol : '' });
+        if (i < 0) return;
+        editor.updateEdge(i, { reagent_mol: molHasAtoms(mol) ? mol : '' });
+        // the panel offers placement and size once there is a structure
+        renderEdgeDetail(editor.scheme.edges[i], i, key, editor);
       }
     })
   });
@@ -1340,7 +1349,25 @@ function renderEdgeDetail(e, idx, key, editor) {
       </select>
       <small style="color:var(--muted2);display:block;margin-top:0.3rem">Y wirkt bei Pfeilen mit mehreren Edukten (A + B → C) und bei Verzweigungen (A → B, A → C). Ein Gleichgewicht knickt nie ab: stehen die beiden Verbindungen nicht in einer Zeile oder Spalte, läuft es schräg.</small>
     </div>
-    <div class="helper-text" style="margin:0.2rem 0 0.4rem">Reagenzien und Bedingungen direkt am Pfeil im Schema eintippen (oben / unten). Enter springt nach unten, Esc beendet. LaTeX-Indizes: <code>H_2SO_4</code>, <code>H_3O^+</code>. „⌬ Struktur“ neben dem Feld setzt eine Struktur über den Pfeil.</div>
+    <div class="field"><label style="display:flex;align-items:center;gap:0.45rem;cursor:pointer;text-transform:none;letter-spacing:0">
+        <input type="checkbox" style="width:auto" ${e.plus ? 'checked' : ''} onchange="__edgePlus('${x(key)}',${idx}, this.checked)">
+        ＋ Als Gleichung zeichnen (A + B → C + D)</label>
+      <small style="color:var(--muted2);display:block;margin-top:0.3rem">Alle Edukte und Produkte dieser Reaktion stehen in einer Zeile, mit „+“ dazwischen (am Handy: Edukte über den Produkten). Gilt für alle Pfeile derselben Reaktion. Ohne Haken: Co-Edukte über dem Pfeil, mehrere Produkte gleichwertig verzweigt.</small>
+    </div>
+    ${e.reagent_mol ? `
+    <div class="row2">
+      <div class="field"><label>Struktur am Pfeil — Lage</label>
+        <select onchange="__edgePatch('${x(key)}',${idx},'reagent_mol_below', this.value === 'below')">
+          <option value="above" ${e.reagent_mol_below ? '' : 'selected'}>über dem Pfeil (Standard)</option>
+          <option value="below" ${e.reagent_mol_below ? 'selected' : ''}>unter dem Pfeil</option>
+        </select></div>
+      <div class="field"><label>Struktur am Pfeil — Größe</label>
+        <select onchange="__edgePatch('${x(key)}',${idx},'reagent_mol_size', this.value ? +this.value : '')">
+          ${[['0.6', '60 %'], ['', '80 % (Standard)'], ['1', '100 %'], ['1.2', '120 %']].map(([v, t]) =>
+            `<option value="${v}" ${String(e.reagent_mol_size || '') === v ? 'selected' : ''}>${t} der Bindungslänge</option>`).join('')}
+        </select></div>
+    </div>` : ''}
+    <div class="helper-text" style="margin:0.2rem 0 0.4rem">Reagenzien und Bedingungen direkt am Pfeil im Schema eintippen (oben / unten). Enter springt zum nächsten Feld, Esc beendet. LaTeX-Indizes: <code>H_2SO_4</code>, <code>H_3O^+</code>. Über den Feldern: „⌬ Struktur“ setzt eine Struktur über den Pfeil (gleiche Bindungslänge wie die Verbindungen, etwas kleiner), „⇅“ legt sie unter den Pfeil; „⤵ Bogen“ zeichnet einen Bogen für Cofaktoren und Nebenprodukte — links tippt man ein, was hineingeht (z. B. <code>NADH/H^+</code>), rechts, was herauskommt (<code>NAD^+</code>).</div>
     <div class="sg-detail-actions">
       <button class="danger" onclick="_activeEditor.deleteEdge(${idx})">× Pfeil löschen</button>
     </div>`;
@@ -1369,6 +1396,17 @@ window.__edgePatch = function(key, idx, prop, value) {
   // Re-rendering the panel would replace the <input> being typed in and
   // drop its focus after every character, so text fields stay untouched.
   if (prop === 'to') renderEdgeDetail(ed.scheme.edges[idx], idx, key, ed);
+};
+/* "+" equation: set on every arrow of the same reaction (same sources,
+   same text), since the layout treats them as one. */
+window.__edgePlus = function(key, idx, on) {
+  const ed = (key === 'main') ? _activeEditor : _composedSectionEditors[parseInt(key.slice(3),10)];
+  if (!ed) return;
+  const E = ed.scheme.edges, e0 = E[idx];
+  if (!e0) return;
+  const sig = e => [...new Set(e.from || [])].sort().join('|') + '#' + (e.reagent_above || '').trim() + '#' + (e.reagent_below || '').trim();
+  E.forEach((e, i) => { if (i !== idx && sig(e) === sig(e0)) e.plus = !!on; });
+  ed.updateEdge(idx, { plus: !!on });
 };
 /* Arrow type: plain / Y / equilibrium (stored as `join` and `equilibrium`). */
 window.__edgeKind = function(key, idx, kind) {
@@ -2693,8 +2731,15 @@ function _serializeScheme(scheme) {
     if (e.reagent_below) o.reagent_below = e.reagent_below;
     if (e.reagent_mol)   o.reagent_mol = e.reagent_mol;
     if (e.reagent_mol && e.reagent_mol_below) o.reagent_mol_below = true;
+    if (e.reagent_mol && +e.reagent_mol_size > 0) o.reagent_mol_size = +e.reagent_mol_size;
     if (e.join)          o.join = e.join;
     if (e.equilibrium)   o.equilibrium = true;
+    if (e.plus)          o.plus = true;
+    if (e.curve) {
+      o.curve = true;
+      if ((e.curve_in || '').trim())  o.curve_in = e.curve_in.trim();
+      if ((e.curve_out || '').trim()) o.curve_out = e.curve_out.trim();
+    }
     return o;
   });
   return out;

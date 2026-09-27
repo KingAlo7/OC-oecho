@@ -5,7 +5,9 @@
  *   scheme = {
  *     nodes: [{ id, label, name, smiles, mol, given, explanation,
  *               note, related_reaction_id, x?, y? }],
- *     edges: [{ from: [nodeId...], to: nodeId, reagent_above, reagent_below }]
+ *     edges: [{ from: [nodeId...], to: nodeId, reagent_above, reagent_below,
+ *               reagent_mol, reagent_mol_below, reagent_mol_size, join, equilibrium,
+ *               plus, curve, curve_in, curve_out }]
  *   }
  *
  * UI:
@@ -37,6 +39,11 @@
  *     away from existing arrows; an arrowhead always has a straight run
  *   - an equilibrium (edge.equilibrium) is one straight line, slanted
  *     when the compounds are not in one row or column
+ *   - edge.plus draws the reaction as an equation, "A + B → C + D"
+ *     (stacked vertically on narrow screens)
+ *   - edge.curve adds a cofactor curve (curve_in → curve_out) that touches
+ *     the shaft; a structure on the arrow (reagent_mol) follows the
+ *     compounds' bond length and the arrow grows to carry it
  *   - several plans are routed off-screen; the one with the fewest
  *     crossings and bends is kept
  *   - reagent text is placed last and avoids structures, other text and
@@ -93,12 +100,26 @@
   const CELL_MAX_W     = 250;   // viewer: largest structure is shrunk to fit this …
   const CELL_MAX_H     = 170;   // … and every other one by the same factor
   const NATURAL_BOX    = 2400;  // oversized, so OCL draws at its own bond length
-  const EMOL_W         = 86;    // structure slot on an arrow (above its text)
+  /* A structure on an arrow (reagent_mol) is drawn at EMOL_REL of the
+     compounds' own scale — the same bond length as on the sheet, a bit
+     smaller — and the arrow grows to carry it. Only a structure that
+     would still exceed EMOL_MAX_W × EMOL_MAX_H is shrunk further.
+     `reagent_mol_size` on the arrow overrides EMOL_REL. */
+  const EMOL_W         = 86;    // stand-in size while OpenChemLib is not there
   const EMOL_H         = 58;
   const EMOL_GAP       = 4;     // px between that structure and the text below it
+  const EMOL_REL       = 0.8;
+  const EMOL_MAX_W     = 180;
+  const EMOL_MAX_H     = 110;
   const EQ_GAP         = 2.5;   // px each half-arrow of an equilibrium sits off the route
-  const EMOL_SCALE     = 0.75;  // reagents are drawn smaller than the compounds
   const MIN_FIT        = 0.72;  // don't pick a grid that needs shrinking below this
+  /* Cofactor curve (curve: true, curve_in / curve_out): an arc under the
+     shaft that touches it in the middle, from the cofactor going in to
+     the one coming out, arrowhead at its end. */
+  const CURVE_D        = 16;    // px the arc's ends reach away from the shaft
+  const CURVE_MIN_W    = 56;    // px shortest chord
+  const CURVE_LABEL_H  = 14;    // px of the label line at either end
+  const PLUS_W         = 34;    // px gap that carries the "+" of an equation
   /* A split (one reaction, several products): the shaft before the bus
      takes whatever length the gap has, the branches after it stay within
      BRANCH_MIN … BRANCH_MAX. */
@@ -191,8 +212,10 @@
     return { up: CAP_H + (f.sup ? SUP_RISE : 0), down: f.sub ? SUB_DROP + 0.8 : 0 };
   }
 
-  /* Full metrics for one edge's above/below labels. */
-  function edgeLabelMetrics(edge) {
+  /* Full metrics for one edge's labels: text above and below, the
+     structure on the arrow (sized from `f`, the scale the compounds of
+     the scheme are drawn at) and the cofactor curve. */
+  function edgeLabelMetrics(edge, f) {
     const above = wrapLabel(edge && edge.reagent_above, LABEL_FONT_ABOVE);
     const below = wrapLabel(edge && edge.reagent_below, LABEL_FONT_BELOW);
     const wa = Math.max(0, ...above.map(l => measureText(plainChemText(l), LABEL_FONT_ABOVE)));
@@ -200,14 +223,33 @@
     const mol = !!(edge && edge.reagent_mol);
     // reagent_mol_below: the structure hangs under the arrow (after the below text)
     const molBelow = mol && !!edge.reagent_mol_below;
-    const w  = Math.max(wa, wb, mol ? EMOL_W : 0);
+    const ms = mol ? emolSize(edge, f) : null;
+    const curve = curveMetrics(edge);
+    const tw = Math.max(wa, wb, ms ? ms.w : 0);
+    const w = Math.max(tw, curve ? curve.span : 0);
+    const text = (above.length + below.length) * LABEL_LINE_H + (ms ? ms.h + EMOL_GAP : 0);
     return {
-      above, below, edge, mol, molBelow,
-      any: mol || above.length > 0 || below.length > 0,
-      width: w,
-      blockH: (above.length + below.length) * LABEL_LINE_H + (mol ? EMOL_H + EMOL_GAP : 0),
+      above, below, edge, mol, molBelow, curve,
+      molW: ms ? ms.w : 0, molH: ms ? ms.h : 0,
+      any: mol || !!curve || above.length > 0 || below.length > 0,
+      width: w, tw,
+      // across a horizontal shaft (text + curve) and along a vertical one
+      blockH: text + (curve ? curve.H : 0),
+      vLen: Math.max(text, curve ? curve.W + CURVE_LABEL_H : 0),
       shaft: Math.max(ARROW_MIN, Math.min(ARROW_MAX, Math.ceil(w) + LABEL_PAD_X * 2))
     };
+  }
+
+  /* The cofactor curve of an arrow: chord W wide enough for both end
+     labels, `span` = what it needs across (labels hang past the ends). */
+  function curveMetrics(edge) {
+    if (!edge || !edge.curve) return null;
+    const tin = String(edge.curve_in || '').trim(), tout = String(edge.curve_out || '').trim();
+    const wIn = tin ? measureText(plainChemText(tin), LABEL_FONT_BELOW) : 0;
+    const wOut = tout ? measureText(plainChemText(tout), LABEL_FONT_BELOW) : 0;
+    const W = Math.max(CURVE_MIN_W, Math.ceil((wIn + wOut) / 2) + 16);
+    return { tin, tout, wIn, wOut, W, D: CURVE_D, span: W + Math.max(wIn, wOut),
+             H: CURVE_D + (tin || tout ? CURVE_LABEL_H + 2 : 0) };
   }
 
   /* A node without a structure: its `text` (a compound named in words on
@@ -220,8 +262,10 @@
     return (a.reagent_above || '').trim() === (b.reagent_above || '').trim() &&
            (a.reagent_below || '').trim() === (b.reagent_below || '').trim() &&
            (a.reagent_mol || '') === (b.reagent_mol || '') &&
-           !a.reagent_mol_below === !b.reagent_mol_below;
+           !a.reagent_mol_below === !b.reagent_mol_below &&
+           curveKey(a) === curveKey(b);
   }
+  const curveKey = e => e && e.curve ? (e.curve_in || '').trim() + '→' + (e.curve_out || '').trim() : '';
 
   /* Arrow shape. Default ('') is the orthogonal textbook routing; 'y'
      draws the lines between compounds and the junction as straight
@@ -229,25 +273,37 @@
      shaft splits into slanted branches). Stored per arrow as `join`. */
   const isY = e => !!e && e.join === 'y';
 
-  /* Rendered arrow structures, cached per MOL text. */
+  /* Arrow structures: OpenChemLib's drawing at its own bond length,
+     cached per MOL text; emolSize() scales it like the compounds. */
   const _emolCache = new Map();
-  function edgeMolSvg(mol) {
+  function emolNatural(mol) {
     if (!mol || !window.OCL || !window.MolRenderer) return null;
     let c = _emolCache.get(mol);
     if (!c) {
       const tmp = document.createElement('div');
       let el = null;
-      try { el = window.MolRenderer.drawMol(mol, tmp, { width: 900, height: 700, autoCrop: true, autoCropMargin: 2 }); } catch (_) {}
+      try { el = window.MolRenderer.drawMol(mol, tmp, { width: NATURAL_BOX, height: NATURAL_BOX, autoCrop: true, autoCropMargin: 2 }); } catch (_) {}
       if (!el || !el.getAttribute) return null;
       const w = parseFloat(el.getAttribute('width')) || EMOL_W, h = parseFloat(el.getAttribute('height')) || EMOL_H;
       c = { el, w, h };
       if (_emolCache.size > 200) _emolCache.clear();
       _emolCache.set(mol, c);
     }
-    const k = Math.min(EMOL_SCALE, EMOL_W / c.w, EMOL_H / c.h);
+    return c;
+  }
+  function emolSize(edge, f) {
+    const c = emolNatural(edge.reagent_mol);
+    if (!c) return { w: EMOL_W, h: EMOL_H };
+    const rel = +edge.reagent_mol_size > 0 ? +edge.reagent_mol_size : EMOL_REL;
+    const k = Math.min((f || 1) * rel, EMOL_MAX_W / c.w, EMOL_MAX_H / c.h);
+    return { w: c.w * k, h: c.h * k };
+  }
+  function edgeMolSvg(mol, size) {
+    const c = emolNatural(mol);
+    if (!c) return null;
     const el = c.el.cloneNode(true);
     el.removeAttribute('style');
-    return { el, w: c.w * k, h: c.h * k };
+    return { el, w: size.w, h: size.h };
   }
 
   function nextLetterId(usedSet) {
@@ -296,6 +352,7 @@
     const splits = !(popts && popts.split === false);
     const defers = !(popts && popts.defer === false);
     const lanes = !(popts && popts.lanes === false);
+    const pluses = !(popts && popts.plus === false);
     const ids = new Set(nodes.map(n => n.id));
     const order = new Map(nodes.map((n, i) => [n.id, i]));
     const trim = s => String(s == null ? '' : s).trim();
@@ -307,8 +364,8 @@
       const from = [...new Set((e.from || []).filter(id => ids.has(id) && id !== e.to))];
       if (!from.length) return;
       let rx = null;
-      const lab = trim(e.reagent_above) + '#' + trim(e.reagent_below);
-      if (from.length > 1 || lab !== '#') {
+      const lab = trim(e.reagent_above) + '#' + trim(e.reagent_below) + (e.curve ? '#' + curveKey(e) : '');
+      if (from.length > 1 || lab !== '#' || e.plus) {
         const key = [...from].sort().join('|') + '#' + lab;
         rx = multi.get(key);
         if (!rx) { rx = { srcs: from, prods: [], edges: [] }; multi.set(key, rx); }
@@ -458,9 +515,112 @@
       return Array.from({ length: n }, (_, i) => n % 2 ? i - half : (i < half ? i - half : i - half + 1));
     };
 
+    /* ── equations (edge.plus): "A + B → C + D" in one row ──────────── */
+    const flagged = rx => rx.edges.some(i => edges[i].plus);
+    const isPlus = rx => pluses && flagged(rx);
+    const free = (h, r) => { const v = cell.get(K(h, r)); return v == null || v === 'R'; };
+    // Something already arrives at (or leaves) this compound along its row.
+    const along = (h, r) => [-1, 1].some(d => { const v = cell.get(K(h + d, r)); return v != null && v !== 'R' && v !== 'T'; });
+    const eqnMembers = rx => ({
+      reacts: rx.srcs.filter(id => id === rx.main || !pos.has(id)),
+      prods: rx.prods.filter(p => !pos.has(p)),
+      // members already drawn elsewhere join the arrow like any co-node
+      extra: rx.srcs.filter(id => id !== rx.main && pos.has(id)).map(id => ({ id, dir: 'in' }))
+        .concat(rx.prods.filter(p => pos.has(p)).map(id => ({ id, dir: 'out' })))
+    });
+
+    /* The reactants side by side with "+" between them, the arrow, the
+       products the same way — reactants and products in data order. Not
+       after a compound that is reached along its row ("X → M + W" would
+       read as if M and W came out of X). */
+    function tryEqn(rx, dx) {
+      const m = pos.get(rx.main), mh = m.h, mr = m.r;
+      const { reacts, prods, extra } = eqnMembers(rx);
+      if (!prods.includes(rx.prod) || reacts.length + prods.length < 3) return null;
+      if (reacts.length > 1 && along(mh, mr)) return null;
+      for (const order of [reacts, [rx.main, ...reacts.filter(id => id !== rx.main)]]) {
+        const iM = order.indexOf(rx.main);
+        const hs = order.map((_, j) => mh + 2 * dx * (j - iM));
+        const g = hs[hs.length - 1] + dx;
+        const ph = prods.map((_, k) => g + dx + 2 * dx * k);
+        if (!hs.filter(h => h !== mh).concat(ph).every(h => canPut(h, mr) && inSpan(h))) continue;
+        const plusH = [];
+        for (let j = 1; j < hs.length; j++) plusH.push((hs[j - 1] + hs[j]) / 2);
+        for (let k = 1; k < ph.length; k++) plusH.push((ph[k - 1] + ph[k]) / 2);
+        if (!plusH.every(h => free(h, mr)) || !passOk(g, mr)) continue;
+        const co = order.map((id, j) => ({ id, dir: 'in', slot: 'eqn', h: hs[j], r: mr, via: [] }))
+          .concat(prods.map((id, k) => ({ id, dir: 'out', slot: 'eqn', h: ph[k], r: mr, via: [] })))
+          .filter(c => c.id !== rx.main && c.id !== rx.prod);
+        return { type: 'eqn', rx, dx, gap: g, row: mr, mh, mr, th: ph[prods.indexOf(rx.prod)], tr: mr,
+                 plusH, lo: Math.min(...hs, ...ph), hi: Math.max(...hs, ...ph),
+                 order, prods, co, extra, cost: 0 };
+      }
+      return null;
+    }
+
+    /* Narrow screens: "M + W" in one row, the arrow straight down from
+       between them (the "+" column) to "C + D" in a lower row. Two
+       reactants and two products only. */
+    function tryEqnV(rx, dy, k) {
+      const m = pos.get(rx.main), mh = m.h, mr = m.r, tr = mr + dy * k;
+      const { reacts, prods, extra } = eqnMembers(rx);
+      if (reacts.length !== 2 || prods.length !== 2 || !prods.includes(rx.prod) || along(mh, mr)) return null;
+      const other = reacts.find(id => id !== rx.main);
+      for (const sd of reacts[0] === rx.main ? [1, -1] : [-1, 1]) {
+        const ch = mh + 2 * sd, c = mh + sd;
+        if (!canPut(ch, mr) || !inSpan(ch) || !free(c, mr) || !free(c, tr)) continue;
+        const hs = [Math.min(mh, ch), Math.max(mh, ch)];
+        if (!hs.every(h => canPut(h, tr))) continue;
+        let ok = true;
+        for (let i = 1; i < k && ok; i++) ok = free(c, mr + dy * i);
+        if (!ok) continue;
+        const at = prods.map((id, j) => ({ id, h: hs[j] }));
+        return { type: 'veqn', rx, dy, k, ac: c, mh, mr, th: at.find(a => a.id === rx.prod).h, tr,
+                 order: sd > 0 ? [rx.main, other] : [other, rx.main], prods,
+                 co: [{ id: other, dir: 'in', slot: 'eqn', h: ch, r: mr, via: [] }]
+                   .concat(at.filter(a => a.id !== rx.prod).map(a => ({ id: a.id, dir: 'out', slot: 'eqn', h: a.h, r: tr, via: [] }))),
+                 extra, cost: 0 };
+      }
+      return null;
+    }
+
+    /* Narrow screens, "A + B → C": the two reactants stacked in one
+       column with the "+" between them, the arrow on down to the product. */
+    function tryEqnS(rx, k) {
+      const m = pos.get(rx.main), mh = m.h, mr = m.r;
+      const { reacts, prods, extra } = eqnMembers(rx);
+      if (reacts.length !== 2 || prods.length !== 1 || prods[0] !== rx.prod) return null;
+      const other = reacts.find(id => id !== rx.main);
+      const wr = mr + 1, tr = wr + k;
+      if (!canPut(mh, wr) || !canPut(mh, tr)) return null;
+      for (let i = 1; i < k; i++) if (!free(mh, wr + i)) return null;
+      return { type: 'seqn', rx, dy: 1, k, mh, mr, th: mh, tr, wr,
+               order: [rx.main, other], prods,
+               co: [{ id: other, dir: 'in', slot: 'eqn', h: mh, r: wr, via: [] }], extra, cost: 0 };
+    }
+
+    /* An arrow flagged as an equation is laid as one where it fits;
+       otherwise the usual way, at a price. */
+    function tryH(rx, dx, fromProd) {
+      if (fromProd || !isPlus(rx)) return tryHPlain(rx, dx, fromProd);
+      const e = tryEqn(rx, dx);
+      if (e) return e;
+      const it = tryHPlain(rx, dx, fromProd);
+      if (it) it.pen = (it.pen || 0) + 2;
+      return it;
+    }
+    function tryV(rx, dy, k, fromProd) {
+      if (fromProd || !isPlus(rx)) return tryVPlain(rx, dy, k, fromProd);
+      const e = tryEqnV(rx, dy, k) || (dy > 0 ? tryEqnS(rx, k) : null);
+      if (e) return e;
+      const it = tryVPlain(rx, dy, k, fromProd);
+      if (it) it.pen = (it.pen || 0) + 2;
+      return it;
+    }
+
     /* Straight horizontal reaction. `fromProd` anchors on an already
        placed product (used when laying a feed chain backwards). */
-    function tryH(rx, dx, fromProd) {
+    function tryHPlain(rx, dx, fromProd) {
       let mh, mr, th, tr;
       if (fromProd) { const p = pos.get(rx.prod); th = p.h; tr = p.r; mh = th - 2 * dx; mr = tr; if (!canPut(mh, mr)) return null; }
       else { const m = pos.get(rx.main); mh = m.h; mr = m.r; th = mh + 2 * dx; tr = mr; if (!canPut(th, tr)) return null; }
@@ -563,7 +723,7 @@
 
     /* Vertical reaction over k rows; co-nodes sit left/right of the
        shaft in the row just before the target. */
-    function tryV(rx, dy, k, fromProd) {
+    function tryVPlain(rx, dy, k, fromProd) {
       if (!fromProd && splits && isSplit(rx)) return trySplitV(rx, dy, k);
       const { ins, outs } = coOf(rx);
       const slotted = ins.filter(id => !lanes || !reconverges(id)).concat(outs).filter(id => !pos.has(id));
@@ -621,6 +781,21 @@
         for (let r = it.lo; r <= it.hi; r++) mark(it.gap, r, 'X:' + rx.main);
       } else if (it.type === 'vsplit') {
         for (let i = 1; i < it.k; i++) mark(it.mh, it.mr + it.dy * i, 'X:' + rx.main);
+      } else if (it.type === 'eqn') {
+        mark(it.gap, it.row, (it.extra.length ? 'X:' : 'A:') + rx.main);
+        for (const h of it.plusH) mark(h, it.row, 'X:' + rx.main);
+        // nothing continues along the row out of a group of two or more
+        // ("… → C + D → E" would read as if C and D reacted together)
+        if (it.order.length > 1) mark(it.dx > 0 ? it.lo - 1 : it.hi + 1, it.row, 'X:eqn');
+        if (it.prods.length > 1) mark(it.dx > 0 ? it.hi + 1 : it.lo - 1, it.row, 'X:eqn');
+      } else if (it.type === 'seqn') {
+        for (let i = 1; i < it.k; i++) mark(it.mh, it.wr + i, 'X:' + rx.main);
+      } else if (it.type === 'veqn') {
+        for (let i = 0; i <= it.k; i++) mark(it.ac, it.mr + it.dy * i, 'X:' + rx.main);
+        for (const r of [it.mr, it.tr]) {
+          mark(it.ac - 2, r, 'X:eqn');
+          mark(it.ac + 2, r, 'X:eqn');
+        }
       }
       if (it.type === 'late') {
         // the product becomes a co-reactant of the reaction it merges into
@@ -787,6 +962,13 @@
         const rx = pickMain(cur);
         if (!rx) break;
         let it = inSpan(pos.get(cur).h + 2 * flow) ? tryH(rx, flow) : null;
+        if (it && isPlus(rx) && it.type !== 'eqn') {
+          // an equation that does not fit along the row goes down a level
+          for (let k = 1; k <= 3; k++) {
+            const t = tryV(rx, 1, k);
+            if (t && (t.type === 'veqn' || t.type === 'seqn')) { it = t; break; }
+          }
+        }
         if (it && it.cost > 0) {
           // No room above/below the arrow here: step down a level instead,
           // with the co-reactants beside the vertical arrow.
@@ -905,11 +1087,17 @@
     for (const it of items) {
       it.row = remap(it.row); it.mr = remap(it.mr); it.tr = remap(it.tr);
       if (it.jRow != null) it.jRow = remap(it.jRow);
+      if (it.wr != null) it.wr = remap(it.wr);
     }
     const h0 = Math.min(...[...pos.values()].map(p => p.h));
     const hShift = h0 - (odd(h0) ? 1 : 0);
     for (const p of pos.values()) p.h -= hShift;
-    for (const it of items) { it.mh -= hShift; it.th -= hShift; if (it.gap != null) it.gap -= hShift; }
+    for (const it of items) {
+      it.mh -= hShift; it.th -= hShift;
+      if (it.gap != null) it.gap -= hShift;
+      if (it.ac != null) it.ac -= hShift;
+      if (it.plusH) it.plusH = it.plusH.map(h => h - hShift);
+    }
     const laidEdges = new Set(items.flatMap(it => it.rx.edges));
     /* How much of this plan is NOT tidy grid: arrows routed freely or
        wrapped, compounds joining from elsewhere, long vertical runs, and
@@ -923,18 +1111,23 @@
       for (const x of it.extra) cost += (x.own ? 0.8 : 3) + Math.max(0, far(x.id, it.rx.prod) - 1) * 0.5;
       if (it.type === 'v' || it.type === 'vsplit') cost += (it.k - 1) * 0.4;
       cost += it.pen || 0;
-      if (!splits && it.rx.prods.length > 1) cost += 2.5;
+      if (!splits && it.rx.prods.length > 1 && !flagged(it.rx)) cost += 2.5;
+      if (flagged(it.rx) && !/eqn$/.test(it.type)) cost += 5;
+      if (it.type === 'seqn') cost += (it.k - 1) * 0.4;
     }
     return { pos, items, rows: used.length, laidEdges, cost };
   }
 
   /* Every distinct plan worth routing, cheapest grid first: with and
-     without equal splits, with and without waiting for merge points, and
-     the plain planner (co-reactants always above the arrow). */
+     without equal splits, with and without waiting for merge points,
+     with and without the "+" equations, and the plain planner
+     (co-reactants always above the arrow). */
   const PLAN_VARIANTS = [
     { split: true,  defer: true },  { split: true,  defer: false },
     { split: false, defer: true },  { split: false, defer: false },
-    { split: true,  defer: false, lanes: false }, { split: false, defer: false, lanes: false }
+    { split: true,  defer: false, lanes: false }, { split: false, defer: false, lanes: false },
+    // equations drawn the usual way (where an equation routes badly)
+    { split: true,  defer: true, plus: false }, { split: false, defer: false, lanes: false, plus: false }
   ];
   function planCandidates(nodes, edges, cols) {
     const out = [], seen = new Set();
@@ -999,6 +1192,12 @@
               <path d="M0,0 L${ARROW_HEAD},${ARROW_HEAD/2} L0,${ARROW_HEAD} z" fill="#3a3a35"/>
             </marker>
             <marker id="sg-arrow-sel" viewBox="0 0 ${ARROW_HEAD} ${ARROW_HEAD}" refX="${ARROW_HEAD - 1}" refY="${ARROW_HEAD/2}" markerWidth="${ARROW_HEAD}" markerHeight="${ARROW_HEAD}" orient="auto-start-reverse">
+              <path d="M0,0 L${ARROW_HEAD},${ARROW_HEAD/2} L0,${ARROW_HEAD} z" fill="#e2001a"/>
+            </marker>
+            <marker id="sg-arrow-sm" viewBox="0 0 ${ARROW_HEAD} ${ARROW_HEAD}" refX="${ARROW_HEAD - 1}" refY="${ARROW_HEAD/2}" markerWidth="${ARROW_HEAD * 0.72}" markerHeight="${ARROW_HEAD * 0.72}" orient="auto">
+              <path d="M0,0 L${ARROW_HEAD},${ARROW_HEAD/2} L0,${ARROW_HEAD} z" fill="#3a3a35"/>
+            </marker>
+            <marker id="sg-arrow-sm-sel" viewBox="0 0 ${ARROW_HEAD} ${ARROW_HEAD}" refX="${ARROW_HEAD - 1}" refY="${ARROW_HEAD/2}" markerWidth="${ARROW_HEAD * 0.72}" markerHeight="${ARROW_HEAD * 0.72}" orient="auto">
               <path d="M0,0 L${ARROW_HEAD},${ARROW_HEAD/2} L0,${ARROW_HEAD} z" fill="#e2001a"/>
             </marker>
             <marker id="sg-harpoon" viewBox="0 0 ${ARROW_HEAD} ${ARROW_HEAD}" refX="${ARROW_HEAD - 1}" refY="${ARROW_HEAD/2}" markerWidth="${ARROW_HEAD}" markerHeight="${ARROW_HEAD}" orient="auto">
@@ -1102,6 +1301,12 @@
       return this.scheme.layout !== 'manual';
     }
 
+    /* Label metrics of an arrow at this scheme's scale (a structure on the
+       arrow follows the compounds' bond length). */
+    _metrics(edge) {
+      return edgeLabelMetrics(edge, this.readOnly && this._cell ? this._cell.f : 1);
+    }
+
     _ensurePositions() {
       const missingAny = this.scheme.nodes.some(n => typeof n.x !== 'number' || typeof n.y !== 'number');
       if (missingAny || this._isAutoLayout()) this.autoLayout();
@@ -1151,12 +1356,22 @@
                          forkKeys.has(it.rx.main + '|' + it.gap);
       let maxHx = 0;
       for (const p of pos.values()) maxHx = Math.max(maxHx, p.h);
-      const horiz = it => it.type === 'h' || it.type === 'fork' || it.type === 'stack' || it.type === 'split';
+      const horiz = it => it.type === 'h' || it.type === 'fork' || it.type === 'stack' || it.type === 'split' || it.type === 'eqn';
       const gapW = new Map();
+      const atLeast = (h, w) => gapW.set(h, Math.max(gapW.get(h) || 0, w));
+      // (the editor's boxes carry a handle on their right edge)
+      const plusW = this.readOnly ? PLUS_W : PLUS_W + 16;
       for (const it of items) {
+        if (it.type === 'eqn') {
+          // the arrow as wide as its text; a narrow gap for each "+"
+          atLeast(it.gap, this._metrics(E[it.rx.edges[0]]).shaft + (it.extra.some(x => x.dir === 'in') ? JUNCTION_OFF + 6 : 0));
+          for (const h of it.plusH) atLeast(h, plusW);
+          continue;
+        }
+        if (it.type === 'veqn') { atLeast(it.ac, plusW); continue; }
         if (!horiz(it)) continue;
         const e0 = E[it.rx.edges[0]];
-        const m = edgeLabelMetrics(e0);
+        const m = this._metrics(e0);
         // A Y spends a diagonal run before (join) or after (fork) the junction.
         // Joins slide their co-reactant back instead (see below), so only a
         // fork widens its gap.
@@ -1186,24 +1401,25 @@
       const nRows = plan.rows;
       const rowGap = new Array(Math.max(0, nRows)).fill(STACK_GAP + 8);
       for (const it of items) {
-        if (it.type !== 'v' && it.type !== 'vsplit') continue;
-        const m = edgeLabelMetrics(E[it.rx.edges[0]]);
+        if (it.type !== 'v' && it.type !== 'vsplit' && it.type !== 'veqn' && it.type !== 'seqn') continue;
+        const m = this._metrics(E[it.rx.edges[0]]);
         // a vertical split also needs room for its bus and branches
         const need = it.type === 'vsplit'
-          ? (it.k === 1 ? (m.blockH ? m.blockH + 16 : 24) : 16) + BRANCH_W
-          : (m.blockH ? m.blockH + 26 : 0);
+          ? (it.k === 1 ? (m.vLen ? m.vLen + 16 : 24) : 16) + BRANCH_W
+          : (m.vLen ? m.vLen + 26 : 0);
         if (!need) continue;
         const gi = it.dy > 0 ? it.tr - 1 : it.tr;
         if (gi >= 0 && gi < rowGap.length) rowGap[gi] = Math.max(rowGap[gi], need);
       }
       for (const it of items) {
         if (!horiz(it)) continue;
-        const m = edgeLabelMetrics(E[it.rx.edges[0]]);
+        const m = this._metrics(E[it.rx.edges[0]]);
         if (!m.mol) continue;
         // The structure sits above the text and reaches into the row gap above
         // (or below the lower text, reaching into the gap below).
         const gi = m.molBelow ? Math.floor(it.row) : Math.ceil(it.row) - 1;
-        const need = (m.molBelow ? m.below.length : m.above.length) * LABEL_LINE_H + EMOL_H + EMOL_GAP + LABEL_GAP - this.NH / 2 + 20;
+        const need = (m.molBelow ? m.below.length * LABEL_LINE_H + (m.curve ? m.curve.H : 0) : m.above.length * LABEL_LINE_H) +
+                     m.molH + EMOL_GAP + LABEL_GAP - this.NH / 2 + 20;
         if (gi >= 0 && gi < rowGap.length) rowGap[gi] = Math.max(rowGap[gi], STACK_GAP + 8 + need);
       }
       const rowY = [];
@@ -1226,6 +1442,8 @@
       for (const it of items) {
         it.hasJ = hasJ(it);
         if (it.gap != null) it.jx = jx(it.gap, it.dx || 1);
+        // a vertical equation's arrow and "+" run down the middle of its column
+        if (it.type === 'veqn') it.ax = colX[it.ac] + gapW.get(it.ac) / 2;
       }
       // Y joins: slide each co-reactant back along its row so its line
       // reaches the junction on a slant. Column widths stay as they are;
@@ -1270,14 +1488,34 @@
         for (let k = 1; k < pts.length; k++) segs.push([pts[k - 1], pts[k], path.parentNode]);
       }
       const o = (p, q, r) => Math.sign((q.x - p.x) * (r.y - p.y) - (q.y - p.y) * (r.x - p.x));
-      let cross = 0;
+      // two runs of different arrows on one line read as one arrow
+      const onTop = (a, b, c, d) => {
+        const h = Math.abs(a.y - b.y) < 0.5 && Math.abs(c.y - d.y) < 0.5 && Math.abs(a.y - c.y) < 2.5;
+        const v = Math.abs(a.x - b.x) < 0.5 && Math.abs(c.x - d.x) < 0.5 && Math.abs(a.x - c.x) < 2.5;
+        if (!h && !v) return false;
+        const k = h ? 'x' : 'y';
+        return Math.min(Math.max(a[k], b[k]), Math.max(c[k], d[k])) - Math.max(Math.min(a[k], b[k]), Math.min(c[k], d[k])) > 4;
+      };
+      // parallel runs of different arrows only a few px apart
+      const hug = (a, b, c, d) => {
+        const h = Math.abs(a.y - b.y) < 0.5 && Math.abs(c.y - d.y) < 0.5;
+        const v = Math.abs(a.x - b.x) < 0.5 && Math.abs(c.x - d.x) < 0.5;
+        if (!h && !v) return false;
+        const gap = h ? Math.abs(a.y - c.y) : Math.abs(a.x - c.x);
+        if (gap <= 2.5 || gap > 14) return false;
+        const k = h ? 'x' : 'y';
+        return Math.min(Math.max(a[k], b[k]), Math.max(c[k], d[k])) - Math.max(Math.min(a[k], b[k]), Math.min(c[k], d[k])) > 20;
+      };
+      let cross = 0, close = 0;
       for (let i = 0; i < segs.length; i++) {
         for (let j = i + 1; j < segs.length; j++) {
           const [a, b, ga] = segs[i], [c, d, gb] = segs[j];
-          if (ga !== gb && o(a, b, c) * o(a, b, d) < 0 && o(c, d, a) * o(c, d, b) < 0) cross++;
+          if (ga === gb) continue;
+          if ((o(a, b, c) * o(a, b, d) < 0 && o(c, d, a) * o(c, d, b) < 0) || onTop(a, b, c, d)) cross++;
+          else if (hug(a, b, c, d)) close++;
         }
       }
-      return cross * 10 + bends * 0.5 + this._seatBad * 3;
+      return cross * 10 + close * 4 + bends * 0.5 + this._seatBad * 3;
     }
 
     /* The widest grid that still reads at a comfortable zoom. */
@@ -1294,7 +1532,8 @@
     _planSig() {
       return JSON.stringify([
         this.scheme.nodes.map(n => n.id),
-        this.scheme.edges.map(e => [e.from, e.to, (e.reagent_above || '').trim(), (e.reagent_below || '').trim(), e.join || '', !!e.reagent_mol, !!e.equilibrium])
+        this.scheme.edges.map(e => [e.from, e.to, (e.reagent_above || '').trim(), (e.reagent_below || '').trim(), e.join || '',
+                                    !!e.reagent_mol, !!e.equilibrium, !!e.plus, curveKey(e)])
       ]);
     }
 
@@ -1665,6 +1904,9 @@
       this._seatOf = new Map();   // edge → { sg, mode }: where its text sits
 
       const usePlan = this._plan && this._isAutoLayout() && this._plan.sig === this._planSig();
+      // The "+" of an equation is in the way of other arrows like a structure.
+      this._pluses = usePlan ? this._plusSpots(this._plan) : [];
+      for (const p of this._pluses) this._obstacles.push({ id: '+', x: p.x - 8, y: p.y - 9, w: 16, h: 18 });
       const planned = usePlan ? this._drawPlan(layer) : new Set();
       const valid = (e, i) => !planned.has(i) && (e.from || []).length === 1 && this._nodeById(e.from[0]) && this._nodeById(e.to);
 
@@ -1757,7 +1999,7 @@
           J = { x: it.jx, y: p.y };
           const from = joinIn ? J : p;
           const near = it.dx > 0 ? Math.min(...outs.map(q => q.x)) : Math.max(...outs.map(q => q.x));
-          const J2 = { x: near - it.dx * this._branchLen(Math.abs(near - from.x), edgeLabelMetrics(e).shaft), y: p.y };
+          const J2 = { x: near - it.dx * this._branchLen(Math.abs(near - from.x), this._metrics(e).shaft), y: p.y };
           this._addPath(g, this._pathD([p, J2]), it.rx.edges[0], false);
           for (const q of outs) {
             const pts = Math.abs(q.y - J2.y) < 1 ? [J2, q] : [J2, { x: J2.x, y: q.y }, q];
@@ -1786,9 +2028,9 @@
           const p = this._exit(A, side);
           const outs = [it.rx.prod, ...it.co.filter(c => c.slot === 'split').map(c => c.id)]
             .map(id => this._nodeById(id)).filter(Boolean).map(n => this._entry(this._box(n), side));
-          const m = edgeLabelMetrics(e);
+          const m = this._metrics(e);
           const near = it.dy > 0 ? Math.min(...outs.map(q => q.y)) : Math.max(...outs.map(q => q.y));
-          const J2 = { x: p.x, y: near - it.dy * this._branchLen(Math.abs(near - p.y), m.blockH ? m.blockH + 16 : 0) };
+          const J2 = { x: p.x, y: near - it.dy * this._branchLen(Math.abs(near - p.y), m.vLen ? m.vLen + 16 : 0) };
           // the bus stays clear of every box it passes (a co-reactant beside the shaft)
           const bl = Math.min(p.x, ...outs.map(q => q.x)), br = Math.max(p.x, ...outs.map(q => q.x));
           for (const o of this._obstacles) {
@@ -1818,6 +2060,41 @@
           joins.push(J2);
           Jout = J2;
           if (it.extra.some(x => x.dir === 'in')) J = { x: p.x, y: p.y + (J2.y - p.y) * 0.4 };
+        } else if (it.type === 'eqn') {
+          // "A + B → C + D": the arrow from the last reactant to the first product
+          const side = it.dx > 0 ? 'R' : 'L';
+          const R = it.order.map(id => this._nodeById(id)).filter(Boolean).map(n => this._box(n));
+          const Pd = it.prods.map(id => this._nodeById(id)).filter(Boolean).map(n => this._box(n));
+          const p = this._exit(R[R.length - 1], side), q = this._entry(Pd[0], side);
+          const pts = Math.abs(p.y - q.y) < 1 ? [p, q] : this._straight(R[R.length - 1], Pd[0]);
+          this._addPath(g, this._pathD(pts), it.rx.edges[0], true);
+          seats.push(...this._segsOf(pts));
+          if (it.extra.length) J = { x: it.jx, y: p.y };
+          if (pts.length === 2 && Math.abs(p.y - q.y) < 1) shaft = { p, q };
+          for (const sp of this._pluses.filter(sp => sp.it === it)) this._plusAt(g, sp.x, sp.y);
+        } else if (it.type === 'veqn') {
+          // "M + W" over "C + D", the arrow straight down the "+" column
+          const R = it.order.map(id => this._nodeById(id)).filter(Boolean).map(n => this._box(n));
+          const Pd = it.prods.map(id => this._nodeById(id)).filter(Boolean).map(n => this._box(n));
+          const x = it.ax, dn = it.dy > 0;
+          const p = { x, y: dn ? Math.max(...R.map(b => b.b)) + 2 : Math.min(...R.map(b => b.t)) - 2 };
+          const q = { x, y: dn ? Math.min(...Pd.map(b => b.t)) - 2 : Math.max(...Pd.map(b => b.b)) + 2 };
+          this._addPath(g, this._pathD([p, q]), it.rx.edges[0], true);
+          seats.push(...this._segsOf([p, q]));
+          if (it.extra.length) J = { x, y: p.y + (q.y - p.y) * 0.4 };
+          shaft = { p, q };
+          for (const sp of this._pluses.filter(sp => sp.it === it)) this._plusAt(g, sp.x, sp.y);
+        } else if (it.type === 'seqn') {
+          // "M / + / W", then the arrow straight down to the product
+          const W = this._nodeById(it.order[1]);
+          const Wb = W ? this._box(W) : A;
+          const p = this._exit(Wb, 'D'), q = this._entry(B, 'D');
+          const pts = Math.abs(p.x - q.x) < 1 ? [p, q] : this._straight(Wb, B);
+          this._addPath(g, this._pathD(pts), it.rx.edges[0], true);
+          seats.push(...this._segsOf(pts));
+          if (it.extra.length) J = { x: p.x, y: p.y + (q.y - p.y) * 0.4 };
+          if (pts.length === 2 && Math.abs(p.x - q.x) < 1) shaft = { p, q };
+          for (const sp of this._pluses.filter(sp => sp.it === it)) this._plusAt(g, sp.x, sp.y);
         } else if (it.type === 'h' || it.type === 'fork' || it.type === 'stack') {
           const side = it.dx > 0 ? 'R' : 'L';
           const p = this._exit(A, side), q = this._entry(B, side);
@@ -1902,7 +2179,7 @@
           seats.push(...this._segsOf(pts));
         } else if (it.type === 'late' && !eq) {
           // a branch parked in the slot of the reaction it merges into
-          const pts = this._bestRoute(A, B, skip, edgeLabelMetrics(e)).pts;
+          const pts = this._bestRoute(A, B, skip, this._metrics(e)).pts;
           this._addPath(g, this._pathD(pts), it.rx.edges[0], true);
           seats.push(...this._segsOf(pts));
           if (it.extra.length) { const s0 = seats[0]; J = { x: (s0.x1 + s0.x2) / 2, y: (s0.y1 + s0.y2) / 2 }; }
@@ -1955,6 +2232,38 @@
         it.rx.edges.forEach(i => drawn.add(i));
       }
       return drawn;
+    }
+
+    /* Where the "+" signs of the planned equations go: midway between two
+       neighbouring structures, or down the middle of a vertical
+       equation's column. */
+    _plusSpots(plan) {
+      const out = [];
+      const boxes = ids => ids.map(id => this._nodeById(id)).filter(Boolean).map(n => this._box(n));
+      for (const it of plan.items) {
+        if (it.type === 'eqn') {
+          for (const grp of [boxes(it.order), boxes(it.prods)]) {
+            for (let j = 1; j < grp.length; j++) {
+              const [a, b] = grp[j - 1].cx <= grp[j].cx ? [grp[j - 1], grp[j]] : [grp[j], grp[j - 1]];
+              out.push({ it, x: (a.r + b.l) / 2 + (this.readOnly ? 0 : HANDLE_R / 2), y: (a.cy + b.cy) / 2 });
+            }
+          }
+        } else if (it.type === 'veqn') {
+          for (const grp of [boxes(it.order), boxes(it.prods)]) {
+            if (grp.length > 1) out.push({ it, x: it.ax, y: (grp[0].cy + grp[1].cy) / 2 });
+          }
+        } else if (it.type === 'seqn') {
+          const [a, b] = boxes(it.order);
+          if (a && b) out.push({ it, x: a.cx, y: (a.b + b.t) / 2 });
+        }
+      }
+      return out;
+    }
+    _plusAt(g, x, y) {
+      const t = svg('text', { class: 'sg-plus', x: r1(x), y: r1(y + 5.5), 'text-anchor': 'middle' });
+      t.textContent = '+';
+      g.appendChild(t);
+      if (this._placed) this._placed.push({ x: x - 6, y: y - 7, w: 12, h: 14 });
     }
 
     _edgeGroup(idx, fromId) {
@@ -2175,12 +2484,23 @@
         return Math.abs(l.x1 - l.x2) < 0.5 && Math.abs(l.x1 - a.x) < 3 &&
           Math.min(Math.max(l.y1, l.y2), Math.max(a.y, b.y)) - Math.max(Math.min(l.y1, l.y2), Math.min(a.y, b.y)) > 2;
       });
+      // … and so, though less, does one hugging it a few px off
+      const hugs = (a, b) => (this._lines || []).some(l => {
+        const hz = Math.abs(a.y - b.y) < 0.5 && Math.abs(l.y1 - l.y2) < 0.5;
+        const vt = Math.abs(a.x - b.x) < 0.5 && Math.abs(l.x1 - l.x2) < 0.5;
+        if (!hz && !vt) return false;
+        const d = hz ? Math.abs(l.y1 - a.y) : Math.abs(l.x1 - a.x);
+        if (d < 3 || d > 14) return false;
+        const k = hz ? 'x' : 'y';
+        return Math.min(Math.max(l[k + 1], l[k + 2]), Math.max(a[k], b[k])) - Math.max(Math.min(l[k + 1], l[k + 2]), Math.min(a[k], b[k])) > 16;
+      });
       let best = null;
       for (const [ps, qs, bias] of opts) {
         const p = ps ? this._exit(s, ps) : { x: s.cx, y: s.cy };
         const q = qs ? this._entry(t, qs) : { x: t.cx, y: t.cy };
         for (const pts of this._route(p, ps, q, qs, skip, m ? m.blockH : 0, true)) {
           let score = bias + this._hits(pts, skip) * 1000 + (pts.length - 2) * 25;
+          for (let k = 1; k < pts.length; k++) if (hugs(pts[k - 1], pts[k])) score += 90;
           if (labelled) score += Math.min(800, this._pickSeat(this._segsOf(pts), m.edge, true) * 0.3);
           let len = 0, longest = 0;
           for (let k = 1; k < pts.length; k++) {
@@ -2212,7 +2532,7 @@
         return;
       }
       if (this._plan && this._isAutoLayout()) {
-        const b = this._bestRoute(s, t, [fromId, e.to], edgeLabelMetrics(e));
+        const b = this._bestRoute(s, t, [fromId, e.to], this._metrics(e));
         const g = this._edgeGroup(idx, fromId);
         this._addPath(g, this._pathD(b.pts), idx, true);
         this._placeLabel(this._segsOf(b.pts), e, g);
@@ -2254,7 +2574,7 @@
       const [dx, dy] = DIR[side];
       const p = this._exit(s, side);
       const shared = idxs.every(i => sameLabels(E[i], E[idxs[0]]));
-      const m0 = edgeLabelMetrics(E[idxs[0]]);
+      const m0 = this._metrics(E[idxs[0]]);
       const targets = idxs.map(i => this._box(this._nodeById(E[i].to)));
 
       const room = Math.min(...targets.map(t => {
@@ -2263,7 +2583,7 @@
       }));
       let stub = JUNCTION_STUB;
       if (shared && m0.any) {
-        stub = Math.max(stub, Math.min(room - 14, isH(side) ? m0.shaft : m0.blockH + 16));
+        stub = Math.max(stub, Math.min(room - 14, isH(side) ? m0.shaft : m0.vLen + 16));
       }
       stub = Math.max(8, Math.min(stub, room - 12));
       const J = { x: p.x + dx * stub, y: p.y + dy * stub };
@@ -2278,7 +2598,7 @@
         if (isY(E[i])) {
           // Slanted branch, then a straight last run for the label.
           const span = isH(side) ? Math.abs(q.x - J.x) : Math.abs(q.y - J.y);
-          const run = Math.max(24, Math.min(span * 0.55, isH(side) ? edgeLabelMetrics(E[i]).shaft : 60));
+          const run = Math.max(24, Math.min(span * 0.55, isH(side) ? this._metrics(E[i]).shaft : 60));
           const K = isH(side) ? { x: q.x - dx * run, y: q.y } : { x: q.x, y: q.y - dy * run };
           const yb = [J, K, q];
           if (!this._hits(yb, skip)) return yb;
@@ -2354,13 +2674,13 @@
       }
       const [dx, dy] = DIR[side];
       const q = this._entry(t, side);
-      const m = edgeLabelMetrics(e);
+      const m = this._metrics(e);
 
       const room = Math.min(...srcs.map(s => {
         const p = this._exit(s, side);
         return isH(side) ? Math.abs(q.x - p.x) : Math.abs(q.y - p.y);
       }));
-      let trunkLen = isH(side) ? m.shaft : Math.max(30, m.blockH + 16);
+      let trunkLen = isH(side) ? m.shaft : Math.max(30, m.vLen + 16);
       trunkLen = Math.max(18, Math.min(trunkLen, room - JUNCTION_STUB));
       const J = { x: q.x - dx * trunkLen, y: q.y - dy * trunkLen };
 
@@ -2388,54 +2708,107 @@
       layer.appendChild(g);
     }
 
-    /* Vertical extents of the above/below blocks of a label. */
+    /* Vertical extents of the above/below blocks of a label. `cvH` is the
+       part of hBelow the cofactor curve takes; `hAlong` what the label
+       needs along a vertical shaft. */
     _labelExtents(m) {
       const up = m.above.map(lineExtent), dn = m.below.map(lineExtent);
       const sum = (arr, lead) => arr.reduce((a, x) => a + x.up + x.down, 0) + lead * Math.max(0, arr.length - 1);
-      const mh = m.mol ? EMOL_H + EMOL_GAP : 0;
-      return { hAbove: sum(up, LINE_LEAD) + (m.molBelow ? 0 : mh), hBelow: sum(dn, LINE_LEAD + 2) + (m.molBelow ? mh : 0), hAll: sum(up.concat(dn), LINE_LEAD) + mh };
+      const mh = m.mol ? m.molH + EMOL_GAP : 0;
+      const cvH = m.curve ? m.curve.H + (m.below.length || m.molBelow ? 3 : 0) : 0;
+      const hAll = sum(up.concat(dn), LINE_LEAD) + mh;
+      return {
+        hAbove: sum(up, LINE_LEAD) + (m.molBelow ? 0 : mh),
+        hBelow: cvH + sum(dn, LINE_LEAD + 2) + (m.molBelow ? mh : 0),
+        cvH, hAll,
+        hAlong: Math.max(hAll, m.curve ? m.curve.W + CURVE_LABEL_H : 0)
+      };
+    }
+
+    /* Travel direction u along a seat and the side n its curve goes to:
+       under a horizontal shaft, opposite the text beside a vertical one,
+       on the lower side of a slanted one. */
+    _curveFrame(seg, mode) {
+      const dx = seg.x2 - seg.x1, dy = seg.y2 - seg.y1;
+      if (mode === 'h') return { u: { x: dx < 0 ? -1 : 1, y: 0 }, n: { x: 0, y: 1 } };
+      if (mode === 'vr' || mode === 'vl') return { u: { x: 0, y: dy < 0 ? -1 : 1 }, n: { x: mode === 'vr' ? -1 : 1, y: 0 } };
+      const l = Math.hypot(dx, dy) || 1;
+      let nx = dy / l, ny = -dx / l;
+      if (ny > 0 || (ny === 0 && nx < 0)) { nx = -nx; ny = -ny; }
+      return { u: { x: dx / l, y: dy / l }, n: { x: -nx, y: -ny } };
+    }
+
+    /* The arc: ends CURVE_D off the shaft, W apart; control points just
+       past the shaft so the arc touches it in the middle. */
+    _curveGeom(mx, my, fr, cv) {
+      const P = (a, b) => ({ x: mx + fr.u.x * a + fr.n.x * b, y: my + fr.u.y * a + fr.n.y * b });
+      const c = (4 - cv.D) / 3;
+      return { S: P(-cv.W / 2, cv.D), C1: P(-cv.W * 0.3, c), C2: P(cv.W * 0.3, c), E: P(cv.W / 2, cv.D) };
     }
 
     _labelBox(seg, mode, m, ext) {
       const mx = (seg.x1 + seg.x2) / 2, my = (seg.y1 + seg.y2) / 2, w = m.width;
+      const union = (a, b) => {
+        const x = Math.min(a.x, b.x), y = Math.min(a.y, b.y);
+        return { x, y, w: Math.max(a.x + a.w, b.x + b.w) - x, h: Math.max(a.y + a.h, b.y + b.h) - y };
+      };
       if (mode === 'd') {
         const bl = this._diagBlocks(seg, m, ext);
-        const x1 = Math.min(...bl.map(b => b.cx - w / 2)), x2 = Math.max(...bl.map(b => b.cx + w / 2));
-        const y1 = Math.min(...bl.map(b => b.cy - b.h / 2)), y2 = Math.max(...bl.map(b => b.cy + b.h / 2));
-        return { x: x1, y: y1, w: x2 - x1, h: y2 - y1 };
+        let box = null;
+        for (const b of bl) {
+          const r = { x: b.cx - w / 2, y: b.cy - b.h / 2, w, h: b.h };
+          box = box ? union(box, r) : r;
+        }
+        if (m.curve) {
+          const g = this._curveGeom(mx, my, this._curveFrame(seg, mode), m.curve);
+          const lw = Math.max(m.curve.wIn, m.curve.wOut) / 2 + 2;
+          const xs = [g.S.x, g.E.x, mx], ys = [g.S.y, g.E.y, my];
+          const r = { x: Math.min(...xs) - lw, y: Math.min(...ys) - 4, w: Math.max(...xs) - Math.min(...xs) + 2 * lw, h: Math.max(...ys) - Math.min(...ys) + CURVE_LABEL_H + 6 };
+          box = box ? union(box, r) : r;
+        }
+        return box || { x: mx, y: my, w: 1, h: 1 };
       }
       if (mode === 'h') {
-        const top = m.above.length ? my - LABEL_GAP - ext.hAbove : my;
-        const bot = m.below.length ? my + LABEL_GAP + ext.hBelow : my;
+        const top = m.above.length || (m.mol && !m.molBelow) ? my - LABEL_GAP - ext.hAbove : my;
+        const bot = m.below.length || m.molBelow || m.curve ? my + LABEL_GAP + ext.hBelow : my;
         return { x: mx - w / 2, y: top, w, h: bot - top };
       }
-      const x = mode === 'vr' ? mx + VLABEL_DX : mx - VLABEL_DX - w;
-      return { x, y: my - ext.hAll / 2, w, h: ext.hAll };
+      const tw = m.tw;
+      let box = { x: mode === 'vr' ? mx + VLABEL_DX : mx - VLABEL_DX - tw, y: my - ext.hAll / 2, w: tw, h: ext.hAll };
+      if (!m.above.length && !m.below.length && !m.mol) box = { x: mx, y: my, w: 1, h: 1 };
+      if (m.curve) {
+        const cw = m.curve.D + 4 + Math.max(m.curve.wIn, m.curve.wOut);
+        const r = { x: mode === 'vr' ? mx - cw : mx, y: my - m.curve.W / 2 - CURVE_LABEL_H / 2, w: cw, h: m.curve.W + CURVE_LABEL_H };
+        box = union(box, r);
+      }
+      return box;
     }
 
     /* Text on a slanted line (an equilibrium between compounds that are
        not in one row or column): the reagents sit on the upper side of
        the line, the conditions on the lower, each block pushed off the
-       line just far enough that its nearest corner keeps LABEL_GAP. */
+       line just far enough that its nearest corner keeps LABEL_GAP (the
+       lower one also clears the cofactor curve). */
     _diagBlocks(seg, m, ext) {
       const dx = seg.x2 - seg.x1, dy = seg.y2 - seg.y1, l = Math.hypot(dx, dy) || 1;
       let nx = dy / l, ny = -dx / l;
       if (ny > 0 || (ny === 0 && nx < 0)) { nx = -nx; ny = -ny; }
-      const mx = (seg.x1 + seg.x2) / 2, my = (seg.y1 + seg.y2) / 2, w = m.width;
+      const mx = (seg.x1 + seg.x2) / 2, my = (seg.y1 + seg.y2) / 2, w = m.tw;
       const out = [];
-      const put = (h, sg, kind) => {
-        const d = LABEL_GAP + Math.abs(nx) * w / 2 + Math.abs(ny) * h / 2;
+      const put = (h, sg, kind, extra) => {
+        const d = LABEL_GAP + extra + Math.abs(nx) * w / 2 + Math.abs(ny) * h / 2;
         out.push({ kind, h, cx: mx + sg * nx * d, cy: my + sg * ny * d });
       };
-      if (ext.hAbove > 0) put(ext.hAbove, 1, 'above');
-      if (ext.hBelow > 0) put(ext.hBelow, -1, 'below');
+      if (ext.hAbove > 0) put(ext.hAbove, 1, 'above', 0);
+      const hb = ext.hBelow - ext.cvH;
+      if (hb > 0) put(hb, -1, 'below', m.curve ? m.curve.D + CURVE_LABEL_H + 4 : 0);
       return out;
     }
 
     /* Labels are placed after every line is drawn, so a label can
        avoid other arrows as well as structures and earlier labels. */
     _placeLabel(segs, edge, g) {
-      const m = edgeLabelMetrics(edge);
+      const m = this._metrics(edge);
       // An empty arrow still gets a seat, so it can be typed on in place.
       if (segs.length && this._seatOf && !this._seatOf.has(edge)) {
         const hs = segs.find(sg => sg.dir === 'h') || segs[0];
@@ -2458,7 +2831,7 @@
     /* Pick the first seat on the arrow that collides with nothing; if
        every seat collides, take the one with the least overlap. */
     _pickSeat(segs, edge, dry) {
-      const m = edgeLabelMetrics(edge);
+      const m = this._metrics(edge);
       if (!m.any) return null;
       const ext = this._labelExtents(m);
       const cands = [];
@@ -2476,14 +2849,16 @@
       segs.forEach((sg, k) => {
         if (sg.dir === 'd') return;
         const h = sg.dir === 'h';
-        const need = (h ? m.width : ext.hAll) + 12;
+        const need = (h ? m.width : ext.hAlong) + 12;
         const a0 = h ? Math.min(sg.x1, sg.x2) : Math.min(sg.y1, sg.y2);
         const len = Math.abs(sg.x2 - sg.x1) + Math.abs(sg.y2 - sg.y1);
         if (len - need < 16) return;
+        // (a slice keeps the direction of travel: the curve's arrowhead follows it)
+        const back = h ? sg.x2 < sg.x1 : sg.y2 < sg.y1;
         for (const f of [0.25, 0.75, 0, 1]) {
-          const b0 = a0 + (len - need) * f;
-          const sub = h ? { x1: b0, x2: b0 + need, y1: sg.y1, y2: sg.y2, dir: 'h' }
-                        : { x1: sg.x1, x2: sg.x2, y1: b0, y2: b0 + need, dir: 'v' };
+          const b0 = a0 + (len - need) * f, b1 = b0 + need;
+          const sub = h ? { x1: back ? b1 : b0, x2: back ? b0 : b1, y1: sg.y1, y2: sg.y2, dir: 'h' }
+                        : { x1: sg.x1, x2: sg.x2, y1: back ? b1 : b0, y2: back ? b0 : b1, dir: 'v' };
           if (h) cands.push({ sg: sub, mode: 'h', pref: k * 2 + 4 });
           else { cands.push({ sg: sub, mode: 'vr', pref: k * 2 + 4 }); cands.push({ sg: sub, mode: 'vl', pref: k * 2 + 5 }); }
         }
@@ -2513,7 +2888,7 @@
         const len = Math.abs(c.sg.x2 - c.sg.x1) + Math.abs(c.sg.y2 - c.sg.y1);
         // A horizontal seat shorter than the text overhangs the shaft end.
         if (c.mode === 'h' && len < m.width + 6) score += (m.width + 6 - len) * 4;
-        if ((c.mode === 'vr' || c.mode === 'vl') && len < ext.hAll + 6) score += (ext.hAll + 6 - len) * 4;
+        if ((c.mode === 'vr' || c.mode === 'vl') && len < ext.hAlong + 6) score += (ext.hAlong + 6 - len) * 4;
         score += c.pref * 0.01;
         c.bb = bb; c.score = score;
         if (!best || score < best.score) best = c;
@@ -2533,9 +2908,12 @@
        from the shaft measured to the text's visual edge — a subscript
        on the line nearest the shaft lifts that line instead of touching
        the arrow. Beside a vertical shaft the block is vertically
-       centred, to the right ('vr') or left ('vl'). */
+       centred, to the right ('vr') or left ('vl'). A structure on the
+       arrow sits on top of the reagent text (under the conditions with
+       reagent_mol_below); the cofactor curve goes under the shaft, or
+       opposite the text beside a vertical one. */
     _labelEl(seg, edge, mode, textOff) {
-      const m = edgeLabelMetrics(edge);
+      const m = this._metrics(edge);
       if (!m.any) return null;
       mode = mode || (seg.dir === 'h' ? 'h' : seg.dir === 'd' ? 'd' : 'vr');
       const mx = (seg.x1 + seg.x2) / 2;
@@ -2546,24 +2924,46 @@
         const t = svg('text', { class: 'sg-edge-label ' + cls, x: r1(x), y: r1(y), 'text-anchor': anchor });
         wrap.appendChild(setChemText(t, text));
       };
-      /* Structure slot: EMOL_W × EMOL_H, bottom edge at `bottom`,
+      /* The structure, m.molW × m.molH, bottom edge at `bottom`,
          horizontally anchored like the text. */
       const putMol = (x, bottom, anchor) => {
         if (!m.mol) return;
-        const left = anchor === 'middle' ? x - EMOL_W / 2 : anchor === 'end' ? x - EMOL_W : x;
-        const r = edgeMolSvg(edge.reagent_mol);
+        const r = edgeMolSvg(edge.reagent_mol, { w: m.molW, h: m.molH });
+        const left = anchor === 'middle' ? x - m.molW / 2 : anchor === 'end' ? x - m.molW : x;
         if (!r) {
-          if (!this.readOnly) wrap.appendChild(svg('rect', { class: 'sg-edge-mol-ph', x: r1(left), y: r1(bottom - EMOL_H), width: EMOL_W, height: EMOL_H, rx: 4 }));
+          if (!this.readOnly) wrap.appendChild(svg('rect', { class: 'sg-edge-mol-ph', x: r1(left), y: r1(bottom - m.molH), width: r1(m.molW), height: r1(m.molH), rx: 4 }));
           this._emolPending = true;
           return;
         }
-        const ax = anchor === 'middle' ? x - r.w / 2 : anchor === 'end' ? x - r.w : x;
-        r.el.setAttribute('x', r1(ax));
+        r.el.setAttribute('x', r1(left));
         r.el.setAttribute('y', r1(bottom - r.h));
         r.el.setAttribute('width', r1(r.w));
         r.el.setAttribute('height', r1(r.h));
         r.el.setAttribute('class', 'sg-edge-mol');
         wrap.appendChild(r.el);
+      };
+      /* The cofactor curve around (cx, cy), labels at its two ends. */
+      const putCurve = (cx, cy) => {
+        const cv = m.curve;
+        if (!cv) return;
+        const fr = this._curveFrame(seg, mode);
+        const g = this._curveGeom(cx, cy, fr, cv);
+        const sel = this._isSelected('edge', this.scheme.edges.indexOf(edge));
+        wrap.appendChild(svg('path', {
+          class: 'sg-curve', fill: 'none', 'marker-end': sel ? 'url(#sg-arrow-sm-sel)' : 'url(#sg-arrow-sm)',
+          d: `M ${r1(g.S.x)} ${r1(g.S.y)} C ${r1(g.C1.x)} ${r1(g.C1.y)} ${r1(g.C2.x)} ${r1(g.C2.y)} ${r1(g.E.x)} ${r1(g.E.y)}`
+        }));
+        const endLabel = (text, P) => {
+          if (!text) return;
+          const ex = lineExtent(text);
+          if (Math.abs(fr.n.y) >= Math.abs(fr.n.x)) {
+            put(text, 'below', P.x, fr.n.y > 0 ? P.y + 3 + ex.up : P.y - 3 - ex.down, 'middle');
+          } else {
+            put(text, 'below', P.x + fr.n.x * 4, P.y + (ex.up - ex.down) / 2, fr.n.x > 0 ? 'start' : 'end');
+          }
+        };
+        endLabel(cv.tin, g.S);
+        endLabel(cv.tout, g.E);
       };
 
       if (mode === 'd') {
@@ -2585,9 +2985,10 @@
               put(txt, 'below', b.cx, base, 'middle');
               cursor = base + ex.down + LINE_LEAD + 2;
             }
-            if (m.molBelow) putMol(b.cx, cursor + EMOL_GAP + EMOL_H, 'middle');
+            if (m.molBelow) putMol(b.cx, cursor + EMOL_GAP + m.molH, 'middle');
           }
         }
+        putCurve(mx, my);
       } else if (mode === 'h') {
         let cursor = my - LABEL_GAP;
         for (let i = m.above.length - 1; i >= 0; i--) {
@@ -2597,14 +2998,15 @@
           cursor = base - ex.up - LINE_LEAD;
         }
         if (!m.molBelow) putMol(mx, m.above.length ? cursor + LINE_LEAD - EMOL_GAP : cursor, 'middle');
-        cursor = my + LABEL_GAP;
+        putCurve(mx, my);
+        cursor = my + LABEL_GAP + this._labelExtents(m).cvH;
         for (const txt of m.below) {
           const ex = lineExtent(txt);
           const base = cursor + ex.up;
           put(txt, 'below', mx, base, 'middle');
           cursor = base + ex.down + LINE_LEAD + 2;
         }
-        if (m.molBelow) putMol(mx, cursor + EMOL_GAP + EMOL_H, 'middle');
+        if (m.molBelow) putMol(mx, cursor + EMOL_GAP + m.molH, 'middle');
       } else {
         const all = [
           ...m.above.map(t => ({ t, cls: 'above' })),
@@ -2614,15 +3016,16 @@
         const blockH = ext.reduce((a, x) => a + x.up + x.down, 0) + LINE_LEAD * Math.max(0, all.length - 1);
         const x = mode === 'vl' ? mx - VLABEL_DX : mx + VLABEL_DX;
         const anchor = mode === 'vl' ? 'end' : 'start';
-        const molH = m.mol ? EMOL_H + EMOL_GAP : 0;
+        const molH = m.mol ? m.molH + EMOL_GAP : 0;
         let cursor = my - (blockH + molH) / 2;
-        if (m.mol && !m.molBelow) { putMol(x, cursor + EMOL_H, anchor); cursor += molH; }
+        if (m.mol && !m.molBelow) { putMol(x, cursor + m.molH, anchor); cursor += molH; }
         all.forEach((it, k) => {
           const base = cursor + ext[k].up;
           put(it.t, it.cls, x, base, anchor);
           cursor = base + ext[k].down + LINE_LEAD;
         });
-        if (m.molBelow) putMol(x, cursor + EMOL_GAP + EMOL_H, anchor);
+        if (m.molBelow) putMol(x, cursor + EMOL_GAP + m.molH, anchor);
+        putCurve(mx, my);
       }
       return wrap;
     }
@@ -2773,23 +3176,42 @@
       box.innerHTML =
         '<input class="sg-ie-above" placeholder="Reagenz" spellcheck="false" autocomplete="off">' +
         '<input class="sg-ie-below" placeholder="Bedingungen" spellcheck="false" autocomplete="off">' +
+        '<input class="sg-ie-cin" placeholder="ein" title="Cofaktor / Co-Substrat, das in den Bogen hineingeht" spellcheck="false" autocomplete="off">' +
+        '<input class="sg-ie-cout" placeholder="aus" title="Cofaktor / Nebenprodukt, das aus dem Bogen herauskommt" spellcheck="false" autocomplete="off">' +
         '<span class="sg-ie-tools">' +
           '<button type="button" class="sg-ie-mol" title="Struktur über dem Pfeil (Ketcher)">⌬ Struktur</button>' +
+          '<button type="button" class="sg-ie-molflip" title="Struktur über / unter den Pfeil">⇅</button>' +
           '<button type="button" class="sg-ie-molx" title="Struktur entfernen">×</button>' +
+          '<button type="button" class="sg-ie-curve" title="Bogen für Cofaktoren / Nebenprodukte unter dem Pfeil (z. B. NAD⁺ → NADH)">⤵ Bogen</button>' +
         '</span>';
       this.container.appendChild(box);
-      const [ia, ib] = box.querySelectorAll('input');
+      const [ia, ib, ic, io] = box.querySelectorAll('input');
       const tools = box.querySelector('.sg-ie-tools');
       const bMol = box.querySelector('.sg-ie-mol'), bX = box.querySelector('.sg-ie-molx');
-      this._inline = { box, ia, ib, tools, bMol, bX };
-      if (!this.onRequestEdgeStructEdit) tools.style.display = 'none';
+      const bFlip = box.querySelector('.sg-ie-molflip'), bCurve = box.querySelector('.sg-ie-curve');
+      this._inline = { box, ia, ib, ic, io, tools, bMol, bX, bFlip, bCurve };
+      if (!this.onRequestEdgeStructEdit) bMol.style.display = 'none';
+      const idxOf = e => this.scheme.edges.indexOf(e);
       bMol.addEventListener('click', () => {
         const e = this._editEdge;
-        if (e && this.onRequestEdgeStructEdit) this.onRequestEdgeStructEdit(e, this.scheme.edges.indexOf(e));
+        if (e && this.onRequestEdgeStructEdit) this.onRequestEdgeStructEdit(e, idxOf(e));
       });
       bX.addEventListener('click', () => {
         const e = this._editEdge;
-        if (e) this.updateEdge(this.scheme.edges.indexOf(e), { reagent_mol: '' });
+        if (e) this.updateEdge(idxOf(e), { reagent_mol: '' });
+      });
+      bFlip.addEventListener('click', () => {
+        const e = this._editEdge;
+        if (!e) return;
+        this.updateEdge(idxOf(e), { reagent_mol_below: !e.reagent_mol_below });
+        this.onSelectEdge(e, idxOf(e));   // the side panel shows the placement too
+      });
+      bCurve.addEventListener('click', () => {
+        const e = this._editEdge;
+        if (!e) return;
+        const on = !e.curve;
+        this.updateEdge(idxOf(e), { curve: on });
+        if (on) requestAnimationFrame(() => ic.focus());
       });
       let t = null;
       const onInput = () => {
@@ -2797,6 +3219,7 @@
         if (!e) return;
         e.reagent_above = ia.value;
         e.reagent_below = ib.value;
+        if (e.curve) { e.curve_in = ic.value; e.curve_out = io.value; }
         this._sizeInline();
         clearTimeout(t);
         // Re-planning and re-rendering is too heavy per keystroke.
@@ -2806,25 +3229,28 @@
           this.onChange();
         }, 160);
       };
-      ia.addEventListener('input', onInput);
-      ib.addEventListener('input', onInput);
+      // Enter / Tab walk the fields in reading order: reagent, conditions,
+      // then the curve's two ends.
+      const order = () => [ia, ib].concat(this._editEdge && this._editEdge.curve ? [ic, io] : []);
       const keys = ev => {
-        if (ev.key === 'Enter' && ev.target === ia) { ev.preventDefault(); ib.focus(); }
+        const seq = order(), k = seq.indexOf(ev.target);
+        if ((ev.key === 'Enter' || (ev.key === 'Tab' && !ev.shiftKey)) && k >= 0 && k < seq.length - 1) { ev.preventDefault(); seq[k + 1].focus(); }
         else if (ev.key === 'Enter' || ev.key === 'Escape') { ev.preventDefault(); ev.target.blur(); this.svg.focus(); }
-        else if (ev.key === 'Tab' && !ev.shiftKey && ev.target === ia) { ev.preventDefault(); ib.focus(); }
       };
-      ia.addEventListener('keydown', keys);
-      ib.addEventListener('keydown', keys);
+      for (const el of [ia, ib, ic, io]) {
+        el.addEventListener('input', onInput);
+        el.addEventListener('keydown', keys);
+      }
       // Keep the canvas from starting a pan/deselect under the fields.
       box.addEventListener('pointerdown', ev => ev.stopPropagation());
     }
 
     _sizeInline() {
-      const { ia, ib } = this._inline;
+      const { ia, ib, ic, io } = this._inline;
       const fs = Math.max(10, Math.min(18, 11.5 * this.scale));
-      for (const el of [ia, ib]) {
+      for (const el of [ia, ib, ic, io]) {
         const len = CT.plain(el.value || el.placeholder).length;
-        el.style.fontSize = (el === ib ? fs * 0.92 : fs) + 'px';
+        el.style.fontSize = (el === ia ? fs : fs * 0.92) + 'px';
         el.style.width = Math.max(4, len + 2) + 'ch';
       }
     }
@@ -2836,26 +3262,33 @@
       const seat = e && this._seatOf && this._seatOf.get(e);
       if (!e || !seat || !this.scheme.edges.includes(e)) { ie.box.hidden = true; return; }
       ie.box.hidden = false;
+      const m = this._metrics(e);
       if (document.activeElement !== ie.ia) ie.ia.value = e.reagent_above || '';
       if (document.activeElement !== ie.ib) ie.ib.value = e.reagent_below || '';
+      if (document.activeElement !== ie.ic) ie.ic.value = e.curve_in || '';
+      if (document.activeElement !== ie.io) ie.io.value = e.curve_out || '';
+      ie.ic.style.display = ie.io.style.display = e.curve ? '' : 'none';
       this._sizeInline();
       const sg = seat.sg;
       const mx = (sg.x1 + sg.x2) / 2, my = (sg.y1 + sg.y2) / 2;
       // SVG elements have no offsetLeft/Top; measure against the host.
       const hr = this.container.getBoundingClientRect(), cr = this.svg.getBoundingClientRect();
       const ox = cr.left - hr.left - this.container.clientLeft, oy = cr.top - hr.top - this.container.clientTop;
-      const sx = ox + this.viewX + mx * this.scale;
-      const sy = oy + this.viewY + my * this.scale;
+      const scr = (x, y) => ({ x: ox + this.viewX + x * this.scale, y: oy + this.viewY + y * this.scale });
+      const { x: sx, y: sy } = scr(mx, my);
       const ha = ie.ia.offsetHeight || 22, gap = 3;
       const place = (el, left, top) => { el.style.left = left + 'px'; el.style.top = top + 'px'; };
       ie.bMol.textContent = e.reagent_mol ? '✎ Struktur' : '⌬ Struktur';
-      ie.bX.style.display = e.reagent_mol ? '' : 'none';
+      ie.bX.style.display = ie.bFlip.style.display = e.reagent_mol ? '' : 'none';
+      ie.bCurve.classList.toggle('on', !!e.curve);
+      ie.bCurve.textContent = e.curve ? '⤵ Bogen ×' : '⤵ Bogen';
+      const molUp = e.reagent_mol && !e.reagent_mol_below ? (m.molH + EMOL_GAP) * this.scale : 0;
       if (seat.mode === 'h' || seat.mode === 'd') {
+        const cvH = this._labelExtents(m).cvH * this.scale;
         place(ie.ia, sx - ie.ia.offsetWidth / 2, sy - gap - ha);
-        place(ie.ib, sx - ie.ib.offsetWidth / 2, sy + gap);
+        place(ie.ib, sx - ie.ib.offsetWidth / 2, sy + gap + cvH);
         // Tools sit above everything the arrow carries (text, structure).
-        const molH = e.reagent_mol ? (EMOL_H + EMOL_GAP) * this.scale : 0;
-        place(ie.tools, sx - ie.tools.offsetWidth / 2, sy - gap - ha - molH - ie.tools.offsetHeight - 3);
+        place(ie.tools, sx - ie.tools.offsetWidth / 2, sy - gap - ha - molUp - ie.tools.offsetHeight - 3);
       } else {
         const dx = VLABEL_DX * this.scale;
         const w = Math.max(ie.ia.offsetWidth, ie.ib.offsetWidth);
@@ -2863,6 +3296,16 @@
         place(ie.ia, left, sy - ha - 1);
         place(ie.ib, left, sy + 1);
         place(ie.tools, left, sy + ha + 4);
+      }
+      if (e.curve && m.curve) {
+        // the two ends of the arc, where their text is drawn
+        const fr = this._curveFrame(sg, seat.mode);
+        const g = this._curveGeom(mx, my, fr, m.curve);
+        for (const [el, P] of [[ie.ic, g.S], [ie.io, g.E]]) {
+          const q = scr(P.x, P.y), w = el.offsetWidth, h = el.offsetHeight || 20;
+          if (Math.abs(fr.n.y) >= Math.abs(fr.n.x)) place(el, q.x - w / 2, fr.n.y > 0 ? q.y + 2 : q.y - h - 2);
+          else place(el, fr.n.x > 0 ? q.x + 3 : q.x - w - 3, q.y - h / 2);
+        }
       }
     }
 
@@ -3290,5 +3733,6 @@
 
   SchemeGraphEditor.planLayout = planLayout;
   SchemeGraphEditor.bestPlan = bestPlan;
+  SchemeGraphEditor.planCandidates = planCandidates;
   window.SchemeGraphEditor = SchemeGraphEditor;
 })();

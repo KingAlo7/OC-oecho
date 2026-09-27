@@ -41,7 +41,10 @@ Die ganze Aufgabe steht auf **einem Blatt**: eine Fortschrittsleiste oben (Aufde
   - Graph-Editor mit Ketcher pro Struktur und OCL-Live-Preview
   - **Kürzel** in Ketcher über den Knopf **FG** rechts unter **PT**: rund 130 Gruppen (OMe, CO₂Me, NHBoc, OTBDMS, MgBr, Platzhalter wie R₁ …), Suche, eigene Kürzel. Klick auf ein Atom ersetzt es durch die Gruppe, Ziehen von einem Atom hängt sie an. Gespeichert wird eine Superatom-S-Gruppe; **⇄** fügt die gespiegelte Schreibweise ein (MeO₂C)
   - Kanten-Editor mit `from[]`, `to`, Reagenz-Beschriftung über/unter dem Pfeil und **Pfeiltyp**
-    (rechtwinklig / Y / Gleichgewicht ⇌)
+    (rechtwinklig / Y / Gleichgewicht ⇌); Haken **＋ Als Gleichung zeichnen** (A + B → C + D)
+  - Am ausgewählten Pfeil direkt im Schema: **⌬ Struktur** (Struktur über dem Pfeil), **⇅** (darunter),
+    **⤵ Bogen** (Cofaktor-Bogen mit eigenem Eingabefeld an jedem Ende: links, was hineingeht, rechts,
+    was herauskommt); Größe der Struktur (60–120 % der Bindungslänge) im Detailpanel
   - **Vorgegeben / Gesucht** je Knoten — Schalter im Detailpanel oder Taste <kbd>G</kbd>; **✓ Ausgangsstoffe vorgeben** markiert alle Strukturen ohne eingehenden Pfeil
   - Pro Knoten: Beschriftung (leer = keine), Name (erst nach dem Aufdecken sichtbar) und **Angabe-Text unter der Struktur** (`caption`, immer sichtbar, z. B. Summenformel)
   - Pro Abschnitt: **Angabe-Text & Hinweise** (`body`, `hints`)
@@ -230,6 +233,18 @@ Array von Fragenobjekten. Jede Frage hat `type: "composed"` und ein Array `secti
   über dem Pfeil; mit `reagent_mol_below: true` darunter), `join: "y"` (schräg zusammenlaufend /
   verzweigend), `equilibrium: true` (Gleichgewichtspfeil ⇌ — immer eine gerade Linie, schräg, wenn die
   beiden Verbindungen nicht in einer Zeile oder Spalte stehen). Im Admin: Auswahl **Pfeiltyp**
+- `reagent_mol_size` → Größe der Struktur am Pfeil relativ zur Bindungslänge der Verbindungen des Schemas
+  (Standard 0,8). Die Struktur wird so gezeichnet wie die Verbindungen, nur kleiner, und der Pfeil wird so
+  lang, dass sie passt; erst über 180 × 110 px wird sie weiter verkleinert
+- `plus: true` → die Reaktion wird als Gleichung gezeichnet: Edukte nebeneinander mit „+“, Pfeil, Produkte
+  ebenso (Reihenfolge wie in `from` bzw. in der Pfeilliste). Gilt für alle Pfeile derselben Reaktion. Auf
+  schmalen Bildschirmen stehen die Edukte über den Produkten (A + B über C + D, bzw. A / + / B übereinander
+  bei einem Produkt). Nach einer Verbindung, die über einen waagrechten Pfeil erreicht wird, und hinter
+  einer Produktgruppe geht es nicht waagrecht weiter („X → A + B“ läse sich wie ein Produkt) — dann wird
+  wie gewohnt gezeichnet (Co-Edukt über dem Pfeil)
+- `curve: true` mit `curve_in` / `curve_out` → Bogen für Cofaktoren und Nebenprodukte (Biochemie): ein Bogen
+  unter dem Pfeil (neben einem senkrechten Pfeil auf der Gegenseite des Texts), der den Schaft in der Mitte
+  berührt; `curve_in` steht am Anfang (z. B. `NADH/H^+`), `curve_out` am Ende mit Spitze (`NAD^+`)
 - `x`/`y` sind Layout-Hinweise. Fehlt `"layout": "manual"` am Schema, rechnet der Viewer das
   Layout für die Bildschirmbreite des Lesers neu (so viele Spalten, wie ohne starkes Verkleinern passen; 2 am Handy).
   Sobald jemand im Admin einen Knoten zieht, wird `"layout": "manual"` gesetzt und die
@@ -255,9 +270,10 @@ Haupt-Edukt (längster Weg davor) und ein Haupt-Produkt (längster Weg danach):
   eigene Pfeile ein. Pfeile, die nicht in dieses Raster passen, werden um Strukturen herum geführt
   und meiden bestehende Pfeile; vor jeder Pfeilspitze bleiben mindestens 26 px gerade Linie.
 - Das Auto-Layout plant jedes Schema in mehreren Varianten (mit/ohne gleichwertige Verzweigung, mit/ohne
-  eigene Spuren), zeichnet jede probeweise und nimmt die mit den wenigsten Kreuzungen und Knicken —
-  so fällt es auf schmalen Bildschirmen dort, wo eine Verzweigung keinen Platz hat, auf die
-  Co-Produkt-Anordnung zurück.
+  eigene Spuren, mit/ohne „+“-Gleichung), zeichnet jede probeweise und nimmt die mit den wenigsten
+  Kreuzungen, übereinanderliegenden oder dicht nebeneinander laufenden Pfeilen und Knicken — so fällt es
+  auf schmalen Bildschirmen dort, wo eine Verzweigung oder Gleichung keinen Platz hat, auf die
+  Co-Produkt-Anordnung zurück. Eine Gleichung, die sich zeichnen lässt, wird deutlich bevorzugt.
 
 **Abschnitt `type: "multiple_choice"`** — Strukturen oder Text-Antworten:
 
