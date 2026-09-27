@@ -7,16 +7,24 @@
  *               note, related_reaction_id, x?, y? }],
  *     edges: [{ from: [nodeId...], to: nodeId, reagent_above, reagent_below,
  *               reagent_mol, reagent_mol_below, reagent_mol_size, join, equilibrium,
- *               plus, curve, curve_in, curve_out }]
+ *               plus, curve, curve_in, curve_out, curve_in_mol, curve_out_mol, rxn }]
  *   }
+ *   Arrows from the same compounds that carry the same things (or share
+ *   `rxn`) are ONE reaction; see rxGroupKey.
  *
- * UI:
+ * UI (editor):
  *   - SVG canvas with pan (drag empty area) and zoom (Ctrl + wheel)
- *   - Drag a node by its body to reposition
- *   - Drag from a node's "→" handle (right edge) onto another node to
- *     create an edge; release outside any node to cancel
- *   - Click a node or edge to select it → fires onSelect callback
- *   - Selected node/edge highlighted in red; press Delete to remove
+ *   - A click on an arrow selects its whole reaction; its text is typed
+ *     in place; Delete removes the reaction
+ *   - Drag from a node's "→" handle onto another node: a new arrow; onto
+ *     an arrow: one more educt of that reaction. The handle on a selected
+ *     arrow, dragged onto a node: one more product
+ *   - A node on no arrow, dragged onto an arrow: its structure (or name)
+ *     goes over / under the arrow or onto an end of the cofactor curve
+ *     (drop zones light up); a structure on an arrow can be dragged off
+ *     again (a node) or elsewhere; double click opens Ketcher
+ *   - In an auto layout a dragged node returns to its place; "✥ Frei"
+ *     (layout 'manual') keeps nodes where they are dropped
  *
  * Modes:
  *   `opts.readOnly: true` switches to the quiz viewer. The viewer draws
@@ -41,25 +49,31 @@
  *     when the compounds are not in one row or column
  *   - edge.plus draws the reaction as an equation, "A + B → C + D"
  *     (stacked vertically on narrow screens)
- *   - edge.curve adds a cofactor curve (curve_in → curve_out) that touches
- *     the shaft; a structure on the arrow (reagent_mol) follows the
- *     compounds' bond length and the arrow grows to carry it
+ *   - edge.curve adds a cofactor curve (curve_in → curve_out, each end
+ *     text and/or a structure) that touches the shaft; in the quiz a half
+ *     without anything on it is left off; a structure on the arrow
+ *     (reagent_mol) follows the compounds' bond length and the arrow
+ *     grows to carry it
  *   - several plans are routed off-screen; the one with the fewest
  *     crossings and bends is kept
  *   - reagent text is placed last and avoids structures, other text and
  *     other arrows, always on its own arrow
- * With "layout": "manual" (a node was dragged in the editor) the older
- * free routing is used: split arrows share a stub, several sources meet
- * in a junction.
+ * With "layout": "manual" ("✥ Frei" in the editor) the older free
+ * routing is used: split arrows share a stub, several sources meet in a
+ * junction.
  *
  * Callbacks:
  *   onChange(), onSelectNode(node|null), onSelectEdge(edge|null, idx),
- *   onRequestStructEdit(node), onNodeClick(node)
+ *   onRequestStructEdit(node), onRequestEdgeStructEdit(edge, idx, slot),
+ *   onNodeClick(node), onHint(message)
  *
  * Public methods:
  *   refresh(), refreshNode(id), autoLayout(), addNode(opts), focusNode(id),
- *   setRevealed(id,b), resetReveals(), countHidden(), reflow(force),
- *   fitToContent(), destroy()
+ *   reactionOf(idx), updateReaction(idx, patch), addReactionEduct /
+ *   removeReactionEduct / addReactionProduct / removeReactionProduct(idx, id),
+ *   deleteReaction(idx), attachNode(id, idx, zone), detachStructure(idx,
+ *   slot, at), moveStructure(idx, slot, to), setRevealed(id,b),
+ *   resetReveals(), countHidden(), reflow(force), fitToContent(), destroy()
  */
 (function () {
   const NS = 'http://www.w3.org/2000/svg';
@@ -120,6 +134,11 @@
   const CURVE_MIN_W    = 56;    // px shortest chord
   const CURVE_LABEL_H  = 14;    // px of the label line at either end
   const PLUS_W         = 34;    // px gap that carries the "+" of an equation
+  /* Structures an arrow can carry, by slot: on the arrow ('mol', over or
+     under it) and on the two ends of its cofactor curve. */
+  const SLOT_FIELD     = { mol: 'reagent_mol', in: 'curve_in_mol', out: 'curve_out_mol' };
+  /* Where a compound dragged onto an arrow can go (see _dropZones). */
+  const ZONE_CAP       = { above: 'über den Pfeil', below: 'unter den Pfeil', in: 'in den Bogen', out: 'aus dem Bogen' };
   /* A split (one reaction, several products): the shaft before the bus
      takes whatever length the gap has, the branches after it stay within
      BRANCH_MIN … BRANCH_MAX. */
@@ -214,8 +233,9 @@
 
   /* Full metrics for one edge's labels: text above and below, the
      structure on the arrow (sized from `f`, the scale the compounds of
-     the scheme are drawn at) and the cofactor curve. */
-  function edgeLabelMetrics(edge, f) {
+     the scheme are drawn at) and the cofactor curve. `editing`: the
+     editor, where an empty end of the curve keeps room for its field. */
+  function edgeLabelMetrics(edge, f, editing) {
     const above = wrapLabel(edge && edge.reagent_above, LABEL_FONT_ABOVE);
     const below = wrapLabel(edge && edge.reagent_below, LABEL_FONT_BELOW);
     const wa = Math.max(0, ...above.map(l => measureText(plainChemText(l), LABEL_FONT_ABOVE)));
@@ -224,7 +244,7 @@
     // reagent_mol_below: the structure hangs under the arrow (after the below text)
     const molBelow = mol && !!edge.reagent_mol_below;
     const ms = mol ? emolSize(edge, f) : null;
-    const curve = curveMetrics(edge);
+    const curve = curveMetrics(edge, f, editing);
     const tw = Math.max(wa, wb, ms ? ms.w : 0);
     const w = Math.max(tw, curve ? curve.span : 0);
     const text = (above.length + below.length) * LABEL_LINE_H + (ms ? ms.h + EMOL_GAP : 0);
@@ -235,21 +255,51 @@
       width: w, tw,
       // across a horizontal shaft (text + curve) and along a vertical one
       blockH: text + (curve ? curve.H : 0),
-      vLen: Math.max(text, curve ? curve.W + CURVE_LABEL_H : 0),
+      vLen: Math.max(text, curve ? curve.along : 0),
       shaft: Math.max(ARROW_MIN, Math.min(ARROW_MAX, Math.ceil(w) + LABEL_PAD_X * 2))
     };
   }
 
-  /* The cofactor curve of an arrow: chord W wide enough for both end
-     labels, `span` = what it needs across (labels hang past the ends). */
-  function curveMetrics(edge) {
+  /* The cofactor curve of an arrow. Each end carries text and/or a
+     structure (curve_in / curve_in_mol going in, curve_out /
+     curve_out_mol coming out). W: the chord, wide enough for both ends;
+     `span` / `H`: what it needs along / under a horizontal shaft,
+     `along` / `side` the same beside a vertical one. In the quiz an end
+     with nothing on it is left off — `half` 'in' draws only the arc into
+     the shaft, 'out' only the one out of it — and a curve with nothing
+     on either end is not drawn at all. */
+  function curveMetrics(edge, f, editing) {
     if (!edge || !edge.curve) return null;
-    const tin = String(edge.curve_in || '').trim(), tout = String(edge.curve_out || '').trim();
-    const wIn = tin ? measureText(plainChemText(tin), LABEL_FONT_BELOW) : 0;
-    const wOut = tout ? measureText(plainChemText(tout), LABEL_FONT_BELOW) : 0;
-    const W = Math.max(CURVE_MIN_W, Math.ceil((wIn + wOut) / 2) + 16);
-    return { tin, tout, wIn, wOut, W, D: CURVE_D, span: W + Math.max(wIn, wOut),
-             H: CURVE_D + (tin || tout ? CURVE_LABEL_H + 2 : 0) };
+    const rel = +edge.reagent_mol_size > 0 ? +edge.reagent_mol_size : EMOL_REL;
+    const end = (txt, mol, ph) => {
+      const t = String(txt || '').trim();
+      const ms = mol ? emolSizeOf(mol, f, rel) : null;
+      // in the editor every end keeps room for its input field
+      const shown = t || (editing ? ph : '');
+      const tw = shown ? measureText(plainChemText(shown), LABEL_FONT_BELOW) + (t ? 0 : 12) : 0;
+      const th = shown ? CURVE_LABEL_H : 0;
+      return { t, mol: mol || '', ms, tw, th, any: !!(t || ms),
+               w: Math.max(tw, ms ? ms.w : 0), h: (ms ? ms.h + (th ? 2 : 0) : 0) + th };
+    };
+    const a = end(edge.curve_in, edge.curve_in_mol, 'ein'), b = end(edge.curve_out, edge.curve_out_mol, 'aus');
+    let half = '';
+    if (!editing) {
+      if (!a.any && !b.any) return null;
+      if (!b.any) half = 'in';
+      else if (!a.any) half = 'out';
+    }
+    const W = Math.max(CURVE_MIN_W, Math.ceil((a.w + b.w) / 2) + 16);
+    const L = half ? W / 2 : W;
+    const cw = half === 'in' ? a.w : half === 'out' ? b.w : Math.max(a.w, b.w);
+    const ch = half === 'in' ? a.h : half === 'out' ? b.h : Math.max(a.h, b.h);
+    return {
+      a, b, half, W, L, D: CURVE_D,
+      tin: a.t, tout: b.t, wIn: a.w, wOut: b.w,
+      span: L + cw,
+      H: CURVE_D + (ch ? ch + 2 : 0),
+      along: L + Math.max(ch, CURVE_LABEL_H),
+      side: CURVE_D + 4 + cw
+    };
   }
 
   /* A node without a structure: its `text` (a compound named in words on
@@ -259,13 +309,36 @@
   }
 
   function sameLabels(a, b) {
-    return (a.reagent_above || '').trim() === (b.reagent_above || '').trim() &&
-           (a.reagent_below || '').trim() === (b.reagent_below || '').trim() &&
-           (a.reagent_mol || '') === (b.reagent_mol || '') &&
-           !a.reagent_mol_below === !b.reagent_mol_below &&
-           curveKey(a) === curveKey(b);
+    return reagentKey(a) === reagentKey(b);
   }
-  const curveKey = e => e && e.curve ? (e.curve_in || '').trim() + '→' + (e.curve_out || '').trim() : '';
+  const trimS = s => String(s == null ? '' : s).trim();
+  /* Short fingerprint of a MOL text (structures take part in keys). */
+  function hashStr(s) {
+    if (!s) return '';
+    let h = 0x811c9dc5;
+    for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+    return (h >>> 0).toString(36);
+  }
+  const curveKey = e => e && e.curve
+    ? [trimS(e.curve_in), trimS(e.curve_out), hashStr(e.curve_in_mol), hashStr(e.curve_out_mol)].join('→') : '';
+  /* Everything an arrow carries, as one string. */
+  function reagentKey(e) {
+    return trimS(e.reagent_above) + '#' + trimS(e.reagent_below) +
+      (e.curve ? '#' + curveKey(e) : '') +
+      (e.reagent_mol ? '#' + (e.reagent_mol_below ? 'mb' : 'm') + hashStr(e.reagent_mol) : '') +
+      (e.rxn ? '#r' + e.rxn : '');
+  }
+  /* Arrows from the same compounds that carry the same things are ONE
+     reaction ("A + W → B + X" is stored as A,W→B and A,W→X). `rxn` ties
+     arrows together that carry nothing at all; a bare arrow from one
+     compound is a reaction of its own (null). `ids`: the scheme's nodes. */
+  function rxGroupKey(e, ids) {
+    const from = [...new Set((e.from || []).filter(id => ids.has(id) && id !== e.to))];
+    if (!from.length || !ids.has(e.to)) return null;
+    const lab = reagentKey(e);
+    if (from.length > 1 || lab !== '#' || e.plus) return [...from].sort().join('|') + '#' + lab;
+    return null;
+  }
 
   /* Arrow shape. Default ('') is the orthogonal textbook routing; 'y'
      draws the lines between compounds and the junction as straight
@@ -291,12 +364,14 @@
     }
     return c;
   }
-  function emolSize(edge, f) {
-    const c = emolNatural(edge.reagent_mol);
+  function emolSizeOf(mol, f, rel) {
+    const c = emolNatural(mol);
     if (!c) return { w: EMOL_W, h: EMOL_H };
-    const rel = +edge.reagent_mol_size > 0 ? +edge.reagent_mol_size : EMOL_REL;
     const k = Math.min((f || 1) * rel, EMOL_MAX_W / c.w, EMOL_MAX_H / c.h);
     return { w: c.w * k, h: c.h * k };
+  }
+  function emolSize(edge, f) {
+    return emolSizeOf(edge.reagent_mol, f, +edge.reagent_mol_size > 0 ? +edge.reagent_mol_size : EMOL_REL);
   }
   function edgeMolSvg(mol, size) {
     const c = emolNatural(mol);
@@ -355,7 +430,6 @@
     const pluses = !(popts && popts.plus === false);
     const ids = new Set(nodes.map(n => n.id));
     const order = new Map(nodes.map((n, i) => [n.id, i]));
-    const trim = s => String(s == null ? '' : s).trim();
 
     const rxs = [];
     const multi = new Map();
@@ -364,9 +438,8 @@
       const from = [...new Set((e.from || []).filter(id => ids.has(id) && id !== e.to))];
       if (!from.length) return;
       let rx = null;
-      const lab = trim(e.reagent_above) + '#' + trim(e.reagent_below) + (e.curve ? '#' + curveKey(e) : '');
-      if (from.length > 1 || lab !== '#' || e.plus) {
-        const key = [...from].sort().join('|') + '#' + lab;
+      const key = rxGroupKey(e, ids);
+      if (key != null) {
         rx = multi.get(key);
         if (!rx) { rx = { srcs: from, prods: [], edges: [] }; multi.set(key, rx); }
       } else rx = { srcs: from, prods: [], edges: [] };
@@ -1225,12 +1298,13 @@
         this.container.innerHTML = `
           <div class="sg-toolbar">
             <button class="sg-btn" data-act="add">＋ Knoten</button>
-            <button class="sg-btn" data-act="layout">Auto-Layout</button>
+            <button class="sg-btn sg-layout-btn" data-act="layout" title="Knoten automatisch anordnen">Auto-Layout</button>
+            <button class="sg-btn sg-layout-btn" data-act="free" title="Knoten frei verschieben (die Pfeile folgen, ohne Auto-Layout)">✥ Frei</button>
             <button class="sg-btn" data-act="fit">↔ Anpassen</button>
             <button class="sg-btn" data-act="zoomin" title="Zoom +">＋</button>
             <button class="sg-btn" data-act="zoomout" title="Zoom -">−</button>
             <span class="sg-zoom-label">100 %</span>
-            <span class="sg-hint">Knoten ziehen · von ⇢-Griff zu Knoten ziehen = Pfeil · Klick = auswählen · Doppelklick = Ketcher · Klick auf Pfeil = Reagenzien direkt eintippen · G = vorgegeben · Entf = löschen · Strg + Mausrad = Zoom</span>
+            <span class="sg-hint">⇢-Griff auf Knoten ziehen = Pfeil, auf einen Pfeil = weiteres Edukt · ◦ am gewählten Pfeil auf Knoten = weiteres Produkt · freien Knoten auf einen Pfeil ziehen = Reagenz / Cofaktor · Klick auf Pfeil = Text eintippen · Doppelklick = Ketcher · G = vorgegeben · Entf = löschen · Strg + Mausrad = Zoom</span>
           </div>` + canvas;
       }
       this.svg = this.container.querySelector('.sg-canvas');
@@ -1304,7 +1378,7 @@
     /* Label metrics of an arrow at this scheme's scale (a structure on the
        arrow follows the compounds' bond length). */
     _metrics(edge) {
-      return edgeLabelMetrics(edge, this.readOnly && this._cell ? this._cell.f : 1);
+      return edgeLabelMetrics(edge, this.readOnly && this._cell ? this._cell.f : 1, !this.readOnly);
     }
 
     _ensurePositions() {
@@ -1532,8 +1606,7 @@
     _planSig() {
       return JSON.stringify([
         this.scheme.nodes.map(n => n.id),
-        this.scheme.edges.map(e => [e.from, e.to, (e.reagent_above || '').trim(), (e.reagent_below || '').trim(), e.join || '',
-                                    !!e.reagent_mol, !!e.equilibrium, !!e.plus, curveKey(e)])
+        this.scheme.edges.map(e => [e.from, e.to, reagentKey(e), e.join || '', !!e.equilibrium, !!e.plus])
       ]);
     }
 
@@ -1542,6 +1615,11 @@
     refresh() {
       while (this.viewport.firstChild) this.viewport.removeChild(this.viewport.firstChild);
       this._applyView();
+      if (this.toolbar && !this.readOnly) {
+        for (const b of this.toolbar.querySelectorAll('.sg-layout-btn')) {
+          b.classList.toggle('on', (b.dataset.act === 'layout') === this._isAutoLayout());
+        }
+      }
       const nodesG = svg('g', { class: 'sg-nodes' });
       this.viewport.appendChild(nodesG);
       this.scheme.nodes.forEach(n => nodesG.appendChild(this._nodeEl(n)));
@@ -1902,6 +1980,9 @@
       this._lines = [];
       this._labelJobs = [];
       this._seatOf = new Map();   // edge → { sg, mode }: where its text sits
+      const selRx = this.selected && this.selected.kind === 'edge' ? this.reactionOf(this.selected.idx) : null;
+      this._selEdges = selRx ? new Set(selRx.edges) : null;
+      this._heads = [];           // lines drawn with an arrowhead: { idx, pts }
 
       const usePlan = this._plan && this._isAutoLayout() && this._plan.sig === this._planSig();
       // The "+" of an equation is in the way of other arrows like a structure.
@@ -1967,6 +2048,27 @@
         else this._drawFanIn(layer, i, f);
       });
       this._flushLabels();
+      // The selected reaction's handle for one more product: on its main
+      // arrow, far enough back from the arrowhead to stay clear of it.
+      if (!this.readOnly && !this._scoring && this._selEdges) {
+        const h = this._heads.find(x => this._selEdges.has(x.idx));
+        if (h) {
+          let at = h.pts[0], rest = 40;
+          for (let k = h.pts.length - 1; k > 0; k--) {
+            const a = h.pts[k], b = h.pts[k - 1], l = Math.hypot(a.x - b.x, a.y - b.y);
+            if (l >= rest) { at = { x: a.x + (b.x - a.x) * rest / l, y: a.y + (b.y - a.y) * rest / l }; break; }
+            rest -= l;
+          }
+          const c = svg('circle', {
+            class: 'sg-handle sg-handle-out sg-handle-rx', r: HANDLE_R, 'data-rx': this.selected.idx,
+            cx: r1(at.x), cy: r1(at.y)
+          });
+          const tt = svg('title', {});
+          tt.textContent = 'Zu einem Knoten ziehen = weiteres Produkt dieser Reaktion';
+          c.appendChild(tt);
+          layer.appendChild(c);
+        }
+      }
       if (!this._scoring) this._syncInlineEdit();
     }
 
@@ -2276,6 +2378,10 @@
     _addPath(g, d, idx, head, extraCls) {
       const e = this.scheme.edges[idx];
       if (head) d = this._pathD(this._longTail(this._ptsOf(d)));
+      if (head && this._heads) {
+        const pts = this._ptsOf(d);
+        if (pts.length > 1) this._heads.push({ idx, pts });
+      }
       if (head && e && e.equilibrium) return this._addEquilibrium(g, d, idx, extraCls);
       const attrs = { class: 'sg-edge-line' + (extraCls ? ' ' + extraCls : ''), d, fill: 'none' };
       if (this._lines) {
@@ -2721,7 +2827,7 @@
         hAbove: sum(up, LINE_LEAD) + (m.molBelow ? 0 : mh),
         hBelow: cvH + sum(dn, LINE_LEAD + 2) + (m.molBelow ? mh : 0),
         cvH, hAll,
-        hAlong: Math.max(hAll, m.curve ? m.curve.W + CURVE_LABEL_H : 0)
+        hAlong: Math.max(hAll, m.curve ? m.curve.along : 0)
       };
     }
 
@@ -2739,32 +2845,71 @@
     }
 
     /* The arc: ends CURVE_D off the shaft, W apart; control points just
-       past the shaft so the arc touches it in the middle. */
+       past the shaft so the arc touches it in the middle. A half arc (in
+       the quiz, when only one end carries something) is the first or the
+       second half of it, shifted to sit centred on the seat. */
     _curveGeom(mx, my, fr, cv) {
-      const P = (a, b) => ({ x: mx + fr.u.x * a + fr.n.x * b, y: my + fr.u.y * a + fr.n.y * b });
+      const off = cv.half === 'in' ? cv.W / 4 : cv.half === 'out' ? -cv.W / 4 : 0;
+      const P = (a, b) => ({ x: mx + fr.u.x * (a + off) + fr.n.x * b, y: my + fr.u.y * (a + off) + fr.n.y * b });
       const c = (4 - cv.D) / 3;
-      return { S: P(-cv.W / 2, cv.D), C1: P(-cv.W * 0.3, c), C2: P(cv.W * 0.3, c), E: P(cv.W / 2, cv.D) };
+      const S = P(-cv.W / 2, cv.D), C1 = P(-cv.W * 0.3, c), C2 = P(cv.W * 0.3, c), E = P(cv.W / 2, cv.D);
+      if (!cv.half) return { S, C1, C2, E };
+      // de Casteljau at t = 1/2
+      const mid = (p, q) => ({ x: (p.x + q.x) / 2, y: (p.y + q.y) / 2 });
+      const a = mid(S, C1), b = mid(C1, C2), d = mid(C2, E), ab = mid(a, b), bd = mid(b, d), M = mid(ab, bd);
+      return cv.half === 'in' ? { S, C1: a, C2: ab, E: M } : { S: M, C1: bd, C2: d, E };
+    }
+
+    /* What sits on the ends of the arc, a structure and/or text: under an
+       end of a horizontal arc (structure first), beside an end of a
+       vertical one. Every drawn end gets a `box`, an empty one too (the
+       editor's field, a place to drop a structure); `ct` is where its
+       content starts, `ax` / `anchor` where its text is anchored. */
+    _curveEnds(g, fr, cv) {
+      const out = [];
+      const horiz = Math.abs(fr.n.y) >= Math.abs(fr.n.x);
+      const spot = (e, P, which) => {
+        const ex = e.t ? lineExtent(e.t) : { up: CAP_H, down: 0 };
+        const vis = (e.ms ? e.ms.h : 0) + (e.t || !e.ms ? (e.ms ? 2 : 0) + ex.up + ex.down : 0);
+        const w = Math.max(e.w, 26), h = Math.max(vis, e.h, CURVE_LABEL_H);
+        const box = horiz
+          ? { x: P.x - w / 2, y: fr.n.y >= 0 ? P.y + 3 : P.y - 3 - h, w, h }
+          : { x: fr.n.x > 0 ? P.x + 4 : P.x - 4 - w, y: P.y - h / 2, w, h };
+        const anchor = horiz ? 'middle' : fr.n.x > 0 ? 'start' : 'end';
+        out.push({
+          which, e, P, box, ex, anchor,
+          ax: anchor === 'middle' ? P.x : anchor === 'start' ? box.x : box.x + box.w,
+          ct: horiz ? box.y : P.y - vis / 2
+        });
+      };
+      if (cv.half !== 'out') spot(cv.a, g.S, 'in');
+      if (cv.half !== 'in') spot(cv.b, g.E, 'out');
+      return out;
+    }
+
+    /* The box a curve and the things on its ends take. */
+    _curveBox(mx, my, seg, mode, cv) {
+      const fr = this._curveFrame(seg, mode), g = this._curveGeom(mx, my, fr, cv);
+      const xs = [g.S.x, g.E.x, g.C1.x, g.C2.x], ys = [g.S.y, g.E.y, g.C1.y, g.C2.y];
+      let box = { x: Math.min(...xs), y: Math.min(...ys), w: Math.max(...xs) - Math.min(...xs), h: Math.max(...ys) - Math.min(...ys) };
+      for (const sp of this._curveEnds(g, fr, cv)) {
+        if (sp.e.any || !this.readOnly) box = unionBox(box, sp.box);
+      }
+      return box;
     }
 
     _labelBox(seg, mode, m, ext) {
       const mx = (seg.x1 + seg.x2) / 2, my = (seg.y1 + seg.y2) / 2, w = m.width;
-      const union = (a, b) => {
-        const x = Math.min(a.x, b.x), y = Math.min(a.y, b.y);
-        return { x, y, w: Math.max(a.x + a.w, b.x + b.w) - x, h: Math.max(a.y + a.h, b.y + b.h) - y };
-      };
       if (mode === 'd') {
         const bl = this._diagBlocks(seg, m, ext);
         let box = null;
         for (const b of bl) {
           const r = { x: b.cx - w / 2, y: b.cy - b.h / 2, w, h: b.h };
-          box = box ? union(box, r) : r;
+          box = box ? unionBox(box, r) : r;
         }
         if (m.curve) {
-          const g = this._curveGeom(mx, my, this._curveFrame(seg, mode), m.curve);
-          const lw = Math.max(m.curve.wIn, m.curve.wOut) / 2 + 2;
-          const xs = [g.S.x, g.E.x, mx], ys = [g.S.y, g.E.y, my];
-          const r = { x: Math.min(...xs) - lw, y: Math.min(...ys) - 4, w: Math.max(...xs) - Math.min(...xs) + 2 * lw, h: Math.max(...ys) - Math.min(...ys) + CURVE_LABEL_H + 6 };
-          box = box ? union(box, r) : r;
+          const r = this._curveBox(mx, my, seg, mode, m.curve);
+          box = box ? unionBox(box, r) : r;
         }
         return box || { x: mx, y: my, w: 1, h: 1 };
       }
@@ -2776,11 +2921,7 @@
       const tw = m.tw;
       let box = { x: mode === 'vr' ? mx + VLABEL_DX : mx - VLABEL_DX - tw, y: my - ext.hAll / 2, w: tw, h: ext.hAll };
       if (!m.above.length && !m.below.length && !m.mol) box = { x: mx, y: my, w: 1, h: 1 };
-      if (m.curve) {
-        const cw = m.curve.D + 4 + Math.max(m.curve.wIn, m.curve.wOut);
-        const r = { x: mode === 'vr' ? mx - cw : mx, y: my - m.curve.W / 2 - CURVE_LABEL_H / 2, w: cw, h: m.curve.W + CURVE_LABEL_H };
-        box = union(box, r);
-      }
+      if (m.curve) box = unionBox(box, this._curveBox(mx, my, seg, mode, m.curve));
       return box;
     }
 
@@ -2801,7 +2942,7 @@
       };
       if (ext.hAbove > 0) put(ext.hAbove, 1, 'above', 0);
       const hb = ext.hBelow - ext.cvH;
-      if (hb > 0) put(hb, -1, 'below', m.curve ? m.curve.D + CURVE_LABEL_H + 4 : 0);
+      if (hb > 0) put(hb, -1, 'below', m.curve ? m.curve.H + 4 : 0);
       return out;
     }
 
@@ -2878,6 +3019,7 @@
         for (const l of this._lines || []) {
           // The shaft the text is written on runs between its two halves.
           if (c.mode === 'h' && Math.abs(l.y1 - l.y2) < 0.5 && Math.abs(l.y1 - c.sg.y1) < 1) continue;
+          if (c.mode !== 'h' && c.mode !== 'd' && m.curve && Math.abs(l.x1 - l.x2) < 0.5 && Math.abs(l.x1 - c.sg.x1) < 1) continue;
           if (c.mode === 'd' && ((Math.abs(l.x1 - c.sg.x1) < 1 && Math.abs(l.y1 - c.sg.y1) < 1) ||
                                  (Math.abs(l.x2 - c.sg.x1) < 1 && Math.abs(l.y2 - c.sg.y1) < 1))) continue;
           const x1 = Math.min(l.x1, l.x2), x2 = Math.max(l.x1, l.x2);
@@ -2924,25 +3066,38 @@
         const t = svg('text', { class: 'sg-edge-label ' + cls, x: r1(x), y: r1(y), 'text-anchor': anchor });
         wrap.appendChild(setChemText(t, text));
       };
-      /* The structure, m.molW × m.molH, bottom edge at `bottom`,
-         horizontally anchored like the text. */
-      const putMol = (x, bottom, anchor) => {
-        if (!m.mol) return;
-        const r = edgeMolSvg(edge.reagent_mol, { w: m.molW, h: m.molH });
-        const left = anchor === 'middle' ? x - m.molW / 2 : anchor === 'end' ? x - m.molW : x;
+      /* A structure at (left, top), `size` px. In the editor it carries
+         its slot ('mol' on the arrow, 'in' / 'out' on the curve's ends),
+         so it can be picked up and dragged off or elsewhere. */
+      const putStruct = (mol, left, top, size, slot) => {
+        const r = edgeMolSvg(mol, size);
         if (!r) {
-          if (!this.readOnly) wrap.appendChild(svg('rect', { class: 'sg-edge-mol-ph', x: r1(left), y: r1(bottom - m.molH), width: r1(m.molW), height: r1(m.molH), rx: 4 }));
+          if (!this.readOnly) wrap.appendChild(svg('rect', { class: 'sg-edge-mol-ph', x: r1(left), y: r1(top), width: r1(size.w), height: r1(size.h), rx: 4 }));
           this._emolPending = true;
           return;
         }
         r.el.setAttribute('x', r1(left));
-        r.el.setAttribute('y', r1(bottom - r.h));
+        r.el.setAttribute('y', r1(top));
         r.el.setAttribute('width', r1(r.w));
         r.el.setAttribute('height', r1(r.h));
         r.el.setAttribute('class', 'sg-edge-mol');
+        if (!this.readOnly) {
+          // the drawing is thin lines; this makes all of it grabbable
+          wrap.appendChild(svg('rect', { class: 'sg-slot-hit', 'data-slot': slot, x: r1(left), y: r1(top), width: r1(r.w), height: r1(r.h), fill: 'transparent' }));
+          r.el.setAttribute('data-slot', slot);
+        }
         wrap.appendChild(r.el);
       };
-      /* The cofactor curve around (cx, cy), labels at its two ends. */
+      /* The structure on the arrow, m.molW × m.molH, bottom edge at
+         `bottom`, horizontally anchored like the text. */
+      const putMol = (x, bottom, anchor) => {
+        if (!m.mol) return;
+        const left = anchor === 'middle' ? x - m.molW / 2 : anchor === 'end' ? x - m.molW : x;
+        putStruct(edge.reagent_mol, left, bottom - m.molH, { w: m.molW, h: m.molH }, 'mol');
+      };
+      /* The cofactor curve around (cx, cy), with what sits on its ends.
+         An arc that only brings something in merges into the shaft
+         without an arrowhead. */
       const putCurve = (cx, cy) => {
         const cv = m.curve;
         if (!cv) return;
@@ -2950,20 +3105,20 @@
         const g = this._curveGeom(cx, cy, fr, cv);
         const sel = this._isSelected('edge', this.scheme.edges.indexOf(edge));
         wrap.appendChild(svg('path', {
-          class: 'sg-curve', fill: 'none', 'marker-end': sel ? 'url(#sg-arrow-sm-sel)' : 'url(#sg-arrow-sm)',
+          class: 'sg-curve', fill: 'none',
+          'marker-end': cv.half === 'in' ? null : sel ? 'url(#sg-arrow-sm-sel)' : 'url(#sg-arrow-sm)',
           d: `M ${r1(g.S.x)} ${r1(g.S.y)} C ${r1(g.C1.x)} ${r1(g.C1.y)} ${r1(g.C2.x)} ${r1(g.C2.y)} ${r1(g.E.x)} ${r1(g.E.y)}`
         }));
-        const endLabel = (text, P) => {
-          if (!text) return;
-          const ex = lineExtent(text);
-          if (Math.abs(fr.n.y) >= Math.abs(fr.n.x)) {
-            put(text, 'below', P.x, fr.n.y > 0 ? P.y + 3 + ex.up : P.y - 3 - ex.down, 'middle');
-          } else {
-            put(text, 'below', P.x + fr.n.x * 4, P.y + (ex.up - ex.down) / 2, fr.n.x > 0 ? 'start' : 'end');
+        for (const sp of this._curveEnds(g, fr, cv)) {
+          const e = sp.e;
+          let y = sp.ct;
+          if (e.ms) {
+            const left = sp.anchor === 'middle' ? sp.ax - e.ms.w / 2 : sp.anchor === 'start' ? sp.ax : sp.ax - e.ms.w;
+            putStruct(e.mol, left, y, e.ms, sp.which);
+            y += e.ms.h + 2;
           }
-        };
-        endLabel(cv.tin, g.S);
-        endLabel(cv.tout, g.E);
+          if (e.t) put(e.t, 'below', sp.ax, y + sp.ex.up, sp.anchor);
+        }
       };
 
       if (mode === 'd') {
@@ -3034,8 +3189,10 @@
 
     _nodeById(id) { return this.scheme.nodes.find(n => n.id === id); }
     _isSelected(kind, key) {
-      return this.selected && this.selected.kind === kind &&
-        (kind === 'node' ? this.selected.id === key : this.selected.idx === key);
+      if (!this.selected || this.selected.kind !== kind) return false;
+      if (kind === 'node') return this.selected.id === key;
+      // an arrow selects its whole reaction
+      return this._selEdges ? this._selEdges.has(key) : this.selected.idx === key;
     }
     _degreeOf(id) {
       let i = 0, o = 0;
@@ -3065,7 +3222,8 @@
 
     addNode(opts) {
       opts = opts || {};
-      const usedIds = new Set(this.scheme.nodes.map(n => n.id));
+      // a letter that is neither an id nor a label yet
+      const usedIds = new Set(this.scheme.nodes.flatMap(n => [n.id, String(n.label || '').trim()]));
       const id = opts.id || nextLetterId(usedIds);
       const n = {
         id, label: id, given: false,
@@ -3080,8 +3238,9 @@
         if (prev.smiles) n.smiles = prev.smiles;
       }
       this.scheme.nodes.push(n);
-      this.refresh();
+      if (this._isAutoLayout()) this.autoLayout();
       this.select('node', id);
+      this._reveal(id);
       this.onChange();
       return id;
     }
@@ -3098,8 +3257,12 @@
       if (this.selected && this.selected.kind === 'node' && this.selected.id === id) {
         this.selected = null;
         this.onSelectNode(null);
+      } else if (this.selected && this.selected.kind === 'edge') {
+        this.selected = null;
+        this._editEdge = null;
+        this.onSelectEdge(null);
       }
-      this.refresh();
+      this._relayout();
       this.onChange();
     }
 
@@ -3107,11 +3270,12 @@
       this.scheme.edges.splice(idx, 1);
       if (this.selected && this.selected.kind === 'edge' && this.selected.idx === idx) {
         this.selected = null;
+        this._editEdge = null;
         this.onSelectEdge(null);
       } else if (this.selected && this.selected.kind === 'edge' && this.selected.idx > idx) {
         this.selected.idx--;
       }
-      this.refresh();
+      this._relayout();
       this.onChange();
     }
 
@@ -3120,7 +3284,7 @@
       const exact = this.scheme.edges.findIndex(e => e.to === toId && (e.from || []).length === 1 && e.from[0] === fromId);
       if (exact >= 0) return false;
       this.scheme.edges.push({ from: [fromId], to: toId, reagent_above: '', reagent_below: '' });
-      this.refresh();
+      if (this._isAutoLayout()) this.autoLayout();
       this.select('edge', this.scheme.edges.length - 1);
       this.onChange();
       this.editEdgeText(this.scheme.edges.length - 1);
@@ -3148,6 +3312,313 @@
       this.onChange();
     }
 
+    /* ─── Reactions ───────────────────────────────────────────────
+       What the reader sees as ONE reaction may be several arrows in the
+       data: "A + W → B + X" is stored as A,W→B and A,W→X (see
+       rxGroupKey). The editor selects, edits and deletes reactions. */
+    reactionOf(idx) {
+      const E = this.scheme.edges, e = E[idx];
+      if (!e) return null;
+      const ids = new Set(this.scheme.nodes.map(n => n.id));
+      const key = rxGroupKey(e, ids);
+      const edges = key == null ? [idx] : E.reduce((a, x, i) => { if (rxGroupKey(x, ids) === key) a.push(i); return a; }, []);
+      return {
+        edges, first: edges[0],
+        srcs: [...new Set(e.from || [])],
+        prods: [...new Set(edges.map(i => E[i].to))]
+      };
+    }
+
+    /* The arrows of a reaction get a shared id before anything on them
+       changes, so they stay one reaction even when they end up carrying
+       nothing. */
+    _pinReaction(rx) {
+      const E = this.scheme.edges;
+      if (!rx || rx.edges.length < 2 || E[rx.first].rxn) return;
+      const used = new Set(E.map(e => e.rxn).filter(Boolean));
+      let k = 1;
+      while (used.has('r' + k)) k++;
+      for (const i of rx.edges) E[i].rxn = 'r' + k;
+    }
+
+    /* Re-plan (in an auto layout) and redraw after the scheme changed. */
+    _relayout() {
+      if (this._isAutoLayout()) this.autoLayout();
+      this.refresh();
+    }
+
+    /* After a reaction changed: keep it selected, re-plan, redraw, and
+       let the side panel follow. */
+    _afterReaction(idx) {
+      const rx = idx != null ? this.reactionOf(idx) : null;
+      this.selected = rx ? { kind: 'edge', idx: rx.first } : null;
+      this._editEdge = rx ? this.scheme.edges[rx.first] : null;
+      this._relayout();
+      this.onChange();
+      if (rx) this.onSelectEdge(this.scheme.edges[rx.first], rx.first);
+      else this.onSelectEdge(null);
+    }
+
+    /* The same change on every arrow of the reaction of arrow `idx`. */
+    updateReaction(idx, patch) {
+      const rx = this.reactionOf(idx);
+      if (!rx) return;
+      this._pinReaction(rx);
+      for (const i of rx.edges) {
+        const e = this.scheme.edges[i];
+        for (const k in patch) e[k] = Array.isArray(patch[k]) ? patch[k].slice() : patch[k];
+      }
+      this._afterReaction(rx.first);
+    }
+
+    addReactionEduct(idx, id) {
+      const rx = this.reactionOf(idx);
+      if (!rx || !this._nodeById(id) || rx.srcs.includes(id) || rx.prods.includes(id)) return false;
+      this._pinReaction(rx);
+      for (const i of rx.edges) this.scheme.edges[i].from = [...(this.scheme.edges[i].from || []), id];
+      this._afterReaction(rx.first);
+      return true;
+    }
+
+    removeReactionEduct(idx, id) {
+      const rx = this.reactionOf(idx);
+      if (!rx || !rx.srcs.includes(id) || rx.srcs.length < 2) return false;
+      this._pinReaction(rx);
+      for (const i of rx.edges) this.scheme.edges[i].from = (this.scheme.edges[i].from || []).filter(x => x !== id);
+      this._afterReaction(rx.first);
+      return true;
+    }
+
+    /* Another product: one more arrow carrying the same as the others. */
+    addReactionProduct(idx, id) {
+      const rx = this.reactionOf(idx);
+      if (!rx || !this._nodeById(id) || rx.srcs.includes(id) || rx.prods.includes(id)) return false;
+      const E = this.scheme.edges;
+      const copy = JSON.parse(JSON.stringify(E[rx.first]));
+      copy.to = id;
+      E.push(copy);
+      this._pinReaction({ edges: rx.edges.concat(E.length - 1), first: rx.first });
+      this._afterReaction(rx.first);
+      return true;
+    }
+
+    removeReactionProduct(idx, id) {
+      const rx = this.reactionOf(idx);
+      if (!rx || rx.edges.length < 2) return false;
+      const k = rx.edges.find(i => this.scheme.edges[i].to === id);
+      if (k == null) return false;
+      this.scheme.edges.splice(k, 1);
+      const rest = rx.edges.filter(i => i !== k).map(i => i > k ? i - 1 : i);
+      // a single arrow is a reaction by itself
+      if (rest.length === 1) delete this.scheme.edges[rest[0]].rxn;
+      this._afterReaction(rest[0]);
+      return true;
+    }
+
+    deleteReaction(idx) {
+      const rx = this.reactionOf(idx);
+      if (!rx) return;
+      const drop = new Set(rx.edges);
+      this.scheme.edges = this.scheme.edges.filter((e, i) => !drop.has(i));
+      this._afterReaction(null);
+    }
+
+    /* ─── Structures on arrows ─────────────────────────────────────
+       A compound that is not on any arrow yet can be dragged onto one:
+       over or under it (reagent, reagent_mol) or onto an end of its
+       cofactor curve. A structure on an arrow can be dragged off again
+       and is a compound of its own then. */
+
+    /* A new compound (vorgegeben, no letter) for a structure that comes
+       off an arrow; `at`: where it was dropped (a free layout keeps it). */
+    _newNodeFromMol(mol, at) {
+      const id = nextLetterId(new Set(this.scheme.nodes.flatMap(n => [n.id, String(n.label || '').trim()])));
+      this.scheme.nodes.push({
+        id, label: '', given: true, mol,
+        x: at ? Math.round(at.x - this.NW / 2) : 40,
+        y: at ? Math.round(at.y - this.NH / 2) : 40
+      });
+      return id;
+    }
+
+    detachStructure(idx, slot, at) {
+      const E = this.scheme.edges, f = SLOT_FIELD[slot];
+      const rx = this.reactionOf(idx);
+      if (!rx || !f || !E[idx][f]) return null;
+      const mol = E[idx][f];
+      this._pinReaction(rx);
+      for (const i of rx.edges) E[i][f] = '';
+      const id = this._newNodeFromMol(mol, at);
+      this._relayout();
+      this.onChange();
+      this.select('node', id);
+      this._reveal(id);
+      return id;
+    }
+
+    /* Move a structure to another place on an arrow. Onto the other side
+       of its own arrow it just changes sides; a structure it displaces
+       swaps in on the same arrow, or becomes a compound of its own. */
+    moveStructure(idx, slot, to) {
+      const E = this.scheme.edges, f = SLOT_FIELD[slot];
+      const src = this.reactionOf(idx), dst = this.reactionOf(to.idx);
+      if (!src || !dst || !f || !E[idx][f]) return false;
+      const tf = to.zone === 'in' ? 'curve_in_mol' : to.zone === 'out' ? 'curve_out_mol' : 'reagent_mol';
+      const same = src.first === dst.first;
+      if (same && f === tf) {
+        if (f === 'reagent_mol') this.updateReaction(idx, { reagent_mol_below: to.zone === 'below' });
+        return true;
+      }
+      const mol = E[idx][f];
+      this._pinReaction(src);
+      if (!same) this._pinReaction(dst);
+      const displaced = E[dst.first][tf] || '';
+      for (const i of src.edges) E[i][f] = same && displaced ? displaced : '';
+      for (const i of dst.edges) {
+        E[i][tf] = mol;
+        if (tf === 'reagent_mol') E[i].reagent_mol_below = to.zone === 'below';
+      }
+      if (displaced && !same) this._newNodeFromMol(displaced, null);
+      this._afterReaction(dst.first);
+      return true;
+    }
+
+    /* Drop compound `id` (on no arrow yet) onto reaction `idx`: its
+       structure goes over / under the arrow or onto an end of the curve;
+       a compound given as a name only adds that name to the text there. */
+    attachNode(id, idx, zone) {
+      const n = this._nodeById(id), rx = this.reactionOf(idx);
+      if (!n || !rx) return false;
+      const deg = this._degreeOf(id);
+      if (deg.in || deg.out) return false;
+      let mol = n.mol || '';
+      if (!mol && n.smiles && window.OCL) {
+        try { mol = window.OCL.Molecule.fromSmiles(n.smiles).toMolfile(); } catch (_) { mol = ''; }
+      }
+      const text = !mol ? String(n.text || '').trim() : '';
+      if (!mol && !text) return false;
+      const E = this.scheme.edges, e0 = E[rx.first];
+      this._pinReaction(rx);
+      const patch = {};
+      let displaced = '';
+      if (mol) {
+        const f = zone === 'in' ? 'curve_in_mol' : zone === 'out' ? 'curve_out_mol' : 'reagent_mol';
+        displaced = e0[f] || '';
+        patch[f] = mol;
+        if (f === 'reagent_mol') patch.reagent_mol_below = zone === 'below';
+      } else {
+        const f = { above: 'reagent_above', below: 'reagent_below', in: 'curve_in', out: 'curve_out' }[zone];
+        const cur = String(e0[f] || '').trim();
+        patch[f] = cur ? cur + ', ' + text : text;
+      }
+      for (const i of rx.edges) Object.assign(E[i], patch);
+      const at = { x: n.x + this.NW / 2, y: n.y + this.NH / 2 };
+      this.scheme.nodes.splice(this.scheme.nodes.indexOf(n), 1);
+      if (displaced) this._newNodeFromMol(displaced, at);
+      this._afterReaction(rx.first);
+      return true;
+    }
+
+    /* Drop targets on every arrow: over and under its text (horizontal
+       arrow) or the upper and lower half beside it (vertical arrow), and
+       the two ends of its cofactor curve. The curve's ends come first:
+       they are the smaller, more precise targets. */
+    _dropZones() {
+      const ends = [], sides = [];
+      for (const [edge, seat] of this._seatOf || []) {
+        const idx = this.scheme.edges.indexOf(edge);
+        if (idx < 0) continue;
+        const m = this._metrics(edge), ext = this._labelExtents(m);
+        const sg = seat.sg, mx = (sg.x1 + sg.x2) / 2, my = (sg.y1 + sg.y2) / 2;
+        if (seat.mode === 'h' || seat.mode === 'd') {
+          const w = Math.max(84, Math.min(m.width + 16, 220));
+          const hA = Math.max(34, ext.hAbove + 10), hB = Math.max(30, ext.hBelow - ext.cvH + 10);
+          sides.push({ idx, zone: 'above', box: { x: mx - w / 2, y: my - 4 - hA, w, h: hA } });
+          sides.push({ idx, zone: 'below', box: { x: mx - w / 2, y: my + 4 + ext.cvH, w, h: hB } });
+        } else {
+          const w = Math.max(84, m.tw + 16), h = Math.max(30, ext.hAll / 2 + 10);
+          const x = seat.mode === 'vr' ? mx + 4 : mx - 4 - w;
+          sides.push({ idx, zone: 'above', box: { x, y: my - h, w, h } });
+          sides.push({ idx, zone: 'below', box: { x, y: my, w, h } });
+        }
+        if (m.curve) {
+          const fr = this._curveFrame(sg, seat.mode), g = this._curveGeom(mx, my, fr, m.curve);
+          for (const sp of this._curveEnds(g, fr, m.curve)) {
+            const b = sp.box, w = Math.max(b.w + 8, 46), h = Math.max(b.h + 8, 28);
+            ends.push({ idx, zone: sp.which, box: { x: b.x + b.w / 2 - w / 2, y: b.y + b.h / 2 - h / 2, w, h } });
+          }
+        }
+      }
+      return ends.concat(sides);
+    }
+
+    _zoneAt(p, zones) {
+      for (const z of zones || this._zones || []) {
+        const b = z.box;
+        if (p.x >= b.x && p.x <= b.x + b.w && p.y >= b.y && p.y <= b.y + b.h) return z;
+      }
+      return null;
+    }
+
+    /* The drop targets while something is carried; `hot` is the one under
+       the pointer. Without this._zones the layer goes away. */
+    _drawZones(hot) {
+      let layer = this.viewport.querySelector('.sg-drop-layer');
+      if (!this._zones) { if (layer) layer.remove(); this._zoneEls = null; return; }
+      if (!layer || !this._zoneEls) {
+        if (layer) layer.remove();
+        layer = svg('g', { class: 'sg-drop-layer' });
+        this._zoneEls = this._zones.map(z => {
+          const r = svg('rect', { class: 'sg-drop-zone', x: r1(z.box.x), y: r1(z.box.y), width: r1(z.box.w), height: r1(z.box.h), rx: 6 });
+          layer.appendChild(r);
+          return r;
+        });
+        this._zoneCap = svg('text', { class: 'sg-drop-cap', 'text-anchor': 'middle' });
+        layer.appendChild(this._zoneCap);
+        this.viewport.appendChild(layer);
+      }
+      this._zones.forEach((z, i) => this._zoneEls[i].classList.toggle('hot', z === hot));
+      this._zoneCap.textContent = hot ? ZONE_CAP[hot.zone] : '';
+      if (hot) {
+        this._zoneCap.setAttribute('x', r1(hot.box.x + hot.box.w / 2));
+        this._zoneCap.setAttribute('y', r1(hot.zone === 'above' ? hot.box.y - 4 : hot.box.y + hot.box.h + 11));
+      }
+    }
+
+    /* A see-through copy of a structure that follows the pointer. */
+    _ghostOf(el) {
+      const g = el.cloneNode(true);
+      g.removeAttribute('data-slot');
+      g.setAttribute('class', 'sg-ghost');
+      this.viewport.appendChild(g);
+      return { el: g, w: parseFloat(el.getAttribute('width')) || 60, h: parseFloat(el.getAttribute('height')) || 40 };
+    }
+    _moveGhost(gh, p) {
+      gh.el.setAttribute('x', r1(p.x - gh.w / 2));
+      gh.el.setAttribute('y', r1(p.y - gh.h / 2));
+    }
+
+    /* While a connection is dragged: the compound or arrow it would go to. */
+    _draftTarget(ev, d) {
+      const el = document.elementFromPoint(ev.clientX, ev.clientY);
+      if (!el || !d || !this.container.contains(el)) return null;
+      const nodeEl = el.closest('.sg-node');
+      if (nodeEl) return nodeEl.dataset.node === d.fromId ? null : { kind: 'node', el: nodeEl, id: nodeEl.dataset.node };
+      const edgeEl = d.fromId ? el.closest('.sg-edge') : null;
+      if (edgeEl) return { kind: 'edge', el: edgeEl, idx: parseInt(edgeEl.dataset.edgeIdx, 10) };
+      return null;
+    }
+    _markTarget(t) {
+      const el = t ? t.el : null;
+      if (this._target && this._target !== el) this._target.classList.remove('sg-target');
+      this._target = el;
+      if (el) el.classList.add('sg-target');
+    }
+
+    _hint(msg) {
+      if (typeof this.opts.onHint === 'function') this.opts.onHint(msg);
+    }
+
     select(kind, key) {
       if (!kind) {
         this.selected = null;
@@ -3156,6 +3627,10 @@
         this.onSelectNode(null);
         this.onSelectEdge(null);
         return;
+      }
+      if (kind === 'edge') {
+        const rx = this.reactionOf(key);
+        if (rx) key = rx.first;
       }
       this.selected = kind === 'node' ? { kind, id: key } : { kind, idx: key };
       this._editEdge = kind === 'edge' ? this.scheme.edges[key] : null;
@@ -3177,49 +3652,23 @@
         '<input class="sg-ie-above" placeholder="Reagenz" spellcheck="false" autocomplete="off">' +
         '<input class="sg-ie-below" placeholder="Bedingungen" spellcheck="false" autocomplete="off">' +
         '<input class="sg-ie-cin" placeholder="ein" title="Cofaktor / Co-Substrat, das in den Bogen hineingeht" spellcheck="false" autocomplete="off">' +
-        '<input class="sg-ie-cout" placeholder="aus" title="Cofaktor / Nebenprodukt, das aus dem Bogen herauskommt" spellcheck="false" autocomplete="off">' +
-        '<span class="sg-ie-tools">' +
-          '<button type="button" class="sg-ie-mol" title="Struktur über dem Pfeil (Ketcher)">⌬ Struktur</button>' +
-          '<button type="button" class="sg-ie-molflip" title="Struktur über / unter den Pfeil">⇅</button>' +
-          '<button type="button" class="sg-ie-molx" title="Struktur entfernen">×</button>' +
-          '<button type="button" class="sg-ie-curve" title="Bogen für Cofaktoren / Nebenprodukte unter dem Pfeil (z. B. NAD⁺ → NADH)">⤵ Bogen</button>' +
-        '</span>';
+        '<input class="sg-ie-cout" placeholder="aus" title="Cofaktor / Nebenprodukt, das aus dem Bogen herauskommt" spellcheck="false" autocomplete="off">';
       this.container.appendChild(box);
       const [ia, ib, ic, io] = box.querySelectorAll('input');
-      const tools = box.querySelector('.sg-ie-tools');
-      const bMol = box.querySelector('.sg-ie-mol'), bX = box.querySelector('.sg-ie-molx');
-      const bFlip = box.querySelector('.sg-ie-molflip'), bCurve = box.querySelector('.sg-ie-curve');
-      this._inline = { box, ia, ib, ic, io, tools, bMol, bX, bFlip, bCurve };
-      if (!this.onRequestEdgeStructEdit) bMol.style.display = 'none';
-      const idxOf = e => this.scheme.edges.indexOf(e);
-      bMol.addEventListener('click', () => {
-        const e = this._editEdge;
-        if (e && this.onRequestEdgeStructEdit) this.onRequestEdgeStructEdit(e, idxOf(e));
-      });
-      bX.addEventListener('click', () => {
-        const e = this._editEdge;
-        if (e) this.updateEdge(idxOf(e), { reagent_mol: '' });
-      });
-      bFlip.addEventListener('click', () => {
-        const e = this._editEdge;
-        if (!e) return;
-        this.updateEdge(idxOf(e), { reagent_mol_below: !e.reagent_mol_below });
-        this.onSelectEdge(e, idxOf(e));   // the side panel shows the placement too
-      });
-      bCurve.addEventListener('click', () => {
-        const e = this._editEdge;
-        if (!e) return;
-        const on = !e.curve;
-        this.updateEdge(idxOf(e), { curve: on });
-        if (on) requestAnimationFrame(() => ic.focus());
-      });
+      this._inline = { box, ia, ib, ic, io };
       let t = null;
       const onInput = () => {
         const e = this._editEdge;
         if (!e) return;
-        e.reagent_above = ia.value;
-        e.reagent_below = ib.value;
-        if (e.curve) { e.curve_in = ic.value; e.curve_out = io.value; }
+        // every arrow of the reaction carries the same text
+        const i = this.scheme.edges.indexOf(e);
+        const rx = i >= 0 ? this.reactionOf(i) : null;
+        this._pinReaction(rx);
+        for (const x of rx ? rx.edges.map(k => this.scheme.edges[k]) : [e]) {
+          x.reagent_above = ia.value;
+          x.reagent_below = ib.value;
+          if (x.curve) { x.curve_in = ic.value; x.curve_out = io.value; }
+        }
         this._sizeInline();
         clearTimeout(t);
         // Re-planning and re-rendering is too heavy per keystroke.
@@ -3278,34 +3727,46 @@
       const { x: sx, y: sy } = scr(mx, my);
       const ha = ie.ia.offsetHeight || 22, gap = 3;
       const place = (el, left, top) => { el.style.left = left + 'px'; el.style.top = top + 'px'; };
-      ie.bMol.textContent = e.reagent_mol ? '✎ Struktur' : '⌬ Struktur';
-      ie.bX.style.display = ie.bFlip.style.display = e.reagent_mol ? '' : 'none';
-      ie.bCurve.classList.toggle('on', !!e.curve);
-      ie.bCurve.textContent = e.curve ? '⤵ Bogen ×' : '⤵ Bogen';
-      const molUp = e.reagent_mol && !e.reagent_mol_below ? (m.molH + EMOL_GAP) * this.scale : 0;
+      // The curve's fields first: each goes where its end's text is drawn
+      // (under a structure on that end). The fields don't shrink with the
+      // zoom, so the conditions field keeps below them, not just below
+      // the drawn curve.
+      let curveBottom = -Infinity;
+      if (e.curve && m.curve) {
+        const fr = this._curveFrame(sg, seat.mode);
+        const g = this._curveGeom(mx, my, fr, m.curve);
+        const row = [];
+        for (const sp of this._curveEnds(g, fr, m.curve)) {
+          const el = sp.which === 'in' ? ie.ic : ie.io;
+          const w = el.offsetWidth, h = el.offsetHeight || 20;
+          const top = sp.ct + (sp.e.ms ? sp.e.ms.h + 2 : 0);
+          if (sp.anchor === 'middle') {
+            const q = scr(sp.ax, top);
+            row.push({ el, left: q.x - w / 2, w, top: q.y - 1 });
+            curveBottom = Math.max(curveBottom, q.y - 1 + h);
+          } else {
+            const q = scr(sp.ax, top + (sp.ex.up + sp.ex.down) / 2);
+            place(el, sp.anchor === 'start' ? q.x : q.x - w, q.y - h / 2);
+          }
+        }
+        // zoomed out, the two fields would overlap: move them apart
+        if (row.length === 2) {
+          row.sort((p, q) => p.left - q.left);
+          const over = row[0].left + row[0].w + 4 - row[1].left;
+          if (over > 0) { row[0].left -= over / 2; row[1].left += over / 2; }
+        }
+        for (const f of row) place(f.el, f.left, f.top);
+      }
       if (seat.mode === 'h' || seat.mode === 'd') {
         const cvH = this._labelExtents(m).cvH * this.scale;
         place(ie.ia, sx - ie.ia.offsetWidth / 2, sy - gap - ha);
-        place(ie.ib, sx - ie.ib.offsetWidth / 2, sy + gap + cvH);
-        // Tools sit above everything the arrow carries (text, structure).
-        place(ie.tools, sx - ie.tools.offsetWidth / 2, sy - gap - ha - molUp - ie.tools.offsetHeight - 3);
+        place(ie.ib, sx - ie.ib.offsetWidth / 2, Math.max(sy + gap + cvH, curveBottom + 3));
       } else {
         const dx = VLABEL_DX * this.scale;
         const w = Math.max(ie.ia.offsetWidth, ie.ib.offsetWidth);
         const left = seat.mode === 'vl' ? sx - dx - w : sx + dx;
         place(ie.ia, left, sy - ha - 1);
         place(ie.ib, left, sy + 1);
-        place(ie.tools, left, sy + ha + 4);
-      }
-      if (e.curve && m.curve) {
-        // the two ends of the arc, where their text is drawn
-        const fr = this._curveFrame(sg, seat.mode);
-        const g = this._curveGeom(mx, my, fr, m.curve);
-        for (const [el, P] of [[ie.ic, g.S], [ie.io, g.E]]) {
-          const q = scr(P.x, P.y), w = el.offsetWidth, h = el.offsetHeight || 20;
-          if (Math.abs(fr.n.y) >= Math.abs(fr.n.x)) place(el, q.x - w / 2, fr.n.y > 0 ? q.y + 2 : q.y - h - 2);
-          else place(el, fr.n.x > 0 ? q.x + 3 : q.x - w - 3, q.y - h / 2);
-        }
       }
     }
 
@@ -3314,6 +3775,20 @@
       if (this.readOnly) return;
       if (!this._isSelected('edge', idx)) this.select('edge', idx);
       if (this._inline && !this._inline.box.hidden) this._inline.ia.focus();
+    }
+
+    /* Pan (no zoom) until node `id` is in view. */
+    _reveal(id) {
+      const n = this._nodeById(id);
+      if (!n || !this.svg) return;
+      const r = this.svg.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      const b = this._box(n);
+      const x1 = this.viewX + b.l * this.scale, x2 = this.viewX + b.r * this.scale;
+      const y1 = this.viewY + b.t * this.scale, y2 = this.viewY + b.b * this.scale;
+      const dx = x1 < 12 ? 12 - x1 : x2 > r.width - 12 ? r.width - 12 - x2 : 0;
+      const dy = y1 < 12 ? 12 - y1 : y2 > r.height - 12 ? r.height - 12 - y2 : 0;
+      if (dx || dy) { this.viewX += dx; this.viewY += dy; this._applyView(); }
     }
 
     focusNode(id) {
@@ -3432,6 +3907,12 @@
         const act = b.dataset.act;
         if (act === 'add'    && !this.readOnly) this.addNode({ x: -this.viewX / this.scale + 60, y: -this.viewY / this.scale + 60 });
         if (act === 'layout' && !this.readOnly) { this.autoLayout(); this.refresh(); this.fitToContent(); this.onChange(); }
+        if (act === 'free' && !this.readOnly && this._isAutoLayout()) {
+          this.scheme.layout = 'manual';
+          this.refresh();
+          this.onChange();
+          this._hint('Freies Verschieben: Knoten bleiben, wo man sie ablegt. „Auto-Layout“ ordnet wieder automatisch an.');
+        }
         if (act === 'fit')      this.fitToContent();
         if (act === 'zoomin')   this._zoomBy(1.2);
         if (act === 'zoomout')  this._zoomBy(1 / 1.2);
@@ -3447,7 +3928,7 @@
         if (this.readOnly) return;
         if ((e.key === 'Delete' || e.key === 'Backspace') && this.selected && document.activeElement === this.svg) {
           if (this.selected.kind === 'node') this.deleteNode(this.selected.id);
-          else                                this.deleteEdge(this.selected.idx);
+          else                                this.deleteReaction(this.selected.idx);
           e.preventDefault();
         }
       };
@@ -3458,12 +3939,14 @@
       const handleEl = e.target.closest('.sg-handle-out');
       const nodeEl = e.target.closest('.sg-node');
       const edgeEl = e.target.closest('.sg-edge');
+      const slotEl = !this.readOnly && edgeEl ? e.target.closest('[data-slot]') : null;
       if (!this.readOnly) this.svg.focus();
 
       this._pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
       if (this._pointers.size >= 2) {
         this.drag = null;
         this.edgeDraft = null;
+        this.slotDrag = null;
         this.tap = null;
         this.pan = null;
         this.pinch = this._initPinchState();
@@ -3472,13 +3955,31 @@
       }
 
       if (handleEl && !this.readOnly) {
+        // A compound's handle: a new arrow to a compound, or one more educt
+        // when dropped on an arrow. The handle on a selected arrow: one
+        // more product.
         e.preventDefault();
-        const fromId = handleEl.dataset.node;
         const start = this._eventToWorld(e);
-        this.edgeDraft = { fromId, line: svg('line', {
-          class: 'sg-edge-draft', x1: start.x, y1: start.y, x2: start.x, y2: start.y
-        }) };
+        this.edgeDraft = {
+          fromId: handleEl.dataset.node || null,
+          fromRx: handleEl.dataset.rx != null ? parseInt(handleEl.dataset.rx, 10) : null,
+          line: svg('line', { class: 'sg-edge-draft', x1: start.x, y1: start.y, x2: start.x, y2: start.y })
+        };
         this.viewport.appendChild(this.edgeDraft.line);
+        this.svg.setPointerCapture(e.pointerId);
+        return;
+      }
+
+      if (slotEl) {
+        // A structure on an arrow: a click selects the reaction, a double
+        // click opens it in Ketcher, dragging takes it off the arrow.
+        e.preventDefault();
+        const slot = slotEl.dataset.slot;
+        this.slotDrag = {
+          idx: parseInt(edgeEl.dataset.edgeIdx, 10), slot,
+          el: edgeEl.querySelector(`svg.sg-edge-mol[data-slot="${slot}"]`) || slotEl,
+          pointerId: e.pointerId, sx: e.clientX, sy: e.clientY, moved: false
+        };
         this.svg.setPointerCapture(e.pointerId);
         return;
       }
@@ -3500,9 +4001,12 @@
         }
         e.preventDefault();
         const w = this._eventToWorld(e);
+        const deg = this._degreeOf(id);
         this.drag = {
           id, pointerId: e.pointerId,
           offsetX: w.x - n.x, offsetY: w.y - n.y,
+          sx: e.clientX, sy: e.clientY, x0: n.x, y0: n.y,
+          free: !deg.in && !deg.out,
           moved: false
         };
         this.svg.setPointerCapture(e.pointerId);
@@ -3543,22 +4047,50 @@
         return;
       }
       if (this.drag && e.pointerId === this.drag.pointerId) {
-        const w = this._eventToWorld(e);
-        const n = this._nodeById(this.drag.id);
+        const d = this.drag;
+        const n = this._nodeById(d.id);
         if (!n) return;
-        n.x = Math.round(w.x - this.drag.offsetX);
-        n.y = Math.round(w.y - this.drag.offsetY);
-        this.drag.moved = true;
-        this.scheme.layout = 'manual';
-        const g = this.container.querySelector(`[data-node="${cssEsc(this.drag.id)}"]`);
-        if (g) g.setAttribute('transform', `translate(${n.x} ${n.y})`);
-        this._drawEdges();
+        if (!d.moved) {
+          if (Math.abs(e.clientX - d.sx) + Math.abs(e.clientY - d.sy) < 4) return;
+          d.moved = true;
+          d.auto = this._isAutoLayout();
+          // a compound on no arrow yet can be dropped onto one
+          if (d.free) this._zones = this._dropZones();
+        }
+        const w = this._eventToWorld(e);
+        n.x = Math.round(w.x - d.offsetX);
+        n.y = Math.round(w.y - d.offsetY);
+        const g = this.container.querySelector(`[data-node="${cssEsc(d.id)}"]`);
+        if (g) {
+          g.setAttribute('transform', `translate(${n.x} ${n.y})`);
+          // see-through while carried over the drop zones
+          if (d.free) g.classList.add('sg-carried');
+        }
+        if (this._zones) this._drawZones(this._zoneAt(w));
+        // In a free layout the arrows follow the compound. The auto layout
+        // keeps its plan: a compound is only carried across it.
+        if (!d.auto && !d.free) this._drawEdges();
+        return;
+      }
+      if (this.slotDrag && e.pointerId === this.slotDrag.pointerId) {
+        const d = this.slotDrag;
+        if (!d.moved) {
+          if (Math.abs(e.clientX - d.sx) + Math.abs(e.clientY - d.sy) < 5) return;
+          d.moved = true;
+          this._zones = this._dropZones();
+          d.ghost = this._ghostOf(d.el);
+          d.el.style.opacity = '0.25';
+        }
+        const w = this._eventToWorld(e);
+        this._moveGhost(d.ghost, w);
+        this._drawZones(this._zoneAt(w));
         return;
       }
       if (this.edgeDraft) {
         const w = this._eventToWorld(e);
         this.edgeDraft.line.setAttribute('x2', w.x);
         this.edgeDraft.line.setAttribute('y2', w.y);
+        this._markTarget(this._draftTarget(e, this.edgeDraft));
         return;
       }
       if (this.pan && e.pointerId === this.pan.pointerId) {
@@ -3590,39 +4122,90 @@
         return;
       }
       if (this.drag && e.pointerId === this.drag.pointerId) {
-        const wasMoved = this.drag.moved;
-        const id = this.drag.id;
+        const d = this.drag;
         this.drag = null;
-        if (wasMoved) { this.onChange(); this._lastNodeTap = null; }
-        else {
-          /* select() rebuilds the node's SVG, so the browser's own
-             dblclick never sees two clicks on the same element —
-             detect the double click here instead. */
-          const now = Date.now(), last = this._lastNodeTap;
-          this._lastNodeTap = { id, t: now };
-          if (last && last.id === id && now - last.t < 450) {
-            this._lastNodeTap = null;
-            const n = this._nodeById(id);
-            if (n) this.onRequestStructEdit(n);
-          } else {
-            this.select('node', id);
-          }
-        }
         try { this.svg.releasePointerCapture(e.pointerId); } catch (_) {}
+        const zones = this._zones;
+        this._zones = null;
+        this._drawZones(null);
+        if (d.moved) {
+          this._lastNodeTap = null;
+          const hit = e.type === 'pointerup' && zones ? this._zoneAt(this._eventToWorld(e), zones) : null;
+          if (hit && this.attachNode(d.id, hit.idx, hit.zone)) return;
+          if (d.auto) {
+            // the auto layout decides where compounds sit
+            const n = this._nodeById(d.id);
+            if (n) { n.x = d.x0; n.y = d.y0; }
+            this.refresh();
+            this._hint(d.free
+              ? 'Einen freien Knoten auf einen Pfeil ziehen (über / unter den Pfeil, an den Bogen) – oder über seinen ⇢-Griff verbinden.'
+              : 'Die Anordnung macht das Auto-Layout. Zum freien Verschieben „✥ Frei“ in der Leiste wählen.');
+          } else {
+            this.scheme.layout = 'manual';
+            this.refresh();
+            this.onChange();
+          }
+          return;
+        }
+        /* select() rebuilds the node's SVG, so the browser's own dblclick
+           never sees two clicks on the same element — detect the double
+           click here instead. */
+        const now = Date.now(), last = this._lastNodeTap;
+        this._lastNodeTap = { id: d.id, t: now };
+        if (last && last.id === d.id && now - last.t < 450) {
+          this._lastNodeTap = null;
+          const n = this._nodeById(d.id);
+          if (n) this.onRequestStructEdit(n);
+        } else {
+          this.select('node', d.id);
+        }
+        return;
+      }
+      if (this.slotDrag && e.pointerId === this.slotDrag.pointerId) {
+        const d = this.slotDrag;
+        this.slotDrag = null;
+        try { this.svg.releasePointerCapture(e.pointerId); } catch (_) {}
+        const zones = this._zones;
+        this._zones = null;
+        this._drawZones(null);
+        if (d.moved) {
+          if (d.ghost) d.ghost.el.remove();
+          d.el.style.opacity = '';
+          this._eatClick();
+          if (e.type !== 'pointerup') return;
+          const w = this._eventToWorld(e);
+          const hit = zones ? this._zoneAt(w, zones) : null;
+          if (hit) this.moveStructure(d.idx, d.slot, hit);
+          else this.detachStructure(d.idx, d.slot, w);
+          return;
+        }
+        // not moved: the click selects the reaction; a second one opens Ketcher
+        const now = Date.now(), last = this._lastSlotTap;
+        this._lastSlotTap = { idx: d.idx, slot: d.slot, t: now };
+        if (last && last.slot === d.slot && now - last.t < 450 &&
+            this.reactionOf(last.idx) && this.reactionOf(last.idx).first === (this.reactionOf(d.idx) || {}).first) {
+          this._lastSlotTap = null;
+          this._eatClick();
+          const edge = this.scheme.edges[d.idx];
+          if (edge && this.onRequestEdgeStructEdit) this.onRequestEdgeStructEdit(edge, d.idx, d.slot);
+        }
         return;
       }
       if (this.edgeDraft) {
-        const target = document.elementFromPoint(e.clientX, e.clientY);
-        const nodeEl = target ? target.closest('.sg-node') : null;
-        if (nodeEl) {
-          const toId = nodeEl.dataset.node;
-          if (toId !== this.edgeDraft.fromId) this.createEdge(this.edgeDraft.fromId, toId);
-          else this.refresh();
-        } else if (this.edgeDraft.line.parentNode) {
-          this.edgeDraft.line.parentNode.removeChild(this.edgeDraft.line);
-        }
+        const d = this.edgeDraft;
         this.edgeDraft = null;
         try { this.svg.releasePointerCapture(e.pointerId); } catch (_) {}
+        const t = e.type === 'pointerup' ? this._draftTarget(e, d) : null;
+        this._markTarget(null);
+        if (d.line.parentNode) d.line.parentNode.removeChild(d.line);
+        if (!t) return;
+        if (d.fromRx != null) {
+          if (t.kind === 'node' && !this.addReactionProduct(d.fromRx, t.id)) this._hint('Diese Verbindung gehört schon zur Reaktion.');
+        } else if (t.kind === 'node') {
+          if (!this.createEdge(d.fromId, t.id)) this._hint('Diesen Pfeil gibt es schon.');
+        } else if (!this.addReactionEduct(t.idx, d.fromId)) {
+          this._hint('Diese Verbindung gehört schon zur Reaktion.');
+        }
         return;
       }
       if (this.pan && e.pointerId === this.pan.pointerId) {
@@ -3631,6 +4214,12 @@
         if (!wasMoved) this.select(null);
         try { this.svg.releasePointerCapture(e.pointerId); } catch (_) {}
       }
+    }
+
+    /* The click that ends a drag must not also select what is under it. */
+    _eatClick() {
+      this._clickEaten = true;
+      setTimeout(() => { this._clickEaten = false; }, 0);
     }
 
     /* A bare wheel scrolls the page; Ctrl/Cmd + wheel zooms. */
@@ -3651,7 +4240,8 @@
 
     _onClick(e) {
       if (this.readOnly) return;
-      if (this.drag || this.edgeDraft || this.pinch) return;
+      if (this._clickEaten) { this._clickEaten = false; return; }
+      if (this.drag || this.edgeDraft || this.pinch || this.slotDrag) return;
       const edgeEl = e.target.closest('.sg-edge');
       if (edgeEl) {
         e.stopPropagation();
@@ -3707,6 +4297,10 @@
   }
 
   function r1(v) { return Math.round(v * 10) / 10; }
+  function unionBox(a, b) {
+    const x = Math.min(a.x, b.x), y = Math.min(a.y, b.y);
+    return { x, y, w: Math.max(a.x + a.w, b.x + b.w) - x, h: Math.max(a.y + a.h, b.y + b.h) - y };
+  }
 
   /* Does a (diagonal) line segment cross a rectangle? Sampled — labels
      are coarse boxes, so a handful of points along the line is plenty. */

@@ -40,11 +40,21 @@ Die ganze Aufgabe steht auf **einem Blatt**: eine Fortschrittsleiste oben (Aufde
   - Abschnitts-Reiter (`＋ Abschnitt` → Typ aus der Liste wählen)
   - Graph-Editor mit Ketcher pro Struktur und OCL-Live-Preview
   - **Kürzel** in Ketcher über den Knopf **FG** rechts unter **PT**: rund 130 Gruppen (OMe, CO₂Me, NHBoc, OTBDMS, MgBr, Platzhalter wie R₁ …), Suche, eigene Kürzel. Klick auf ein Atom ersetzt es durch die Gruppe, Ziehen von einem Atom hängt sie an. Gespeichert wird eine Superatom-S-Gruppe; **⇄** fügt die gespiegelte Schreibweise ein (MeO₂C)
-  - Kanten-Editor mit `from[]`, `to`, Reagenz-Beschriftung über/unter dem Pfeil und **Pfeiltyp**
-    (rechtwinklig / Y / Gleichgewicht ⇌); Haken **＋ Als Gleichung zeichnen** (A + B → C + D)
-  - Am ausgewählten Pfeil direkt im Schema: **⌬ Struktur** (Struktur über dem Pfeil), **⇅** (darunter),
-    **⤵ Bogen** (Cofaktor-Bogen mit eigenem Eingabefeld an jedem Ende: links, was hineingeht, rechts,
-    was herauskommt); Größe der Struktur (60–120 % der Bindungslänge) im Detailpanel
+  - **Reaktionen statt einzelner Pfeile:** ein Klick auf einen Pfeil wählt die ganze Reaktion (alle ihre
+    Pfeile, z. B. G + Cystein → H + H´). Das Detailpanel zeigt **Edukte** und **Produkte** (hinzufügen /
+    entfernen), **Pfeiltyp** (rechtwinklig / Y / mit Bogen ⤵ / Gleichgewicht ⇌), Haken **＋ Als Gleichung
+    zeichnen** (A + B → C + D); <kbd>Entf</kbd> löscht die Reaktion
+  - Verbinden im Schema: den ⇢-Griff eines Knotens auf einen Knoten ziehen = neuer Pfeil, **auf einen Pfeil =
+    weiteres Edukt**; den ◦ am ausgewählten Pfeil (vor der Spitze) auf einen Knoten ziehen = **weiteres Produkt**
+  - Reagenzien und Bedingungen direkt am Pfeil eintippen (über / unter dem Pfeil, beim Bogen an beiden
+    Enden: links, was hineingeht, rechts, was herauskommt)
+  - **Strukturen am Pfeil per Drag & Drop:** einen freien Knoten (ohne Pfeile) auf einen Pfeil ziehen — die
+    Ablageflächen über und unter dem Pfeil und an den Enden des Bogens leuchten auf; ein Knoten, der nur
+    einen Namen trägt (`text`), gibt dort seinen Text ab. Eine Struktur am Pfeil lässt sich ebenso
+    wegziehen (sie wird wieder ein Knoten) oder auf die andere Seite ziehen; Doppelklick öffnet Ketcher.
+    Größe (60–120 % der Bindungslänge) im Detailpanel
+  - **Auto-Layout / ✥ Frei:** im Auto-Layout ordnet das Programm an, ein gezogener Knoten kehrt an seinen
+    Platz zurück; mit **✥ Frei** bleiben Knoten, wo man sie ablegt (die Pfeile folgen)
   - **Vorgegeben / Gesucht** je Knoten — Schalter im Detailpanel oder Taste <kbd>G</kbd>; **✓ Ausgangsstoffe vorgeben** markiert alle Strukturen ohne eingehenden Pfeil
   - Pro Knoten: Beschriftung (leer = keine), Name (erst nach dem Aufdecken sichtbar) und **Angabe-Text unter der Struktur** (`caption`, immer sichtbar, z. B. Summenformel)
   - Pro Abschnitt: **Angabe-Text & Hinweise** (`body`, `hints`)
@@ -244,14 +254,19 @@ Array von Fragenobjekten. Jede Frage hat `type: "composed"` und ein Array `secti
   wie gewohnt gezeichnet (Co-Edukt über dem Pfeil)
 - `curve: true` mit `curve_in` / `curve_out` → Bogen für Cofaktoren und Nebenprodukte (Biochemie): ein Bogen
   unter dem Pfeil (neben einem senkrechten Pfeil auf der Gegenseite des Texts), der den Schaft in der Mitte
-  berührt; `curve_in` steht am Anfang (z. B. `NADH/H^+`), `curve_out` am Ende mit Spitze (`NAD^+`)
+  berührt; `curve_in` steht am Anfang (z. B. `NADH/H^+`), `curve_out` am Ende mit Spitze (`NAD^+`).
+  `curve_in_mol` / `curve_out_mol` setzen eine Struktur an das jeweilige Ende (über den Text). Im Quiz
+  entfällt eine Hälfte ohne Eintrag: nur hinein → der Bogen mündet ohne Spitze in den Pfeil, nur heraus →
+  er verlässt ihn mit Spitze
+- `rxn` → gemeinsame Kennung der Pfeile einer Reaktion, damit sie eine Reaktion bleiben, auch wenn sie
+  nichts gemeinsam tragen (setzt der Admin, sobald eine Reaktion mehrere Produkte hat)
 - `x`/`y` sind Layout-Hinweise. Fehlt `"layout": "manual"` am Schema, rechnet der Viewer das
   Layout für die Bildschirmbreite des Lesers neu (so viele Spalten, wie ohne starkes Verkleinern passen; 2 am Handy).
-  Sobald jemand im Admin einen Knoten zieht, wird `"layout": "manual"` gesetzt und die
-  Positionen bleiben unangetastet.
+  Mit **✥ Frei** im Admin wird `"layout": "manual"` gesetzt und die Positionen bleiben unangetastet.
 
-**Schema-Layout.** Pfeile mit denselben Edukten und derselben Beschriftung bilden eine Reaktion
-(„A + W → B + X“); gleich beschriftete Pfeile von einem Edukt ebenso („D → A + B“). Pro Reaktion gibt es ein
+**Schema-Layout.** Pfeile mit denselben Edukten, die dasselbe tragen (Text, Struktur, Bogen), bilden eine
+Reaktion („A + W → B + X“); gleich beschriftete Pfeile von einem Edukt ebenso („D → A + B“), und Pfeile mit
+derselben `rxn`. Pro Reaktion gibt es ein
 Haupt-Edukt (längster Weg davor) und ein Haupt-Produkt (längster Weg danach):
 
 - Die Hauptkette läuft geradeaus; am Rand der Bildschirmbreite biegt sie nach unten ab und läuft zurück.

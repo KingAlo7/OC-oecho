@@ -375,10 +375,6 @@ select.fi option{background:var(--surface);color:var(--text);}
 .sg-edge-hit{cursor:pointer;}
 .sg-inline-edit{position:absolute;left:0;top:0;width:0;height:0;z-index:5;}
 .sg-inline-edit input{position:absolute;box-sizing:content-box;padding:1px 4px;min-width:3ch;text-align:center;font-family:'Segoe UI',system-ui,sans-serif;font-weight:500;color:#3a3a35;background:rgba(255,255,255,0.92);border:1px dashed #e2001a;border-radius:4px;outline:none;line-height:1.25;}
-.sg-ie-tools{position:absolute;display:flex;gap:3px;white-space:nowrap;}
-.sg-ie-tools button{font:600 11px 'Segoe UI',system-ui,sans-serif;padding:2px 6px;border:1px solid var(--border);background:#fff;color:var(--text-soft);border-radius:4px;cursor:pointer;}
-.sg-ie-tools button:hover{border-color:#e2001a;color:#e2001a;}
-.sg-ie-tools button.on{border-color:#e2001a;color:#e2001a;background:#fff5f6;}
 .sg-inline-edit input.sg-ie-cin,.sg-inline-edit input.sg-ie-cout{border-style:dotted;}
 .sg-edge-mol-ph{fill:none;stroke:#b9b7a8;stroke-dasharray:3 3;}
 .sg-inline-edit input:focus{border-style:solid;box-shadow:0 0 0 3px rgba(226,0,26,0.12);}
@@ -387,6 +383,25 @@ select.fi option{background:var(--surface);color:var(--text);}
 .sg-edge-label.below{font-size:10px;}
 .sg-edge-orphan{stroke:#b87a00;}
 .sg-edge-draft{stroke:#5a8a2a;stroke-width:2;stroke-dasharray:6 3;pointer-events:none;}
+/* Drag and drop onto arrows: the green of a new connection marks where
+   something can go. */
+.sg-edge.sg-target .sg-edge-line{stroke:#5a8a2a;stroke-width:3;}
+.sg-node.sg-target .sg-node-bg{stroke:#5a8a2a;stroke-width:2;stroke-dasharray:none;}
+.sg-drop-zone{fill:rgba(90,138,42,0.06);stroke:#7aa84a;stroke-width:1;stroke-dasharray:4 3;vector-effect:non-scaling-stroke;pointer-events:none;}
+.sg-drop-zone.hot{fill:rgba(90,138,42,0.2);stroke:#5a8a2a;stroke-width:1.8;stroke-dasharray:none;}
+.sg-drop-cap{font:600 10px 'Segoe UI',system-ui,sans-serif;fill:#3d6b12;pointer-events:none;paint-order:stroke;stroke:#fff;stroke-width:3px;}
+.sg-ghost{opacity:0.7;pointer-events:none;}
+.sg-node.sg-carried{opacity:0.5;pointer-events:none;}
+.sg-slot-hit{cursor:grab;}
+.sg-edge-mol[data-slot]{cursor:grab;}
+.sg-handle-rx{fill:#fff;stroke:#e2001a;stroke-width:1.6;}
+.sg-handle-rx:hover{fill:#e2001a;}
+.sg-btn.sg-layout-btn.on{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
+.sg-chips{display:flex;align-items:center;gap:0.3rem;flex-wrap:wrap;}
+.sg-chip{display:inline-flex;align-items:center;gap:0.25rem;font-size:0.78rem;padding:0.18rem 0.55rem;border-radius:5px;background:var(--surface);border:1px solid var(--border2);color:var(--text-soft);font-weight:600;}
+.sg-chip button{background:none;border:none;cursor:pointer;color:var(--muted);font-size:0.85rem;padding:0;line-height:1;}
+.sg-chip button:hover{color:var(--accent);}
+.sg-detail .sg-chips select{width:auto;font-size:0.8rem;padding:0.2rem 0.45rem;}
 
 /* Sections (composed questions): the Abschnitte card is framed in the
    accent colour with a faintly tinted header; the section switcher is a
@@ -1234,18 +1249,9 @@ function initSynthGraphEditor(scheme, key, q) {
     onSelectNode: (n) => renderNodeDetail(n, key, editor),
     onSelectEdge: (e, idx) => renderEdgeDetail(e, idx, key, editor),
     onRequestStructEdit: (n) => openStructEditorForGraphNode(n, editor),
-    // Optional structure drawn above an arrow's text.
-    onRequestEdgeStructEdit: (e, idx) => openStructEditorFor({
-      title: 'Struktur über dem Pfeil (Reaktionsschritt ' + (idx + 1) + ')',
-      load: () => e.reagent_mol || '',
-      save: (mol) => {
-        const i = editor.scheme.edges.indexOf(e);
-        if (i < 0) return;
-        editor.updateEdge(i, { reagent_mol: molHasAtoms(mol) ? mol : '' });
-        // the panel offers placement and size once there is a structure
-        renderEdgeDetail(editor.scheme.edges[i], i, key, editor);
-      }
-    })
+    // A structure on an arrow (double click on it): Ketcher.
+    onRequestEdgeStructEdit: (e, idx, slot) => editArrowStructure(editor, e, slot || 'mol'),
+    onHint: (msg) => toast(msg)
   });
   if (key === 'main') {
     _activeEditor = editor;
@@ -1313,6 +1319,10 @@ function renderNodeDetail(n, key, editor) {
     </div>`;
 }
 
+/* The side panel of a selected reaction. One reaction may be several
+   arrows in the data (A + W → B + X is A,W→B and A,W→X); everything here
+   acts on all of them. */
+const _SLOT_FIELD = { mol: 'reagent_mol', in: 'curve_in_mol', out: 'curve_out_mol' };
 function renderEdgeDetail(e, idx, key, editor) {
   const panel = document.getElementById('sg-detail-' + key);
   if (!panel) return;
@@ -1320,57 +1330,129 @@ function renderEdgeDetail(e, idx, key, editor) {
     panel.innerHTML = '<div class="sg-detail-empty">Klick auf einen Knoten oder Pfeil zum Bearbeiten.</div>';
     return;
   }
-  const nodeOpts = editor.scheme.nodes.map(n => `<option value="${x(n.id)}">${x(n.label||n.id)}${n.name?' — '+x(n.name):''}</option>`).join('');
-  const fromChips = (e.from||[]).map((fid, j) =>
-    `<span style="display:inline-flex;align-items:center;gap:0.25rem;font-size:0.78rem;padding:0.18rem 0.55rem;border-radius:5px;background:var(--surface);border:1px solid var(--border2);color:var(--text-soft);font-weight:600;margin-right:0.3rem">${x(fid)} <button onclick="__edgeRmFrom('${x(key)}',${idx},${j})" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:0.85rem;padding:0;line-height:1">×</button></span>`
-  ).join('');
+  const rx = editor.reactionOf(idx) || { edges: [idx], first: idx, srcs: e.from || [], prods: [e.to] };
+  const K = x(key), I = rx.first;
+  const name = id => { const n = editor._nodeById(id); return n ? (n.label || n.name || n.text || n.id) : id; };
+  const chip = (id, rm) => `<span class="sg-chip">${x(name(id))}${rm ? `<button title="entfernen" onclick="${rm}">×</button>` : ''}</span>`;
+  const others = editor.scheme.nodes.filter(n => !rx.srcs.includes(n.id) && !rx.prods.includes(n.id))
+    .map(n => `<option value="${x(n.id)}">${x(n.label || n.name || n.text || n.id)}${n.name && n.label ? ' — ' + x(n.name) : ''}</option>`).join('');
+  const kind = e.equilibrium ? 'eq' : e.curve ? 'curve' : e.join === 'y' ? 'y' : '';
+  const opt = (v, t) => `<option value="${v}" ${kind === v ? 'selected' : ''}>${t}</option>`;
+  const slotTools = slot => `<button onclick="__rxMol('${K}',${I},'${slot}','edit')">✎ bearbeiten</button>` +
+    `<button onclick="__rxMol('${K}',${I},'${slot}','detach')" title="Wird wieder ein eigener Knoten">↥ als Knoten</button>` +
+    `<button class="danger" onclick="__rxMol('${K}',${I},'${slot}','clear')">× entfernen</button>`;
   panel.innerHTML = `
-    <div class="sg-detail-head">Pfeil (Reaktionsschritt ${idx + 1})</div>
-    <div class="field">
-      <label>Quelle(n) — FROM (mehrere = A + B → Produkt)</label>
-      <div style="display:flex;align-items:center;gap:0.3rem;flex-wrap:wrap">
-        ${fromChips}
-        <select onchange="__edgeAddFrom('${x(key)}',${idx}, this.value); this.value=''" style="width:auto;font-size:0.8rem">
-          <option value="">+ Knoten</option>${nodeOpts}
-        </select>
+    <div class="sg-detail-head">Reaktion
+      <span style="font-weight:400;color:var(--muted);font-size:0.7rem">${x(rx.srcs.map(name).join(' + '))} → ${x(rx.prods.map(name).join(' + '))}</span>
+    </div>
+    <div class="field"><label>Edukte</label>
+      <div class="sg-chips">
+        ${rx.srcs.map(id => chip(id, rx.srcs.length > 1 ? `__rxEduct('${K}',${I},'${x(id)}',false)` : '')).join('')}
+        <select onchange="__rxEduct('${K}',${I}, this.value, true)"><option value="">+ Edukt</option>${others}</select>
       </div>
     </div>
-    <div class="field"><label>Ziel — TO</label>
-      <select onchange="__edgePatch('${x(key)}',${idx},'to', this.value)">
-        <option value="">—</option>
-        ${editor.scheme.nodes.map(n => `<option value="${x(n.id)}" ${e.to===n.id?'selected':''}>${x(n.label||n.id)}${n.name?' — '+x(n.name):''}</option>`).join('')}
-      </select>
+    <div class="field"><label>Produkte</label>
+      <div class="sg-chips">
+        ${rx.prods.map(id => chip(id, rx.prods.length > 1 ? `__rxProduct('${K}',${I},'${x(id)}',false)` : '')).join('')}
+        <select onchange="__rxProduct('${K}',${I}, this.value, true)"><option value="">+ Produkt</option>${others}</select>
+      </div>
+      <small style="color:var(--muted2);display:block;margin-top:0.3rem">Im Schema: den ⇢-Griff eines Knotens auf diesen Pfeil ziehen = weiteres Edukt; den ◦ am Pfeil (vor der Spitze) auf einen Knoten ziehen = weiteres Produkt.</small>
     </div>
     <div class="field"><label>Pfeiltyp</label>
-      <select onchange="__edgeKind('${x(key)}',${idx}, this.value)">
-        <option value="" ${!e.join && !e.equilibrium ? 'selected' : ''}>→ Reaktionspfeil (rechtwinklig)</option>
-        <option value="y" ${e.join === 'y' && !e.equilibrium ? 'selected' : ''}>→ Y — schräg zusammenlaufend / verzweigend</option>
-        <option value="eq" ${e.equilibrium ? 'selected' : ''}>⇌ Gleichgewicht (immer eine gerade Linie)</option>
+      <select onchange="__rxKind('${K}',${I}, this.value)">
+        ${opt('', '→ Reaktionspfeil (rechtwinklig)')}
+        ${opt('y', '→ Y — schräg zusammenlaufend / verzweigend')}
+        ${opt('curve', '⤵ Reaktionspfeil mit Bogen (Cofaktoren, z. B. NAD⁺ → NADH)')}
+        ${opt('eq', '⇌ Gleichgewicht (immer eine gerade Linie)')}
       </select>
-      <small style="color:var(--muted2);display:block;margin-top:0.3rem">Y wirkt bei Pfeilen mit mehreren Edukten (A + B → C) und bei Verzweigungen (A → B, A → C). Ein Gleichgewicht knickt nie ab: stehen die beiden Verbindungen nicht in einer Zeile oder Spalte, läuft es schräg.</small>
+      <small style="color:var(--muted2);display:block;margin-top:0.3rem">${kind === 'curve'
+        ? 'Der Bogen berührt den Pfeil. An seinen Enden eintippen, was hinein- und was herausgeht – oder einen freien Knoten an ein Ende ziehen. Im Quiz entfällt eine Hälfte ohne Eintrag.'
+        : 'Y wirkt bei mehreren Edukten (A + B → C) und bei Verzweigungen. Ein Gleichgewicht knickt nie ab: stehen die Verbindungen nicht in einer Zeile oder Spalte, läuft es schräg.'}</small>
     </div>
     <div class="field"><label style="display:flex;align-items:center;gap:0.45rem;cursor:pointer;text-transform:none;letter-spacing:0">
-        <input type="checkbox" style="width:auto" ${e.plus ? 'checked' : ''} onchange="__edgePlus('${x(key)}',${idx}, this.checked)">
+        <input type="checkbox" style="width:auto" ${e.plus ? 'checked' : ''} onchange="__rxPatch('${K}',${I},'plus', this.checked)">
         ＋ Als Gleichung zeichnen (A + B → C + D)</label>
-      <small style="color:var(--muted2);display:block;margin-top:0.3rem">Alle Edukte und Produkte dieser Reaktion stehen in einer Zeile, mit „+“ dazwischen (am Handy: Edukte über den Produkten). Gilt für alle Pfeile derselben Reaktion. Ohne Haken: Co-Edukte über dem Pfeil, mehrere Produkte gleichwertig verzweigt.</small>
+      <small style="color:var(--muted2);display:block;margin-top:0.3rem">Alle Edukte und Produkte in einer Zeile, mit „+“ dazwischen (am Handy: Edukte über den Produkten). Ohne Haken: Co-Edukte über dem Pfeil, mehrere Produkte gleichwertig verzweigt.</small>
     </div>
-    ${e.reagent_mol ? `
-    <div class="row2">
-      <div class="field"><label>Struktur am Pfeil — Lage</label>
-        <select onchange="__edgePatch('${x(key)}',${idx},'reagent_mol_below', this.value === 'below')">
-          <option value="above" ${e.reagent_mol_below ? '' : 'selected'}>über dem Pfeil (Standard)</option>
-          <option value="below" ${e.reagent_mol_below ? 'selected' : ''}>unter dem Pfeil</option>
-        </select></div>
-      <div class="field"><label>Struktur am Pfeil — Größe</label>
-        <select onchange="__edgePatch('${x(key)}',${idx},'reagent_mol_size', this.value ? +this.value : '')">
-          ${[['0.6', '60 %'], ['', '80 % (Standard)'], ['1', '100 %'], ['1.2', '120 %']].map(([v, t]) =>
-            `<option value="${v}" ${String(e.reagent_mol_size || '') === v ? 'selected' : ''}>${t} der Bindungslänge</option>`).join('')}
-        </select></div>
-    </div>` : ''}
-    <div class="helper-text" style="margin:0.2rem 0 0.4rem">Reagenzien und Bedingungen direkt am Pfeil im Schema eintippen (oben / unten). Enter springt zum nächsten Feld, Esc beendet. LaTeX-Indizes: <code>H_2SO_4</code>, <code>H_3O^+</code>. Über den Feldern: „⌬ Struktur“ setzt eine Struktur über den Pfeil (gleiche Bindungslänge wie die Verbindungen, etwas kleiner), „⇅“ legt sie unter den Pfeil; „⤵ Bogen“ zeichnet einen Bogen für Cofaktoren und Nebenprodukte — links tippt man ein, was hineingeht (z. B. <code>NADH/H^+</code>), rechts, was herauskommt (<code>NAD^+</code>).</div>
+    <div class="field"><label>Struktur am Pfeil</label>
+      ${e.reagent_mol ? `
+      <select onchange="__rxPatch('${K}',${I},'reagent_mol_below', this.value === 'below')">
+        <option value="above" ${e.reagent_mol_below ? '' : 'selected'}>über dem Pfeil</option>
+        <option value="below" ${e.reagent_mol_below ? 'selected' : ''}>unter dem Pfeil</option>
+      </select>
+      <div class="sg-detail-actions" style="margin-top:0.35rem">${slotTools('mol')}</div>` : `
+      <div class="sg-detail-actions"><button onclick="__rxMol('${K}',${I},'mol','edit')">⌬ Struktur zeichnen</button></div>`}
+      ${e.curve ? ['in', 'out'].filter(sl => e[_SLOT_FIELD[sl]]).map(sl => `
+      <div style="margin-top:0.45rem;font-size:0.75rem;color:var(--muted);font-weight:600">Struktur ${sl === 'in' ? 'in den Bogen' : 'aus dem Bogen'}</div>
+      <div class="sg-detail-actions" style="margin-top:0.2rem">${slotTools(sl)}</div>`).join('') : ''}
+      ${e.reagent_mol || (e.curve && (e.curve_in_mol || e.curve_out_mol)) ? `
+      <select style="margin-top:0.45rem" title="Größe der Strukturen am Pfeil" onchange="__rxPatch('${K}',${I},'reagent_mol_size', this.value ? +this.value : '')">
+        ${[['0.6', '60 %'], ['', '80 % (Standard)'], ['1', '100 %'], ['1.2', '120 %']].map(([v, t]) =>
+          `<option value="${v}" ${String(e.reagent_mol_size || '') === v ? 'selected' : ''}>Größe: ${t} der Bindungslänge</option>`).join('')}
+      </select>` : ''}
+      <small style="color:var(--muted2);display:block;margin-top:0.35rem">Einfacher: einen freien Knoten (ohne Pfeile) auf den Pfeil ziehen – die Ablageflächen über und unter dem Pfeil${e.curve ? ' und an den Enden des Bogens' : ''} leuchten auf. Eine Struktur am Pfeil lässt sich ebenso wegziehen (wird wieder ein Knoten) oder auf die andere Seite ziehen; Doppelklick darauf öffnet Ketcher.</small>
+    </div>
+    <div class="helper-text" style="margin:0.2rem 0 0.4rem">Reagenzien und Bedingungen direkt am Pfeil im Schema eintippen (oben / unten${e.curve ? ', am Bogen: ein / aus' : ''}). Enter springt zum nächsten Feld, Esc beendet. LaTeX-Indizes: <code>H_2SO_4</code>, <code>H_3O^+</code>.</div>
     <div class="sg-detail-actions">
-      <button class="danger" onclick="_activeEditor.deleteEdge(${idx})">× Pfeil löschen</button>
+      <button class="danger" onclick="__rxDelete('${K}',${I})">× Reaktion löschen</button>
     </div>`;
+}
+
+function _edFor(key) {
+  return (key === 'main') ? _activeEditor : _composedSectionEditors[parseInt(key.slice(3), 10)];
+}
+/* Educts / products: `add` true adds node `id`, false takes it out. */
+window.__rxEduct = function(key, idx, id, add) {
+  const ed = _edFor(key);
+  if (!ed || !id) return;
+  if (!(add ? ed.addReactionEduct(idx, id) : ed.removeReactionEduct(idx, id))) renderEdgeDetail(ed.scheme.edges[idx], idx, key, ed);
+};
+window.__rxProduct = function(key, idx, id, add) {
+  const ed = _edFor(key);
+  if (!ed || !id) return;
+  if (!(add ? ed.addReactionProduct(idx, id) : ed.removeReactionProduct(idx, id))) renderEdgeDetail(ed.scheme.edges[idx], idx, key, ed);
+};
+/* Arrow type: plain / Y / with cofactor curve / equilibrium. */
+window.__rxKind = function(key, idx, kind) {
+  const ed = _edFor(key);
+  if (!ed) return;
+  ed.updateReaction(idx, { join: kind === 'y' ? 'y' : '', equilibrium: kind === 'eq', curve: kind === 'curve' });
+  // a new curve: straight into its "ein" field
+  if (kind === 'curve') requestAnimationFrame(() => {
+    ed.editEdgeText(ed.selected ? ed.selected.idx : idx);
+    if (ed._inline && !ed._inline.box.hidden) ed._inline.ic.focus();
+  });
+};
+window.__rxPatch = function(key, idx, prop, value) {
+  const ed = _edFor(key);
+  if (!ed) return;
+  ed.updateReaction(idx, { [prop]: value });
+};
+window.__rxDelete = function(key, idx) {
+  const ed = _edFor(key);
+  if (ed) ed.deleteReaction(idx);
+};
+/* A structure on the arrow (slot 'mol', or the curve's ends 'in' / 'out'):
+   edit in Ketcher, turn back into a compound, or remove. */
+window.__rxMol = function(key, idx, slot, act) {
+  const ed = _edFor(key);
+  if (!ed) return;
+  const e = ed.scheme.edges[idx];
+  if (!e) return;
+  if (act === 'edit') editArrowStructure(ed, e, slot);
+  else if (act === 'detach') ed.detachStructure(idx, slot, null);
+  else if (act === 'clear') ed.updateReaction(idx, { [_SLOT_FIELD[slot]]: '' });
+};
+function editArrowStructure(editor, e, slot) {
+  const f = _SLOT_FIELD[slot] || 'reagent_mol';
+  openStructEditorFor({
+    title: slot === 'in' ? 'Struktur, die in den Bogen hineingeht' : slot === 'out' ? 'Struktur, die aus dem Bogen herauskommt' : 'Struktur am Pfeil',
+    load: () => e[f] || '',
+    save: (mol) => {
+      const i = editor.scheme.edges.indexOf(e);
+      if (i >= 0) editor.updateReaction(i, { [f]: molHasAtoms(mol) ? mol : '' });
+    }
+  });
 }
 
 window.__patchSelectedNode = function(key, prop, value) {
@@ -1387,55 +1469,6 @@ window.__patchSelectedNode = function(key, prop, value) {
       renderNodeDetail(n, key, ed);
     }
   }
-};
-
-window.__edgePatch = function(key, idx, prop, value) {
-  const ed = (key === 'main') ? _activeEditor : _composedSectionEditors[parseInt(key.slice(3),10)];
-  if (!ed) return;
-  ed.updateEdge(idx, { [prop]: value });
-  // Re-rendering the panel would replace the <input> being typed in and
-  // drop its focus after every character, so text fields stay untouched.
-  if (prop === 'to') renderEdgeDetail(ed.scheme.edges[idx], idx, key, ed);
-};
-/* "+" equation: set on every arrow of the same reaction (same sources,
-   same text), since the layout treats them as one. */
-window.__edgePlus = function(key, idx, on) {
-  const ed = (key === 'main') ? _activeEditor : _composedSectionEditors[parseInt(key.slice(3),10)];
-  if (!ed) return;
-  const E = ed.scheme.edges, e0 = E[idx];
-  if (!e0) return;
-  const sig = e => [...new Set(e.from || [])].sort().join('|') + '#' + (e.reagent_above || '').trim() + '#' + (e.reagent_below || '').trim();
-  E.forEach((e, i) => { if (i !== idx && sig(e) === sig(e0)) e.plus = !!on; });
-  ed.updateEdge(idx, { plus: !!on });
-};
-/* Arrow type: plain / Y / equilibrium (stored as `join` and `equilibrium`). */
-window.__edgeKind = function(key, idx, kind) {
-  const ed = (key === 'main') ? _activeEditor : _composedSectionEditors[parseInt(key.slice(3),10)];
-  if (!ed) return;
-  ed.updateEdge(idx, { join: kind === 'y' ? 'y' : '', equilibrium: kind === 'eq' });
-};
-window.__edgeAddFrom = function(key, idx, nodeId) {
-  if (!nodeId) return;
-  const ed = (key === 'main') ? _activeEditor : _composedSectionEditors[parseInt(key.slice(3),10)];
-  if (!ed) return;
-  const e = ed.scheme.edges[idx];
-  if (!e) return;
-  if (!e.from) e.from = [];
-  if (e.from.includes(nodeId)) return;
-  e.from.push(nodeId);
-  ed.refresh();
-  ed.onChange();
-  renderEdgeDetail(e, idx, key, ed);
-};
-window.__edgeRmFrom = function(key, idx, fromIdx) {
-  const ed = (key === 'main') ? _activeEditor : _composedSectionEditors[parseInt(key.slice(3),10)];
-  if (!ed) return;
-  const e = ed.scheme.edges[idx];
-  if (!e || !e.from) return;
-  e.from.splice(fromIdx, 1);
-  ed.refresh();
-  ed.onChange();
-  renderEdgeDetail(e, idx, key, ed);
 };
 
 /* Flip a node between "given" (drawn for the student) and "sought"
@@ -2731,15 +2764,19 @@ function _serializeScheme(scheme) {
     if (e.reagent_below) o.reagent_below = e.reagent_below;
     if (e.reagent_mol)   o.reagent_mol = e.reagent_mol;
     if (e.reagent_mol && e.reagent_mol_below) o.reagent_mol_below = true;
-    if (e.reagent_mol && +e.reagent_mol_size > 0) o.reagent_mol_size = +e.reagent_mol_size;
+    if ((e.reagent_mol || (e.curve && (e.curve_in_mol || e.curve_out_mol))) && +e.reagent_mol_size > 0) o.reagent_mol_size = +e.reagent_mol_size;
     if (e.join)          o.join = e.join;
     if (e.equilibrium)   o.equilibrium = true;
     if (e.plus)          o.plus = true;
     if (e.curve) {
       o.curve = true;
       if ((e.curve_in || '').trim())  o.curve_in = e.curve_in.trim();
+      if (e.curve_in_mol)             o.curve_in_mol = e.curve_in_mol;
       if ((e.curve_out || '').trim()) o.curve_out = e.curve_out.trim();
+      if (e.curve_out_mol)            o.curve_out_mol = e.curve_out_mol;
     }
+    // arrows of one reaction that carry nothing else in common
+    if (e.rxn)           o.rxn = e.rxn;
     return o;
   });
   return out;
