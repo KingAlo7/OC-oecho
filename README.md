@@ -40,7 +40,8 @@ Die ganze Aufgabe steht auf **einem Blatt**: eine Fortschrittsleiste oben (Aufde
   - Abschnitts-Reiter (`＋ Abschnitt` → Typ aus der Liste wählen)
   - Graph-Editor mit Ketcher pro Struktur und OCL-Live-Preview
   - **Kürzel** in Ketcher über den Knopf **FG** rechts unter **PT**: rund 130 Gruppen (OMe, CO₂Me, NHBoc, OTBDMS, MgBr, Platzhalter wie R₁ …), Suche, eigene Kürzel. Klick auf ein Atom ersetzt es durch die Gruppe, Ziehen von einem Atom hängt sie an. Gespeichert wird eine Superatom-S-Gruppe; **⇄** fügt die gespiegelte Schreibweise ein (MeO₂C)
-  - Kanten-Editor mit `from[]`, `to`, Reagenz-Beschriftung über/unter dem Pfeil
+  - Kanten-Editor mit `from[]`, `to`, Reagenz-Beschriftung über/unter dem Pfeil und **Pfeiltyp**
+    (rechtwinklig / Y / Gleichgewicht ⇌)
   - **Vorgegeben / Gesucht** je Knoten — Schalter im Detailpanel oder Taste <kbd>G</kbd>; **✓ Ausgangsstoffe vorgeben** markiert alle Strukturen ohne eingehenden Pfeil
   - Pro Knoten: Beschriftung (leer = keine), Name (erst nach dem Aufdecken sichtbar) und **Angabe-Text unter der Struktur** (`caption`, immer sichtbar, z. B. Summenformel)
   - Pro Abschnitt: **Angabe-Text & Hinweise** (`body`, `hints`)
@@ -224,24 +225,39 @@ Array von Fragenobjekten. Jede Frage hat `type: "composed"` und ein Array `secti
 - Abschnitt-Felder `body` (Angabe-Text) und `hints` (Array, „Hinweise“ der Angabe) werden über dem Abschnitt angezeigt
 - `given: false` → an Stelle der Struktur steht ihr Buchstabe (bzw. „?“ bei leerem `label`), Klick deckt auf
 - `mol` (bevorzugt) wird vor `smiles` gerendert — enthält die optimierten Koordinaten
+- `text` → Verbindung, die die Angabe nur mit Namen nennt (Knoten ohne Struktur, z. B. „Hirsuten“)
+- Pfeil-Felder: `reagent_above` / `reagent_below` (Text über / unter dem Pfeil), `reagent_mol` (Struktur
+  über dem Pfeil; mit `reagent_mol_below: true` darunter), `join: "y"` (schräg zusammenlaufend /
+  verzweigend), `equilibrium: true` (Gleichgewichtspfeil ⇌ — immer eine gerade Linie, schräg, wenn die
+  beiden Verbindungen nicht in einer Zeile oder Spalte stehen). Im Admin: Auswahl **Pfeiltyp**
 - `x`/`y` sind Layout-Hinweise. Fehlt `"layout": "manual"` am Schema, rechnet der Viewer das
   Layout für die Bildschirmbreite des Lesers neu (so viele Spalten, wie ohne starkes Verkleinern passen; 2 am Handy).
   Sobald jemand im Admin einen Knoten zieht, wird `"layout": "manual"` gesetzt und die
   Positionen bleiben unangetastet.
 
 **Schema-Layout.** Pfeile mit denselben Edukten und derselben Beschriftung bilden eine Reaktion
-(„A + W → B + X“); gleich beschriftete Pfeile von einem Edukt ebenso („C → E + d“). Pro Reaktion gibt es ein
+(„A + W → B + X“); gleich beschriftete Pfeile von einem Edukt ebenso („D → A + B“). Pro Reaktion gibt es ein
 Haupt-Edukt (längster Weg davor) und ein Haupt-Produkt (längster Weg danach):
 
 - Die Hauptkette läuft geradeaus; am Rand der Bildschirmbreite biegt sie nach unten ab und läuft zurück.
-- Ein Co-Edukt steht über dem Pfeil und mündet in ihn, ein Co-Produkt steht darunter und zweigt ab.
-  Drei oder mehr Edukte stehen untereinander und laufen in einer Klammer zusammen; an senkrechten
-  Pfeilen stehen Co-Edukte/-Produkte links und rechts.
+- Ein Co-Edukt steht über dem Pfeil und mündet in ihn. Drei oder mehr Edukte stehen untereinander und
+  laufen in einer Klammer zusammen; an senkrechten Pfeilen stehen Co-Edukte links und rechts.
+- **Mehrere Produkte einer Reaktion werden gleichwertig verzweigt:** ein Pfeilschaft trägt die
+  Beschriftung, an seinem Ende fächert er auf, jedes Produkt bekommt einen eigenen kurzen Ast mit Spitze
+  (26–56 px; der Schaft davor nimmt die übrige Länge). Die Produkte stehen symmetrisch zur Zeile (bzw.
+  Spalte) des Edukts — bei ungerader Zahl eins geradeaus; ist dort kein Platz, alle unterhalb.
 - Nebenreaktionen zweigen als Gabel ab (gemeinsames Pfeilstück, eigene Spitze) oder gehen nach unten,
-  oben oder zurück — je nachdem, was frei ist und näher an den Folgeverbindungen liegt.
+  oben oder zurück — je nachdem, was frei ist und näher an den Folge- und Partnerverbindungen liegt.
+- Läuft ein Seitenzweig wieder in die Hauptkette zurück (A → B → C, A → B´ → C´, C + C´ → D), bekommt er
+  eine eigene Spur neben der Hauptkette und mündet dort ein, statt als Co-Edukt über dem Pfeil zu stehen.
+  Eine Verbindung neben einem Pfeilschaft mündet gerade in ihn.
 - Eine Verbindung, die über mehrere Wege entsteht, sitzt am längsten Weg; kürzere Wege münden als
   eigene Pfeile ein. Pfeile, die nicht in dieses Raster passen, werden um Strukturen herum geführt
-  und meiden bestehende Pfeile.
+  und meiden bestehende Pfeile; vor jeder Pfeilspitze bleiben mindestens 26 px gerade Linie.
+- Das Auto-Layout plant jedes Schema in mehreren Varianten (mit/ohne gleichwertige Verzweigung, mit/ohne
+  eigene Spuren), zeichnet jede probeweise und nimmt die mit den wenigsten Kreuzungen und Knicken —
+  so fällt es auf schmalen Bildschirmen dort, wo eine Verzweigung keinen Platz hat, auf die
+  Co-Produkt-Anordnung zurück.
 
 **Abschnitt `type: "multiple_choice"`** — Strukturen oder Text-Antworten:
 

@@ -769,7 +769,7 @@ const MolRenderer = (() => {
     });
     bLines.forEach(function (l, i) {
       const y = cy + 6 + RXN_LINE_H * 0.82 + i * lhB;
-      txt += '<text x="' + cx + '" y="' + y + '" text-anchor="middle" style="font:' + RXN_LABEL_FONT_BELOW + ';fill:#6b6a5d">' + _sub(l) + '</text>';
+      txt += '<text x="' + cx + '" y="' + y + '" text-anchor="middle" style="font:' + RXN_LABEL_FONT_BELOW + ';fill:#3a3a35">' + _sub(l) + '</text>';
     });
 
     const x1 = 4, x2 = 4 + shaft;
