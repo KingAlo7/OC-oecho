@@ -449,6 +449,7 @@
     const merges = !(popts && popts.merge === false);
     const early = !!(popts && popts.early);
     const downs = !!(popts && popts.down);
+    const diamonds = !!(popts && popts.diamond);
     const ids = new Set(nodes.map(n => n.id));
     const order = new Map(nodes.map((n, i) => [n.id, i]));
 
@@ -517,7 +518,9 @@
     const odd = h => (h & 1) === 1;
     let minH = Infinity, maxH = -Infinity, maxR = -Infinity;
     const span = 2 * (Math.max(2, cols) - 1);
-    const inSpan = h => !pos.size || Math.max(maxH, h) - Math.min(minH, h) <= span;
+    // within the width, or within the columns already used (a co-node may
+    // have made the scheme a little wider)
+    const inSpan = h => !pos.size || (h >= minH && h <= maxH) || Math.max(maxH, h) - Math.min(minH, h) <= span;
     const canPut = (h, r) => {
       if (cell.has(K(h, r))) return false;
       if (odd(h)) return cell.get(K(h - 1, r)) !== 'N' && cell.get(K(h + 1, r)) !== 'N';
@@ -760,7 +763,8 @@
         if (fromProd) { const p = pos.get(rx.prod); th = p.h; R = p.r - po[plist.indexOf(rx.prod)]; mh = th - 2 * dx; }
         else { const m = pos.get(rx.main); mh = m.h; R = m.r - eo[iM]; th = mh + 2 * dx; }
         const g = mh + dx;
-        if (!inSpan(th) || !inSpan(mh)) continue;
+        // (laid backwards from the product, the caller prices a wider scheme)
+        if (!fromProd && (!inSpan(th) || !inSpan(mh))) continue;
         const cells = order.map((id, i) => [id, mh, R + eo[i]]).concat(plist.map((id, j) => [id, th, R + po[j]]));
         if (!cells.every(([id, h, r]) => pos.has(id) ? pos.get(id).h === h && pos.get(id).r === r : canPut(h, r))) continue;
         const rs = cells.map(c => c[2]).concat([R]);
@@ -797,7 +801,9 @@
       if (!passOk(g, mr)) return null;
       const list = splitProds(rx), n = list.length;
       let best = null;
-      const arrangements = [[symOffs(n), 0], [list.map((_, i) => i + 1), 0.6], [list.map((_, i) => i - n), 0.8]];
+      // symmetric; one straight on and the rest below (above); all below (above)
+      const arrangements = [[symOffs(n), 0], [list.map((_, i) => i), 0.3], [list.map((_, i) => i - n + 1), 0.5],
+                            [list.map((_, i) => i + 1), 0.6], [list.map((_, i) => i - n), 0.8]];
       for (const [offs, pen] of arrangements) {
         if (!offs.every(o => canPut(th, mr + o))) continue;
         const lo = Math.min(0, ...offs), hi = Math.max(0, ...offs);
@@ -829,7 +835,10 @@
       for (let i = 1; i < k; i++) if (!passOk(mh, mr + dy * i)) return null;
       const list = splitProds(rx), n = list.length;
       let best = null;
-      const arrangements = [[symOffs(n), 0], [list.map((_, i) => i - n), 0.6], [list.map((_, i) => i + 1), 0.6]];
+      // symmetric; one straight on and the rest to one side (at the edge
+      // of the width); all to one side
+      const arrangements = [[symOffs(n), 0], [list.map((_, i) => i - n + 1), 0.3], [list.map((_, i) => i), 0.3],
+                            [list.map((_, i) => i - n), 0.6], [list.map((_, i) => i + 1), 0.6]];
       for (const [offs, pen] of arrangements) {
         const cols = offs.map(o => mh + 2 * o);
         if (!cols.every(h => canPut(h, tr) && inSpan(h))) continue;
@@ -966,6 +975,110 @@
       return { type: 'fork', rx, dx, sy, k, gap: g, row: m.r, mh: m.h, mr: m.r, th, tr, co: [], extra: [], cost: 0 };
     }
 
+    /* ── diamonds (variant): two lanes that meet again ─────────────────
+       A → B + B´, B → C, B´ → C´, C + C´ → D, or two arrows of their own
+       out of A: the source on top, the lanes side by side going down, the
+       two educts equal into the product under them. Each lane is a plain
+       chain of at most three arrows. */
+    function findDiamond(s) {
+      const free = x => !pos.has(x);
+      const walk = (x, first) => {
+        const lane = [first], ids = [x];
+        for (let cur = x; ;) {
+          const next = consBy.get(cur);
+          if (next.length !== 1 || laid.has(next[0].idx)) return null;
+          const nx = next[0];
+          if (nx.srcs.length > 1) return { lane, ids, end: cur, into: nx };
+          if (lane.length >= 3 || nx.prods.length !== 1 || prodBy.get(nx.prod).length !== 1 || !free(nx.prod)) return null;
+          lane.push(nx);
+          ids.push(cur = nx.prod);
+        }
+      };
+      const outs = rxs.filter(rx => rx.main === s && rx.srcs.length === 1 && !laid.has(rx.idx) && rx.prods.every(free));
+      const pairs = [];
+      for (const rx of outs) if (rx.prods.length === 2) pairs.push([[rx, rx.prods[0]], [rx, rx.prods[1]]]);
+      const one = outs.filter(rx => rx.prods.length === 1);
+      for (let i = 0; i < one.length; i++) for (let j = i + 1; j < one.length; j++) pairs.push([[one[i], one[i].prod], [one[j], one[j].prod]]);
+      for (const [[r1, x1], [r2, x2]] of pairs) {
+        if (prodBy.get(x1).length !== 1 || prodBy.get(x2).length !== 1) continue;
+        const a = walk(x1, r1), b = walk(x2, r2);
+        if (!a || !b || a.into !== b.into || a.end === b.end) continue;
+        const M = a.into;
+        if (M.srcs.length !== 2 || M.prods.length !== 1 || !free(M.prod)) continue;
+        // a split puts both lanes' first compounds in one row: a lane of
+        // one arrow cannot then be longer to meet a longer one
+        const split = r1 === r2;
+        if (split && a.lane.length !== b.lane.length && Math.min(a.lane.length, b.lane.length) === 1) continue;
+        return { s, split, lanes: [a, b], M };
+      }
+      return null;
+    }
+    // The split that starts both lanes, its products in the lanes' columns.
+    function vsplitAt(d, cols) {
+      const rx = d.lanes[0].lane[0], S = pos.get(rx.main), tr = S.r + 1;
+      const at = d.lanes.map((L, i) => ({ id: L.ids[0], h: cols[i] }));
+      if (!at.every(a => canPut(a.h, tr))) return null;
+      return { type: 'vsplit', rx, dy: 1, k: 1, jRow: S.r, mh: S.h, mr: S.r, th: at.find(a => a.id === rx.prod).h, tr, pen: 0,
+               co: at.filter(a => a.id !== rx.prod).map(a => ({ id: a.id, dir: 'out', slot: 'split', h: a.h, r: tr, via: [] })),
+               extra: [], cost: 0 };
+    }
+    // The two educts, side by side at the end of the lanes, into the
+    // product under the source's column.
+    function vmergeAt(d, cols, pen) {
+      const M = d.M, S = pos.get(d.s), rE = S.r + Math.max(...d.lanes.map(L => L.lane.length)), pc = S.h;
+      const ends = d.lanes.map((L, i) => ({ id: L.end, h: cols[i] }));
+      if (!ends.every(e => pos.get(e.id) && pos.get(e.id).h === e.h && pos.get(e.id).r === rE)) return null;
+      if (!canPut(pc, rE + 1) || cell.get(K(pc, rE)) === 'N' && !ends.some(e => e.h === pc)) return null;
+      const order = ends.sort((a, b) => a.h - b.h);
+      return { type: 'vmerge', rx: M, dy: 1, k: 1, pc, mh: order.find(e => e.id === M.main).h, mr: rE, th: pc, tr: rE + 1,
+               order: order.map(e => e.id), prods: [M.prod], eo: order.map(e => (e.h - pc) / 2), po: [0], fromProd: false, pen,
+               co: order.filter(e => e.id !== M.main).map(e => ({ id: e.id, dir: 'in', slot: 'merge', h: e.h, r: rE, via: [] })),
+               extra: [], cost: 0 };
+    }
+    /* Lay a diamond from its placed source: lanes left and right of it
+       (symmetric), else one straight down and one beside it. Every piece
+       is committed as it goes; if one does not fit, all of it is undone.
+       Returns the items laid, or null. */
+    function layDiamond(d) {
+      const S = pos.get(d.s), depth = Math.max(...d.lanes.map(L => L.lane.length));
+      const snap = { cell: new Map(cell), pos: new Map(pos), laid: new Set(laid), near: new Map(near), n: items.length, minH, maxH, maxR };
+      const undo = () => {
+        cell.clear(); snap.cell.forEach((v, k) => cell.set(k, v));
+        pos.clear(); snap.pos.forEach((v, k) => pos.set(k, v));
+        laid.clear(); snap.laid.forEach(v => laid.add(v));
+        near.clear(); snap.near.forEach((v, k) => near.set(k, v));
+        items.length = snap.n;
+        ({ minH, maxH, maxR } = snap);
+      };
+      // a source still to be fed from elsewhere keeps one side free for it
+      const fed = prodBy.get(d.s).some(rx => !laid.has(rx.idx) && rx.srcs.some(x => !pos.has(x)));
+      const sym = [[-1, 1, 0], [1, -1, 0]], one = [[0, 1, 0.3], [1, 0, 0.3], [-1, 0, 0.3], [0, -1, 0.3]];
+      for (const [oa, ob, pen] of fed ? one.concat(sym) : sym.concat(one)) {
+        const cols = [S.h + 2 * oa, S.h + 2 * ob];
+        if (!cols.every(inSpan)) continue;
+        const done = [];
+        const step = it => { if (it) { commit(it); done.push(it); } return !!it; };
+        // the first arrows out of the source
+        let ok = true;
+        if (d.split) ok = step(vsplitAt(d, cols));
+        else {
+          for (let i = 0; i < 2 && ok; i++) {
+            const L = d.lanes[i], o = i ? ob : oa, k = L.lane.length === 1 ? depth : 1;
+            ok = step(o === 0 ? tryVPlain(L.lane[0], 1, k) : tryF(L.lane[0], o, 1, k));
+          }
+        }
+        // on down each lane; the shorter one takes longer over its last arrow
+        for (let i = 0; i < 2 && ok; i++) {
+          const L = d.lanes[i];
+          for (let j = 1; j < L.lane.length && ok; j++) ok = step(tryVPlain(L.lane[j], 1, j === L.lane.length - 1 ? 1 + depth - L.lane.length : 1));
+        }
+        if (ok) ok = step(vmergeAt(d, cols, pen));
+        if (ok) return done;
+        undo();
+      }
+      return null;
+    }
+
     function commit(it) {
       const rx = it.rx;
       laid.add(rx.idx);
@@ -1077,6 +1190,17 @@
       for (const c of it.co) if (c.dir === 'out' || c.slot === 'stack') pending.push([c.id, flow]);
     }
 
+    /* Where a compound joining reaction `rx` meets its arrow, once it is
+       laid: the junction in the arrow gap, or beside a vertical shaft. */
+    const joinAt = rx => {
+      const it = items.find(i => i.rx === rx);
+      if (!it) return null;
+      if (it.gap != null) return { h: it.gap, r: it.R != null ? it.R : it.row };
+      if (it.type === 'v' || it.type === 'vsplit') return { h: it.mh, r: it.jRow };
+      if (it.type === 'vmerge') return { h: it.pc, r: (it.mr + it.tr) / 2 };
+      return null;
+    };
+
     function placeBranch(rx, flow) {
       if (laid.has(rx.idx) || pos.has(rx.prod)) return;
       const m = pos.get(rx.main);
@@ -1089,8 +1213,9 @@
         // scheme goes on downwards: so does the branch.
         if (downs && it.tr < m.r && consBy.get(rx.prod).some(nx => nx.prod !== rx.main && !pos.has(nx.prod))) c += 2;
         for (const nx of consBy.get(rx.prod)) {
-          const P = pos.get(nx.prod);
-          if (!P || nx.prod === rx.main) continue;
+          if (!pos.get(nx.prod) || nx.prod === rx.main) continue;
+          // a reaction already laid is joined where its arrow runs, not at its product
+          const P = joinAt(nx) || pos.get(nx.prod);
           c += Math.abs(it.tr - P.r) * 0.6 + Math.abs(it.th - P.h) * 0.15;
           if ((it.tr - m.r) * (P.r - m.r) < 0) c += 2;
           // Compounds in the way of the later arrow (along the row, then up/down).
@@ -1179,6 +1304,14 @@
       const seg = [start];
       let cur = start, turn = null;
       for (;;) {
+        // (variant) two lanes out of here that meet again: laid as one block
+        const dmd = diamonds && findDiamond(cur), done = dmd && layDiamond(dmd);
+        if (done) {
+          for (const it of done) afterCommit(it, flow);
+          for (const L of dmd.lanes) for (const id of L.ids) if (!seg.includes(id)) seg.push(id);
+          seg.push(cur = dmd.M.prod);
+          continue;
+        }
         const rx = pickMain(cur);
         if (!rx) break;
         // (variant) Turn one step early when the reaction after this one has
@@ -1365,6 +1498,10 @@
     { split: true,  defer: true },  { split: true,  defer: false },
     { split: false, defer: true },  { split: false, defer: false },
     { split: true,  defer: false, lanes: false }, { split: false, defer: false, lanes: false },
+    // a branch that comes back waits and then merges equal with the other educts
+    { split: true,  defer: true,  lanes: false },
+    // two lanes that meet again drawn as a diamond
+    { split: true,  defer: true,  diamond: true }, { split: true,  defer: false, diamond: true },
     // equations drawn the usual way (where an equation routes badly)
     { split: true,  defer: true, plus: false }, { split: false, defer: false, lanes: false, plus: false },
     // co-reactants above the arrow (where a merge routes badly)
@@ -2014,14 +2151,21 @@
       return cross * 10 + close * 4 + bends * 0.5 + this._seatBad * 3 + freeLen * 0.01;
     }
 
-    /* The widest grid that still reads at a comfortable zoom. */
+    /* The widest grid that still reads at a comfortable zoom. When none
+       does: 2 columns, unless a wider grid comes out narrower (its side
+       branches need no extra columns) and is no less tidy. */
     _bestCols() {
       const avail = ((this.svg && this.svg.clientWidth) || this.container.clientWidth || 0) - 30;
       if (avail <= 0) return 4;
-      for (let c = 6; c > 2; c--) {
-        if (this.autoLayout({ columns: c, dry: true }) * MIN_FIT <= avail) return c;
+      const S = this.scheme, fit = {};
+      for (let c = 6; c >= 2; c--) {
+        const p = planCandidates(S.nodes, S.edges, c)[0];
+        fit[c] = { w: this._placePlan(p, true), cost: p.cost };
+        if (c > 2 && fit[c].w * MIN_FIT <= avail) return c;
       }
-      return 2;
+      let best = 2;
+      for (let c = 3; c <= 6; c++) if (fit[c].w < fit[best].w - 1 && fit[c].cost <= fit[2].cost) best = c;
+      return best;
     }
 
     /* Anything that changes grouping or indices invalidates the plan. */
