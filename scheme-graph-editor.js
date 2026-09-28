@@ -24,7 +24,8 @@
  *     (drop zones light up); a structure on an arrow can be dragged off
  *     again (a node) or elsewhere; double click opens Ketcher
  *   - In an auto layout a dragged node returns to its place; "✥ Frei"
- *     (layout 'manual') keeps nodes where they are dropped
+ *     (layout 'manual') keeps nodes where they are dropped, and an educt
+ *     (product) of a "+" reaction takes the other educts (products) along
  *
  * Modes:
  *   `opts.readOnly: true` switches to the quiz viewer. The viewer draws
@@ -62,9 +63,22 @@
  *     crossings, bends and long detours is kept
  *   - reagent text is placed last and avoids structures, other text and
  *     other arrows, always on its own arrow
- * With "layout": "manual" ("✥ Frei" in the editor) the older free
- * routing is used: split arrows share a stub, several sources meet in a
- * junction.
+ *
+ * Free layout ("layout": "manual", "✥ Frei" in the editor): compounds stay
+ * where they are, and every feature above still draws:
+ *   - a reaction with several educts or products is ONE drawing
+ *     (_drawReaction): educts behind it run into a bus, one standing
+ *     beside the shaft joins it where it stands, one shaft carries the
+ *     text, curve and structure on the arrow, a split bus sends a branch
+ *     to each product. It heads the way most educts are behind the
+ *     products (then: a straight shaft, then from the educts' centre to
+ *     the products'); where no way fits, the pieces meet in a hub and are
+ *     routed around structures and other arrows; an equilibrium keeps a
+ *     straight shaft with both half-arrows on it, a Y its slanted joins
+ *   - a "+" reaction is an equation: "+" between neighbouring educts and
+ *     between neighbouring products, one arrow from group to group
+ *   - single arrows: separate arrows from one compound share a stub,
+ *     separate arrows into one compound meet in a junction
  *
  * Callbacks:
  *   onChange(), onSelectNode(node|null), onSelectEdge(edge|null, idx),
@@ -2395,12 +2409,17 @@
       this._heads = [];           // lines drawn with an arrowhead: { idx, pts }
 
       // The "+" of an equation is in the way of other arrows like a structure.
-      this._pluses = usePlan ? this._plusSpots(this._plan) : [];
+      const free = usePlan ? null : this._freeReactions();
+      this._pluses = usePlan ? this._plusSpots(this._plan) : this._freePlusSpots(free);
       for (const p of this._pluses) this._obstacles.push({ id: '+', x: p.x - 8, y: p.y - 9, w: 16, h: 18 });
-      const planned = usePlan ? this._drawPlan(layer) : new Set();
+      // Without a plan, reactions with several educts or products are
+      // still drawn whole (after the single arrows, so what they route
+      // freely steers around those); single arrows: the routing below.
+      const planned = usePlan ? this._drawPlan(layer) : new Set([].concat(...free.map(rx => rx.edges)));
       const valid = (e, i) => !planned.has(i) && (e.from || []).length === 1 && this._nodeById(e.from[0]) && this._nodeById(e.to);
 
-      // 1. Split arrows: one source, several targets on the same side.
+      // 1. Separate arrows from one source to several targets on the same
+      //    side share a stub.
       const outBy = new Map();
       E.forEach((e, i) => {
         if (!valid(e, i)) return;
@@ -2456,6 +2475,7 @@
         if (f.length === 1) this._drawSingle(layer, i, f[0]);
         else this._drawFanIn(layer, i, f);
       });
+      if (free) this._drawFree(layer, free);
       this._flushLabels();
       // The selected reaction's handle for one more product: on its main
       // arrow, far enough back from the arrowhead to stay clear of it.
@@ -2969,6 +2989,15 @@
       return n;
     }
 
+    /* How many arrows already drawn a polyline crosses. */
+    _crossings(pts) {
+      let n = 0;
+      for (let k = 1; k < pts.length; k++) {
+        for (const l of this._lines || []) if (segCross(pts[k - 1], pts[k], l)) n++;
+      }
+      return n;
+    }
+
     /* A vertical run blocked by a compound stacked in the same column
        leaves sideways, drops in the gap next to the stack and enters the
        target from above/below. */
@@ -3087,15 +3116,7 @@
         return Math.min(Math.max(l[k + 1], l[k + 2]), Math.max(a[k], b[k])) - Math.max(Math.min(l[k + 1], l[k + 2]), Math.min(a[k], b[k])) > 16;
       });
       // Crossing another arrow costs more than a detour of a few bends.
-      const o3 = (a, b, c) => Math.sign((b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x));
-      const crosses = (a, b) => {
-        let n = 0;
-        for (const l of this._lines || []) {
-          const c = { x: l.x1, y: l.y1 }, d = { x: l.x2, y: l.y2 };
-          if (o3(a, b, c) * o3(a, b, d) < 0 && o3(c, d, a) * o3(c, d, b) < 0) n++;
-        }
-        return n;
-      };
+      const crosses = (a, b) => this._crossings([a, b]);
       let best = null;
       for (const [ps, qs, bias] of opts) {
         const p = ps ? this._exit(s, ps) : { x: s.cx, y: s.cy };
@@ -3127,23 +3148,20 @@
       const e = this.scheme.edges[idx];
       const s = this._box(this._nodeById(fromId));
       const t = this._box(this._nodeById(e.to));
-      if (e.equilibrium) {
-        // never bent, not even off the grid: one straight line
-        const pts = this._straight(s, t);
-        const g = this._edgeGroup(idx, fromId);
-        this._addPath(g, this._pathD(pts), idx, true);
-        this._placeLabel(this._segsOf(pts), e, g);
-        layer.appendChild(g);
-        return;
-      }
-      if (this._plan && this._isAutoLayout()) {
-        const b = this._bestRoute(s, t, [fromId, e.to], this._metrics(e));
-        const g = this._edgeGroup(idx, fromId);
-        this._addPath(g, this._pathD(b.pts), idx, true);
-        this._placeLabel(this._segsOf(b.pts), e, g);
-        layer.appendChild(g);
-        return;
-      }
+      const skip = [fromId, e.to];
+      // an equilibrium is never bent, not even off the grid: one straight line
+      const pts = e.equilibrium ? this._straight(s, t)
+        : this._plan && this._isAutoLayout() ? this._bestRoute(s, t, skip, this._metrics(e)).pts
+        : this._freeLine(s, t, skip);
+      const g = this._edgeGroup(idx, fromId);
+      this._addPath(g, this._pathD(pts), idx, true);
+      this._placeLabel(this._segsOf(pts), e, g);
+      layer.appendChild(g);
+    }
+
+    /* Free route between two boxes: straight when they face each other,
+       else one step; around structures when that runs into one. */
+    _freeLine(s, t, skip) {
       const side = this._side(s, t);
       const p = this._exit(s, side);
       const q = this._entry(t, side);
@@ -3161,13 +3179,244 @@
           pts = [p, { x: p.x, y: my }, { x: q.x, y: my }, q];
         }
       }
-      const skip = [fromId, e.to];
       if (this._hits(pts, skip)) pts = this._route(p, side, q, side, skip);
-      pts = this._detours(s, t, side, pts, skip);
-      const g = this._edgeGroup(idx, fromId);
-      this._addPath(g, this._pathD(pts), idx, true);
+      return this._detours(s, t, side, pts, skip);
+    }
+
+    /* ─── Free layout: whole reactions ───────────────────────────
+       Without a plan ('manual', "✥ Frei") a reaction with several
+       educts or products is still drawn ONCE, from wherever its
+       compounds stand: one shaft with one text. */
+
+    /* The scheme's reactions with several educts or products (see
+       rxGroupKey), in data order; `plus`: drawn as an equation. */
+    _freeReactions() {
+      const E = this.scheme.edges, ids = new Set(this.scheme.nodes.map(n => n.id));
+      const by = new Map(), out = [];
+      E.forEach((e, i) => {
+        if (!ids.has(e.to)) return;
+        const srcs = [...new Set((e.from || []).filter(id => ids.has(id) && id !== e.to))];
+        if (!srcs.length) return;
+        const key = rxGroupKey(e, ids);
+        let rx = key != null ? by.get(key) : null;
+        if (!rx) { rx = { edges: [], srcs, prods: [] }; out.push(rx); if (key != null) by.set(key, rx); }
+        rx.edges.push(i);
+        if (!rx.prods.includes(e.to) && !srcs.includes(e.to)) rx.prods.push(e.to);
+      });
+      return out.filter(rx => rx.prods.length && rx.srcs.length + rx.prods.length > 2).map(rx => Object.assign(rx, {
+        first: rx.edges[0], plus: rx.edges.some(i => E[i].plus)
+      }));
+    }
+
+    /* Where the "+" signs of the free equations go: between neighbouring
+       educts and between neighbouring products — side by side, or one
+       over the other, whichever way the group spreads. */
+    _freePlusSpots(rxs) {
+      const out = [];
+      for (const rx of rxs) {
+        if (!rx.plus) continue;
+        for (const ids of [rx.srcs, rx.prods]) {
+          const grp = ids.map(id => this._box(this._nodeById(id)));
+          if (grp.length < 2) continue;
+          const xs = grp.map(b => b.cx), ys = grp.map(b => b.cy);
+          const row = (Math.max(...xs) - Math.min(...xs)) * this.NH >= (Math.max(...ys) - Math.min(...ys)) * this.NW;
+          grp.sort((a, b) => row ? a.cx - b.cx : a.cy - b.cy);
+          for (let j = 1; j < grp.length; j++) {
+            const a = grp[j - 1], b = grp[j];
+            out.push(row ? { rx, x: (a.r + b.l) / 2 + (this.readOnly ? 0 : HANDLE_R / 2), y: (a.cy + b.cy) / 2 }
+                         : { rx, x: (a.cx + b.cx) / 2, y: (a.b + b.t) / 2 });
+          }
+        }
+      }
+      return out;
+    }
+
+    _drawFree(layer, rxs) {
+      for (const rx of rxs) {
+        if (rx.plus) this._drawEquation(layer, rx);
+        else this._drawReaction(layer, rx);
+      }
+    }
+
+    /* One box around a group of compounds; its centre is the mean of
+       theirs, so a row keeps its line. */
+    _groupBox(ids) {
+      const bs = ids.map(id => this._box(this._nodeById(id)));
+      const mean = k => bs.reduce((a, b) => a + b[k], 0) / bs.length;
+      return {
+        id: ids.join('+'), cx: mean('cx'), cy: mean('cy'),
+        l: Math.min(...bs.map(b => b.l)), r: Math.max(...bs.map(b => b.r)),
+        t: Math.min(...bs.map(b => b.t)), b: Math.max(...bs.map(b => b.b))
+      };
+    }
+
+    /* A free equation (edge.plus): "+" between the educts and between the
+       products, one arrow from the one group to the other. */
+    _drawEquation(layer, rx) {
+      const e = this.scheme.edges[rx.first];
+      const S = this._groupBox(rx.srcs), T = this._groupBox(rx.prods);
+      const skip = rx.srcs.concat(rx.prods);
+      const pts = e.equilibrium ? this._straight(S, T) : this._freeLine(S, T, skip);
+      const g = this._edgeGroup(rx.first, rx.srcs.join(','));
+      this._addPath(g, this._pathD(pts), rx.first, true);
+      for (const sp of this._pluses.filter(sp => sp.rx === rx)) this._plusAt(g, sp.x, sp.y);
       this._placeLabel(this._segsOf(pts), e, g);
       layer.appendChild(g);
+    }
+
+    /* How a free reaction runs: the side it heads to, the educts behind
+       the products that way, the shaft's line `c`, and where its bus (Ja)
+       and its split (J2a) sit along it. `main`: the one educt the shaft
+       leaves straight from. Of the four sides, the one with the most
+       educts behind the products wins, then one with a straight shaft,
+       then the way from the educts' centre to the products'. Null when no
+       educt is behind the products any way. */
+    _rxFrame(S, T, m) {
+      const mean = (bs, k) => bs.reduce((a, b) => a + b[k], 0) / bs.length;
+      const pref = this._side({ cx: mean(S, 'cx'), cy: mean(S, 'cy') }, { cx: mean(T, 'cx'), cy: mean(T, 'cy') });
+      const multi = T.length > 1;
+      let best = null;
+      for (const side of ['R', 'L', 'D', 'U']) {
+        const H = isH(side), s = DIR[side][0] + DIR[side][1];
+        const front = b => H ? (s > 0 ? b.r : b.l) : (s > 0 ? b.b : b.t);
+        const back = b => H ? (s > 0 ? b.l : b.r) : (s > 0 ? b.t : b.b);
+        const acr = b => H ? b.cy : b.cx;
+        const A1 = s > 0 ? Math.min(...T.map(back)) : Math.max(...T.map(back));
+        const behind = S.filter(b => (A1 - front(b)) * s >= 24 + (multi ? BRANCH_MIN : 0));
+        if (!behind.length) continue;
+        const A0 = s > 0 ? Math.max(...behind.map(front)) : Math.min(...behind.map(front));
+        const need = H ? m.shaft : Math.max(30, m.vLen + 16);
+        const ks = T.map(acr);
+        const c = !multi ? ks[0] : behind.length === 1 ? acr(behind[0]) : (Math.min(...ks) + Math.max(...ks)) / 2;
+        const J2a = multi ? A1 - s * this._branchLen((A1 - A0) * s, need) : A1;
+        const main = behind.length === 1 && Math.abs(acr(behind[0]) - c) < 1 ? behind[0] : null;
+        const span = (J2a - A0) * s;
+        const Ja = main ? A0 : J2a - s * Math.max(Math.min(18, span / 2), Math.min(need, span - JUNCTION_STUB));
+        const score = (S.length - behind.length) * 100 + (main || behind.length > 1 ? 0 : 30) + (side === pref ? 0 : 10);
+        if (!best || score < best.score) best = { side, H, s, c, Ja, J2a, main, behind, score };
+      }
+      return best;
+    }
+
+    /* A free point between two groups of compounds, off every structure. */
+    _hub(S, T) {
+      const mean = (bs, k) => bs.reduce((a, b) => a + b[k], 0) / bs.length;
+      const x = (mean(S, 'cx') + mean(T, 'cx')) / 2, y = (mean(S, 'cy') + mean(T, 'cy')) / 2;
+      const free = p => !(this._obstacles || []).some(o => p.x > o.x - 10 && p.x < o.x + o.w + 10 && p.y > o.y - 10 && p.y < o.y + o.h + 10);
+      const dirs = [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [-1, 1], [1, -1], [-1, -1]];
+      for (let r = 0; r <= 240; r += 20) {
+        for (const [ux, uy] of r ? dirs : [[0, 0]]) if (free({ x: x + ux * r, y: y + uy * r })) return { x: x + ux * r, y: y + uy * r };
+      }
+      return { x, y };
+    }
+
+    /* A free reaction with several educts and/or products, drawn once
+       the way the auto layout's merge / split is: educts behind it run
+       parallel into a bus, one standing beside the shaft joins it
+       straight where it stands, one shaft carries the text (curve,
+       structure on the arrow), several products split off a bus at its
+       end with a short branch each. Where no educt is behind the products,
+       the pieces are routed freely to a hub between the two groups. */
+    _drawReaction(layer, rx) {
+      const e = this.scheme.edges[rx.first], idx = rx.first;
+      const S = rx.srcs.map(id => this._box(this._nodeById(id)));
+      const T = rx.prods.map(id => this._box(this._nodeById(id)));
+      const skip = rx.srcs.concat(rx.prods);
+      const m = this._metrics(e), Y = isY(e), eq = !!e.equilibrium, multi = T.length > 1;
+      const g = this._edgeGroup(idx, rx.srcs.join(','));
+      const joins = [];
+      let seats;
+      const f = this._rxFrame(S, T, m);
+      if (f) {
+        const { side, H, s, c, Ja, J2a, main, behind } = f;
+        const P = (a, k) => H ? { x: a, y: k } : { x: k, y: a };
+        const acr = b => H ? b.cy : b.cx, al = p => H ? p.x : p.y;
+        const J = P(Ja, c), J2 = P(J2a, c);
+        // the shaft; an equilibrium never bends
+        let shaft = [J, multi ? J2 : this._entry(T[0], side)];
+        const straight = eq || !this._hits(shaft, skip);
+        if (!straight) shaft = this._route(J, side, shaft[1], multi ? null : side, skip);
+        // drawn first, so what is routed freely below keeps off it; an
+        // equilibrium that splits: the shaft carries the half-arrows
+        if (multi && eq) {
+          this._addEquilibrium(g, this._pathD(shaft), idx);
+          if (this._heads) this._heads.push({ idx, pts: shaft });
+        } else this._addPath(g, this._pathD(shaft), idx, !multi);
+        // educts neither behind nor beside the shaft come in a bit along it
+        const Jo = main && straight ? P(Ja + s * Math.min(JUNCTION_OFF, Math.abs(J2a - Ja) / 3), c) : J;
+        const onShaft = [];
+        if (!main) joins.push(J);
+        for (const b of S) {
+          if (b === main) continue;
+          const p = this._exit(b, side);
+          let pts = null;
+          if (behind.includes(b)) {
+            pts = Math.abs(acr(b) - c) < 1 ? [p, J] : Y ? [this._toward(b, J), J] : [p, P(Ja, acr(b)), J];
+            if (this._hits(pts, skip) || this._crossings(pts)) pts = this._bestRoute(b, { cx: J.x, cy: J.y, point: true }, skip, null).pts;
+          } else {
+            const at = H ? b.cx : b.cy;
+            const clear = H ? b.b < c - 2 || b.t > c + 2 : b.r < c - 2 || b.l > c + 2;
+            if (straight && !Y && clear && (at - Ja) * s > 12 && (J2a - at) * s > (multi ? 8 : TAIL_MIN + 8)) {
+              const Js = P(at, c), near = acr(b) < c;
+              const d = [H ? { x: at, y: near ? b.b : b.t } : { x: near ? b.r : b.l, y: at }, Js];
+              if (!this._hits(d, skip)) { pts = d; onShaft.push(Js); joins.push(Js); }
+            }
+            if (!pts) {
+              const d = [this._toward(b, Jo), Jo];
+              pts = Y && !this._hits(d, skip) ? d : this._bestRoute(b, { cx: Jo.x, cy: Jo.y, point: true }, skip, null).pts;
+              if (Jo !== J && !joins.includes(Jo)) { joins.push(Jo); onShaft.push(Jo); }
+            }
+          }
+          this._addPath(g, this._pathD(pts), idx, false);
+        }
+        if (multi) {
+          joins.push(J2);
+          for (const b of T) {
+            const q = this._entry(b, side), run = Math.min(TAIL_MIN, Math.abs(al(q) - J2a) * 0.6);
+            let pts = Math.abs(acr(b) - c) < 1 ? [J2, q] : Y ? [J2, P(al(q) - s * run, acr(b)), q] : [J2, P(J2a, acr(b)), q];
+            if (this._hits(pts, skip)) pts = this._route(J2, side, q, side, skip);
+            if (this._crossings(pts)) pts = this._bestRoute({ cx: J2.x, cy: J2.y, point: true }, b, skip, null).pts;
+            this._addPath(g, this._pathD(pts), idx, !eq);
+          }
+        }
+        // the text sits on the shaft, on its longest piece between joins
+        seats = this._segsOf(straight ? [shaft[0], ...onShaft.sort((u, v) => (al(u) - al(v)) * s), shaft[1]] : shaft);
+      } else {
+        const hub = this._hub(S, T), hp = { cx: hub.x, cy: hub.y, point: true };
+        const ins = [], outs = [];
+        for (const b of S) {
+          const pts = eq ? [this._toward(b, hub), hub] : this._bestRoute(b, hp, skip, S.length === 1 ? m : null).pts;
+          this._addPath(g, this._pathD(pts), idx, false);
+          ins.push(pts);
+        }
+        for (const b of T) {
+          const pts = eq ? [hub, this._toward(b, hub)] : this._bestRoute(hp, b, skip, multi ? null : m).pts;
+          this._addPath(g, this._pathD(pts), idx, true);
+          outs.push(pts);
+        }
+        joins.push(hub);
+        seats = !multi ? this._segsOf(outs[0]) : S.length === 1 ? this._segsOf(ins[0])
+          : [].concat(...ins.concat(outs).map(p => this._segsOf(p))).sort((u, v) => v.len - u.len);
+      }
+      for (const j of joins) g.appendChild(svg('circle', { class: 'sg-junction', cx: r1(j.x), cy: r1(j.y), r: 1.6 }));
+      this._placeLabel(seats, e, g);
+      layer.appendChild(g);
+    }
+
+    /* Compounds that move along with `id` in a free layout: the other
+       educts of an equation it is an educt of, the other products of one
+       it is a product of (and theirs in turn: a group stays together). */
+    _lockedWith(id) {
+      const rxs = this._freeReactions().filter(rx => rx.plus);
+      const seen = new Set([id]), st = [id];
+      while (st.length) {
+        const k = st.pop();
+        for (const rx of rxs) for (const grp of [rx.srcs, rx.prods]) {
+          if (grp.includes(k)) for (const o of grp) if (!seen.has(o)) { seen.add(o); st.push(o); }
+        }
+      }
+      seen.delete(id);
+      return [...seen];
     }
 
     /* One source, several targets on the same side: shared stub, then a
@@ -4555,6 +4804,9 @@
           d.auto = this._isAutoLayout();
           // a compound on no arrow yet can be dropped onto one
           if (d.free) this._zones = this._dropZones();
+          // in a free layout the educts (products) of an equation move as one
+          d.with = d.auto ? [] : this._lockedWith(d.id).map(id => this._nodeById(id)).filter(Boolean)
+            .map(o => ({ n: o, x0: o.x, y0: o.y }));
         }
         const w = this._eventToWorld(e);
         n.x = Math.round(w.x - d.offsetX);
@@ -4564,6 +4816,12 @@
           g.setAttribute('transform', `translate(${n.x} ${n.y})`);
           // see-through while carried over the drop zones
           if (d.free) g.classList.add('sg-carried');
+        }
+        for (const o of d.with) {
+          o.n.x = o.x0 + n.x - d.x0;
+          o.n.y = o.y0 + n.y - d.y0;
+          const og = this.container.querySelector(`[data-node="${cssEsc(o.n.id)}"]`);
+          if (og) og.setAttribute('transform', `translate(${o.n.x} ${o.n.y})`);
         }
         if (this._zones) this._drawZones(this._zoneAt(w));
         // In a free layout the arrows follow the compound. The auto layout
@@ -4799,6 +5057,13 @@
   function unionBox(a, b) {
     const x = Math.min(a.x, b.x), y = Math.min(a.y, b.y);
     return { x, y, w: Math.max(a.x + a.w, b.x + b.w) - x, h: Math.max(a.y + a.h, b.y + b.h) - y };
+  }
+
+  /* Does segment a–b cross line l (not just touch it)? */
+  function segCross(a, b, l) {
+    const o3 = (p, q, r) => Math.sign((q.x - p.x) * (r.y - p.y) - (q.y - p.y) * (r.x - p.x));
+    const c = { x: l.x1, y: l.y1 }, d = { x: l.x2, y: l.y2 };
+    return o3(a, b, c) * o3(a, b, d) < 0 && o3(c, d, a) * o3(c, d, b) < 0;
   }
 
   /* Does a (diagonal) line segment cross a rectangle? Sampled — labels

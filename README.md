@@ -54,7 +54,8 @@ Die ganze Aufgabe steht auf **einem Blatt**: eine Fortschrittsleiste oben (Aufde
     wegziehen (sie wird wieder ein Knoten) oder auf die andere Seite ziehen; Doppelklick öffnet Ketcher.
     Größe (60–120 % der Bindungslänge) im Detailpanel
   - **Auto-Layout / ✥ Frei:** im Auto-Layout ordnet das Programm an, ein gezogener Knoten kehrt an seinen
-    Platz zurück; mit **✥ Frei** bleiben Knoten, wo man sie ablegt (die Pfeile folgen)
+    Platz zurück; mit **✥ Frei** bleiben Knoten, wo man sie ablegt (die Pfeile folgen, jede Reaktion bleibt
+    ein Pfeil; die Edukte bzw. Produkte einer „+“-Reaktion werden gemeinsam verschoben)
   - **Vorgegeben / Gesucht** je Knoten — Schalter im Detailpanel oder Taste <kbd>G</kbd>; **✓ Ausgangsstoffe vorgeben** markiert alle Strukturen ohne eingehenden Pfeil
   - Pro Knoten: Beschriftung (leer = keine), Name (erst nach dem Aufdecken sichtbar) und **Angabe-Text unter der Struktur** (`caption`, immer sichtbar, z. B. Summenformel)
   - Pro Abschnitt: **Angabe-Text & Hinweise** (`body`, `hints`)
@@ -297,6 +298,18 @@ Haupt-Edukt (längster Weg davor) und ein Haupt-Produkt (längster Weg danach):
   langen Umwegen (1000 px zählen wie eine Kreuzung) — so fällt es
   auf schmalen Bildschirmen dort, wo eine Verzweigung oder Gleichung keinen Platz hat, auf die
   Co-Produkt-Anordnung zurück. Eine Gleichung, die sich zeichnen lässt, wird deutlich bevorzugt.
+- **✥ Frei** (`"layout": "manual"`): die Verbindungen bleiben, wo man sie ablegt, und alles wird weiter
+  gezeichnet. Eine Reaktion mit mehreren Edukten oder Produkten ist auch hier **ein** Pfeil (A + B → C + D):
+  Edukte dahinter laufen parallel in eine Sammelschiene, ein Edukt neben dem Schaft mündet dort gerade ein,
+  ein Schaft trägt Text, Bogen und Struktur am Pfeil, eine zweite Sammelschiene verzweigt zu den Produkten.
+  Gezeichnet wird in die Richtung, in der die meisten Edukte hinter den Produkten stehen (danach: gerader
+  Schaft, dann vom Schwerpunkt der Edukte zu dem der Produkte). Passt keine Richtung, treffen sich die
+  Stücke in einem Knotenpunkt dazwischen und werden um Strukturen und Pfeile herum geführt. Gleichgewichte
+  bleiben gerade (beide Halbpfeile auf dem Schaft), Y-Pfeile schräg. Eine „+“-Reaktion bleibt eine
+  Gleichung: „+“ zwischen benachbarten Edukten und zwischen benachbarten Produkten (nebeneinander oder
+  übereinander), ein Pfeil von Gruppe zu Gruppe; zieht man ein Edukt, gehen die anderen Edukte der
+  Reaktion mit (ebenso bei den Produkten). Einzelne Pfeile aus einer Verbindung teilen sich ein Pfeilstück,
+  einzelne Pfeile in eine Verbindung treffen sich vor ihr.
 
 **Abschnitt `type: "multiple_choice"`** — Strukturen oder Text-Antworten:
 
