@@ -270,12 +270,17 @@ derselben `rxn`. Pro Reaktion gibt es ein
 Haupt-Edukt (längster Weg davor) und ein Haupt-Produkt (längster Weg danach):
 
 - Die Hauptkette läuft geradeaus; am Rand der Bildschirmbreite biegt sie nach unten ab und läuft zurück.
-- Ein Co-Edukt steht über dem Pfeil und mündet in ihn. Drei oder mehr Edukte stehen untereinander und
-  laufen in einer Klammer zusammen; an senkrechten Pfeilen stehen Co-Edukte links und rechts.
+- **Mehrere Edukte einer Reaktion sind gleichwertig:** sie stehen symmetrisch zum Produkt, parallele
+  Linien laufen in einer Sammelschiene zusammen, ein Pfeilschaft trägt die Beschriftung (waagrecht, oder
+  nach einer Kehre nebeneinander über einem senkrechten Schaft). Nur wo das nicht passt, steht ein
+  Co-Edukt über dem Pfeil und mündet in ihn (drei oder mehr untereinander in einer Klammer).
 - **Mehrere Produkte einer Reaktion werden gleichwertig verzweigt:** ein Pfeilschaft trägt die
   Beschriftung, an seinem Ende fächert er auf, jedes Produkt bekommt einen eigenen kurzen Ast mit Spitze
   (26–56 px; der Schaft davor nimmt die übrige Länge). Die Produkte stehen symmetrisch zur Zeile (bzw.
   Spalte) des Edukts — bei ungerader Zahl eins geradeaus; ist dort kein Platz, alle unterhalb.
+  Gabeln sind nicht breiter als nötig: bei gerader Zahl rücken beide Hälften in benachbarte Zeilen bzw.
+  Spalten zusammen, und die Äste sind gleich lang (auch im Quiz, wo gesuchte Strukturen erst als
+  Buchstabe stehen).
 - Nebenreaktionen zweigen als Gabel ab (gemeinsames Pfeilstück, eigene Spitze) oder gehen nach unten,
   oben oder zurück — je nachdem, was frei ist und näher an den Folge- und Partnerverbindungen liegt.
 - Läuft ein Seitenzweig wieder in die Hauptkette zurück (A → B → C, A → B´ → C´, C + C´ → D), bekommt er
@@ -283,10 +288,13 @@ Haupt-Edukt (längster Weg davor) und ein Haupt-Produkt (längster Weg danach):
   Eine Verbindung neben einem Pfeilschaft mündet gerade in ihn.
 - Eine Verbindung, die über mehrere Wege entsteht, sitzt am längsten Weg; kürzere Wege münden als
   eigene Pfeile ein. Pfeile, die nicht in dieses Raster passen, werden um Strukturen herum geführt
-  und meiden bestehende Pfeile; vor jeder Pfeilspitze bleiben mindestens 26 px gerade Linie.
+  und meiden bestehende Pfeile: eine Kreuzung wiegt mehr als ein Umweg mit ein paar Knicken; frei
+  geführte Pfeile werden als letzte gezogen. Vor jeder Pfeilspitze bleiben mindestens 26 px gerade Linie.
 - Das Auto-Layout plant jedes Schema in mehreren Varianten (mit/ohne gleichwertige Verzweigung, mit/ohne
-  eigene Spuren, mit/ohne „+“-Gleichung), zeichnet jede probeweise und nimmt die mit den wenigsten
-  Kreuzungen, übereinanderliegenden oder dicht nebeneinander laufenden Pfeilen und Knicken — so fällt es
+  eigene Spuren, mit/ohne „+“-Gleichung, Co-Edukt über dem Pfeil statt gleichwertig, eine Stufe früher
+  abbiegen, Seitenzweige nach unten zum Rest des Schemas), zeichnet jede probeweise und nimmt die mit den
+  wenigsten Kreuzungen, übereinanderliegenden oder dicht nebeneinander laufenden Pfeilen, Knicken und
+  langen Umwegen (1000 px zählen wie eine Kreuzung) — so fällt es
   auf schmalen Bildschirmen dort, wo eine Verzweigung oder Gleichung keinen Platz hat, auf die
   Co-Produkt-Anordnung zurück. Eine Gleichung, die sich zeichnen lässt, wird deutlich bevorzugt.
 
