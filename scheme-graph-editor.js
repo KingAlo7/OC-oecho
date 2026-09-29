@@ -164,6 +164,7 @@
   const BRANCH_MAX     = 56;
   const BRANCH_W       = 40;    // what the layout reserves for the branches
   const TAIL_MIN       = 26;    // px of straight line an arrowhead needs after the last bend
+  const SNAP           = 12;    // px within which a dragged compound snaps into a partner's row / column (free layout)
 
   /* Viewer geometry. OCL is asked for a cropped SVG, and its reported
      size becomes the node's visible footprint. */
@@ -422,34 +423,10 @@
   const DIR = { R: [1, 0], L: [-1, 0], D: [0, 1], U: [0, -1] };
   const isH = side => side === 'R' || side === 'L';
 
-  /* ── Reaction layout planner ─────────────────────────────────────
-     Edges are grouped into reactions (edges with the same several
-     sources and the same reagents are ONE reaction "A + W → B + X").
-     Every reaction gets a main reactant, a main product, co-reactants
-     and co-products, and is laid out the way exam sheets draw it:
-       - the main chain runs straight on; at the width limit it turns
-         down and continues in the opposite direction
-       - a co-reactant sits above the arrow and joins it; three or more
-         reactants stack in a column and meet in a bracket
-       - several products are split equally (see trySplit); without
-         splits (popts.split === false) a co-product sits below the
-         arrow and leaves it
-       - a side reaction forks off the shaft (shared stub, bus, own
-         arrowhead), or leaves downwards / upwards / backwards —
-         whichever is free and cheapest
-     Positions are grid cells (h, r) in half-column units: compounds of
-     the chain on even h, co-reactants/co-products in the odd arrow gaps.
-     Returns { pos: Map(id → {h, r, jdir}), items: [...], cost }; `cost`
-     rates how much of the plan is not tidy grid (see planCandidates). */
-  function planLayout(nodes, edges, cols, popts) {
-    const splits = !(popts && popts.split === false);
-    const defers = !(popts && popts.defer === false);
-    const lanes = !(popts && popts.lanes === false);
-    const pluses = !(popts && popts.plus === false);
-    const merges = !(popts && popts.merge === false);
-    const early = !!(popts && popts.early);
-    const downs = !!(popts && popts.down);
-    const diamonds = !!(popts && popts.diamond);
+  /* The scheme's reactions (see rxGroupKey) with their arrows, each with a
+     main educt (longest way before it) and a main product (longest way
+     after it). Shared by the planner and the free layout. */
+  function reactionsOf(nodes, edges) {
     const ids = new Set(nodes.map(n => n.id));
     const order = new Map(nodes.map((n, i) => [n.id, i]));
 
@@ -508,6 +485,39 @@
       rx.main = best(rx.srcs, s => [up(s), consBy.get(s).length, -order.get(s)]);
       rx.prod = best(rx.prods, p => [down(p), -order.get(p)]);
     }
+    return { order, rxs, prodBy, consBy, down, up, best };
+  }
+
+  /* ── Reaction layout planner ─────────────────────────────────────
+     Edges are grouped into reactions (edges with the same several
+     sources and the same reagents are ONE reaction "A + W → B + X").
+     Every reaction gets a main reactant, a main product, co-reactants
+     and co-products, and is laid out the way exam sheets draw it:
+       - the main chain runs straight on; at the width limit it turns
+         down and continues in the opposite direction
+       - a co-reactant sits above the arrow and joins it; three or more
+         reactants stack in a column and meet in a bracket
+       - several products are split equally (see trySplit); without
+         splits (popts.split === false) a co-product sits below the
+         arrow and leaves it
+       - a side reaction forks off the shaft (shared stub, bus, own
+         arrowhead), or leaves downwards / upwards / backwards —
+         whichever is free and cheapest
+     Positions are grid cells (h, r) in half-column units: compounds of
+     the chain on even h, co-reactants/co-products in the odd arrow gaps.
+     Returns { pos: Map(id → {h, r, jdir}), items: [...], cost }; `cost`
+     rates how much of the plan is not tidy grid (see planCandidates). */
+  function planLayout(nodes, edges, cols, popts) {
+    const splits = !(popts && popts.split === false);
+    const defers = !(popts && popts.defer === false);
+    const lanes = !(popts && popts.lanes === false);
+    const pluses = !(popts && popts.plus === false);
+    const merges = !(popts && popts.merge === false);
+    const early = !!(popts && popts.early);
+    const downs = !!(popts && popts.down);
+    const diamonds = !!(popts && popts.diamond);
+    const gathers = !!(popts && popts.gather);
+    const { order, rxs, prodBy, consBy, down, up, best } = reactionsOf(nodes, edges);
 
     /* ── grid state ── */
     const cell = new Map();
@@ -725,7 +735,7 @@
       if (!passOk(g, mr)) return null;
       const { ins } = coOf(rx);
       // several educts: equal, stacked symmetric about the arrow
-      if (merges && ins.some(id => !pos.has(id))) {
+      if (merges && ins.some(id => !pos.has(id) || movable(id))) {
         const mg = tryMerge(rx, dx, fromProd);
         if (mg) return mg;
       }
@@ -745,7 +755,8 @@
       const { ins } = coOf(rx);
       // compounds already drawn, and branches coming back on a lane of
       // their own, join the arrow wherever they are
-      const todo = ins.filter(id => !pos.has(id) && !(lanes && reconverges(id)));
+      const moves = ins.filter(movable);
+      const todo = ins.filter(id => (!pos.has(id) && !(lanes && reconverges(id))) || moves.includes(id));
       if (!todo.length) return null;
       const educts = rx.srcs.filter(id => id === rx.main || todo.includes(id));
       const n = educts.length, eo = symOffs(n);
@@ -766,7 +777,8 @@
         // (laid backwards from the product, the caller prices a wider scheme)
         if (!fromProd && (!inSpan(th) || !inSpan(mh))) continue;
         const cells = order.map((id, i) => [id, mh, R + eo[i]]).concat(plist.map((id, j) => [id, th, R + po[j]]));
-        if (!cells.every(([id, h, r]) => pos.has(id) ? pos.get(id).h === h && pos.get(id).r === r : canPut(h, r))) continue;
+        const at = (id, h, r) => pos.get(id).h === h && pos.get(id).r === r;
+        if (!cells.every(([id, h, r]) => pos.has(id) && !moves.includes(id) ? at(id, h, r) : canPut(h, r) || (pos.has(id) && at(id, h, r)))) continue;
         const rs = cells.map(c => c[2]).concat([R]);
         const lo = Math.min(...rs), hi = Math.max(...rs);
         let ok = true;
@@ -781,12 +793,36 @@
             .concat(plist.filter(id => id !== rx.prod).map(id => ({ id, dir: 'out', slot: 'split', h: th, r: R + po[plist.indexOf(id)], via: [] }))),
           extra: ins.filter(id => !order.includes(id)).map(id => ({ id, dir: 'in', own: lanes && reconverges(id) && !pos.has(id) }))
             .concat(rx.prods.filter(id => !plist.includes(id)).map(id => ({ id, dir: 'out' }))),
+          moves: moves.filter(id => order.includes(id)),
           cost: 0, pen: tight ? 0 : 0.4
         };
         if (!best || it.pen < best.pen) best = it;
         if (!it.pen) break;
       }
       return best;
+    }
+
+    /* (variant) A compound placed only as the end of a plain branch and
+       wanted by nothing but one merge moves into that merge when it is
+       laid (see tryMerge); its own arrow is then routed freely. */
+    function movable(id) {
+      if (!gathers || !pos.has(id) || consBy.get(id).length !== 1) return false;
+      const bi = items.find(i => i.rx.prod === id);
+      return !!bi && (bi.type === 'h' || bi.type === 'v' || bi.type === 'fork') && !bi.co.length && !bi.extra.length &&
+        !items.some(i => i !== bi && (i.rx.main === id || i.co.some(c => c.id === id)));
+    }
+    function unplace(id) {
+      const p = pos.get(id), bi = items.find(i => i.rx.prod === id);
+      pos.delete(id);
+      cell.delete(K(p.h, p.r));
+      items.splice(items.indexOf(bi), 1);
+      laid.delete(bi.rx.idx);
+      // the marks of its arrow, unless another arrow of the same source shares them
+      if (items.some(o => o.rx.main === bi.rx.main)) return;
+      const own = bi.type === 'h' ? [[bi.gap, bi.row]]
+        : bi.type === 'fork' ? Array.from({ length: bi.k + 1 }, (_, i) => [bi.gap, bi.row + bi.sy * i])
+        : Array.from({ length: Math.max(0, bi.k - 1) }, (_, i) => [bi.mh, bi.mr + bi.dy * (i + 1)]);
+      for (const [h, r] of own) if (/^[AX]:/.test(cell.get(K(h, r)) || '')) cell.delete(K(h, r));
     }
 
     /* Equal split: one shaft carries the reagents, a bus at its far end
@@ -1081,6 +1117,7 @@
 
     function commit(it) {
       const rx = it.rx;
+      for (const id of it.moves || []) unplace(id);
       laid.add(rx.idx);
       if (it.fromProd) put(rx.main, it.mh, it.mr, it.dx);
       else put(rx.prod, it.th, it.tr, it.dx || 1);
@@ -1502,6 +1539,8 @@
     { split: true,  defer: true,  lanes: false },
     // two lanes that meet again drawn as a diamond
     { split: true,  defer: true,  diamond: true }, { split: true,  defer: false, diamond: true },
+    // a compound that only feeds a merge moves into it
+    { split: true,  defer: false, early: true, gather: true },
     // equations drawn the usual way (where an equation routes badly)
     { split: true,  defer: true, plus: false }, { split: false, defer: false, lanes: false, plus: false },
     // co-reactants above the arrow (where a merge routes badly)
@@ -2552,14 +2591,13 @@
       this._selEdges = selRx ? new Set(selRx.edges) : null;
       this._heads = [];           // lines drawn with an arrowhead: { idx, pts }
 
+      // One set of rules: the auto layout's plan, or in a free layout the
+      // same shapes read off the places (see _freePlan).
+      const plan = usePlan ? this._plan : this._freePlan();
       // The "+" of an equation is in the way of other arrows like a structure.
-      const free = usePlan ? null : this._freeReactions();
-      this._pluses = usePlan ? this._plusSpots(this._plan) : this._freePlusSpots(free);
+      this._pluses = this._plusSpots(plan).concat(this._freePlusSpots(plan.fallback || []));
       for (const p of this._pluses) this._obstacles.push({ id: '+', x: p.x - 8, y: p.y - 9, w: 16, h: 18 });
-      // Without a plan, reactions with several educts or products are
-      // still drawn whole (after the single arrows, so what they route
-      // freely steers around those); single arrows: the routing below.
-      const planned = usePlan ? this._drawPlan(layer) : new Set([].concat(...free.map(rx => rx.edges)));
+      const planned = this._drawPlan(layer, plan);
       const valid = (e, i) => !planned.has(i) && (e.from || []).length === 1 && this._nodeById(e.from[0]) && this._nodeById(e.to);
 
       // 1. Separate arrows from one source to several targets on the same
@@ -2619,7 +2657,6 @@
         if (f.length === 1) this._drawSingle(layer, i, f[0]);
         else this._drawFanIn(layer, i, f);
       });
-      if (free) this._drawFree(layer, free);
       this._flushLabels();
       // The selected reaction's handle for one more product: on its main
       // arrow, far enough back from the arrowhead to stay clear of it.
@@ -2645,14 +2682,150 @@
       if (!this._scoring) this._syncInlineEdit();
     }
 
-    /* Draw the reactions exactly as planned. Returns the edge indices
-       it drew; everything else falls back to free routing. */
-    _drawPlan(layer) {
+    /* ─── Free layout: the same arrows, read off the places ─────────
+       With "✥ Frei" only the places are the author's; the arrows follow
+       the same rules as in the auto layout. Each reaction's shape is
+       read off where its compounds stand (in cells, as the auto layout
+       lays them): in a row, 'h' (a co-reactant over the gap joins it, a
+       product off to the side forks off its stub); in a column, 'v' (a
+       compound beside the shaft joins it); educts in one column and
+       products in another, 'merge' / 'split' (in rows: 'vmerge' /
+       'vsplit'); an equation in a row, 'eqn', in two rows, 'veqn',
+       stacked, 'seqn'. Anything else is routed freely, as in the auto
+       layout; a reaction with several educts or products that fits no
+       shape is still drawn whole (_drawReaction / _drawEquation). An
+       auto layout switched to free, nothing moved, draws the same. */
+    _freePlan() {
+      const S = this.scheme, E = S.edges, NW = this.NW, NH = this.NH;
+      const { rxs, prodBy, consBy, up } = reactionsOf(S.nodes, E);
+      // A compound made by several reactions sits at the end of the longest
+      // way; shorter ones from the rest of the scheme come in as arrows of
+      // their own, routed freely — a feed (made only for this, e.g. a
+      // reagent prepared beforehand) is laid beside it.
+      const owner = id => prodBy.get(id).reduce((a, b) => up(b.main) > up(a.main) ? b : a);
+      const feed = (id, seen = new Set()) => !seen.has(id) && seen.add(id) && consBy.get(id).length === 1 &&
+        prodBy.get(id).every(p => p.prods.length === 1 && p.srcs.every(s => feed(s, seen)));
+      const cellOf = id => { const n = this._nodeById(id); return n && { id, l: n.x, r: n.x + NW, t: n.y, b: n.y + NH, cx: n.x + NW / 2, cy: n.y + NH / 2 }; };
+      const inRow = (a, b) => Math.abs(a.cy - b.cy) < NH * 0.3, inCol = (a, b) => Math.abs(a.cx - b.cx) < NW * 0.3;
+      const allRow = cs => cs.every(c => inRow(c, cs[0])), allCol = cs => cs.every(c => inCol(c, cs[0]));
+      const by = k => (a, b) => a[k] - b[k];
+      // x where things join in the gap after `from` (a cell edge), as _placePlan's jx
+      const jxAt = (from, to, dx) => from + dx * Math.min(JUNCTION_OFF, Math.abs(to - from) / 2);
+      const edgeOf = (cs, dx, near) => (dx > 0) === near ? Math.min(...cs.map(c => c.l)) : Math.max(...cs.map(c => c.r));
+      const items = [], fallback = [];
+      for (const rx of rxs) {
+        const M = cellOf(rx.main), P = cellOf(rx.prod);
+        if (!M || !P || rx.srcs.some(id => !cellOf(id)) || rx.prods.some(id => !cellOf(id))) continue;
+        const Es = rx.srcs.map(cellOf), Ps = rx.prods.map(cellOf);
+        const ins = Es.filter(c => c.id !== rx.main), outs = Ps.filter(c => c.id !== rx.prod);
+        const plus = rx.edges.some(i => E[i].plus) && Es.length + Ps.length > 2;
+        const base = { rx, co: [], extra: [] };
+        let it = null;
+        if (plus) {
+          const dx = Math.sign(P.cx - M.cx) || 1, al = c => c.cx * dx;
+          if (allRow(Es.concat(Ps)) && Math.max(...Es.map(al)) < Math.min(...Ps.map(al))) {
+            const order = [...Es].sort((a, b) => al(a) - al(b)), prods = [...Ps].sort((a, b) => al(a) - al(b));
+            const last = order[order.length - 1], first = prods[0];
+            it = { ...base, type: 'eqn', dx, order: order.map(c => c.id), prods: prods.map(c => c.id),
+                   jx: jxAt(dx > 0 ? last.r : last.l, dx > 0 ? first.l : first.r, dx) };
+          } else if (Es.length === 2 && Ps.length === 2 && allRow(Es) && allRow(Ps) && !inRow(Es[0], Ps[0])) {
+            const es = [...Es].sort(by('cx')), ps = [...Ps].sort(by('cx'));
+            if (inCol(es[0], ps[0]) && inCol(es[1], ps[1]) && !inCol(es[0], es[1])) {
+              it = { ...base, type: 'veqn', dy: Math.sign(ps[0].cy - es[0].cy), ax: (es[0].r + es[1].l) / 2,
+                     order: es.map(c => c.id), prods: ps.map(c => c.id) };
+            }
+          } else if (Es.length === 2 && Ps.length === 1 && allCol(Es.concat(Ps)) && Math.max(...Es.map(c => c.b)) < P.t) {
+            const order = [...Es].sort(by('cy'));
+            it = { ...base, type: 'seqn', dy: 1, order: order.map(c => c.id), prods: [rx.prod] };
+          }
+          // the author's "+" stays: an equation that fits no equation shape
+          // is drawn around its groups (_drawEquation)
+          if (!it) { fallback.push(Object.assign(rx, { first: rx.edges[0], plus })); continue; }
+        }
+        if (!it && (ins.length || outs.length)) {
+          const hsep = (a, b) => Math.abs(a.cx - b.cx) > NW * 0.6, vsep = (a, b) => Math.abs(a.cy - b.cy) > NH * 0.6;
+          if (allCol(Es) && allCol(Ps) && hsep(Es[0], Ps[0])) {
+            // educts in one column, products in another: equal merge / split
+            const dx = Math.sign(Ps[0].cx - Es[0].cx);
+            const from = edgeOf(Es, dx, false), to = edgeOf(Ps, dx, true);
+            if (ins.length) {
+              it = { ...base, type: 'merge', dx, order: [...Es].sort(by('cy')).map(c => c.id), prods: [...Ps].sort(by('cy')).map(c => c.id), jx: jxAt(from, to, dx) };
+            } else {
+              it = { ...base, type: 'split', dx, jx: jxAt(from, to, dx), co: outs.map(c => ({ id: c.id, dir: 'out', slot: 'split' })) };
+            }
+          } else if (allRow(Es) && allRow(Ps) && vsep(Es[0], Ps[0])) {
+            const dy = Math.sign(Ps[0].cy - Es[0].cy);
+            it = ins.length
+              ? { ...base, type: 'vmerge', dy, order: [...Es].sort(by('cx')).map(c => c.id), prods: [...Ps].sort(by('cx')).map(c => c.id) }
+              : { ...base, type: 'vsplit', dy, co: outs.map(c => ({ id: c.id, dir: 'out', slot: 'split' })) };
+          }
+        }
+        if (!it) {
+          // the arrow itself: along a row, down a column, or forking off to the side
+          const dx = Math.sign(P.cx - M.cx) || 1, dy = Math.sign(P.cy - M.cy) || 1;
+          const beside = dx > 0 ? P.l >= M.r + 8 : P.r <= M.l - 8, over = dy > 0 ? P.t >= M.b + 8 : P.b <= M.t - 8;
+          // (off its row, a single arrow bends right after the source, as a
+          // fork does, so its text keeps the long last run)
+          const offRow = Math.abs(P.cy - M.cy) > 1 && !ins.length && !outs.length;
+          if (beside && Math.abs(P.cy - M.cy) < NH && !offRow) it = { ...base, type: 'h', dx, jx: jxAt(dx > 0 ? M.r : M.l, dx > 0 ? P.l : P.r, dx) };
+          else if (over && Math.abs(P.cx - M.cx) < NW) it = { ...base, type: 'v', dy };
+          else if (beside && !ins.length && !outs.length) it = { ...base, type: 'fork', dx, sy: dy, jx: jxAt(dx > 0 ? M.r : M.l, dx > 0 ? P.l : P.r, dx) };
+          else it = { ...base, type: 'free' };
+          // the other educts / products: over the gap or beside the shaft,
+          // where the auto layout puts them; else they join freely
+          for (const c of ins.concat(outs)) {
+            const dir = rx.srcs.includes(c.id) ? 'in' : 'out';
+            const inGap = it.type === 'h' && (c.cx - M.cx) * dx > NW * 0.3 && (P.cx - c.cx) * dx > NW * 0.3 && (c.b <= Math.min(M.cy, P.cy) || c.t >= Math.max(M.cy, P.cy));
+            const byShaft = it.type === 'v' && !inCol(c, M) && (c.cy - M.b) * dy > 0 && (P.t - c.cy) * dy > 0;
+            if (inGap) it.co.push({ id: c.id, dir, slot: c.cy < M.cy ? 'up' : 'dn' });
+            else if (byShaft) it.co.push({ id: c.id, dir, slot: c.cx < M.cx ? 'l' : 'r' });
+            else it.extra.push({ id: c.id, dir });
+          }
+          // a reaction with several educts or products that fits no shape: drawn whole
+          if (it.type === 'free' && (ins.length || outs.length)) { fallback.push(Object.assign(rx, { first: rx.edges[0], plus })); continue; }
+        }
+        items.push(it);
+      }
+      // Several reactions into one compound: each keeps its shape as long as
+      // it comes in from a side of its own — the longest way first, a feed
+      // always; the others are routed freely.
+      const sideIn = it => it.type === 'free' ? null
+        : ['v', 'vsplit', 'vmerge', 'veqn', 'seqn'].includes(it.type) ? (it.dy > 0 ? 'T' : 'B') : (it.dx > 0 ? 'L' : 'R');
+      const single = it => it.rx.srcs.length === 1 && it.rx.prods.length === 1 && !it.co.length;
+      const drop = new Set();
+      for (const id of new Set(items.map(it => it.rx.prod))) {
+        if (prodBy.get(id).length < 2) continue;
+        const into = items.filter(it => it.rx.prods.includes(id));
+        into.sort((a, b) => single(a) - single(b) || (owner(id) === b.rx) - (owner(id) === a.rx) || up(b.rx.main) - up(a.rx.main));
+        const taken = new Set();
+        for (const it of into) {
+          const s = sideIn(it);
+          if (single(it) && !feed(it.rx.main) && (!s || taken.has(s))) drop.add(it);
+          else taken.add(s);
+        }
+      }
+      items.splice(0, items.length, ...items.filter(it => !drop.has(it)));
+      // A main arrow shares its stub with the forks off it; the forks meet it there.
+      for (const it of items) {
+        const fork = it.type === 'h' && items.find(f => f.type === 'fork' && f.rx.main === it.rx.main && f.dx === it.dx);
+        if (fork) fork.jx = it.jx;
+        it.hasJ = it.type === 'fork' || it.type === 'merge' || it.co.length > 0 || it.extra.length > 0 || !!fork;
+      }
+      return { items, fallback, free: true };
+    }
+
+    /* Draw the reactions exactly as planned (the auto layout's plan, or
+       the free layout's, see _freePlan). Returns the edge indices it drew;
+       everything else falls back to free routing. */
+    _drawPlan(layer, plan) {
       const E = this.scheme.edges;
       const drawn = new Set();
-      // Arrows routed freely go last, so they can steer around all the others.
-      const loose = it => it.type === 'free' || it.type === 'late';
-      const items = this._plan.items.filter(it => !loose(it)).concat(this._plan.items.filter(loose));
+      // What is routed freely goes last, so it can steer around all the
+      // rest: the shapes first, then shapes with compounds joining them
+      // freely, then free arrows — each in data order, so a free layout
+      // draws them just as the auto layout does.
+      const rank = it => it.type === 'free' || it.type === 'late' ? 2 : it.extra.length ? 1 : 0;
+      const items = plan.items.slice().sort((a, b) => rank(a) - rank(b) || a.rx.edges[0] - b.rx.edges[0]);
       for (const it of items) {
         const mainN = this._nodeById(it.rx.main), prodN = this._nodeById(it.rx.prod);
         if (!mainN || !prodN) continue;
@@ -2981,6 +3154,12 @@
         layer.appendChild(g);
         it.rx.edges.forEach(i => drawn.add(i));
       }
+      // free layout: reactions with several educts or products that fit no shape
+      for (const rx of plan.fallback || []) {
+        if (rx.plus) this._drawEquation(layer, rx);
+        else this._drawReaction(layer, rx);
+        rx.edges.forEach(i => drawn.add(i));
+      }
       return drawn;
     }
 
@@ -3142,28 +3321,6 @@
       return n;
     }
 
-    /* A vertical run blocked by a compound stacked in the same column
-       leaves sideways, drops in the gap next to the stack and enters the
-       target from above/below. */
-    _detours(s, t, side, pts, skip) {
-      if (isH(side) || !this._hits(pts, skip)) return pts;
-      const down = side === 'D';
-      const q = this._entry(t, side);
-      const stack = (this._obstacles || []).filter(o => !skip.includes(o.id) &&
-        o.x < s.r && o.x + o.w > s.l);
-      const right = Math.max(s.r, ...stack.map(o => o.x + o.w)) + 14;
-      const left  = Math.min(s.l, ...stack.map(o => o.x)) - 14;
-      const yEnd = down ? q.y - TAIL_MIN : q.y + TAIL_MIN;
-      const opts = [
-        [{ x: s.r, y: s.cy }, { x: right, y: s.cy }, { x: right, y: yEnd }, { x: q.x, y: yEnd }, q],
-        [{ x: s.l, y: s.cy }, { x: left, y: s.cy }, { x: left, y: yEnd }, { x: q.x, y: yEnd }, q]
-      ];
-      // Prefer the side facing the target.
-      if (t.cx < s.cx) opts.reverse();
-      for (const o of opts) if (!this._hits(o, skip)) return o;
-      return pts;
-    }
-
     /* Orthogonal route from p to q that avoids other structures.
        ps / qs are the travel directions at the ends ('R','L','U','D') or
        null when that end may be approached either way (a junction).
@@ -3292,65 +3449,18 @@
       const e = this.scheme.edges[idx];
       const s = this._box(this._nodeById(fromId));
       const t = this._box(this._nodeById(e.to));
-      const skip = [fromId, e.to];
       // an equilibrium is never bent, not even off the grid: one straight line
-      const pts = e.equilibrium ? this._straight(s, t)
-        : this._plan && this._isAutoLayout() ? this._bestRoute(s, t, skip, this._metrics(e)).pts
-        : this._freeLine(s, t, skip);
+      const pts = e.equilibrium ? this._straight(s, t) : this._bestRoute(s, t, [fromId, e.to], this._metrics(e)).pts;
       const g = this._edgeGroup(idx, fromId);
       this._addPath(g, this._pathD(pts), idx, true);
       this._placeLabel(this._segsOf(pts), e, g);
       layer.appendChild(g);
     }
 
-    /* Free route between two boxes: straight when they face each other,
-       else one step; around structures when that runs into one. */
-    _freeLine(s, t, skip) {
-      const side = this._side(s, t);
-      const p = this._exit(s, side);
-      const q = this._entry(t, side);
-      let pts;
-      if (isH(side)) {
-        if (Math.abs(p.y - q.y) < 1) pts = [p, { x: q.x, y: p.y }];
-        else {
-          const mx = (p.x + q.x) / 2;
-          pts = [p, { x: mx, y: p.y }, { x: mx, y: q.y }, q];
-        }
-      } else {
-        if (Math.abs(p.x - q.x) < 1) pts = [p, { x: p.x, y: q.y }];
-        else {
-          const my = (p.y + q.y) / 2;
-          pts = [p, { x: p.x, y: my }, { x: q.x, y: my }, q];
-        }
-      }
-      if (this._hits(pts, skip)) pts = this._route(p, side, q, side, skip);
-      return this._detours(s, t, side, pts, skip);
-    }
-
-    /* ─── Free layout: whole reactions ───────────────────────────
-       Without a plan ('manual', "✥ Frei") a reaction with several
-       educts or products is still drawn ONCE, from wherever its
-       compounds stand: one shaft with one text. */
-
-    /* The scheme's reactions with several educts or products (see
-       rxGroupKey), in data order; `plus`: drawn as an equation. */
-    _freeReactions() {
-      const E = this.scheme.edges, ids = new Set(this.scheme.nodes.map(n => n.id));
-      const by = new Map(), out = [];
-      E.forEach((e, i) => {
-        if (!ids.has(e.to)) return;
-        const srcs = [...new Set((e.from || []).filter(id => ids.has(id) && id !== e.to))];
-        if (!srcs.length) return;
-        const key = rxGroupKey(e, ids);
-        let rx = key != null ? by.get(key) : null;
-        if (!rx) { rx = { edges: [], srcs, prods: [] }; out.push(rx); if (key != null) by.set(key, rx); }
-        rx.edges.push(i);
-        if (!rx.prods.includes(e.to) && !srcs.includes(e.to)) rx.prods.push(e.to);
-      });
-      return out.filter(rx => rx.prods.length && rx.srcs.length + rx.prods.length > 2).map(rx => Object.assign(rx, {
-        first: rx.edges[0], plus: rx.edges.some(i => E[i].plus)
-      }));
-    }
+    /* ─── Free layout: whole reactions that fit no shape ─────────
+       A reaction with several educts or products whose compounds stand
+       where no shape of the auto layout fits (see _freePlan) is still
+       drawn ONCE: one shaft with one text. */
 
     /* Where the "+" signs of the free equations go: between neighbouring
        educts and between neighbouring products — side by side, or one
@@ -3375,13 +3485,6 @@
       return out;
     }
 
-    _drawFree(layer, rxs) {
-      for (const rx of rxs) {
-        if (rx.plus) this._drawEquation(layer, rx);
-        else this._drawReaction(layer, rx);
-      }
-    }
-
     /* One box around a group of compounds; its centre is the mean of
        theirs, so a row keeps its line. */
     _groupBox(ids) {
@@ -3400,7 +3503,7 @@
       const e = this.scheme.edges[rx.first];
       const S = this._groupBox(rx.srcs), T = this._groupBox(rx.prods);
       const skip = rx.srcs.concat(rx.prods);
-      const pts = e.equilibrium ? this._straight(S, T) : this._freeLine(S, T, skip);
+      const pts = e.equilibrium ? this._straight(S, T) : this._bestRoute(S, T, skip, this._metrics(e)).pts;
       const g = this._edgeGroup(rx.first, rx.srcs.join(','));
       this._addPath(g, this._pathD(pts), rx.first, true);
       for (const sp of this._pluses.filter(sp => sp.rx === rx)) this._plusAt(g, sp.x, sp.y);
@@ -3551,7 +3654,9 @@
        educts of an equation it is an educt of, the other products of one
        it is a product of (and theirs in turn: a group stays together). */
     _lockedWith(id) {
-      const rxs = this._freeReactions().filter(rx => rx.plus);
+      const E = this.scheme.edges;
+      const rxs = reactionsOf(this.scheme.nodes, E).rxs
+        .filter(rx => rx.edges.some(i => E[i].plus) && rx.srcs.length + rx.prods.length > 2);
       const seen = new Set([id]), st = [id];
       while (st.length) {
         const k = st.pop();
@@ -4951,10 +5056,20 @@
           // in a free layout the educts (products) of an equation move as one
           d.with = d.auto ? [] : this._lockedWith(d.id).map(id => this._nodeById(id)).filter(Boolean)
             .map(o => ({ n: o, x0: o.x, y0: o.y }));
+          // … and snaps into the row / column of a compound it shares an arrow with
+          const own = new Set(d.with.map(o => o.n.id).concat(d.id));
+          const ends = x => [x.to, ...(x.from || [])];
+          d.nb = d.auto ? [] : this.scheme.nodes.filter(o => !own.has(o.id) &&
+            this.scheme.edges.some(x => ends(x).includes(o.id) && ends(x).includes(d.id)));
         }
         const w = this._eventToWorld(e);
         n.x = Math.round(w.x - d.offsetX);
         n.y = Math.round(w.y - d.offsetY);
+        for (const k of ['x', 'y']) {
+          let to = null;
+          for (const o of d.nb || []) if (Math.abs(n[k] - o[k]) < SNAP && (to == null || Math.abs(n[k] - o[k]) < Math.abs(n[k] - to))) to = o[k];
+          if (to != null) n[k] = to;
+        }
         const g = this.container.querySelector(`[data-node="${cssEsc(d.id)}"]`);
         if (g) {
           g.setAttribute('transform', `translate(${n.x} ${n.y})`);
