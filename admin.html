@@ -2743,6 +2743,8 @@ function _serializeScheme(scheme) {
   // 'manual' means a human dragged nodes and the quiz viewer must not
   // re-flow the scheme to the reader's screen width.
   if (scheme.layout === 'manual') out.layout = 'manual';
+  // the auto layout chosen here (columns, planner variant); the quiz draws the same
+  else if (scheme.plan && scheme.plan.cols && scheme.plan.v) out.plan = { cols: scheme.plan.cols, v: scheme.plan.v, key: scheme.plan.key };
   out.nodes = (scheme.nodes || []).map(n => {
     const o = { id: n.id || '', label: n.label != null ? n.label : (n.id || ''), given: !!n.given };
     if (n.name)        o.name = n.name;

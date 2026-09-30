@@ -253,7 +253,15 @@
               "reagent_above": "12",
               "reagent_below": "-HCOOH"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "bmhhfe"
+          }
         },
         "hints": [
           "Abkürzungen: Me = Methyl, Ph = Phenyl",
@@ -619,7 +627,15 @@
               "reagent_above": "(mehrere Stufen)",
               "reagent_below": ""
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "qdbm29"
+          }
         }
       },
       {
@@ -715,7 +731,15 @@
               "reagent_above": "Ethanol",
               "reagent_below": ""
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1rpvozf"
+          }
         }
       },
       {
@@ -849,7 +873,15 @@
               "reagent_below": "- Diisopropylamin\n- (EtO)_2PO_2^- Li^+",
               "reagent_mol": "\n     RDKit          2D\n\n  8  6  0  0  0  0  0  0  0  0999 V2000\n    1.6000    0.0000    0.0000 Li  0  0  0  0  0 15  0  0  0  0  0  0\n   -1.2990    2.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5980    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    0.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -2.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -2.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  2  3  1  0\n  3  4  1  0\n  3  5  1  0\n  5  6  1  0\n  6  7  1  0\n  6  8  1  0\nM  CHG  2   1   1   5  -1\nM  END\n"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1j2428j"
+          }
         }
       },
       {
@@ -917,7 +949,15 @@
               "reagent_above": "B",
               "reagent_below": ""
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "g7uvc4"
+          }
         }
       },
       {
@@ -1019,7 +1059,15 @@
               "mol": "\n     RDKit          2D\n\n  5  5  0  0  1  0  0  0  0  0999 V2000\n   -2.0490   -2.0490    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500   -1.2990    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  1  1\n  4  2  1  0\nM  END\n"
             }
           ],
-          "edges": []
+          "edges": [],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1cvte8h"
+          }
         }
       },
       {
@@ -1142,7 +1190,15 @@
               "reagent_above": "MnO_2",
               "reagent_below": ""
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "6hsgdr"
+          }
         }
       },
       {
@@ -1250,7 +1306,15 @@
               "reagent_above": "Isomerisierung",
               "reagent_below": ""
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "zr2i31"
+          }
         }
       }
     ],
@@ -1280,7 +1344,15 @@
               "mol": "\n     RDKit          2D\n\n  9  9  0  0  1  0  0  0  0  0999 V2000\n    2.5980    3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  1\n  2  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  9  4  1  0\nM  END\n"
             }
           ],
-          "edges": []
+          "edges": [],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "n3rxpy"
+          }
         }
       },
       {
@@ -1431,7 +1503,17 @@
               "reagent_above": "1. Mg",
               "reagent_below": "2. X (in Ether)"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": false,
+              "early": true,
+              "gather": true
+            },
+            "key": "1nle80l"
+          }
         }
       }
     ],
@@ -1626,7 +1708,17 @@
               "reagent_above": "1. ClSO_3H",
               "reagent_below": "2. +Z, -HCl"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": false,
+              "early": true,
+              "gather": true
+            },
+            "key": "7otsnm"
+          }
         }
       },
       {
@@ -1763,7 +1855,15 @@
               "mol": "\n     RDKit          2D\n\n  9  9  0  0  0  0  0  0  0  0999 V2000\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5980   -1.5000    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  1  0\n  6  8  2  0\n  8  9  1  0\n  9  3  2  0\nM  END\n"
             }
           ],
-          "edges": []
+          "edges": [],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "3q9hle"
+          }
         }
       },
       {
@@ -1802,7 +1902,15 @@
               "reagent_above": "KOH",
               "reagent_below": "200 °C"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "ggm2t3"
+          }
         }
       },
       {
@@ -1873,7 +1981,15 @@
               "reagent_above": "+ KOH",
               "reagent_below": "Δ"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1wl7v6n"
+          }
         }
       },
       {
@@ -1982,7 +2098,15 @@
               "reagent_above": "KOH",
               "reagent_below": "in EtOH"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "fisoyo"
+          }
         }
       },
       {
@@ -2043,7 +2167,15 @@
               "reagent_above": "Br_2",
               "reagent_below": "in Methanol"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "mzkkoa"
+          }
         }
       },
       {
@@ -2073,7 +2205,15 @@
               "mol": "\n     RDKit          2D\n\n 11 11  0  0  1  0  0  0  0  0999 V2000\n    2.5980   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970   -0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    3.0000    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  1\n  4  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  2  0\n 11  6  1  0\nM  END\n"
             }
           ],
-          "edges": []
+          "edges": [],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1n7lld7"
+          }
         }
       },
       {
@@ -2136,7 +2276,15 @@
               "reagent_above": "Δ",
               "reagent_below": "- CO_2"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1d0312f"
+          }
         }
       },
       {
@@ -2178,7 +2326,15 @@
               "mol": "\n     RDKit          2D\n\n 13 13  0  0  1  0  0  0  0  0999 V2000\n    5.1960    3.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1960    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4950    0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970   -0.7500    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    3.0000    0.0000 Br  0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  2  4  1  0\n  4  5  1  1\n  4  6  1  0\n  6  7  1  6\n  6  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  2  0\n 13  8  1  0\nM  END\n"
             }
           ],
-          "edges": []
+          "edges": [],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "oym9tj"
+          }
         }
       },
       {
@@ -2243,7 +2399,15 @@
               "reagent_above": "P_2O_5",
               "reagent_below": ""
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "168decx"
+          }
         }
       }
     ],
@@ -2452,7 +2616,15 @@
               "to": "K",
               "reagent_above": "H_2/Pd/BaSO_4"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1dtlaof"
+          }
         },
         "hints": [
           "Alle Strukturen sind monocylisch.",
@@ -2677,7 +2849,16 @@
               "reagent_above": "Pt  Δ",
               "reagent_below": ""
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": true,
+              "lanes": false
+            },
+            "key": "9vywa2"
+          }
         },
         "body": "a) Zeichnen Sie Strukturformeln (Konstitutionsformeln) der Verbindungen A, B und C.\nD ist Ausgangmaterial für die zwei Schlüsselbausteine E und G des Papaverins.\nd) Zeichnen Sie die Konstitutionsformeln von E, F und H.",
         "hints": [
@@ -2801,7 +2982,15 @@
               "mol": "\n     RDKit          2D\n\n  6  5  0  0  0  0  0  0  0  0999 V2000\n    5.8050  -15.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8050  -16.5370    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4630  -17.2680    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.1220  -16.5370    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.1460  -17.2680    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.4880  -16.5370    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  1  0\n  2  5  1  0\n  5  6  1  0\nM  END\n"
             }
           ],
-          "edges": []
+          "edges": [],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1ql5j6q"
+          }
         }
       },
       {
@@ -2983,7 +3172,15 @@
               "reagent_above": "",
               "reagent_below": ""
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "11jxvvw"
+          }
         }
       },
       {
@@ -3125,7 +3322,15 @@
               "reagent_below": "",
               "reagent_mol": "\n     RDKit          2D\n\n  5  4  0  0  0  0  0  0  0  0999 V2000\n   21.5120   -0.5810    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   22.5120   -1.5120    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   23.4420   -0.5120    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   24.3720   -1.5580    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   25.3490   -0.5810    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\nM  END\n"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "14thseb"
+          }
         }
       }
     ],
@@ -3169,7 +3374,15 @@
               "reagent_above": "intramolekulare Veresterung",
               "reagent_below": "-H_2O"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "b3uhmi"
+          }
         },
         "body": "g) Zeichnen Sie die Konstitutionsformel von 4-Hydroxybutansäure.\nh) Durch intramolekulare Veresterung entsteht GBL (Gammahydroxybutyrolacton). Zeichnen Sie den intramolekularen Ester von 4-Hydroxybutansäure."
       }
@@ -3393,7 +3606,16 @@
               "to": "MER",
               "reagent_above": "(mehrere Stufen)"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": true,
+              "diamond": true
+            },
+            "key": "rdje39"
+          }
         },
         "hints": [
           "OTBDMS = O–Si(CH_3)_2–C(CH_3)_3"
@@ -3567,7 +3789,15 @@
               "to": "VE",
               "reagent_above": "(mehrere Stufen)"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": false,
+              "defer": true
+            },
+            "key": "fwvkpj"
+          }
         },
         "hints": [
           "OtBu = tert-Butoxy, (CH_3)_3C–O–; OTs = Tosylat, –O–SO_2–C_6H_4–CH_3"
@@ -3635,7 +3865,15 @@
               "mol": "\n     RDKit          2D\n\n 31 32  0  0  1  0  0  0  0  0999 V2000\n    2.6490   -4.5920    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.9740   -3.8630    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.2980   -4.5920    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.2980   -6.0710    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.6230   -3.8630    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.6230   -2.3180    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.2980   -1.5890    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.2980   -0.1100    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.9740   -2.3180    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.6490   -1.5890    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    7.9030   -1.5890    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.2270   -2.3180    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.2270   -3.8630    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.2270   -5.3420    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   10.5520   -4.5920    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   11.8760   -3.8630    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   13.2010   -4.5920    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   14.4590   -3.8630    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   14.4590   -2.3180    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   15.7840   -4.5920    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   17.1080   -3.8630    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   18.4330   -4.5920    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   19.7130   -3.8630    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   19.7130   -2.3180    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   21.0150   -4.5920    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   22.3400   -3.8630    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   23.6640   -4.5920    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   24.9450   -3.8630    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   26.2690   -4.5920    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   24.9450   -2.3180    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.9030   -4.5920    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  3  5  1  0\n  5  6  2  0\n  6  7  1  0\n  7  8  1  0\n  7  9  2  0\n  9 10  1  0\n  6 11  1  0\n 11 12  1  0\n 12 13  1  0\n 13 14  1  6\n 13 15  1  0\n 15 16  1  0\n 16 17  1  0\n 17 18  1  0\n 18 19  1  6\n 18 20  1  0\n 20 21  1  0\n 21 22  1  0\n 22 23  1  0\n 23 24  1  6\n 23 25  1  0\n 25 26  1  0\n 26 27  1  0\n 27 28  1  0\n 28 29  1  0\n 28 30  1  0\n 13 31  1  0\n  9  2  1  0\n 31  5  1  0\nM  END\n"
             }
           ],
-          "edges": []
+          "edges": [],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "iz7cw1"
+          }
         }
       },
       {
@@ -3838,7 +4076,15 @@
               "reagent_above": "1. H_2 / Pd",
               "reagent_below": "2. HCl (konz.)"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1nqbcq4"
+          }
         },
         "hints": [
           "Hinweis: M(C) und M(D) sind größer als 50 g/mol, C ist ein Nebenprodukt, das nicht weiter reagiert.",
@@ -4065,7 +4311,15 @@
               "reagent_above": "H_2 Pd/C , EtOH",
               "reagent_below": ""
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "vptf1w"
+          }
         },
         "hints": [
           "m-CPBA = meta Chlorperbenzoesäure",
@@ -4144,7 +4398,15 @@
               "reagent_above": "1. O_3",
               "reagent_below": "2. (CH_3)_2S"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1g7hdu6"
+          }
         },
         "body": "Strukturaufklärung: Farnesol wurde einer Ozonolyse unterworfen und mit Dimethylsulfid aufgearbeitet. Dabei erhielt man die drei Substanzen A, B und C im Verhältnis 2 : 1 : 1. Von den drei Substanzen wurden jeweils ein ^1H- und ein ^{13}C-NMR Spektrum in CD_3OD aufgenommen.\nZeichnen Sie die Strukturen der Ozonolyseprodukte A, B, C auf.",
         "hints": [
@@ -4223,7 +4485,15 @@
               "to": "R4",
               "reagent_above": "Hydroxylamin"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1sgedu7"
+          }
         },
         "body": "Zusätzlich wurde Farnesol zur Strukturaufklärung weiteren chemischen Untersuchungen unterworfen:\nReaktion 1: Farnesol reagierte mit 3 Äquivalenten Wasserstoff\nReaktion 2: Farnesol reagierte mit Ethansäureanhydrid\nReaktionen 3+4: Farnesol reagierte mit Chrom(VI)-oxid und das Produkt mit Hydroxylamin.\nZeichnen Sie für zwei der vier Reaktionen die Strukturformeln der Reaktionsprodukte und beschriften Sie sie entsprechend mit „Reaktion 1, 2, 3 oder 4“."
       },
@@ -4355,7 +4625,15 @@
               "to": "Fa",
               "reagent_above": "Me_2CuLi"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1cq93i6"
+          }
         },
         "hints": [
           "Von C ist ein Massenspektrum gegeben (Signale bei m/z = 248, 249, 250, 251, 252 mit relativen Intensitäten ≈ 100 : 15 : 65 : 10 : 11).",
@@ -4377,7 +4655,15 @@
               "mol": "\n     RDKit          2D\n\n 16 15  0  0  0  0  0  0  0  0999 V2000\n    6.8030   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8030   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -3.7700    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1800   -4.5080    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1800   -6.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4920   -8.2300    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4260   -8.8520    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8690   -6.7210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1150   -2.2620    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4260   -9.0160    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  1  0\n 10 14  1  0\n  6 15  1  0\n  2 16  1  0\nM  END\n"
             }
           ],
-          "edges": []
+          "edges": [],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "15uh5w6"
+          }
         }
       },
       {
@@ -4552,7 +4838,15 @@
               "curve": true,
               "curve_out": "H_2O"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1fj6kxe"
+          }
         },
         "hints": [
           "Die Reaktion A → F wird katalysiert durch eine Decarboxylase",
@@ -4682,7 +4976,15 @@
               "equilibrium": true,
               "plus": true
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1waxybz"
+          }
         },
         "body": "Die Umwandlung von A + W → B + X erfolgt in mehreren Schritten als katalytischer Cyclus, wobei auch diese Reaktionsfolge auftaucht, in der einer der beiden Ausgangsstoffe (Sie müssen entscheiden, welcher) umgesetzt wird:\nZeichnen Sie die fehlenden Strukturen K, I, K´ und L."
       },
@@ -4836,7 +5138,15 @@
               "to": "E",
               "plus": true
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1zy4qb"
+          }
         },
         "body": "Schreiben Sie für A-D und Malonyl-CoA aus den Glg. 1 und 2 wenn möglich Strukturformeln oder adäquate Abkürzungen für komplexe Strukturen.\nGlg. 1: Hydrogencarbonat + ATP → A + B\nGlg. 2: Biotin-Enzym + A → C + D + Acetyl-CoA → Malonyl-CoA + E",
         "hints": [
@@ -4930,7 +5240,15 @@
               "curve_in": "NADPH/H^+",
               "curve_out": "NADP^+"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "tiubo"
+          }
         },
         "body": "Zeichnen bzw. schreiben Sie in die vorgesehenen Kästchen der FS-Synthese die Strukturformeln der Zwischenprodukte und die Abkü./Summenformeln der Nebenprodukte. Schreiben Sie in die Kreise bei den Reaktionspfeilen die Abkürzungen für die notwendigen Enzyme",
         "hints": [
@@ -4963,7 +5281,15 @@
               "mol": "\n     RDKit          2D\n\n 18 17  0  0  0  0  0  0  0  0999 V2000\n  -10.9072   -0.0389    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -9.5803    0.6605    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -8.3110   -0.1389    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -6.9841    0.5608    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7149   -0.2388    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.3880    0.4608    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.1185   -0.3385    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.7916    0.3608    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5223   -0.4385    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8046    0.2608    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0738   -0.5385    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4007    0.1611    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.6699   -0.6385    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.9969    0.0611    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.2661   -0.7382    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.5930   -0.0389    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.6507    1.4601    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    9.8622   -0.8382    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 12 13  1  0\n 13 14  1  0\n 14 15  1  0\n 15 16  1  0\n 16 17  2  0\n 16 18  1  0\nM  END\n"
             }
           ],
-          "edges": []
+          "edges": [],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1dcbx3u"
+          }
         }
       },
       {
@@ -5023,7 +5349,15 @@
               "reagent_above": "?",
               "reagent_below": ""
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1bsi7wt"
+          }
         }
       },
       {
@@ -5147,7 +5481,15 @@
               "reagent_above": "1) CO_2",
               "reagent_below": "2) HCl"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "8i81nc"
+          }
         },
         "hints": [
           "300 mg der org. Verbindung A mit M < 150 gmol^–1 liefern bei der Verbrennung bei 800 K und 101200 Pa 281,90 mg Wasserdampf und 1,467 L Kohlenstoffdioxid.",
@@ -5189,7 +5531,15 @@
               "mol": "\n     RDKit          2D\n\n 15 15  0  1  1  0  0  0  0  0999 V2000\n   -2.2500    1.3000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.5000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.2010   -2.2500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.7990   -2.2500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500    1.3000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.2500    1.3000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.7500    1.3000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.2500    1.3005    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.9996    2.5998    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.0004    0.0017    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.2500   -1.3000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7500   -1.3000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  1\n  3  4  2  0\n  3  5  1  0\n  2  6  1  0\n  6  7  1  0\n  7  8  2  0\n  8  9  1  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 11 13  1  0\n  9 14  2  0\n 14 15  1  0\n 15  6  2  0\nM  STY  1   1 SUP\nM  SAL   1  3   3   4   5\nM  SMT   1 COOH\nM  END\n"
             }
           ],
-          "edges": []
+          "edges": [],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "17kof42"
+          }
         }
       }
     ],
@@ -5315,7 +5665,15 @@
               "reagent_above": "Ethanol",
               "reagent_below": "H_2SO_4"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "zra2y4"
+          }
         },
         "hints": [
           "^1H-NMR-Spektrum von B: Signale bei δ ≈ 8,1 ppm (2 H), 7,5 ppm (2 H) und 2,4 ppm (3 H)."
@@ -5400,7 +5758,15 @@
               "reagent_above": "",
               "reagent_below": ""
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "ssx2bp"
+          }
         },
         "body": "Zeichnen Sie die Konstitutionsformeln von Edukt E, Zwischenprodukt I und Reagenz Z."
       }
@@ -5473,7 +5839,15 @@
               ],
               "to": "P"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "xaba0f"
+          }
         },
         "body": "Zeichnen Sie die Konstitutionsformeln von 1 und 2. Zeichnen Sie in die Struktur von 2 Pfeile ein, die diejenigen Elektronenpaarwanderungen zeigen, die zum abegebildeten Produkt führen."
       },
@@ -5672,7 +6046,15 @@
               "reagent_above": "1. CH_3CH_2-MgCl\n2. H^+/H_2O",
               "reagent_below": "10"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "k3ydsi"
+          }
         },
         "hints": [
           "Von B, I, G sind die ^1H-NMR-Daten (gemessen in CDCl_3) gegeben.",
@@ -5830,7 +6212,15 @@
               "reagent_above": "- H_2O",
               "reagent_below": "Base"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1erod15"
+          }
         },
         "hints": [
           "Bedenken Sie, dass β-Carbonyl-Carbonsäuren im Basischen und Sauren leicht decarboxylieren.",
@@ -5899,7 +6289,15 @@
               "reagent_above": "23°C",
               "reagent_below": ""
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "4vj9uz"
+          }
         }
       },
       {
@@ -5957,7 +6355,15 @@
               "reagent_above": "RT",
               "reagent_below": ""
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1qtyh70"
+          }
         },
         "hints": [
           "X = Halogen, TsOH = Me-Ph-SO_3H, DEAD-Diethylazodicarboxylat (EtOCO)_2N_2"
@@ -6011,7 +6417,15 @@
               ],
               "to": "A"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "whiiu8"
+          }
         }
       },
       {
@@ -6107,7 +6521,15 @@
               "reagent_below": "AlCl_3",
               "reagent_mol": "\n     RDKit          2D\n\n  4  3  0  0  0  0  0  0  0  0999 V2000\n    1.2991   -0.7499    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -0.0001    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2991   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 Cl  0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  1  0\nM  END\n"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1el8gwt"
+          }
         },
         "body": "Zeichnen Sie die Konstitutionsformeln der Substanzen A, B und C."
       },
@@ -6262,7 +6684,17 @@
               "to": "Gc",
               "reagent_above": "B"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": false,
+              "early": true,
+              "gather": true
+            },
+            "key": "3tj84b"
+          }
         },
         "hints": [
           "Von Substanz C (C_6H_11BrO_2) ist ein ^1H-NMR-Sprektrum gegeben (Signale bei δ ≈ 11 ppm (1H), 3,5 ppm (2H) sowie 2,3–1,4 ppm (zusammen 8H)).",
@@ -6445,7 +6877,15 @@
               "to": "I",
               "reagent_above": "Base"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "14vhas0"
+          }
         },
         "hints": [
           "A zeigt im Massespektrum zwei Molekülpeaks im Verhältnis 75:25 = 132u:134u. Von A sind noch ein ^1H-NMR- und ein ^{13}C-NMR-Spektrum gegeben (^1H: δ ≈ 7,18 (1H), 6,14 (1H), 2,5 (1H), 1,1 (6H) ppm; ^{13}C: δ ≈ 167, 160, 122, 30, 22 ppm). Die beiden H-Kerne (δ = 6,14 ppm und 7,18 ppm) weisen eine Kopplungskonstante J = 16 Hz auf. A ist besonders instabil gegenüber Hydrolyse.",
@@ -6610,7 +7050,15 @@
               "reagent_above": "1. H_2 (Pd)",
               "reagent_below": "2. LiAlH_4"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1gu0jr1"
+          }
         },
         "hints": [
           "Abkürzungen: MsCl = Cl–SO_2–CH_3; ^-O^tBu = ^-O–C(CH_3)_3; Ph = Phenyl"
@@ -6696,7 +7144,15 @@
               "reagent_above": "b",
               "reagent_below": "2"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "12fx37o"
+          }
         }
       },
       {
@@ -6833,7 +7289,15 @@
               "reagent_above": "in DMSO",
               "reagent_below": "NH_2-NH_2\nKO^tBu"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1etle31"
+          }
         },
         "hints": [
           "Im Schritt E nach F findet eine [2+2]-Cycloaddition mit den π-Elektronen des Ketens und einer C=C-Doppelbindung statt. Dabei entsteht ein Derivat des Bicyclus „Bicyclo[3.1.1]heptan“.",
@@ -7106,7 +7570,15 @@
               "to": "ASP",
               "reagent_above": "(mehrere Stufen)"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "jcgqnb"
+          }
         },
         "body": "Zeichnen Sie die Strukturformeln von Butanal, A-K und Z (11 Stück) unter Berücksichtigung der korrekten Stereochemie.",
         "hints": [
@@ -7211,7 +7683,15 @@
               "reagent_above": "I_2 / KI",
               "reagent_below": "NaHCO_3"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "4wcncx"
+          }
         },
         "body": "Zeichnen Sie die Strukturformeln von A, B und C unter Berücksichtigung der korrekten Stereochemie.",
         "hints": [
@@ -7298,7 +7778,15 @@
               "to": "B",
               "reagent_mol": "\n     RDKit          2D\n\n  8  7  0  0  0  0  0  0  0  0999 V2000\n    3.2480    0.3723    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9483   -0.3765    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9471   -1.8766    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.6498    0.3744    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.6498   -0.3744    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.9483    0.3765    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.9471    1.8766    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.2480   -0.3723    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  7  2  0\n  6  8  1  0\nM  END\n"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "k16mbv"
+          }
         },
         "body": "Zeichnen Sie die Strukturformeln von A und B unter Berücksichtigung der korrekten Stereochemie."
       },
@@ -7376,7 +7864,15 @@
               "reagent_above": "",
               "reagent_mol": "\n     RDKit          2D\n\n  7  7  0  0  0  0  0  0  0  0999 V2000\n    2.4563    1.1455    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1566    0.3970    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9979   -1.0947    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.4697   -1.4049    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2183   -0.1050    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.7096    0.0534    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.2132    1.0087    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  2  0\n  5  7  1  0\n  7  2  1  0\nM  END\n"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "7lnb96"
+          }
         },
         "body": "Zeichnen Sie die Strukturformeln von A, B und C unter Berücksichtigung der korrekten Stereochemie."
       }
@@ -7565,7 +8061,15 @@
               "to": "ABA",
               "reagent_above": "z"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "n3gj8o"
+          }
         },
         "hints": [
           "C und D sind Stellungsisomere (C_12H_18O_3), es bilden sich jeweils Carbocyclen mit 6-C-Atomen im Ring.",
@@ -7696,7 +8200,15 @@
               "reagent_above": "1. O_3",
               "reagent_below": "2. oxidative Aufarbeitung"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1luftiq"
+          }
         },
         "body": "Die Ozonolyse mit oxidativer Aufarbeitung von Abscisinsäure liefert die 3 Produkte X, Y und Z.\n1,0000 g von X liefern bei der Verbrennung 1,7872 g CO_2 und 0,5123 g H_2O. Die Molare Masse beträgt 246,24 g/mol.\nEine basische Lösung von Z liefert mit einer Calciumnitrat-Lösung einen schwer löslichen Niederschlag.\n\n2.12 Geben Sie die Strukturformeln der Ozonolyseprodukte X, Y und Z an."
       },
@@ -7895,7 +8407,15 @@
               "to": "T",
               "reagent_above": "b"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1v8jer9"
+          }
         },
         "hints": [
           "Bei der Reaktion F→G erfolgt die Reaktion nur an der sterisch besser zugänglichen Hydroxy-Gruppe.",
@@ -8004,7 +8524,15 @@
               "mol": "\n     RDKit          2D\n\n 12 12  0  0  1  0  0  0  0  0999 V2000\n    0.9640    2.6492    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0001    1.5001    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2991    0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7501    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5982   -1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0001   -1.5001    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9640   -2.6492    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2991   -0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    0.7501    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5982    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9641    2.6491    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9641   -2.6491    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  2  0\n  4  6  1  0\n  6  7  1  0\n  6  8  1  0\n  8  9  1  0\n  9 10  2  0\n  9  2  1  0\n  2 11  1  1\n  6 12  1  6\nM  END\n"
             }
           ],
-          "edges": []
+          "edges": [],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1j1579o"
+          }
         },
         "body": "Geben Sie die Konfigurationsformeln aller möglichen Stereoisomere des Lactids an und bestimmen Sie die absoluten Konfigurationen aller stereogenen Zentren."
       },
@@ -8075,7 +8603,15 @@
               "reagent_above": "H_3O^+",
               "reagent_below": "3"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "n8mq2h"
+          }
         },
         "body": "Formulieren Sie einen Mechanismus (samt Pfeilen für angreifende Teilchen) für Initiation (1), Propagation (2, mit n(LA) = 1) und Termination (3) der Ringöffnungs-polymerisation von Lactid (LA). Achten Sie auch auf die Stereochemie.\nMarkieren Sie beim Produkt (nach Schritt 3) die repetitive Einheit in üblicher Weise."
       },
@@ -8328,7 +8864,16 @@
               "reagent_above": "1. 3-Phenyl-propan-1-ol",
               "reagent_below": "2. HCl, 7h\n-Y"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": true,
+              "lanes": false
+            },
+            "key": "3sabwk"
+          }
         },
         "hints": [
           "Substanz A trägt den Namen 3,4-Dihydroxybenzencarbaldehyd.",
@@ -8683,7 +9228,17 @@
               "to": "COL",
               "reagent_above": "(mehrere Stufen)"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 4,
+            "v": {
+              "split": true,
+              "defer": false,
+              "early": true,
+              "gather": true
+            },
+            "key": "595zar"
+          }
         },
         "hints": [
           "Substanz A: Methyl-(E)-3-aminobut-2-enoat",
@@ -8809,7 +9364,15 @@
               "to": "B",
               "reagent_above": "LiAlH_4"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "lamjum"
+          }
         }
       },
       {
@@ -8886,7 +9449,15 @@
               "to": "B",
               "reagent_above": "Zn, HI"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1kibda1"
+          }
         }
       },
       {
@@ -8979,7 +9550,15 @@
               "to": "I",
               "reagent_above": "-X"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1tl3oyh"
+          }
         }
       },
       {
@@ -9246,7 +9825,15 @@
               "reagent_above": "",
               "reagent_below": "NaBH_3CN"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "nl33vq"
+          }
         },
         "hints": [
           "Die Substanz A trägt den IUPAC-Namen 2-Methylcyclopentanon.",
@@ -9387,7 +9974,15 @@
               "reagent_above": "",
               "reagent_below": ""
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "pp6onx"
+          }
         },
         "hints": [
           "B zeigt im Bereich der Molekülpeakregion die Signale m/z = 233 und m/z = 235 im Intensitätsverhältnis 3:1."
@@ -9509,7 +10104,15 @@
               "reagent_above": "1) HNO_3 / H_2SO_4",
               "reagent_below": "2)NaOH"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1pylo1"
+          }
         },
         "hints": [
           "OAc = O-CO-CH_3"
@@ -9659,7 +10262,15 @@
               "reagent_below": "",
               "reagent_mol": "\n     RDKit          2D\n\n  4  3  0  0  0  0  0  0  0  0999 V2000\n   -1.2990   -0.7501    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7499    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0000    1.5001    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  2  0\nM  END\n"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1soozd1"
+          }
         },
         "hints": [
           "Substanz B trägt den Namen: 3,4,5-Trihydroxybenzencarbonsäuremethylester.",
@@ -9731,7 +10342,15 @@
               "to": "B",
               "reagent_below": "DCC*"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "13kmb8w"
+          }
         },
         "hints": [
           "* Dicyclohexylcarbodiimid (Cyclohexyl-N=C=N-cyclohexyl)"
@@ -9922,7 +10541,15 @@
               "reagent_above": "H_2SO_4, H_2O, Δ",
               "reagent_below": ""
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "vmycde"
+          }
         },
         "body": "In den 1970’er Jahren wurde eine klassische Synthese für Grandisol entwickelt. Sie ist im folgenden Reaktionsschema gezeigt:\n\n5.7. Schreiben Sie die Konstitutionsformeln der Verbindungen B bis I in die entsprechenden Kästchen.",
         "hints": [
@@ -10051,7 +10678,15 @@
               "reagent_above": "1. Ph_3P=CH_2",
               "reagent_below": "2. BH_3/THF"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "69juzw"
+          }
         },
         "body": "Eine weitere Synthese von Grandisol benützt eine andere Strategie zur Bildung des Cyclobutanringes. Die wichtigsten Schritte dieses Reaktionsweges zeigt das folgende Schema:\n\n5.12. Zeichnen Sie die Strukturformeln der Verbindungen K und L."
       },
@@ -10194,7 +10829,15 @@
               "reagent_above": "CH_3I",
               "reagent_below": "NaH"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "sjav0f"
+          }
         },
         "hints": [
           "A enthält 6 C-Atome.",
@@ -10259,7 +10902,15 @@
               "to": "A",
               "reagent_above": "Nazarovcyclisierung"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1mx1hhs"
+          }
         },
         "hints": [
           "die Cyclisierung verläuft thermisch und daher konrotatorisch."
@@ -10373,7 +11024,15 @@
               "reagent_above": "",
               "reagent_below": ""
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "rm07jq"
+          }
         },
         "body": "Zeichnen Sie die Strukturformeln von A und B unter Berücksichtigung der Stereochemie."
       },
@@ -10423,7 +11082,15 @@
               "to": "N2",
               "reagent_above": "Ph_3P=CH_2"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "63sadm"
+          }
         },
         "hints": [
           "AIBN: Azoisobutyronitril (NC((CH_3)_2)CN=NC((CH_3)_2)CN)",
@@ -10625,7 +11292,15 @@
               "reagent_above": "",
               "reagent_below": "Acrylamid"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "2pproy"
+          }
         },
         "hints": [
           "Verbindung A trägt den IUPAC-Namen (3S, 4R, 5R) 1,3,4,5,6-Pentahydroxyhexanon und stellt die wohl bekannteste Ketose dar.",
@@ -10667,7 +11342,15 @@
               "reagent_above": "Aceton (Überschuss)",
               "reagent_below": "p-Toluensulfonsäure (kat.)"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "nhk6oa"
+          }
         },
         "hints": [
           "Die Elementaranalyse des Monosaccharids X ergibt die Summenformel C_6H_12O_6.",
@@ -10733,7 +11416,15 @@
               "reagent_above": "",
               "reagent_below": ""
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "mmryh8"
+          }
         },
         "body": "F. Derivatisierung eines Zuckers\nDer vorliegende Zucker wird in 3 Schritten mit verschiedenen Reagenzien behandelt:\n1. mit CH_3C(OCH_3)_2 in saurer Lösung (1 eq.)\n2. mit Tosylchlorid / Pyridin (p-Toluensulfonsäurechlorid) (1 eq.)\n3. mit Essigsäureanhydrid / Pyridin (im Überschuss)\nZeichnen Sie unter Berücksichtigung der Stereochemie die Struktur von A."
       }
@@ -10865,7 +11556,15 @@
               "curve_in": "NADPH",
               "curve_out": "NADP^+"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "jftgzt"
+          }
         },
         "hints": [
           "Glucose trägt den IUPAC-Namen (2R, 3S, 4R, 5R) 2,3,4,5,6-Pentahydroxyhexanal und stellt das bekannteste Monosaccharid dar.",
@@ -10913,7 +11612,15 @@
               "mol": "\n     RDKit          2D\n\n 12 12  0  0  0  0  0  0  0  0999 V2000\n    9.3310   -2.2840    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    9.3310   -3.1320    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   10.3920   -3.9970    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   11.8760   -3.6220    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   12.9690   -4.6490    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   13.0020   -5.8730    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   11.5010   -4.3720    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   12.2020   -5.1880    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   10.0330   -4.7310    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.0210   -4.5190    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    8.9400   -3.7190    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.0260   -3.9480    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  5  7  1  0\n  7  8  1  0\n  7  9  1  0\n  9 10  1  0\n  9 11  1  0\n 11 12  1  0\n 11  3  1  0\nM  END\n"
             }
           ],
-          "edges": []
+          "edges": [],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1ccmtwa"
+          }
         }
       },
       {
@@ -11171,7 +11878,15 @@
               "reagent_above": "1.HCl 2. NaOH",
               "reagent_below": "3. Hg-Salz"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 5,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1312ngd"
+          }
         },
         "hints": [
           "LDA – ((CH_3)_2CH)_2NLi; KHMDS – ((CH_3)_3Si)_2NK; p-TsOH – p-Toluensulfonsäure",
@@ -11294,7 +12009,15 @@
               "reagent_above": "2-Chlorpropan",
               "reagent_below": "Aluminiumchlorid"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "fey3si"
+          }
         },
         "body": "Schreiben Sie die Strukturen von A bis D auf."
       }
@@ -11401,7 +12124,15 @@
               "reagent_below": "",
               "reagent_mol": "\n     RDKit          2D\n\n  5  4  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970   -0.7500    0.0000 Cl  0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  3  5  2  0\nM  END\n"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "o7ny9y"
+          }
         }
       },
       {
@@ -11457,7 +12188,15 @@
               "mol": "\n     RDKit          2D\n\n  7  6  0  2  0  0  0  0  0  0999 V2000\n    0.0000   -1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3000    0.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990    2.2500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990    2.2500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.3000    0.0000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  1  0\n  4  5  2  0\n  4  6  1  0\n  2  7  1  0\nM  STY  2   1 SUP   2 SUP\nM  SAL   1  3   4   5   6\nM  SMT   1 COOH\nM  SAL   2  1   1\nM  SMT   2 CH3\nM  END\n"
             }
           ],
-          "edges": []
+          "edges": [],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "1gtjav"
+          }
         }
       },
       {
@@ -11530,7 +12269,15 @@
               "reagent_above": "?",
               "reagent_below": ""
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "7w6gzy"
+          }
         }
       },
       {
@@ -11620,7 +12367,15 @@
               "reagent_below": "K_2CO_3",
               "reagent_mol": "\n     RDKit          2D\n\n  6  5  0  0  0  0  0  0  0  0999 V2000\n    0.0000    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    0.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970   -0.7500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  1  0\n  4  5  1  0\n  5  6  1  0\nM  END\n"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "kwuz7"
+          }
         }
       },
       {
@@ -11729,7 +12484,15 @@
               "reagent_above": "(CH_3)_2NH",
               "reagent_below": "-HCl\n7"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "9iywem"
+          }
         }
       },
       {
@@ -11762,7 +12525,15 @@
               "mol": "\n     RDKit          2D\n\n 13 14  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5980    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8970   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.8970   -2.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.5980   -3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2990   -2.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970   -0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8970   -2.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5980   -3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2990   -2.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\n  1  8  1  0\n  8  9  2  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  2  0\n  7  2  1  0\n 13  8  1  0\nM  CHG  1   5   1\nM  END\n"
             }
           ],
-          "edges": []
+          "edges": [],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "14yzri"
+          }
         }
       },
       {
@@ -11912,7 +12683,15 @@
               "to": "PC1",
               "reagent_above": "Br_2"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "8keuyf"
+          }
         },
         "body": "Schreiben Sie unter Berücksichtigung der Stereochemie die Strukturformeln aller möglichen Reaktionsprodukte von A, B und C auf. Schreiben Sie jeweils (bei den jeweiligen Produkten für A, B und C) deren stereochemische Beziehung auf."
       },
@@ -11982,7 +12761,15 @@
               "reagent_above": "1. SOCl_2",
               "reagent_below": "2. AlCl_3"
             }
-          ]
+          ],
+          "plan": {
+            "cols": 6,
+            "v": {
+              "split": true,
+              "defer": true
+            },
+            "key": "v8v0qx"
+          }
         },
         "body": "Betrachten wir nun zwei andere Reaktionen.\nSchreiben Sie die Strukturformeln der Reaktionsprodukte in die Kästchen und benennen Sie jeweils den Reaktionsmechanismus."
       },

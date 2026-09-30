@@ -59,26 +59,40 @@
  *     without anything on it is left off; a structure on the arrow
  *     (reagent_mol) follows the compounds' bond length and the arrow
  *     grows to carry it
+ *   - at the edge of the width a split puts one product straight on and
+ *     the rest beside it; two lanes out of one compound that meet again
+ *     in a merge can be laid as a diamond; a compound that only feeds a
+ *     merge can move into it (variants)
  *   - several plans are routed off-screen; the one with the fewest
  *     crossings, bends and long detours is kept
  *   - reagent text is placed last and avoids structures, other text and
  *     other arrows, always on its own arrow
+ *   - the editor stores its choice with the scheme (scheme.plan: columns,
+ *     planner variant, key of the scheme it belongs to); the quiz draws
+ *     that same layout as long as it reads (STORED_FIT), and plans for the
+ *     screen only below that (a phone). "Auto-Layout" plans anew.
  *
- * Free layout ("layout": "manual", "✥ Frei" in the editor): compounds stay
- * where they are, and every feature above still draws:
- *   - a reaction with several educts or products is ONE drawing
- *     (_drawReaction): educts behind it run into a bus, one standing
- *     beside the shaft joins it where it stands, one shaft carries the
- *     text, curve and structure on the arrow, a split bus sends a branch
- *     to each product. It heads the way most educts are behind the
- *     products (then: a straight shaft, then from the educts' centre to
- *     the products'); where no way fits, the pieces meet in a hub and are
- *     routed around structures and other arrows; an equilibrium keeps a
- *     straight shaft with both half-arrows on it, a Y its slanted joins
- *   - a "+" reaction is an equation: "+" between neighbouring educts and
- *     between neighbouring products, one arrow from group to group
- *   - single arrows: separate arrows from one compound share a stub,
- *     separate arrows into one compound meet in a junction
+ * Free layout ("layout": "manual", "✥ Frei" in the editor): only the
+ * places are the author's — the arrows follow the same rules as in the
+ * auto layout, drawn by the same code (_drawPlan). _freePlan reads each
+ * reaction's shape off where its compounds stand: in a row 'h' (a
+ * co-reactant over the gap joins it; off its row the arrow bends right
+ * after the source, as a fork), in a column 'v' (a compound beside the
+ * shaft joins it), off to the side 'fork', educts in one column and
+ * products in another 'merge' / 'split' (in rows 'vmerge' / 'vsplit'),
+ * equations 'eqn' / 'veqn' / 'seqn'; anything else is routed freely. A
+ * compound made by several reactions takes each arrow's shape as long as
+ * it comes in from a side of its own (the longest way first); the others
+ * are routed freely. Switched to free with nothing moved, it draws as the
+ * auto layout did. Beyond the auto layout's shapes:
+ *   - a reaction with several educts or products that fits no shape is
+ *     still ONE drawing (_drawReaction: bus, one shaft with the text,
+ *     split bus; a hub where the groups overlap)
+ *   - a "+" reaction stays an equation: where no equation shape fits,
+ *     "+" between neighbouring educts / products and one arrow from group
+ *     to group (_drawEquation); dragging an educt (product) moves the
+ *     others along, and a dragged compound snaps into the row / column of
+ *     a partner within SNAP px
  *
  * Callbacks:
  *   onChange(), onSelectNode(node|null), onSelectEdge(edge|null, idx),
@@ -145,6 +159,7 @@
   const EMOL_MAX_H     = 110;
   const EQ_GAP         = 2.5;   // px each half-arrow of an equilibrium sits off the route
   const MIN_FIT        = 0.72;  // don't pick a grid that needs shrinking below this
+  const STORED_FIT     = 0.4;   // the quiz shows the editor's layout down to this scale, re-plans below
   /* Cofactor curve (curve: true, curve_in / curve_out): an arc under the
      shaft that touches it in the middle, from the cofactor going in to
      the one coming out, arrowhead at its end. */
@@ -1557,6 +1572,7 @@
       const key = JSON.stringify([[...p.pos].map(([id, q]) => [id, q.h, q.r]), p.items.map(it => it.type)]);
       if (seen.has(key)) continue;
       seen.add(key);
+      p.v = v;   // the variant it came from (stored with the scheme, see autoLayout)
       out.push(p);
     }
     return out.sort((a, b) => a.cost - b.cost);
@@ -1744,18 +1760,27 @@
       const nodes = this.scheme.nodes;
       const E = this.scheme.edges;
       if (!nodes.length) return;
-      const cols = Math.max(2, opts.columns || this.layoutColumns || this._bestCols());
-      const plans = planCandidates(nodes, E, cols);
-      if (opts.dry) return this._placePlan(plans[0], true);
-      // Several distinct plans: route each one off-screen and keep the one
-      // whose arrows cross and bend least.
-      let best = plans[0];
-      if (plans.length > 1) {
-        let bestScore = Infinity;
-        for (const p of plans) {
-          this._placePlan(p);
-          const sc = this._routeScore(p) + p.cost;
-          if (sc < bestScore - 1e-6) { bestScore = sc; best = p; }
+      // The layout the editor chose is stored with the scheme ("plan"), so
+      // the quiz draws the same (see _storedPlan); `fresh` plans anew.
+      const kept = !opts.fresh && !opts.columns && this._storedPlan();
+      // (after an edit the stored plan no longer fits the scheme: planned
+      // anew, in the columns the author had)
+      const had = !opts.fresh && this.scheme.plan && this.scheme.plan.cols >= 2 ? this.scheme.plan.cols : 0;
+      const cols = kept ? kept.cols : Math.max(2, opts.columns || this.layoutColumns || had || this._bestCols());
+      let best;
+      if (kept) best = Object.assign(planLayout(nodes, E, cols, kept.v), { v: kept.v });
+      else {
+        const plans = planCandidates(nodes, E, cols);
+        // Several distinct plans: route each one off-screen and keep the
+        // one whose arrows cross and bend least.
+        best = plans[0];
+        if (plans.length > 1) {
+          let bestScore = Infinity;
+          for (const p of plans) {
+            this._placePlan(p);
+            const sc = this._routeScore(p) + p.cost;
+            if (sc < bestScore - 1e-6) { bestScore = sc; best = p; }
+          }
         }
       }
       this._placePlan(best);
@@ -1763,6 +1788,15 @@
       this._plan = best;
       this.scheme.layout = 'auto';
       this._layoutCols = cols;
+      if (!this.readOnly) this.scheme.plan = { cols, v: Object.assign({}, best.v), key: hashStr(best.sig) };
+    }
+
+    /* The stored layout ("plan": columns, planner variant and a key of the
+       scheme it was chosen for), if it still belongs to this scheme. */
+    _storedPlan() {
+      const p = this.scheme.plan;
+      if (!p || !(p.cols >= 2) || !p.v || typeof p.v !== 'object' || p.key !== hashStr(this._planSig())) return null;
+      return p;
     }
 
     /* Plan → pixels: arrow gaps as wide as their text needs, row gaps
@@ -4851,12 +4885,19 @@
       this.svg.style.height = Math.max(160, Math.round(bottom)) + 'px';
     }
 
+    /* The layout stored with the scheme (chosen in the editor), as long as
+       it still reads at this width; on a narrower screen (a phone) as many
+       columns as fit. The editor keeps a stored layout at any width. */
     reflow(force) {
       if (!this._isAutoLayout()) return false;
       if (!this.scheme.nodes.length) return false;
-      const want = this.layoutColumns || this._bestCols();
+      const kept = !this.layoutColumns && this._storedPlan();
+      if (kept && !this.readOnly) return false;
+      const S = this.scheme, avail = ((this.svg && this.svg.clientWidth) || this.container.clientWidth || 0) - 30;
+      const keep = kept && avail > 0 && this._placePlan(planLayout(S.nodes, S.edges, kept.cols, kept.v), true) * STORED_FIT <= avail;
+      const want = keep ? kept.cols : this.layoutColumns || this._bestCols();
       if (!force && want === this._layoutCols) return false;
-      this.autoLayout({ columns: want });
+      this.autoLayout(keep ? {} : { columns: want });
       this.refresh();
       this.fitToContent();
       return true;
@@ -4903,7 +4944,8 @@
         if (!b) return;
         const act = b.dataset.act;
         if (act === 'add'    && !this.readOnly) this.addNode({ x: -this.viewX / this.scale + 60, y: -this.viewY / this.scale + 60 });
-        if (act === 'layout' && !this.readOnly) { this.autoLayout(); this.refresh(); this.fitToContent(); this.onChange(); }
+        // plans anew for the editor's width; the quiz then draws this layout
+        if (act === 'layout' && !this.readOnly) { this.autoLayout({ fresh: true }); this.refresh(); this.fitToContent(); this.onChange(); }
         if (act === 'free' && !this.readOnly && this._isAutoLayout()) {
           this.scheme.layout = 'manual';
           this.refresh();

@@ -261,8 +261,11 @@ Array von Fragenobjekten. Jede Frage hat `type: "composed"` und ein Array `secti
   er verlässt ihn mit Spitze
 - `rxn` → gemeinsame Kennung der Pfeile einer Reaktion, damit sie eine Reaktion bleiben, auch wenn sie
   nichts gemeinsam tragen (setzt der Admin, sobald eine Reaktion mehrere Produkte hat)
-- `x`/`y` sind Layout-Hinweise. Fehlt `"layout": "manual"` am Schema, rechnet der Viewer das
-  Layout für die Bildschirmbreite des Lesers neu (so viele Spalten, wie ohne starkes Verkleinern passen; 2 am Handy).
+- `plan` → das im Admin gewählte Auto-Layout (`cols` Spalten, `v` Planer-Variante, `key` Kennung des Schemas,
+  für das es gilt); der Viewer zeichnet es genauso, solange es beim Leser nicht kleiner als 40 % wird. Passt der
+  `key` nicht mehr (Schema geändert), wird neu geplant. Wird vom Admin beim Speichern gesetzt
+- `x`/`y` sind Layout-Hinweise. Ohne gültigen `plan` rechnet der Viewer das Layout für die Bildschirmbreite
+  des Lesers (so viele Spalten, wie ohne starkes Verkleinern passen; 2 am Handy).
   Mit **✥ Frei** im Admin wird `"layout": "manual"` gesetzt und die Positionen bleiben unangetastet.
 
 **Schema-Layout.** Pfeile mit denselben Edukten, die dasselbe tragen (Text, Struktur, Bogen), bilden eine
@@ -298,18 +301,31 @@ Haupt-Edukt (längster Weg davor) und ein Haupt-Produkt (längster Weg danach):
   langen Umwegen (1000 px zählen wie eine Kreuzung) — so fällt es
   auf schmalen Bildschirmen dort, wo eine Verzweigung oder Gleichung keinen Platz hat, auf die
   Co-Produkt-Anordnung zurück. Eine Gleichung, die sich zeichnen lässt, wird deutlich bevorzugt.
-- **✥ Frei** (`"layout": "manual"`): die Verbindungen bleiben, wo man sie ablegt, und alles wird weiter
-  gezeichnet. Eine Reaktion mit mehreren Edukten oder Produkten ist auch hier **ein** Pfeil (A + B → C + D):
-  Edukte dahinter laufen parallel in eine Sammelschiene, ein Edukt neben dem Schaft mündet dort gerade ein,
-  ein Schaft trägt Text, Bogen und Struktur am Pfeil, eine zweite Sammelschiene verzweigt zu den Produkten.
-  Gezeichnet wird in die Richtung, in der die meisten Edukte hinter den Produkten stehen (danach: gerader
-  Schaft, dann vom Schwerpunkt der Edukte zu dem der Produkte). Passt keine Richtung, treffen sich die
-  Stücke in einem Knotenpunkt dazwischen und werden um Strukturen und Pfeile herum geführt. Gleichgewichte
-  bleiben gerade (beide Halbpfeile auf dem Schaft), Y-Pfeile schräg. Eine „+“-Reaktion bleibt eine
-  Gleichung: „+“ zwischen benachbarten Edukten und zwischen benachbarten Produkten (nebeneinander oder
-  übereinander), ein Pfeil von Gruppe zu Gruppe; zieht man ein Edukt, gehen die anderen Edukte der
-  Reaktion mit (ebenso bei den Produkten). Einzelne Pfeile aus einer Verbindung teilen sich ein Pfeilstück,
-  einzelne Pfeile in eine Verbindung treffen sich vor ihr.
+- Am Rand der Breite verzweigt ein Pfeil mit einem Produkt geradeaus und den übrigen daneben (statt alle
+  zur Seite). Zwei Spuren aus einer Verbindung, die in einer Reaktion wieder zusammenlaufen (A → B + B´,
+  B → C, B´ → C´, C + C´ → D), können als Raute gezeichnet werden: Spuren nebeneinander, gleichwertig
+  zusammengeführt; eine Verbindung, die nur einer Zusammenführung zuliefert, kann in sie wandern. Beides
+  sind Varianten, die nur gewinnen, wo sie besser zu zeichnen sind.
+- **Quiz = Admin:** das im Admin gewählte Auto-Layout wird mit dem Schema gespeichert (`plan`) und im Quiz
+  genauso gezeichnet. Nur wo es beim Leser kleiner als 40 % würde (Handy), plant das Quiz für die
+  Bildschirmbreite neu. „Auto-Layout“ im Admin plant für die aktuelle Breite neu; nach einer Änderung am
+  Schema wird in derselben Spaltenzahl neu geplant.
+- **✥ Frei** (`"layout": "manual"`): frei sind nur die Plätze der Verbindungen — die Pfeile folgen denselben
+  Regeln wie im Auto-Layout und werden vom selben Code gezeichnet. Die Form jeder Reaktion wird aus den
+  Plätzen abgelesen: in einer Zeile ein waagrechter Pfeil (Co-Edukt über der Lücke mündet ein; liegt das
+  Produkt etwas neben der Zeile, knickt der Pfeil gleich nach dem Edukt ab, wie eine Gabel), in einer
+  Spalte ein senkrechter (eine Verbindung neben dem Schaft mündet gerade ein), seitlich versetzt eine
+  Gabel, Edukte in einer Spalte und Produkte in einer anderen gleichwertig zusammengeführt bzw. verzweigt
+  (in Zeilen ebenso senkrecht), Gleichungen in einer Zeile, in zwei Zeilen oder übereinander; alles andere
+  wird frei um Strukturen und Pfeile herum geführt. Entsteht eine Verbindung über mehrere Reaktionen,
+  behält jeder Pfeil seine Form, solange er von einer eigenen Seite kommt (der längste Weg zuerst), die
+  übrigen werden frei geführt. Frei geschaltet, ohne etwas zu verschieben, sieht das Schema aus wie im
+  Auto-Layout. Darüber hinaus: eine Reaktion mit mehreren Edukten oder Produkten, deren Plätze zu keiner
+  Form passen, bleibt **ein** Pfeil (Sammelschiene, ein Schaft mit dem Text, Verzweigung; wo sich die
+  Gruppen überlagern, ein Knotenpunkt); eine „+“-Reaktion bleibt eine Gleichung — passt keine
+  Gleichungsform, stehen „+“ zwischen benachbarten Edukten bzw. Produkten und ein Pfeil führt von Gruppe
+  zu Gruppe. Zieht man ein Edukt, gehen die anderen Edukte der Reaktion mit (ebenso bei den Produkten); ein
+  gezogener Knoten rastet in Zeile bzw. Spalte einer verbundenen Verbindung ein (bis 12 px Abstand).
 
 **Abschnitt `type: "multiple_choice"`** — Strukturen oder Text-Antworten:
 
