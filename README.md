@@ -262,10 +262,11 @@ Array von Fragenobjekten. Jede Frage hat `type: "composed"` und ein Array `secti
 - `rxn` → gemeinsame Kennung der Pfeile einer Reaktion, damit sie eine Reaktion bleiben, auch wenn sie
   nichts gemeinsam tragen (setzt der Admin, sobald eine Reaktion mehrere Produkte hat)
 - `plan` → das im Admin gewählte Auto-Layout (`cols` Spalten, `v` Planer-Variante, `key` Kennung des Schemas,
-  für das es gilt); der Viewer zeichnet es genauso, solange es beim Leser nicht kleiner als 40 % wird. Passt der
-  `key` nicht mehr (Schema geändert), wird neu geplant. Wird vom Admin beim Speichern gesetzt
+  für das es gilt, `w` die Breite, für die geplant wurde); der Viewer zeichnet es genauso, solange es beim
+  Leser nicht kleiner als 75 % wird. Passt der `key` nicht mehr (Schema geändert) oder fehlt `w` (ein älterer
+  Plan, für die Fensterbreite des Admins gemacht), wird neu geplant. Wird vom Admin beim Speichern gesetzt
 - `x`/`y` sind Layout-Hinweise. Ohne gültigen `plan` rechnet der Viewer das Layout für die Bildschirmbreite
-  des Lesers (so viele Spalten, wie ohne starkes Verkleinern passen; 2 am Handy).
+  des Lesers (siehe *Schema-Layout*).
   Mit **✥ Frei** im Admin wird `"layout": "manual"` gesetzt und die Positionen bleiben unangetastet.
 
 **Schema-Layout.** Pfeile mit denselben Edukten, die dasselbe tragen (Text, Struktur, Bogen), bilden eine
@@ -301,15 +302,32 @@ Haupt-Edukt (längster Weg davor) und ein Haupt-Produkt (längster Weg danach):
   langen Umwegen (1000 px zählen wie eine Kreuzung) — so fällt es
   auf schmalen Bildschirmen dort, wo eine Verzweigung oder Gleichung keinen Platz hat, auf die
   Co-Produkt-Anordnung zurück. Eine Gleichung, die sich zeichnen lässt, wird deutlich bevorzugt.
+- **Die Breite zählt mit:** geplant wird in 2–6 Spalten, und jede Variante wird auch danach bewertet, wie
+  stark sie für die Breite verkleinert werden muss (unter 90 % kostet es, unter 75 % scheidet sie aus,
+  solange eine andere passt) und wie weit sie dann nach unten reicht. Ein großes Schema wird so nicht in
+  viele Spalten gepresst und winzig, und ein kleines lässt die Breite nicht leer.
+- **Enges Raster im Quiz:** jede Spalte ist nur so breit wie ihre breiteste Verbindung (samt Buchstabe,
+  Name und Angabe-Text), jede Zeile nur so hoch wie ihre höchste samt der Beschriftung ihrer Pfeile —
+  nicht jede Zelle so groß wie die größte Struktur des Schemas. Pfeile zwischen kleinen Strukturen bleiben
+  so kurz. Eine Verbindung, die nur waagrechte Pfeile in ihrer Zeile halten (nichts darüber, darunter oder
+  daneben in einer anderen Zeile), muss nicht in ihrer Spalte bleiben: am Zeilenende rückt sie an die erste
+  gehaltene heran, zwischen zwei gehaltenen teilt sie den Platz gleichmäßig — so ist ein Pfeil nicht lang,
+  nur weil in einer anderen Zeile derselbe Spalt viel Text trägt. Gerechnet wird mit aufgedeckten
+  Strukturen, Aufdecken verschiebt also nichts. Reagenz-Text, der
+  auch an den üblichen Trennstellen (`,` `;` `/` `1.`) umbrochen noch zu breit ist, bricht zwischen Wörtern
+  um, statt eine ganze Pfeilspalte lang zu machen; Text neben einem senkrechten Pfeil am Rand steht nach
+  innen, wo Platz ist.
 - Am Rand der Breite verzweigt ein Pfeil mit einem Produkt geradeaus und den übrigen daneben (statt alle
   zur Seite). Zwei Spuren aus einer Verbindung, die in einer Reaktion wieder zusammenlaufen (A → B + B´,
   B → C, B´ → C´, C + C´ → D), können als Raute gezeichnet werden: Spuren nebeneinander, gleichwertig
   zusammengeführt; eine Verbindung, die nur einer Zusammenführung zuliefert, kann in sie wandern. Beides
   sind Varianten, die nur gewinnen, wo sie besser zu zeichnen sind.
-- **Quiz = Admin:** das im Admin gewählte Auto-Layout wird mit dem Schema gespeichert (`plan`) und im Quiz
-  genauso gezeichnet. Nur wo es beim Leser kleiner als 40 % würde (Handy), plant das Quiz für die
-  Bildschirmbreite neu. „Auto-Layout“ im Admin plant für die aktuelle Breite neu; nach einer Änderung am
-  Schema wird in derselben Spaltenzahl neu geplant.
+- **Quiz = Admin:** der Admin plant für die Breite, die das Quiz am Desktop hat (925 px), gemessen mit den
+  Zellen des Quiz — nicht für seine eigene Fensterbreite. Das gewählte Auto-Layout wird mit dem Schema
+  gespeichert (`plan`) und im Quiz genauso gezeichnet. Nur wo es beim Leser kleiner als 75 % würde (Handy,
+  schmales Fenster), plant das Quiz für seine Breite neu. „Auto-Layout“ im Admin plant neu; nach einer
+  Änderung am Schema wird in derselben Spaltenzahl neu geplant, solange sie passt. Ein gespeichertes Layout,
+  das dafür zu breit ist, plant der Admin beim Öffnen neu (gespeichert wird es mit dem nächsten Speichern).
 - **✥ Frei** (`"layout": "manual"`): frei sind nur die Plätze der Verbindungen — die Pfeile folgen denselben
   Regeln wie im Auto-Layout und werden vom selben Code gezeichnet. Die Form jeder Reaktion wird aus den
   Plätzen abgelesen: in einer Zeile ein waagrechter Pfeil (Co-Edukt über der Lücke mündet ein; liegt das

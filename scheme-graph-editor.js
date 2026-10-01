@@ -63,14 +63,23 @@
  *     the rest beside it; two lanes out of one compound that meet again
  *     in a merge can be laid as a diamond; a compound that only feeds a
  *     merge can move into it (variants)
- *   - several plans are routed off-screen; the one with the fewest
- *     crossings, bends and long detours is kept
+ *   - several plans (every planner variant in 2–6 columns) are routed
+ *     off-screen; kept is the one with the fewest crossings, bends and
+ *     long detours that shrinks least to fit the quiz's width — never one
+ *     that shrinks below MIN_FIT where another one reads
+ *   - in the quiz the grid is tight: a column only as wide as its widest
+ *     compound, a row only as tall as its tallest (text included), so the
+ *     arrows between small structures stay short; a compound that only
+ *     arrows along its row hold closes up to its neighbours there
+ *     (_tightenRows); long reagent text wraps between words rather than
+ *     make a whole column of arrows long
  *   - reagent text is placed last and avoids structures, other text and
  *     other arrows, always on its own arrow
- *   - the editor stores its choice with the scheme (scheme.plan: columns,
- *     planner variant, key of the scheme it belongs to); the quiz draws
- *     that same layout as long as it reads (STORED_FIT), and plans for the
- *     screen only below that (a phone). "Auto-Layout" plans anew.
+ *   - the editor plans for the quiz on a desktop (QUIZ_W) and stores its
+ *     choice with the scheme (scheme.plan: columns, planner variant, key
+ *     of the scheme it belongs to); the quiz draws that same layout as
+ *     long as it reads at MIN_FIT, and plans for its screen below that (a
+ *     phone). "Auto-Layout" plans anew.
  *
  * Free layout ("layout": "manual", "✥ Frei" in the editor): only the
  * places are the author's — the arrows follow the same rules as in the
@@ -158,8 +167,21 @@
   const EMOL_MAX_W     = 180;
   const EMOL_MAX_H     = 110;
   const EQ_GAP         = 2.5;   // px each half-arrow of an equilibrium sits off the route
-  const MIN_FIT        = 0.72;  // don't pick a grid that needs shrinking below this
-  const STORED_FIT     = 0.4;   // the quiz shows the editor's layout down to this scale, re-plans below
+  /* Size. A layout is chosen for the quiz's canvas (the editor plans for
+     QUIZ_W, the width the quiz has on a desktop, so both show the same):
+     no plan that needs shrinking below MIN_FIT where another one reads;
+     shrinking below FIT_OK costs SHRINK_COST per 100 % (a crossing costs
+     10), and every 100 px the scheme takes down the screen HEIGHT_COST —
+     so a narrow plan that leaves the width empty loses to a wider one that
+     still reads at full size. */
+  const MIN_FIT        = 0.75;
+  const FIT_OK         = 0.9;
+  const SHRINK_COST    = 60;
+  const HEIGHT_COST    = 0.3;
+  const ZOOM_MAX       = 1.15;  // the quiz never zooms a scheme in beyond this (fitToContent)
+  const QUIZ_W         = 925;   // px: the quiz's canvas at full page width (.q-page minus padding and the zoom rail)
+  const PLAN_COLS      = [2, 3, 4, 5, 6];
+  const COL_SEP        = 16;    // px a compound beside an arrow gap keeps from its neighbours in the row (quiz)
   /* Cofactor curve (curve: true, curve_in / curve_out): an arc under the
      shaft that touches it in the middle, from the cofactor going in to
      the one coming out, arrowhead at its end. */
@@ -193,6 +215,8 @@
   const V_LABEL_H = 15;                  // label line under a structure
   const V_NAME_H  = 13;                  // name line under the label
   const TEXT_NODE_FONT = "600 15px 'Segoe UI', system-ui, sans-serif";   // .sg-text-node
+  const NODE_LABEL_FONT = "bold 13px 'Segoe UI', system-ui, sans-serif"; // .sg-node-label (quiz)
+  const NODE_NAME_FONT  = "11px 'Segoe UI', system-ui, sans-serif";      // .sg-node-name / -caption
   const textNodeWidth = n => Math.ceil(measureText(plainChemText(n.text), TEXT_NODE_FONT)) + 6;
 
   /* Canvas-based text measurement: synchronous and side-effect free. */
@@ -209,23 +233,40 @@
 
   /* Split a reagent string into stacked lines. Explicit newlines (real
      or the two-character "\n" some data carries) win; otherwise break on
-     the separators chemists already write and pack up to LABEL_MAX_W. */
+     the separators chemists already write and pack up to LABEL_MAX_W. A
+     piece that is still too wide breaks between its words: a long line
+     would make its arrow (and every arrow in that column) ARROW_MAX long. */
   function wrapLabel(text, font) {
     const raw = String(text == null ? '' : text);
     if (!raw.trim()) return [];
     const explicit = raw.split(/\\n|\n/).map(s => s.trim()).filter(Boolean);
-    const out = [];
-    for (const chunk of explicit) {
-      if (measureText(plainChemText(chunk), font) <= LABEL_MAX_W) { out.push(chunk); continue; }
-      const atoms = chunk.split(/(?<=[;,])\s+|(?<=\s\/)\s+|\s+(?=dann\s)|\s+(?=\d\.\s)|\s+(?=\d\)\s)/)
-                         .map(s => s.trim()).filter(Boolean);
+    const wide = s => measureText(plainChemText(s), font) > LABEL_MAX_W;
+    const pack = (atoms, out) => {
       let line = '';
       for (const a of atoms) {
         const cand = line ? line + ' ' + a : a;
-        if (line && measureText(plainChemText(cand), font) > LABEL_MAX_W) { out.push(line); line = a; }
+        if (line && wide(cand)) { out.push(line); line = a; }
         else line = cand;
       }
       if (line) out.push(line);
+    };
+    const out = [];
+    for (const chunk of explicit) {
+      if (!wide(chunk)) { out.push(chunk); continue; }
+      const atoms = chunk.split(/(?<=[;,])\s+|(?<=\s\/)\s+|\s+(?=dann\s)|\s+(?=\d\.\s)|\s+(?=\d\)\s)/)
+                         .map(s => s.trim()).filter(Boolean);
+      const lines = [];
+      pack(atoms, lines);
+      for (const l of lines) {
+        if (!wide(l)) { out.push(l); continue; }
+        // (a step number "1." / "a)" stays with the word after it)
+        const words = [];
+        for (const w of l.split(/\s+/)) {
+          if (words.length && /(^|\s)(\d+[.)]|[a-z]\))$/.test(words[words.length - 1])) words[words.length - 1] += ' ' + w;
+          else words.push(w);
+        }
+        pack(words, out);
+      }
     }
     return out;
   }
@@ -1709,14 +1750,26 @@
 
     /* Returns true when the cell size changed (the layout must follow). */
     _measureCell() {
-      if (!this.readOnly || !window.OCL || typeof window.MolRenderer === 'undefined') return false;
+      if (!this.readOnly) return false;
+      const cell = this._viewerCell();
+      if (!cell) return false;
+      const c = this._cell;
+      const changed = !c || c.nw !== cell.nw || c.nh !== cell.nh || Math.abs(c.f - cell.f) > 1e-3;
+      this._cell = cell;
+      return changed;
+    }
+
+    /* The quiz's cell for this scheme (the editor needs it to know how
+       wide a plan comes out in the quiz, see _quizSize). */
+    _viewerCell() {
+      if (!window.OCL || typeof window.MolRenderer === 'undefined') return null;
       let mw = 0, mh = 0;
       for (const n of this.scheme.nodes) {
         if (!(n.mol || n.smiles)) continue;
         const r = this._natural(n);
         if (r) { mw = Math.max(mw, r.w); mh = Math.max(mh, r.h); }
       }
-      if (!mw || !mh) return false;
+      if (!mw || !mh) return null;
       // a text-only node (a compound given by name) keeps its name on one
       // line: the cells grow to fit it instead of the name running into
       // the arrow
@@ -1727,10 +1780,7 @@
       const f = Math.min(1, CELL_MAX_W / mw, CELL_MAX_H / mh);
       const nw = Math.max(V_FO_W, Math.ceil(mw * f), tw) + (NODE_W - V_FO_W);
       const nh = Math.max(V_FO_H, Math.ceil(mh * f)) + (NODE_H - V_FO_H);
-      const c = this._cell;
-      const changed = !c || c.nw !== nw || c.nh !== nh || Math.abs(c.f - f) > 1e-3;
-      this._cell = { nw, nh, f };
-      return changed;
+      return { nw, nh, f };
     }
 
     /* ─── Layout ──────────────────────────────────────────────── */
@@ -1758,53 +1808,130 @@
     autoLayout(opts) {
       opts = opts || {};
       const nodes = this.scheme.nodes;
-      const E = this.scheme.edges;
       if (!nodes.length) return;
+      const avail = this._availW();
       // The layout the editor chose is stored with the scheme ("plan"), so
-      // the quiz draws the same (see _storedPlan); `fresh` plans anew.
-      const kept = !opts.fresh && !opts.columns && this._storedPlan();
-      // (after an edit the stored plan no longer fits the scheme: planned
-      // anew, in the columns the author had)
-      const had = !opts.fresh && this.scheme.plan && this.scheme.plan.cols >= 2 ? this.scheme.plan.cols : 0;
-      const cols = kept ? kept.cols : Math.max(2, opts.columns || this.layoutColumns || had || this._bestCols());
-      let best;
-      if (kept) best = Object.assign(planLayout(nodes, E, cols, kept.v), { v: kept.v });
-      else {
-        const plans = planCandidates(nodes, E, cols);
-        // Several distinct plans: route each one off-screen and keep the
-        // one whose arrows cross and bend least.
-        best = plans[0];
-        if (plans.length > 1) {
-          let bestScore = Infinity;
-          for (const p of plans) {
-            this._placePlan(p);
-            const sc = this._routeScore(p) + p.cost;
-            if (sc < bestScore - 1e-6) { bestScore = sc; best = p; }
-          }
-        }
+      // the quiz draws the same — as long as it reads there (see
+      // _storedPlan); `fresh` plans anew.
+      let best = !opts.fresh && !opts.columns && this._storedPlan(avail);
+      if (!best) {
+        const fixed = opts.columns || this.layoutColumns;
+        // (after an edit the stored plan no longer fits the scheme: planned
+        // anew, in the columns the author had while they read)
+        const sp = this.scheme.plan;
+        const had = !this.readOnly && !opts.fresh && sp && sp.w === QUIZ_W && sp.cols >= 2 ? sp.cols : 0;
+        best = fixed ? this._choosePlan([Math.max(2, fixed)], avail)
+             : (had && this._choosePlan([had], avail, true)) ||
+               // (width not known yet: the viewer plans again once it is, see reflow)
+               this._choosePlan(avail > 0 ? PLAN_COLS : [4], avail);
       }
       this._placePlan(best);
       best.sig = this._planSig();
       this._plan = best;
+      this._planAvail = avail;
       this.scheme.layout = 'auto';
-      this._layoutCols = cols;
-      if (!this.readOnly) this.scheme.plan = { cols, v: Object.assign({}, best.v), key: hashStr(best.sig) };
+      this._layoutCols = best.cols;
+      if (!this.readOnly) this.scheme.plan = { cols: best.cols, v: Object.assign({}, best.v), key: hashStr(best.sig), w: QUIZ_W };
     }
 
-    /* The stored layout ("plan": columns, planner variant and a key of the
-       scheme it was chosen for), if it still belongs to this scheme. */
-    _storedPlan() {
+    /* The stored layout ("plan": columns, planner variant, a key of the
+       scheme it was chosen for and the width it was planned for), planned,
+       if it still belongs to this scheme and reads at MIN_FIT in `avail`
+       px. A plan made for another width (before `w`: for the editor's own
+       screen) is planned anew. */
+    _storedPlan(avail) {
       const p = this.scheme.plan;
       if (!p || !(p.cols >= 2) || !p.v || typeof p.v !== 'object' || p.key !== hashStr(this._planSig())) return null;
-      return p;
+      if (p.w !== QUIZ_W) return null;
+      const plan = Object.assign(planLayout(this.scheme.nodes, this.scheme.edges, p.cols, p.v), { v: p.v, cols: p.cols });
+      if (avail > 0 && this._quizSize(plan).w * MIN_FIT > avail) return null;
+      return plan;
+    }
+
+    /* The best plan over the given column counts. Every distinct planner
+       variant is routed off-screen and rated by its crossings, bends and
+       detours (_routeScore), how untidy its grid is (`cost`), how far it
+       has to shrink to fit `avail` px and how far down the screen it then
+       reaches; a plan that needs shrinking below MIN_FIT is out where any
+       other one reads. `strict`: null when none reads. */
+    _choosePlan(colsList, avail, strict) {
+      const S = this.scheme, all = [], seen = new Set();
+      // (widest first: a small scheme comes out the same in several column
+      // counts, and an edit later goes on in the columns stored)
+      for (const c of colsList.slice().sort((a, b) => b - a)) {
+        for (const p of planCandidates(S.nodes, S.edges, c)) {
+          const key = JSON.stringify([[...p.pos].map(([id, q]) => [id, q.h, q.r]), p.items.map(it => it.type)]);
+          if (seen.has(key)) continue;
+          seen.add(key);
+          p.cols = c;
+          p.lb = p.cost;
+          if (avail > 0) {
+            const sz = this._quizSize(p), fit = avail / sz.w;
+            p.w = sz.w;
+            p.lb += SHRINK_COST * Math.max(0, FIT_OK - fit) + HEIGHT_COST * sz.h * Math.min(ZOOM_MAX, fit) / 100;
+          }
+          all.push(p);
+        }
+      }
+      const reads = all.filter(p => !(avail > 0) || p.w * MIN_FIT <= avail);
+      if (strict && !reads.length) return null;
+      const pool = (reads.length ? reads : all).sort((a, b) => a.lb - b.lb);
+      let best = pool[0], bestScore = Infinity;
+      if (pool.length === 1) return best;
+      for (const p of pool) {
+        // a route score is never negative: nothing further down can win
+        if (p.lb >= bestScore) break;
+        this._placePlan(p);
+        const sc = this._routeScore(p) + p.lb;
+        if (sc < bestScore - 1e-6) { bestScore = sc; best = p; }
+      }
+      return best;
+    }
+
+    /* The width a layout is planned for: the quiz's canvas; the editor
+       plans for the quiz on a desktop (QUIZ_W), not for its own canvas. */
+    _availW() {
+      const w = this.readOnly ? ((this.svg && this.svg.clientWidth) || this.container.clientWidth || 0) : QUIZ_W;
+      return w - 30;
+    }
+
+    /* How large a plan comes out in the quiz ({ w, h }, unzoomed). The
+       editor measures it with the quiz's cells and compounds as they are
+       drawn there. */
+    _quizSize(plan) {
+      if (this.readOnly) return this._placePlan(plan, true);
+      const keep = { cell: this._cell, scoring: this._scoring };
+      const cell = this._viewerCell();
+      this.readOnly = true;
+      this._cell = cell;
+      this._scoring = true;
+      try { return this._placePlan(plan, true); }
+      finally {
+        this.readOnly = false;
+        this._cell = keep.cell;
+        this._scoring = keep.scoring;
+      }
     }
 
     /* Plan → pixels: arrow gaps as wide as their text needs, row gaps
-       where vertical arrows carry text. With `dry` only the width. */
+       where vertical arrows carry text. With `dry` only its size, { w, h }.
+       The quiz's grid is tight: each column only as wide as the widest
+       compound in it (with its letter, name and caption), each row only as
+       tall as its tallest, the text on its arrows included — not every
+       cell as large as the largest structure of the scheme, which made the
+       arrows between small structures long and the whole scheme wide. */
     _placePlan(plan, dry) {
       const nodes = this.scheme.nodes;
       const E = this.scheme.edges;
       const { pos, items } = plan;
+      const tight = this.readOnly && !!this._cell;
+      const NW = this.NW;
+      const byId = new Map(nodes.map(n => [n.id, n]));
+      const ext = new Map();
+      for (const id of pos.keys()) {
+        const n = byId.get(id);
+        if (n) ext.set(id, tight ? this._ext(n) : { half: NW / 2, U: 0, D: 0 });
+      }
 
       const forkKeys = new Set(items.filter(it => it.type === 'fork').map(it => it.rx.main + '|' + it.gap));
       const joinsIn = it => it.co.some(c => c.dir === 'in') || it.extra.some(x => x.dir === 'in');
@@ -1813,7 +1940,7 @@
       let maxHx = 0;
       for (const p of pos.values()) maxHx = Math.max(maxHx, p.h);
       const horiz = it => it.type === 'h' || it.type === 'fork' || it.type === 'stack' || it.type === 'split' || it.type === 'eqn' || it.type === 'merge';
-      const gapW = new Map();
+      const gapW = new Map(), needW = new Map();   // per gap column; per arrow
       const atLeast = (h, w) => gapW.set(h, Math.max(gapW.get(h) || 0, w));
       // (the editor's boxes carry a handle on their right edge)
       const plusW = this.readOnly ? PLUS_W : PLUS_W + 16;
@@ -1840,22 +1967,94 @@
           ? JUNCTION_OFF + 6 + m.shaft + (it.prods.length > 1 ? BRANCH_W : 0) + (isY(e0) ? Y_RUN / 2 : 0)
           : m.shaft + (hasJ(it) ? JUNCTION_OFF + 6 : 0) + yRun;
         gapW.set(it.gap, Math.max(gapW.get(it.gap) || 0, w));
+        needW.set(it, w);
       }
-      const colX = [];
-      let x = 0;
-      for (let h = 0; h <= maxHx + 1; h++) {
-        colX[h] = x;
-        if (h % 2 === 0) x += this.NW;
-        else {
-          if (!gapW.has(h)) gapW.set(h, GAP_EMPTY);
-          x += gapW.get(h);
+      for (let h = 1; h <= maxHx + 2; h += 2) if (!gapW.has(h)) gapW.set(h, GAP_EMPTY);
+      // Structure columns: the editor's boxes, or the widest compound.
+      const cw = new Map();
+      for (const [id, p] of pos) {
+        if (p.h % 2 === 0 && ext.has(id)) cw.set(p.h, Math.max(cw.get(p.h) || 0, 2 * ext.get(id).half));
+      }
+      const pad = new Map(), wid = new Map();   // px before a column, px a column is widened by (see below)
+      const W = h => (h % 2 ? gapW.get(h) : tight ? cw.get(h) || 0 : NW) + (wid.get(h) || 0);
+      let colX = [];
+      const lay = () => {
+        colX = [];
+        let x = 0;
+        for (let h = 0; h <= maxHx + 2; h++) { x += pad.get(h) || 0; colX[h] = x; x += W(h); }
+      };
+      const jOff = g => Math.min(JUNCTION_OFF, W(g) / 2);
+      // A junction keeps JUNCTION_OFF from the column the arrow leaves;
+      // padding after that column only lengthens the shaft.
+      const jx = (g, dir) => dir < 0 ? colX[g + 1] - jOff(g) : colX[g] - (pad.get(g) || 0) + jOff(g);
+      const xOf = p => p.h % 2 ? jx(p.h, p.jdir) - NW / 2 : colX[p.h] + (W(p.h) - NW) / 2;
+      // the middle of a gap between its two columns (a vertical equation's arrow)
+      const midGap = g => (colX[g] - (pad.get(g) || 0) + colX[g + 1]) / 2;
+      lay();
+      let rowList = new Map(), centreOf = null;
+      if (tight) {
+        // A compound in an arrow gap (a co-reactant over or under its arrow)
+        // hangs from the junction and may be wider than the columns beside
+        // it; so may a vertical run of an arrow through a row come close to
+        // a compound. Where anything comes closer than COL_SEP to its
+        // neighbour in the row, the columns after it move apart.
+        const obs = [];
+        for (const [id, p] of pos) if (ext.has(id)) obs.push({ id, h: p.h, r: p.r, dir: p.jdir || 1, half: ext.get(id).half });
+        const run = (h, r0, r1, dir) => {
+          for (let r = Math.floor(Math.min(r0, r1)) + 1; r < Math.max(r0, r1); r++) obs.push({ h, r, dir, half: 2, sep: COL_SEP });
+        };
+        for (const it of items) {
+          if (it.type === 'v' || it.type === 'vsplit' || it.type === 'seqn') run(it.mh, it.mr, it.tr, 1);
+          else if (it.type === 'vmerge') run(it.pc, it.mr, it.tr, 1);
+          else if (it.type === 'veqn') run(it.ac, it.mr, it.tr, 0);
+          else if (it.type === 'fork') run(it.gap, it.mr, it.tr, it.dx || 1);
+        }
+        const centre = o => o.h % 2 === 0 ? colX[o.h] + W(o.h) / 2 : o.dir === 0 ? midGap(o.h) : jx(o.h, o.dir);
+        const rows = new Map();
+        for (const o of obs) {
+          if (!rows.has(o.r)) rows.set(o.r, []);
+          rows.get(o.r).push(o);
+        }
+        for (const l of rows.values()) l.sort((a, b) => a.h - b.h);
+        rowList = rows;
+        centreOf = centre;
+        for (let pass = 0; pass < 24; pass++) {
+          const need = new Map();
+          for (const l of rows.values()) {
+            for (let i = 1; i < l.length; i++) {
+              const a = l[i - 1], b = l[i];
+              // (neighbouring structure columns are apart by construction)
+              if (a.h === b.h || (a.h % 2 === 0 && b.h % 2 === 0)) continue;
+              const d = a.half + b.half + COL_SEP - (centre(b) - centre(a));
+              if (d <= 0.5) continue;
+              // what hangs from the column before it moves with that column
+              const k = b.h % 2 && b.dir >= 0 ? 'w' + (b.h - 1) : 'p' + b.h;
+              need.set(k, Math.max(need.get(k) || 0, d));
+            }
+          }
+          if (!need.size) break;
+          for (const [k, d] of need) {
+            const mp = k[0] === 'w' ? wid : pad, h = +k.slice(1);
+            mp.set(h, (mp.get(h) || 0) + d);
+          }
+          lay();
         }
       }
-      const jOff = g => Math.min(JUNCTION_OFF, (g % 2 ? gapW.get(g) : this.NW) / 2);
-      const jx = (g, dir) => {
-        const w = g % 2 ? gapW.get(g) : this.NW;
-        return dir < 0 ? colX[g] + w - jOff(g) : colX[g] + jOff(g);
-      };
+      // (quiz) how far a compound moves off its column along its row
+      const shift = tight ? this._tightenRows(plan, rowList, centreOf, needW, forkKeys, W, midGap) : new Map();
+      const placeX = (id, p) => xOf(p) + (shift.get(id) || 0);
+      let dryW = 0;
+      if (dry) {
+        let l = Infinity, r = -Infinity;
+        for (const [id, p] of pos) {
+          const e = ext.get(id);
+          if (!e) continue;
+          const c = placeX(id, p) + NW / 2;
+          l = Math.min(l, c - e.half);
+          r = Math.max(r, c + e.half);
+        }
+        dryW = r - l;
+      }
 
       const nRows = plan.rows;
       const rowGap = new Array(Math.max(0, nRows)).fill(STACK_GAP + 8);
@@ -1885,31 +2084,56 @@
         const gi = it.dy > 0 ? it.tr - 1 : it.tr;
         if (gi >= 0 && gi < rowGap.length) rowGap[gi] = Math.max(rowGap[gi], need);
       }
-      for (const it of items) {
-        if (!horiz(it)) continue;
-        const m = this._metrics(E[it.rx.edges[0]]);
-        if (!m.mol) continue;
-        // The structure sits above the text and reaches into the row gap above
-        // (or below the lower text, reaching into the gap below).
-        const gi = m.molBelow ? Math.floor(it.row) : Math.ceil(it.row) - 1;
-        const need = (m.molBelow ? m.below.length * LABEL_LINE_H + (m.curve ? m.curve.H : 0) : m.above.length * LABEL_LINE_H) +
-                     m.molH + EMOL_GAP + LABEL_GAP - this.NH / 2 + 20;
-        if (gi >= 0 && gi < rowGap.length) rowGap[gi] = Math.max(rowGap[gi], STACK_GAP + 8 + need);
-      }
       const rowY = [];
-      let y = 0;
-      for (let r = 0; r < nRows; r++) { rowY[r] = y; y += this.NH + rowGap[r]; }
-
-      const xOf = p => p.h % 2 ? jx(p.h, p.jdir) - this.NW / 2 : colX[p.h];
-      if (dry) {
-        const xs = [...pos.values()].map(xOf);
-        return Math.max(...xs) + this.NW - Math.min(...xs);
+      if (tight) {
+        // Each row as tall as what is in it: the structures with the text
+        // under them, and the text (structure, cofactor curve) on the
+        // arrows along it. Between rows the air the old cells had.
+        const up = new Array(nRows).fill(0), dn = new Array(nRows).fill(0);
+        for (const [id, p] of pos) {
+          const e = ext.get(id);
+          if (!e || !(p.r >= 0 && p.r < nRows)) continue;
+          up[p.r] = Math.max(up[p.r], e.U);
+          dn[p.r] = Math.max(dn[p.r], e.D);
+        }
+        for (const it of items) {
+          // (a merge into several products runs between their rows)
+          if (!horiz(it) || (it.type === 'merge' && it.prods.length > 1)) continue;
+          const m = this._metrics(E[it.rx.edges[0]]);
+          const at = m.any && pos.get(it.type === 'merge' || it.type === 'fork' ? it.rx.prod : it.rx.main);
+          if (!at || !(at.r >= 0 && at.r < nRows)) continue;
+          const x = this._labelExtents(m);
+          if (m.above.length || (m.mol && !m.molBelow)) up[at.r] = Math.max(up[at.r], LABEL_GAP + x.hAbove + 2);
+          if (m.below.length || m.molBelow || m.curve) dn[at.r] = Math.max(dn[at.r], LABEL_GAP + x.hBelow + 2);
+        }
+        let cy = 0;
+        for (let r = 0; r < nRows; r++) {
+          cy += r ? dn[r - 1] + rowGap[r - 1] + 10 + up[r] : up[r];
+          rowY[r] = cy - this.VCY;
+        }
+        if (dry) return { w: dryW, h: nRows ? cy + dn[nRows - 1] : 0 };
+      } else {
+        for (const it of items) {
+          if (!horiz(it)) continue;
+          const m = this._metrics(E[it.rx.edges[0]]);
+          if (!m.mol) continue;
+          // The structure sits above the text and reaches into the row gap above
+          // (or below the lower text, reaching into the gap below).
+          const gi = m.molBelow ? Math.floor(it.row) : Math.ceil(it.row) - 1;
+          const need = (m.molBelow ? m.below.length * LABEL_LINE_H + (m.curve ? m.curve.H : 0) : m.above.length * LABEL_LINE_H) +
+                       m.molH + EMOL_GAP + LABEL_GAP - this.NH / 2 + 20;
+          if (gi >= 0 && gi < rowGap.length) rowGap[gi] = Math.max(rowGap[gi], STACK_GAP + 8 + need);
+        }
+        let y = 0;
+        for (let r = 0; r < nRows; r++) { rowY[r] = y; y += this.NH + rowGap[r]; }
+        if (dry) return { w: dryW, h: nRows ? rowY[nRows - 1] + this.NH : 0 };
       }
+
       this._rowOf = new Map();
       for (const n of nodes) {
         const p = pos.get(n.id);
         if (!p) continue;
-        n.x = xOf(p);
+        n.x = placeX(n.id, p);
         n.y = rowY[p.r];
         this._rowOf.set(n.id, p.r);
       }
@@ -1917,13 +2141,12 @@
         it.hasJ = hasJ(it);
         if (it.gap != null) it.jx = jx(it.gap, it.dx || 1);
         // a vertical equation's arrow and "+" run down the middle of its column
-        if (it.type === 'veqn') it.ax = colX[it.ac] + gapW.get(it.ac) / 2;
+        if (it.type === 'veqn') it.ax = midGap(it.ac);
       }
       // Y joins: slide each co-reactant back along its row so its line
       // reaches the junction on a slant. Column widths stay as they are;
       // the slide stops short of any other compound and of the main
       // reactant's centre.
-      const byId = new Map(nodes.map(n => [n.id, n]));
       for (const it of items) {
         if (it.type !== 'h' || !isY(E[it.rx.edges[0]])) continue;
         const dir = it.dx || 1, main = byId.get(it.rx.main);
@@ -1932,17 +2155,91 @@
           if (!cn || c.slot === 'stack' || !main) continue;
           let sft = Math.min(Y_RUN, Math.abs(cn.x - main.x) - 12);
           for (const o of nodes) {
-            if (o === cn || Math.abs(o.y - cn.y) >= this.NH) continue;
-            const behind = dir > 0 ? cn.x - (o.x + this.NW) : o.x - (cn.x + this.NW);
+            if (o === cn) continue;
+            let behind;
+            if (tight) {
+              // (the quiz: what is drawn, in the same row)
+              const po = pos.get(o.id), pc = pos.get(cn.id);
+              if (!po || !pc || po.r !== pc.r) continue;
+              const ho = ext.get(o.id).half, hc = ext.get(cn.id).half;
+              behind = dir > 0 ? (cn.x - hc) - (o.x + ho) : (o.x - ho) - (cn.x + hc);
+            } else {
+              if (Math.abs(o.y - cn.y) >= this.NH) continue;
+              behind = dir > 0 ? cn.x - (o.x + this.NW) : o.x - (cn.x + this.NW);
+            }
             if (behind >= 0) sft = Math.min(sft, behind - 16);
           }
           if (sft > 8) cn.x -= dir * sft;
         }
       }
       this._compactForks(plan, rowY);
-      this._compactColumns(plan, colX);
+      // (where a compound of each structure column sits)
+      this._compactColumns(plan, colX.map((x, h) => h % 2 ? x : x + (W(h) - NW) / 2));
       // where each compound sits before _alignBranches evens out branches
       for (const n of nodes) n._bx = n.x;
+    }
+
+    /* The quiz: a compound that only arrows along its own row hold — nothing
+       above, below or beside it in another row — need not stay in its
+       column, which is as wide as its widest compound, its gap as wide as
+       the longest text in any row. At either end of a row such compounds
+       close up to the first one that is held; between two held ones they
+       share the room evenly. Each arrow is then about as long as its own
+       text needs. `rows`: what is in each row, by column (see _placePlan),
+       `centre` where it stands. Returns id → px it moves along its row. */
+    _tightenRows(plan, rows, centre, needW, forkKeys, W, midGap) {
+      const { pos, items } = plan;
+      const held = new Set(), along = new Map(), laid = new Set();
+      const block = new Map();   // row → runs of arrows nothing may close over
+      const add = (r, o) => { if (!block.has(r)) block.set(r, []); block.get(r).push(Object.assign({ r }, o)); };
+      const cell = h => ({ h, half: W(h) / 2, sep: 0, x: h % 2 ? midGap(h) : null, dir: 0 });
+      for (const it of items) {
+        it.rx.edges.forEach(i => laid.add(i));
+        const P = pos.get(it.rx.main), Q = pos.get(it.rx.prod);
+        if (it.type === 'h' && !it.co.length && !it.extra.length && !forkKeys.has(it.rx.main + '|' + it.gap) && P && Q && P.r === Q.r) {
+          along.set(it.rx.main + '|' + it.rx.prod, needW.get(it));
+          along.set(it.rx.prod + '|' + it.rx.main, needW.get(it));
+          continue;
+        }
+        for (const id of [it.rx.main, it.rx.prod, ...it.rx.srcs, ...it.rx.prods, ...it.co.map(c => c.id), ...it.extra.map(x => x.id)]) held.add(id);
+        // a split's or merge's bus down its gap, a fork's turn into its
+        // product's row, a co-reactant's way through other cells
+        if ((it.type === 'split' || it.type === 'merge') && it.lo != null) {
+          for (let r = Math.ceil(it.lo); r <= it.hi; r++) add(r, cell(it.gap));
+        }
+        if (it.type === 'fork') add(it.tr, { h: it.gap, dir: it.dx || 1, half: 2, sep: COL_SEP });
+        for (const c of it.co) for (const [h, r] of c.via || []) add(r, cell(h));
+      }
+      // arrows outside the plan are drawn between wherever their ends are
+      this.scheme.edges.forEach((e, i) => {
+        if (laid.has(i)) return;
+        (e.from || []).forEach(id => held.add(id));
+        held.add(e.to);
+      });
+      const shift = new Map();
+      for (const [r, l0] of rows) {
+        const free = o => o.id != null && !held.has(o.id);
+        if (!l0.some(free) || l0.every(free)) continue;
+        const l = l0.concat(block.get(r) || []).sort((a, b) => a.h - b.h);
+        const c0 = l.map(o => o.x != null ? o.x : centre(o)), c = c0.slice();
+        const gap = (a, b) => a.id == null ? a.sep : b.id == null ? b.sep
+          : along.has(a.id + '|' + b.id) ? along.get(a.id + '|' + b.id) : GAP_EMPTY;
+        const dist = i => l[i].half + gap(l[i], l[i + 1]) + l[i + 1].half;
+        const hold = l.map((o, i) => free(o) ? -1 : i).filter(i => i >= 0);
+        for (let i = hold[0] - 1; i >= 0; i--) c[i] = Math.max(c[i], c[i + 1] - dist(i));
+        for (let i = hold[hold.length - 1] + 1; i < l.length; i++) c[i] = Math.min(c[i], c[i - 1] + dist(i - 1));
+        for (let k = 1; k < hold.length; k++) {
+          const a = hold[k - 1], b = hold[k];
+          if (b - a < 2) continue;
+          let min = 0;
+          for (let i = a; i < b; i++) min += dist(i);
+          const slack = c[b] - c[a] - min;
+          if (slack <= 0) continue;
+          for (let i = a + 1; i < b; i++) c[i] = c[i - 1] + dist(i - 1) + slack / (b - a);
+        }
+        l.forEach((o, i) => { if (free(o) && Math.abs(c[i] - c0[i]) > 0.5) shift.set(o.id, c[i] - c0[i]); });
+      }
+      return shift;
     }
 
     /* An even number of products (or educts) of one reaction leaves the
@@ -2009,7 +2306,15 @@
             if (!A || !B) continue;
             const top = A.y < B.y ? A : B, low = top === A ? B : A;
             const need = Math.max(30, m.vLen ? m.vLen + 16 : 0);
-            const room = (low.y - top.y - this.NH) - need;
+            let gap = low.y - top.y - this.NH;
+            if (this.readOnly) {
+              // (the quiz's rows are only as tall as what is drawn in them)
+              const was = this._scoring;
+              this._scoring = true;
+              gap = this._box(low).t - this._box(top).b;
+              this._scoring = was;
+            }
+            const room = gap - need;
             const bt = band(top.id), bl = band(low.id);
             if (bt === 'U' && bl === 'L') gapNeed = Math.max(gapNeed, need + 10);
             else if (bt === 'U' && !bl && low.y > top.y) dUmax = Math.min(dUmax, room);
@@ -2224,23 +2529,6 @@
       return cross * 10 + close * 4 + bends * 0.5 + this._seatBad * 3 + freeLen * 0.01;
     }
 
-    /* The widest grid that still reads at a comfortable zoom. When none
-       does: 2 columns, unless a wider grid comes out narrower (its side
-       branches need no extra columns) and is no less tidy. */
-    _bestCols() {
-      const avail = ((this.svg && this.svg.clientWidth) || this.container.clientWidth || 0) - 30;
-      if (avail <= 0) return 4;
-      const S = this.scheme, fit = {};
-      for (let c = 6; c >= 2; c--) {
-        const p = planCandidates(S.nodes, S.edges, c)[0];
-        fit[c] = { w: this._placePlan(p, true), cost: p.cost };
-        if (c > 2 && fit[c].w * MIN_FIT <= avail) return c;
-      }
-      let best = 2;
-      for (let c = 3; c <= 6; c++) if (fit[c].w < fit[best].w - 1 && fit[c].cost <= fit[2].cost) best = c;
-      return best;
-    }
-
     /* Anything that changes grouping or indices invalidates the plan. */
     _planSig() {
       return JSON.stringify([
@@ -2403,7 +2691,7 @@
 
       if (n.name && !this._isHidden(n)) {
         const name = svg('text', { class: 'sg-node-name', x: this.NW / 2, 'text-anchor': 'middle' });
-        name.textContent = n.name.length > 30 ? n.name.slice(0, 28) + '…' : n.name;
+        name.textContent = shortName(n);
         g.appendChild(name);
       }
       // A caption is part of the Angabe (e.g. a sum formula printed under
@@ -2445,6 +2733,23 @@
       if (nat && nat.w) return { w: Math.min(this.FOW, nat.w * this._cell.f), h: Math.min(this.FOH, nat.h * this._cell.f) };
       return { w: PH_SIZE, h: PH_SIZE };
     }
+    /* What a compound takes in the quiz around the point its arrows meet
+       (the cell's cx, cy): half its width — the structure with the air an
+       arrow keeps, or the letter, name or caption under it where wider —
+       and how far it reaches up and down. As revealed, so that revealing
+       moves nothing (see _placePlan). */
+    _ext(n) {
+      const was = this._scoring;
+      this._scoring = true;
+      const m = this._footprint(n), tb = this._textBlockH(n);
+      this._scoring = was;
+      let half = m.w / 2 + V_GAP;
+      const letter = String(n.label != null ? n.label : n.id || '').trim();
+      const texts = [[letter, NODE_LABEL_FONT], [n.name ? shortName(n) : '', NODE_NAME_FONT]]
+        .concat(captionLines(n).map(l => [l, NODE_NAME_FONT]));
+      for (const [t, font] of texts) if (t) half = Math.max(half, measureText(plainChemText(t), font) / 2 + 4);
+      return { half, U: m.h / 2 + V_GAP, D: m.h / 2 + tb + 2 };
+    }
     _textBlockH(n) {
       const hidden = this._isHidden(n) && !this._scoring;
       const hasLabel = !hidden && String(n.label != null ? n.label : n.id || '').trim();
@@ -2468,6 +2773,26 @@
         const bx = Math.min(this.NW - 9, this.NW / 2 + m.w / 2 + 4);
         const by = Math.max(9, this.VCY - m.h / 2 - 2);
         ib.setAttribute('transform', `translate(${bx} ${by})`);
+      }
+      // The cell is only as large as what is drawn in it: columns are as
+      // narrow as their compounds, and a full-size cell would cover the
+      // neighbours and take their clicks (and count as content, see
+      // _contentBBox).
+      const fw = Math.min(this.FOW, m.w + 4), fh = Math.min(this.FOH, m.h + 4);
+      const fo = g.querySelector('foreignObject');
+      if (fo) {
+        fo.setAttribute('x', r1(this.NW / 2 - fw / 2));
+        fo.setAttribute('y', r1(this.VCY - fh / 2));
+        fo.setAttribute('width', r1(fw));
+        fo.setAttribute('height', r1(fh));
+      }
+      const bg = g.querySelector('.sg-node-bg');
+      if (bg) {
+        const half = m.w / 2 + V_GAP;
+        bg.setAttribute('x', r1(this.NW / 2 - half));
+        bg.setAttribute('y', r1(this.VCY - m.h / 2 - V_GAP));
+        bg.setAttribute('width', r1(2 * half));
+        bg.setAttribute('height', r1(m.h + 2 * V_GAP + this._textBlockH(n)));
       }
     }
 
@@ -2617,6 +2942,18 @@
         const b = this._box(n);
         return { id: n.id, x: b.l, y: b.t, w: b.r - b.l, h: b.b - b.t };
       });
+      // (quiz) the compounds' span across: text beside a vertical arrow at
+      // the edge goes inside where it can, rather than widen the scheme
+      this._span = null;
+      if (this.readOnly && this.scheme.nodes.length) {
+        let l = Infinity, r = -Infinity;
+        for (const n of this.scheme.nodes) {
+          const half = this._ext(n).half, cx = (n.x || 0) + this.NW / 2;
+          l = Math.min(l, cx - half);
+          r = Math.max(r, cx + half);
+        }
+        this._span = { l, r };
+      }
       this._placed = [];
       this._lines = [];
       this._labelJobs = [];
@@ -4063,12 +4400,15 @@
         if (c.mode === 'h' && len < m.width + 6) score += (m.width + 6 - len) * 4;
         if ((c.mode === 'vr' || c.mode === 'vl') && len < ext.hAlong + 6) score += (ext.hAlong + 6 - len) * 4;
         score += c.pref * 0.01;
+        // (outside the compounds' span is a worse seat, not a bad one)
+        c.bad = score >= 1;
+        if (this._span) score += Math.max(0, this._span.l - bb.x) + Math.max(0, bb.x + bb.w - this._span.r);
         c.bb = bb; c.score = score;
         if (!best || score < best.score) best = c;
         if (score < 1) break;
       }
       if (dry) return best.score;
-      if (this._scoring && best.score >= 1) this._seatBad++;
+      if (this._scoring && best.bad) this._seatBad++;
       if (this._placed) this._placed.push(best.bb);
       if (this._seatOf) this._seatOf.set(edge, { sg: best.sg, mode: best.mode });
       // The edge being typed on shows the inputs instead of its text
@@ -4835,6 +5175,23 @@
     /* Content bounds in world space: nodes plus every label and arrow,
        so a reagent written beside the last column is never clipped. */
     _contentBBox() {
+      if (this.readOnly && this.scheme.nodes.length) {
+        // The quiz: what is drawn — each compound as revealed (revealing
+        // must not change the fit) and every arrow with its text.
+        let l = Infinity, t = Infinity, r = -Infinity, b = -Infinity;
+        for (const n of this.scheme.nodes) {
+          const e = this._ext(n), cx = (n.x || 0) + this.NW / 2, cy = (n.y || 0) + this.VCY;
+          l = Math.min(l, cx - e.half); r = Math.max(r, cx + e.half);
+          t = Math.min(t, cy - e.U); b = Math.max(b, cy + e.D);
+        }
+        let eb = null;
+        try { const el = this.viewport.querySelector('.sg-edges'); eb = el && el.getBBox(); } catch (_) { eb = null; }
+        if (eb && (eb.width > 0 || eb.height > 0)) {
+          l = Math.min(l, eb.x); r = Math.max(r, eb.x + eb.width);
+          t = Math.min(t, eb.y); b = Math.max(b, eb.y + eb.height);
+        }
+        return { x: l, y: t, w: r - l, h: b - t };
+      }
       let bb = null;
       try { bb = this.viewport.getBBox(); } catch (_) { bb = null; }
       if (bb && bb.width > 0 && bb.height > 0) {
@@ -4863,7 +5220,7 @@
       const r = this.svg.getBoundingClientRect();
 
       if (this.readOnly && r.width > 40) {
-        this.scale = Math.min(r.width / wantW, 1.15);
+        this.scale = Math.min(r.width / wantW, ZOOM_MAX);
         // Centre a narrow scheme instead of hugging the left margin.
         const spare = Math.max(0, r.width - wantW * this.scale);
         this.viewX = -bb.x * this.scale + pad * this.scale + spare / 2;
@@ -4885,19 +5242,16 @@
       this.svg.style.height = Math.max(160, Math.round(bottom)) + 'px';
     }
 
-    /* The layout stored with the scheme (chosen in the editor), as long as
-       it still reads at this width; on a narrower screen (a phone) as many
-       columns as fit. The editor keeps a stored layout at any width. */
+    /* The quiz plans for its own width (autoLayout: the layout stored with
+       the scheme while it reads there, else the best one for the screen);
+       after a resize it redraws when another layout wins. The editor plans
+       for the quiz's width, whatever its own. */
     reflow(force) {
-      if (!this._isAutoLayout()) return false;
-      if (!this.scheme.nodes.length) return false;
-      const kept = !this.layoutColumns && this._storedPlan();
-      if (kept && !this.readOnly) return false;
-      const S = this.scheme, avail = ((this.svg && this.svg.clientWidth) || this.container.clientWidth || 0) - 30;
-      const keep = kept && avail > 0 && this._placePlan(planLayout(S.nodes, S.edges, kept.cols, kept.v), true) * STORED_FIT <= avail;
-      const want = keep ? kept.cols : this.layoutColumns || this._bestCols();
-      if (!force && want === this._layoutCols) return false;
-      this.autoLayout(keep ? {} : { columns: want });
+      if (!this.readOnly || !this._isAutoLayout() || !this.scheme.nodes.length) return false;
+      const was = this._plan ? JSON.stringify([this._layoutCols, this._plan.v]) : '';
+      // (not when it is planned for this width already, e.g. just built)
+      if (!this._plan || this._planAvail !== this._availW()) this.autoLayout();
+      if (!force && was === JSON.stringify([this._layoutCols, this._plan.v])) return false;
       this.refresh();
       this.fitToContent();
       return true;
@@ -5384,6 +5738,11 @@
      two characters backslash-n some data carries). */
   function captionLines(n) {
     return n && n.caption ? String(n.caption).split(/\r?\n|\\n/).map(t => t.trim()).filter(Boolean) : [];
+  }
+
+  /* A compound's name as the quiz writes it under the structure. */
+  function shortName(n) {
+    return n.name.length > 30 ? n.name.slice(0, 28) + '…' : n.name;
   }
 
   function cssEsc(s) {
