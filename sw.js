@@ -1,6 +1,6 @@
 /* Service worker for the OC Reaktionen PWA.
    Bump CACHE when the shell changes — activate drops every other cache. */
-const CACHE = 'oc-oecho-v16';
+const CACHE = 'oc-oecho-v17';
 
 /* App shell. Paths are relative to the SW scope, so the same file works on
    GitHub Pages (/OC-oecho/) and on localhost. Ketcher (vendor/, ~26 MB) and
@@ -92,7 +92,8 @@ self.addEventListener('fetch', e => {
     e.respondWith((async () => {
       try {
         const res = await fetch(req);
-        if (res && res.ok) caches.open(CACHE).then(c => c.put(req, res.clone()));
+        // (the copy is taken now: once the page reads the response, it can't be cloned)
+        if (res && res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); }
         return res;
       } catch {
         return (await caches.match(req)) || new Response('[]', { headers: { 'Content-Type': 'application/json' } });
@@ -105,7 +106,7 @@ self.addEventListener('fetch', e => {
   e.respondWith((async () => {
     const hit = await caches.match(req);
     const net = fetch(req).then(res => {
-      if (res && res.ok) caches.open(CACHE).then(c => c.put(req, res.clone()));
+      if (res && res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); }
       return res;
     }).catch(() => hit);
     return hit || net;

@@ -102,6 +102,8 @@
  *     to group (_drawEquation); dragging an educt (product) moves the
  *     others along, and a dragged compound snaps into the row / column of
  *     a partner within SNAP px
+ *   - in the quiz no structure of a free layout is drawn larger than the
+ *     editor's box it was placed with (_viewerCell)
  *
  * Callbacks:
  *   onChange(), onSelectNode(node|null), onSelectEdge(edge|null, idx),
@@ -173,10 +175,14 @@
      shrinking below FIT_OK costs SHRINK_COST per 100 % (a crossing costs
      10), and every 100 px the scheme takes down the screen HEIGHT_COST —
      so a narrow plan that leaves the width empty loses to a wider one that
-     still reads at full size. */
+     still reads at full size. Where no plan reads at MIN_FIT (a phone),
+     every 100 % below it costs TINY_COST more: the one that shrinks least
+     wins unless it is much worse drawn, not a wide one at a third of its
+     size. */
   const MIN_FIT        = 0.75;
   const FIT_OK         = 0.9;
   const SHRINK_COST    = 60;
+  const TINY_COST      = 180;
   const HEIGHT_COST    = 0.3;
   const ZOOM_MAX       = 1.15;  // the quiz never zooms a scheme in beyond this (fitToContent)
   const QUIZ_W         = 925;   // px: the quiz's canvas at full page width (.q-page minus padding and the zoom rail)
@@ -1751,7 +1757,7 @@
     /* Returns true when the cell size changed (the layout must follow). */
     _measureCell() {
       if (!this.readOnly) return false;
-      const cell = this._viewerCell();
+      const cell = this._viewerCell(!this._isAutoLayout());
       if (!cell) return false;
       const c = this._cell;
       const changed = !c || c.nw !== cell.nw || c.nh !== cell.nh || Math.abs(c.f - cell.f) > 1e-3;
@@ -1760,8 +1766,9 @@
     }
 
     /* The quiz's cell for this scheme (the editor needs it to know how
-       wide a plan comes out in the quiz, see _quizSize). */
-    _viewerCell() {
+       wide a plan comes out in the quiz, see _quizSize); `free`: for a free
+       layout. */
+    _viewerCell(free) {
       if (!window.OCL || typeof window.MolRenderer === 'undefined') return null;
       let mw = 0, mh = 0;
       for (const n of this.scheme.nodes) {
@@ -1777,7 +1784,9 @@
       for (const n of this.scheme.nodes) {
         if (!(n.mol || n.smiles) && n.text) tw = Math.max(tw, textNodeWidth(n) + 8);
       }
-      const f = Math.min(1, CELL_MAX_W / mw, CELL_MAX_H / mh);
+      // A free layout keeps the author's places, made around the editor's
+      // boxes: no structure is drawn larger than its box was there.
+      const f = Math.min(1, (free ? V_FO_W : CELL_MAX_W) / mw, (free ? V_FO_H : CELL_MAX_H) / mh);
       const nw = Math.max(V_FO_W, Math.ceil(mw * f), tw) + (NODE_W - V_FO_W);
       const nh = Math.max(V_FO_H, Math.ceil(mh * f)) + (NODE_H - V_FO_H);
       return { nw, nh, f };
@@ -1809,6 +1818,9 @@
       opts = opts || {};
       const nodes = this.scheme.nodes;
       if (!nodes.length) return;
+      // (auto from here on: the plans are rated by drawing them as plans,
+      // not as a free layout read off their places)
+      this.scheme.layout = 'auto';
       const avail = this._availW();
       // The layout the editor chose is stored with the scheme ("plan"), so
       // the quiz draws the same — as long as it reads there (see
@@ -1827,9 +1839,9 @@
       }
       this._placePlan(best);
       best.sig = this._planSig();
+      best.at = this._posKey();
       this._plan = best;
       this._planAvail = avail;
-      this.scheme.layout = 'auto';
       this._layoutCols = best.cols;
       if (!this.readOnly) this.scheme.plan = { cols: best.cols, v: Object.assign({}, best.v), key: hashStr(best.sig), w: QUIZ_W };
     }
@@ -1868,7 +1880,8 @@
           if (avail > 0) {
             const sz = this._quizSize(p), fit = avail / sz.w;
             p.w = sz.w;
-            p.lb += SHRINK_COST * Math.max(0, FIT_OK - fit) + HEIGHT_COST * sz.h * Math.min(ZOOM_MAX, fit) / 100;
+            p.lb += SHRINK_COST * Math.max(0, FIT_OK - fit) + TINY_COST * Math.max(0, MIN_FIT - fit) +
+                    HEIGHT_COST * sz.h * Math.min(ZOOM_MAX, fit) / 100;
           }
           all.push(p);
         }
@@ -1901,7 +1914,7 @@
     _quizSize(plan) {
       if (this.readOnly) return this._placePlan(plan, true);
       const keep = { cell: this._cell, scoring: this._scoring };
-      const cell = this._viewerCell();
+      const cell = this._viewerCell(false);
       this.readOnly = true;
       this._cell = cell;
       this._scoring = true;
@@ -2529,6 +2542,11 @@
       return cross * 10 + close * 4 + bends * 0.5 + this._seatBad * 3 + freeLen * 0.01;
     }
 
+    /* Where every compound stands (a plan only draws the places it made). */
+    _posKey() {
+      return this.scheme.nodes.map(n => n.id + ':' + n.x + ',' + n.y).join(';');
+    }
+
     /* Anything that changes grouping or indices invalidates the plan. */
     _planSig() {
       return JSON.stringify([
@@ -2926,6 +2944,18 @@
       this._routeAll(layer);
       if (old) old.replaceWith(layer);
       else this.viewport.insertBefore(layer, this.viewport.firstChild);
+      // (the quiz) a structure revealed can send an arrow routed around it,
+      // or a text, elsewhere: fit again when something no longer shows
+      if (this.readOnly && this._fitted && this._clipped()) this.fitToContent();
+    }
+
+    /* Does anything drawn reach outside the quiz's canvas? */
+    _clipped() {
+      const r = this.svg.getBoundingClientRect();
+      if (!(r.width > 40)) return false;
+      const bb = this._contentBBox();
+      const l = this.viewX + bb.x * this.scale, t = this.viewY + bb.y * this.scale;
+      return l < -1 || t < -1 || l + bb.w * this.scale > r.width + 1 || t + bb.h * this.scale > r.height + 1;
     }
     // Kept for callers of the old name.
     _redrawEdgesTouching() { this._drawEdges(); }
@@ -2933,7 +2963,10 @@
     _routeAll(layer) {
       const E = this.scheme.edges;
       const done = new Set();
-      const usePlan = this._plan && this._isAutoLayout() && this._plan.sig === this._planSig();
+      // (switched to free with nothing moved yet, the plan still draws it:
+      // the same picture as the auto layout)
+      const usePlan = this._plan && this._plan.sig === this._planSig() &&
+        (this._isAutoLayout() || this._plan.at === this._posKey());
       if (usePlan && this.readOnly) this._alignBranches(this._plan);
       // Label placement avoids every structure footprint and every label
       // already set. Candidates are always positions on the arrow's OWN
@@ -5136,8 +5169,26 @@
         const dx = VLABEL_DX * this.scale;
         const w = Math.max(ie.ia.offsetWidth, ie.ib.offsetWidth);
         const left = seat.mode === 'vl' ? sx - dx - w : sx + dx;
-        place(ie.ia, left, sy - ha - 1);
-        place(ie.ib, left, sy + 1);
+        // The fields take the text's place in the block (see _labelEl): a
+        // structure on the arrow sits over the text (under it with
+        // reagent_mol_below) and must stay visible and grabbable.
+        const lines = m.above.concat(m.below);
+        const blockH = lines.reduce((a, t) => { const x = lineExtent(t); return a + x.up + x.down; }, 0) +
+          LINE_LEAD * Math.max(0, lines.length - 1);
+        const molH = m.mol ? m.molH + EMOL_GAP : 0;
+        const top = my - (blockH + molH) / 2, hb = ie.ib.offsetHeight || ha;
+        if (m.mol && !m.molBelow) {
+          const y = scr(mx, top + molH).y;
+          place(ie.ia, left, y);
+          place(ie.ib, left, y + ha + 2);
+        } else if (m.mol) {
+          const y = scr(mx, top + blockH).y;
+          place(ie.ib, left, y - hb);
+          place(ie.ia, left, y - hb - ha - 2);
+        } else {
+          place(ie.ia, left, sy - ha - 1);
+          place(ie.ib, left, sy + 1);
+        }
       }
     }
 

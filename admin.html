@@ -2744,7 +2744,12 @@ function _serializeScheme(scheme) {
   // re-flow the scheme to the reader's screen width.
   if (scheme.layout === 'manual') out.layout = 'manual';
   // the auto layout chosen here (columns, planner variant); the quiz draws the same
-  else if (scheme.plan && scheme.plan.cols && scheme.plan.v) out.plan = { cols: scheme.plan.cols, v: scheme.plan.v, key: scheme.plan.key };
+  else if (scheme.plan && scheme.plan.cols && scheme.plan.v) {
+    out.plan = { cols: scheme.plan.cols, v: scheme.plan.v, key: scheme.plan.key };
+    // the width it was planned for: without it the quiz (and the editor, on
+    // reopening) take the plan for an old one and plan anew
+    if (scheme.plan.w) out.plan.w = scheme.plan.w;
+  }
   out.nodes = (scheme.nodes || []).map(n => {
     const o = { id: n.id || '', label: n.label != null ? n.label : (n.id || ''), given: !!n.given };
     if (n.name)        o.name = n.name;

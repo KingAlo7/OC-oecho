@@ -267,7 +267,9 @@ Array von Fragenobjekten. Jede Frage hat `type: "composed"` und ein Array `secti
   Plan, für die Fensterbreite des Admins gemacht), wird neu geplant. Wird vom Admin beim Speichern gesetzt
 - `x`/`y` sind Layout-Hinweise. Ohne gültigen `plan` rechnet der Viewer das Layout für die Bildschirmbreite
   des Lesers (siehe *Schema-Layout*).
-  Mit **✥ Frei** im Admin wird `"layout": "manual"` gesetzt und die Positionen bleiben unangetastet.
+  Mit **✥ Frei** im Admin wird `"layout": "manual"` gesetzt und die Positionen bleiben unangetastet; das
+  Quiz zeichnet die Strukturen dann höchstens so groß wie die Kästen im Admin, damit die Abstände so
+  bleiben, wie sie dort gesetzt wurden.
 
 **Schema-Layout.** Pfeile mit denselben Edukten, die dasselbe tragen (Text, Struktur, Bogen), bilden eine
 Reaktion („A + W → B + X“); gleich beschriftete Pfeile von einem Edukt ebenso („D → A + B“), und Pfeile mit
@@ -305,7 +307,9 @@ Haupt-Edukt (längster Weg davor) und ein Haupt-Produkt (längster Weg danach):
 - **Die Breite zählt mit:** geplant wird in 2–6 Spalten, und jede Variante wird auch danach bewertet, wie
   stark sie für die Breite verkleinert werden muss (unter 90 % kostet es, unter 75 % scheidet sie aus,
   solange eine andere passt) und wie weit sie dann nach unten reicht. Ein großes Schema wird so nicht in
-  viele Spalten gepresst und winzig, und ein kleines lässt die Breite nicht leer.
+  viele Spalten gepresst und winzig, und ein kleines lässt die Breite nicht leer. Passt keine (Handy),
+  kostet jedes Prozent unter 75 % dreimal so viel: es gewinnt die, die am wenigsten verkleinert werden
+  muss, sofern sie nicht viel schlechter gezeichnet ist.
 - **Enges Raster im Quiz:** jede Spalte ist nur so breit wie ihre breiteste Verbindung (samt Buchstabe,
   Name und Angabe-Text), jede Zeile nur so hoch wie ihre höchste samt der Beschriftung ihrer Pfeile —
   nicht jede Zelle so groß wie die größte Struktur des Schemas. Pfeile zwischen kleinen Strukturen bleiben
@@ -313,7 +317,8 @@ Haupt-Edukt (längster Weg davor) und ein Haupt-Produkt (längster Weg danach):
   daneben in einer anderen Zeile), muss nicht in ihrer Spalte bleiben: am Zeilenende rückt sie an die erste
   gehaltene heran, zwischen zwei gehaltenen teilt sie den Platz gleichmäßig — so ist ein Pfeil nicht lang,
   nur weil in einer anderen Zeile derselbe Spalt viel Text trägt. Gerechnet wird mit aufgedeckten
-  Strukturen, Aufdecken verschiebt also nichts. Reagenz-Text, der
+  Strukturen, Aufdecken verschiebt also keine Verbindung; führt ein frei geführter Pfeil oder ein Text
+  danach anders, passt das Quiz den Ausschnitt an, statt ihn abzuschneiden. Reagenz-Text, der
   auch an den üblichen Trennstellen (`,` `;` `/` `1.`) umbrochen noch zu breit ist, bricht zwischen Wörtern
   um, statt eine ganze Pfeilspalte lang zu machen; Text neben einem senkrechten Pfeil am Rand steht nach
   innen, wo Platz ist.
