@@ -3,14 +3,16 @@
 
      H_2SO_4, C_12H_22O_11   bare digits after _ are one subscript run
      Fe^3+, SO_4^2-, ^13C    digits (+ optional charge sign) after ^
+     mol^-1                  a sign followed by digits (exponent)
      _{...} / ^{...}         anything in braces, e.g. [Ag(NH_3)_2]^{+}
      _n, ^+, ^-, ^•          otherwise a single letter / sign
      \_  \^                  literal underscore / caret
+   A minus may be written -, − (U+2212) or – (U+2013, as typed in Word).
 */
 (function (root) {
   'use strict';
 
-  const RE = /\\([_^])|_(?:\{([^}]*)\}|([0-9]+|[A-Za-z+\-−]))|\^(?:\{([^}]*)\}|([0-9]*[+\-−]|[0-9]+|[A-Za-z•·*]))/g;
+  const RE = /\\([_^])|_(?:\{([^}]*)\}|([0-9]+|[A-Za-z+\-−–]))|\^(?:\{([^}]*)\}|([+\-−–][0-9]+|[0-9]*[+\-−–]|[0-9]+|[A-Za-z•·*]))/g;
 
   /* → [{ t: 'text' | 'sub' | 'sup', v: string }] */
   function tokenize(str) {

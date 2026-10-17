@@ -38,7 +38,7 @@
   --red:#c91020;
   --red-soft:#fde4e7;
   --yellow:#b87a00;
-  --sidebar:280px;
+  --sidebar:clamp(264px, 20vw, 304px);
   --shadow-sm:0 1px 2px rgba(60,55,40,0.04);
   --shadow-md:0 2px 8px rgba(60,55,40,0.06);
   --header-h:56px;
@@ -50,6 +50,8 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;overflow:hidden;}
 body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+#search:focus-visible,.sa-area:focus-visible{outline:none;}
 
 header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.25rem;height:56px;display:flex;align-items:center;gap:1rem;flex-shrink:0;z-index:20;box-shadow:var(--shadow-sm);}
 .brand{display:flex;align-items:center;gap:0.6rem;flex-shrink:0;}
@@ -71,9 +73,15 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .nav-link.muted:hover{background:var(--surface2);color:var(--text);border-color:var(--muted);}
 .count-badge{font-size:0.75rem;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:0.22rem 0.7rem;}
 
-.layout{display:flex;flex:1;overflow:hidden;height:calc(100vh - var(--header-h));}
+/* Sized by the body's flex column, not by 100vh — on phones 100vh is the
+   height with the browser bars hidden, which would push the bottom of the
+   page under the toolbar. */
+.layout{display:flex;flex:1;min-height:0;overflow:hidden;}
 
-.sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0;display:flex;flex-direction:column;}
+.hamburger{display:none;align-items:center;justify-content:center;width:40px;height:40px;border:1px solid var(--border);border-radius:8px;background:var(--surface);cursor:pointer;color:var(--text);font-size:1.18rem;line-height:1;flex-shrink:0;font-family:inherit;-webkit-tap-highlight-color:transparent;}
+.hamburger:active{background:var(--surface2);}
+
+.sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;overscroll-behavior:contain;flex-shrink:0;display:flex;flex-direction:column;}
 .sidebar::-webkit-scrollbar{width:6px;}
 .sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
 .sidebar-top{padding:0.85rem;border-bottom:1px solid var(--border);flex-shrink:0;}
@@ -98,11 +106,13 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .cat-count{margin-left:auto;font-size:0.68rem;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:0.05rem 0.45rem;color:var(--muted);font-weight:600;}
 .cat-items{display:none;padding:0.2rem 0 0.4rem;}
 .cat-header.open + .cat-items{display:block;}
-.q-link{display:flex;align-items:center;gap:0.4rem;padding:0.45rem 0.95rem 0.45rem 1.7rem;font-size:0.84rem;color:var(--text-soft);cursor:pointer;border-left:3px solid transparent;transition:all 0.12s;}
+.q-link{display:flex;align-items:flex-start;gap:0.45rem;padding:0.45rem 0.95rem 0.45rem 1.7rem;font-size:0.84rem;line-height:1.35;color:var(--text-soft);cursor:pointer;border-left:3px solid transparent;transition:all 0.12s;}
 .q-link:hover{color:var(--text);background:var(--surface2);}
 .q-link.active{color:var(--accent);border-left-color:var(--accent);background:var(--accent-soft);font-weight:600;}
 .q-link.hidden{display:none;}
-.q-link .q-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.q-link .diff-badge{margin-top:1px;}
+/* Long names wrap to a second line instead of being cut off mid-word. */
+.q-link .q-name{flex:1;min-width:0;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:break-word;}
 .diff-badge{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 4px;border-radius:3px;font-size:0.62rem;font-weight:700;line-height:1;border:1px solid currentColor;background:transparent;flex-shrink:0;}
 .diff-badge.diff-A{color:var(--diff-A);} .diff-badge.diff-B{color:var(--diff-B);} .diff-badge.diff-C{color:var(--diff-C);} .diff-badge.diff-D{color:var(--diff-D);}
 .q-link.diff-A:not(.active){border-left-color:var(--diff-A-soft);}
@@ -130,8 +140,11 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
    question and hint on the same plain ground, no nested windows. */
 .q-page{padding:1.9rem 2.4rem 2.6rem;max-width:1040px;width:100%;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:6px;box-shadow:0 1px 3px rgba(60,55,40,0.06),0 8px 28px rgba(60,55,40,0.05);}
 .q-actionbar{position:sticky;top:0;z-index:15;display:flex;align-items:center;gap:0.6rem;justify-content:flex-end;margin:-0.6rem -0.8rem 0.9rem;padding:0.55rem 0.8rem;background:#fff;border-bottom:1px solid var(--border);}
-.q-actionbar .prog{display:flex;align-items:center;gap:0.5rem;font-size:0.76rem;color:var(--muted);margin-right:auto;min-width:0;}
-.q-actionbar .prog-bar{width:140px;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;flex-shrink:1;}
+.q-actionbar .prog{display:flex;align-items:center;gap:0.5rem;font-size:0.76rem;color:var(--muted);margin-right:auto;min-width:0;flex:1;}
+.q-actionbar .prog > span{white-space:nowrap;font-variant-numeric:tabular-nums;}
+.q-actionbar .prog-bar{width:140px;min-width:36px;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;flex-shrink:1;}
+/* nothing to uncover → no reveal / reset buttons */
+.q-actionbar.nothing-hidden button{display:none;}
 .q-actionbar .prog-fill{height:100%;background:var(--accent);transition:width 0.25s;}
 .q-actionbar button{background:var(--surface);border:1px solid var(--border);color:var(--text-soft);padding:0.3rem 0.75rem;border-radius:7px;font-size:0.76rem;cursor:pointer;font-family:inherit;transition:all 0.15s;white-space:nowrap;}
 .q-actionbar button:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
@@ -141,9 +154,10 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .sec-hints ul{list-style:none;display:flex;flex-direction:column;gap:0.15rem;}
 .sec-hints li{padding-left:1em;text-indent:-1em;}
 .sec-hints li::before{content:'• ';color:var(--accent2);font-weight:700;}
-.q-breadcrumb{font-size:0.76rem;color:var(--muted);margin-bottom:0.7rem;display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;}
+.q-breadcrumb{font-size:0.76rem;color:var(--muted);margin-bottom:0.7rem;display:flex;align-items:center;gap:0.4rem;min-width:0;}
 .q-breadcrumb .sep{color:var(--muted2);}
-.q-breadcrumb .cat-name{color:var(--accent);font-weight:600;}
+.q-breadcrumb .cat-name{color:var(--accent);font-weight:600;white-space:nowrap;flex-shrink:0;}
+.q-breadcrumb .crumb-current{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .q-type-badge{font-size:0.66rem;padding:0.1rem 0.5rem;border-radius:4px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent);font-weight:700;letter-spacing:0.05em;text-transform:uppercase;}
 .q-title{font-size:1.55rem;font-weight:700;margin-bottom:0.2rem;line-height:1.3;letter-spacing:-0.02em;}
 .q-source{font-size:0.78rem;color:var(--muted);font-style:italic;margin-bottom:1rem;}
@@ -167,6 +181,8 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .step-title{font-size:0.92rem;font-weight:600;color:var(--text);flex:1;}
 .step-arrow{font-size:0.78rem;color:var(--muted);font-family:ui-monospace,monospace;}
 .step-body{padding:1rem 1.2rem;}
+/* On the sheet a section's content lines up with its heading */
+.q-section > .step-body{padding:0;}
 .step-prompt{font-size:0.9rem;line-height:1.7;color:var(--text);margin-bottom:0.9rem;}
 .step-given{background:#fff;border:1px solid var(--border);border-radius:8px;padding:1.2rem 1rem;display:flex;justify-content:center;align-items:center;min-height:120px;margin-bottom:0.9rem;overflow-x:auto;}
 .step-given svg{display:block;max-width:100%;height:auto;}
@@ -202,14 +218,18 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 
 /* MCQ */
 .mcq-choices{display:flex;flex-direction:column;gap:0.6rem;margin-bottom:0.9rem;}
-.mcq-choice{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:0.9rem 1rem;cursor:pointer;transition:all 0.15s;display:flex;gap:0.8rem;align-items:center;}
-.mcq-choice:hover{border-color:var(--muted2);transform:translateY(-1px);}
+.mcq-choice{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:0.9rem 1rem;cursor:pointer;transition:all 0.15s;display:flex;gap:0.8rem;align-items:center;-webkit-tap-highlight-color:transparent;}
+@media (hover:hover){
+  .mcq-choices:not(.locked) .mcq-choice:hover{border-color:var(--muted2);transform:translateY(-1px);}
+}
+.mcq-choices.locked .mcq-choice{cursor:default;}
 .mcq-choice.selected{border-color:var(--accent);background:var(--accent-soft);}
 .mcq-choice.correct{border-color:var(--green);background:var(--green-soft);}
 .mcq-choice.wrong{border-color:var(--red);background:var(--red-soft);}
 .mcq-choice .struct{flex:1;min-height:60px;display:flex;justify-content:center;align-items:center;background:#fff;border:1px solid var(--border);border-radius:6px;padding:0.4rem;}
 .mcq-choice .struct svg{display:block;max-width:100%;height:auto;}
-.mcq-choice .lbl{font-size:0.86rem;color:var(--text);min-width:140px;font-weight:500;}
+.mcq-choice .lbl{font-size:0.88rem;line-height:1.5;color:var(--text);flex:1;min-width:0;font-weight:500;}
+.mcq-choice.has-struct .lbl{flex:0 1 200px;min-width:120px;}
 .mcq-choice .marker{width:24px;height:24px;border-radius:50%;border:2px solid var(--border2);font-size:0.78rem;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--muted);flex-shrink:0;}
 .mcq-choice.selected .marker{border-color:var(--accent);color:var(--accent);}
 .mcq-choice.correct .marker{border-color:var(--green);background:var(--green);color:#fff;}
@@ -363,56 +383,83 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .composed-info-actions{display:flex;gap:0.4rem;flex-wrap:wrap;align-items:center;}
 @keyframes slide-in { from { transform: translateY(20px); opacity:0; } to { transform: translateY(0); opacity:1; } }
 
+.overlay{display:none;position:fixed;inset:0;background:rgba(60,55,40,0.35);z-index:25;}
+.overlay.open{display:block;}
+
 /* ════════════════════════════════════════════════════════════════════
-   MOBILE (≤ 760px) — comprehensive responsive overrides
+   TABLET + PHONE (≤ 1023px) — the sidebar becomes a drawer, so the
+   task sheet gets the full width
+   ════════════════════════════════════════════════════════════════════ */
+@media(max-width:1023px){
+  /* Above the overlay: the ✕ and the search stay usable while the drawer is open. */
+  header{position:relative;z-index:40;}
+  .hamburger{display:flex;}
+  /* the hamburger takes their room in the header row; the search keeps its width */
+  .brand-sub,.count-badge{display:none;}
+  .sidebar{position:fixed;left:0;top:var(--header-h);bottom:0;z-index:30;
+    width:min(320px,86vw);transform:translateX(-100%);visibility:hidden;
+    transition:transform 0.22s ease-out,visibility 0s linear 0.22s;
+    box-shadow:0 10px 30px rgba(60,55,40,0.18);will-change:transform;}
+  .sidebar.open{transform:translateX(0);visibility:visible;transition:transform 0.22s ease-out;}
+  .overlay{top:var(--header-h);}
+  .q-wrap{padding:1.25rem 1.25rem 3rem;}
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   PHONE (≤ 760px)
    ════════════════════════════════════════════════════════════════════ */
 @media(max-width:760px){
-  :root{--header-h:94px;}
+  :root{--header-h:100px;}
 
   /* Header: two-row layout — brand + actions on row 1, search full-width on row 2 */
-  header{flex-wrap:wrap;row-gap:0.45rem;padding:0.5rem 0.85rem;height:auto;min-height:56px;
+  header{flex-wrap:wrap;row-gap:0.45rem;column-gap:0.6rem;padding:0.5rem 0.85rem;height:auto;min-height:56px;
     padding-top:max(0.5rem, env(safe-area-inset-top));align-items:center;}
-  .brand{gap:0.5rem;}
+  .brand{gap:0.5rem;min-width:0;}
   .brand-name{font-size:0.95rem;}
   .brand-sub{display:none;}
   .search-wrap{flex-basis:100%;order:10;max-width:none;}
-  #search{padding:0.5rem 0.8rem 0.5rem 2.1rem;font-size:0.92rem;border-radius:9px;}
-  .header-right{gap:0.3rem;margin-left:auto;}
+  /* 16 px — anything smaller makes iOS zoom the page when the field is focused */
+  #search{padding:0.5rem 0.8rem 0.5rem 2.1rem;font-size:16px;border-radius:9px;}
+  .header-right{gap:0.4rem;}
   .count-badge{display:none;}
-  .nav-link{font-size:0.74rem;padding:0.32rem 0.55rem;min-height:32px;display:inline-flex;align-items:center;}
-  .hamburger{display:flex;align-items:center;justify-content:center;width:38px;height:38px;
-    border:1px solid var(--border);border-radius:8px;background:var(--surface);cursor:pointer;
-    color:var(--text);font-size:1.18rem;flex-shrink:0;-webkit-tap-highlight-color:transparent;}
-  .hamburger:active{background:var(--surface2);}
-
-  /* Sidebar drawer — uses transform for smoother GPU-accelerated slide */
-  .sidebar{position:fixed;left:0;top:var(--header-h);
-    height:calc(100vh - var(--header-h));z-index:30;
-    transform:translateX(-100%);transition:transform 0.22s ease-out;
-    width:min(310px,88vw);box-shadow:var(--shadow-md);will-change:transform;}
-  .sidebar.open{transform:translateX(0);}
-  .overlay{top:var(--header-h);}
+  /* Admin is a desktop tool — keep only the link to the reactions */
+  .nav-link.muted{display:none;}
+  .nav-link{font-size:0.8rem;padding:0 0.8rem;min-height:40px;display:inline-flex;align-items:center;}
 
   /* Welcome */
-  .welcome{padding:1.75rem 1.1rem;}
-  .welcome-logo{width:72px;height:72px;margin-bottom:1rem;}
-  .welcome h1{font-size:1.45rem;}
-  .welcome p{font-size:0.88rem;max-width:100%;margin-bottom:1.4rem;}
+  .welcome{padding:1.5rem 1rem 2rem;}
+  .welcome-logo{width:60px;height:60px;margin-bottom:0.9rem;}
+  .welcome h1{font-size:1.4rem;}
+  .welcome p{font-size:0.88rem;line-height:1.65;max-width:100%;margin-bottom:1.4rem;}
   .welcome-stats{gap:0.4rem;}
   .stat-pill{padding:0.45rem 0.75rem;font-size:0.74rem;}
 
-  /* Question page — reduced padding, room for bottom-sheet */
-  .q-wrap{padding:0.5rem 0.4rem 5rem;}
-  .q-page{padding:0.9rem 0.8rem 1.4rem;border-radius:4px;}
-  .q-actionbar{margin:-0.4rem -0.4rem 0.7rem;padding:0.45rem 0.5rem;gap:0.35rem;}
-  .q-actionbar .prog-bar{width:60px;}
-  .q-actionbar button{padding:0.3rem 0.5rem;font-size:0.72rem;}
-  .sg-rail{flex-basis:26px;}
-  .sg-rail-btn{width:26px;height:26px;}
+  /* Question page: the sheet runs edge to edge (a frame only costs width
+     here); room at the bottom for the bottom sheet */
+  .q-wrap{padding:0 0 5rem;}
+  .q-page{padding:0.9rem 1rem 1.4rem;border:none;border-radius:0;box-shadow:none;}
+  .q-actionbar{margin:-0.9rem -1rem 0.8rem;padding:0.45rem 1rem;gap:0.4rem;}
+  .q-actionbar .prog-word{display:none;}
+  .q-actionbar .prog-bar{flex:1 1 40px;width:auto;max-width:120px;}
+  .q-actionbar button{padding:0 0.65rem;min-height:36px;font-size:0.76rem;}
+  /* Zoom rail as a row above the scheme: the viewer plans for the canvas
+     width, so every pixel the rail gave back draws the scheme larger. */
+  .sg-body{flex-direction:column;align-items:stretch;gap:0.3rem;}
+  .sg-readonly .sg-canvas{flex:none;width:100%;}
+  .sg-rail{order:-1;flex:none;flex-direction:row;align-self:flex-end;position:static;gap:0.35rem;padding-top:0;}
+  .sg-rail [data-act="zoomout"]{order:1;}
+  .sg-rail .sg-zoom-label{order:2;min-width:2.6rem;text-align:center;font-size:0.68rem;}
+  .sg-rail [data-act="zoomin"]{order:3;}
+  .sg-rail [data-act="fit"]{order:4;}
   .q-title{font-size:1.25rem;line-height:1.25;}
   .q-source{font-size:0.74rem;}
   .q-intro{padding:0.75rem 0.9rem;font-size:0.86rem;line-height:1.6;border-radius:8px;}
-  .q-breadcrumb{font-size:0.72rem;gap:0.3rem;}
+  .q-breadcrumb{font-size:0.72rem;gap:0.35rem;}
+  /* the title right below already names the task */
+  .q-breadcrumb .sep,.q-breadcrumb .crumb-current{display:none;}
+  .section-title{font-size:1.02rem;}
+  /* 16 px — keeps iOS from zooming into the answer field */
+  .sa-area{font-size:16px;}
 
   /* Section headers */
   .section-header{font-size:0.95rem;}
@@ -454,9 +501,11 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
   .composed-info-name{font-size:1rem;}
   .composed-info-expl{font-size:0.88rem;line-height:1.6;}
 
-  /* MCQ choices: tap-friendly */
-  .mcq-choice{padding:0.7rem 0.85rem;min-height:48px;}
-  .mcq-choice .lbl{min-width:0;font-size:0.88rem;}
+  /* MCQ choices: tap-friendly; a structure goes under the text */
+  .mcq-choice{padding:0.75rem 0.85rem;min-height:48px;}
+  .mcq-choice.has-struct{flex-wrap:wrap;}
+  .mcq-choice.has-struct .lbl{flex:1 1 0;min-width:0;}
+  .mcq-choice.has-struct .struct{flex:1 1 100%;}
 
   /* Hide answer-struct overflow gracefully */
   .answer-struct{padding:0.6rem;}
@@ -464,25 +513,34 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 
 /* Tiny phones (≤ 380px) */
 @media(max-width:380px){
-  .nav-link{padding:0.3rem 0.45rem;font-size:0.7rem;}
-  .brand-name{font-size:0.85rem;}
+  .nav-link{padding:0 0.65rem;font-size:0.76rem;}
+  .brand-name{font-size:0.88rem;}
   .brand-logo{width:26px;height:26px;}
-  .hamburger{width:36px;height:36px;}
   .flow-node{min-width:128px;max-width:144px;}
   .flow-arrow{min-width:54px;}
   .flow-arrow .arrow-line{width:36px;}
-  .welcome h1{font-size:1.3rem;}
+  .welcome h1{font-size:1.28rem;}
+  .q-actionbar button{padding:0 0.5rem;font-size:0.72rem;}
 }
 
-@media(min-width:761px){.hamburger{display:none;}}
-.overlay{display:none;position:fixed;inset:0;background:rgba(60,55,40,0.35);z-index:25;}
-.overlay.open{display:block;}
+/* Touch screens: finger-sized targets (≥ 40 px) */
+@media (pointer:coarse){
+  .diff-pill{min-height:40px;padding:0;display:flex;align-items:center;justify-content:center;}
+  .cat-header{padding-top:0.8rem;padding-bottom:0.8rem;}
+  .q-link{padding-top:0.7rem;padding-bottom:0.7rem;}
+  .brand-home{padding:0.6rem 0;margin:-0.6rem 0;}
+  /* nothing hovers to reveal the zoom buttons */
+  .sg-rail{opacity:1;flex-basis:34px;}
+  .sg-rail-btn{width:34px;height:34px;}
+  .composed-info-close{min-width:40px;min-height:40px;}
+  .related-link,.expl-toggle{display:inline-flex;align-items:center;min-height:36px;}
+}
 </style>
 </head>
 <body>
 
 <header>
-  <button class="hamburger" onclick="toggleSidebar()" aria-label="Menü">☰</button>
+  <button class="hamburger" id="hamburger" onclick="toggleSidebar()" aria-label="Menü öffnen" aria-controls="sidebar" aria-expanded="false">☰</button>
   <a href="./index.html" class="brand brand-home" title="Zur Startseite — Reaktionen">
     <div class="brand-logo">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="14 52 174 187"><path fill="#ff0000" d="M 153.27953,54.242684 141.3862,76.472852 73.360897,76.250643 39.904024,139.16308 16.228467,139.27419 v 13.11599 l 23.452832,0.22273 34.124015,62.80081 68.025306,0.11111 11.33781,21.56406 10.67067,-6.55826 -11.67113,-22.11958 33.79071,-62.80082 -34.12402,-62.801331 12.11554,-21.897371 z m -12.0804,35.318258 30.29893,56.472008 -30.37747,56.07874 -60.322938,0.1571 -30.220377,-56.35367 30.220377,-56.27563 z m 13.04727,56.216728 -22.51801,41.95092 3.81166,2.31872 22.518,-41.87289 c 0,0 2.9e-4,-0.0192 -3.81165,-2.39675 z"/></svg>
@@ -494,10 +552,10 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
     <span class="search-icon">⌕</span>
     <input id="search" type="text" placeholder="Fragen suchen…" oninput="globalSearch(this.value)" autocomplete="off">
   </div>
-  <a href="./index.html" class="nav-link muted">Reaktionen</a>
-  <a href="./admin.html" class="nav-link muted">Admin</a>
   <div class="header-right">
     <span class="count-badge" id="count-badge">— Fragen</span>
+    <a href="./index.html" class="nav-link" title="Reaktionen nachschlagen">Reaktionen ↗</a>
+    <a href="./admin.html" class="nav-link muted" title="Adminbereich">Admin</a>
   </div>
 </header>
 
@@ -508,10 +566,10 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
     <div class="sidebar-top">
       <div class="sidebar-label">Schwierigkeit</div>
       <div class="diff-filter" id="diff-filter">
-        <div class="diff-pill diff-A active" data-diff="A" onclick="toggleDiff('A')" title="Einsteiger/innen">A</div>
-        <div class="diff-pill diff-B active" data-diff="B" onclick="toggleDiff('B')" title="LW / JÖChO">B</div>
-        <div class="diff-pill diff-C active" data-diff="C" onclick="toggleDiff('C')" title="BW">C</div>
-        <div class="diff-pill diff-D active" data-diff="D" onclick="toggleDiff('D')" title="Spezial">D</div>
+        <div class="diff-pill diff-A active" data-diff="A" onclick="toggleDiff('A')" title="Einsteiger/innen" role="button" tabindex="0" aria-pressed="true">A</div>
+        <div class="diff-pill diff-B active" data-diff="B" onclick="toggleDiff('B')" title="LW / JÖChO" role="button" tabindex="0" aria-pressed="true">B</div>
+        <div class="diff-pill diff-C active" data-diff="C" onclick="toggleDiff('C')" title="BW" role="button" tabindex="0" aria-pressed="true">C</div>
+        <div class="diff-pill diff-D active" data-diff="D" onclick="toggleDiff('D')" title="Spezial" role="button" tabindex="0" aria-pressed="true">D</div>
       </div>
       <div class="sidebar-label" style="margin-top:0.85rem">Kategorien</div>
     </div>
@@ -609,7 +667,7 @@ function buildSidebar() {
     const label = typeKey;
     const visibleN = items.filter(qVisible).length;
     return `<div class="cat-group" data-cat="${x(typeKey)}"${visibleN===0?' style="display:none"':''}>
-      <div class="cat-header" onclick="toggleCat(this)">
+      <div class="cat-header" onclick="toggleCat(this)" role="button" tabindex="0" aria-expanded="false">
         <span class="cat-arrow">▶</span>
         <span>${renderLatexLabel(label)}</span>
         <span class="cat-count">${visibleN}</span>
@@ -620,26 +678,43 @@ function buildSidebar() {
           const badge = d ? `<span class="diff-badge diff-${d}">${d}</span>` : '';
           const hidden = !qVisible(q) ? ' hidden' : '';
           const diffCls = d ? ' diff-'+d : '';
-          return `<div class="q-link${diffCls}${hidden}" id="link-${x(q.id)}" onclick="showQuestion('${x(q.id)}')">${badge}<span class="q-name">${renderLatexLabel(q.name)}</span></div>`;
+          return `<div class="q-link${diffCls}${hidden}" id="link-${x(q.id)}" onclick="showQuestion('${x(q.id)}')" role="button" tabindex="0" title="${x(ChemText.plain(q.name))}">${badge}<span class="q-name">${renderLatexLabel(q.name)}</span></div>`;
         }).join('')}
       </div>
     </div>`;
   }).join('');
+  const act = activeId && document.getElementById('link-'+activeId);
+  if (act) {
+    act.classList.add('active');
+    act.closest('.cat-group')?.querySelector('.cat-header')?.classList.add('open');
+  }
+  syncCatHeaders();
+}
+
+/* aria-expanded mirrors the .open class that shows a category's items. */
+function syncCatHeaders() {
+  document.querySelectorAll('.cat-header').forEach(h =>
+    h.setAttribute('aria-expanded', h.classList.contains('open') ? 'true' : 'false'));
 }
 
 function toggleDiff(d) {
   const pill = document.querySelector(`.diff-pill[data-diff="${d}"]`);
   if (diffFilter.has(d)) { diffFilter.delete(d); pill.classList.remove('active'); }
   else                   { diffFilter.add(d);    pill.classList.add('active');    }
+  pill.setAttribute('aria-pressed', diffFilter.has(d) ? 'true' : 'false');
   buildSidebar();
+  const s = document.getElementById('search').value;
+  if (s.trim()) globalSearch(s);
 }
-function toggleCat(h) { h.classList.toggle('open'); }
+function toggleCat(h) { h.classList.toggle('open'); syncCatHeaders(); }
 function openSidebarFor(id) {
   const link = document.getElementById('link-'+id);
   if (!link) return;
   const header = link.closest('.cat-group')?.querySelector('.cat-header');
   if (header) header.classList.add('open');
-  setTimeout(() => link.scrollIntoView({block:'nearest',behavior:'smooth'}), 50);
+  syncCatHeaders();
+  // In drawer mode the list is out of sight; it is scrolled when the drawer opens.
+  if (!isDrawerMode()) setTimeout(() => link.scrollIntoView({block:'nearest',behavior:'smooth'}), 50);
 }
 
 function showWelcome() {
@@ -768,7 +843,9 @@ function renderComposedScheme(q, scheme) {
   const containerId = 'sg-view-' + q.id;
   const infoPanels = nodes.filter(n => !n.given).map(n => {
     const slot = q.id + '-n-' + n.id;
-    return `<div class="composed-info" id="info-${x(slot)}">
+    // Nothing to tell beyond "revealed" → the panel is never opened.
+    const empty = !(n.name || n.explanation || n.note || n.related_reaction_id);
+    return `<div class="composed-info" id="info-${x(slot)}"${empty ? ' data-empty="1"' : ''}>
       <button class="composed-info-close" onclick="closeNodeInfo('${x(slot)}')">×</button>
       <div class="composed-info-head">${renderLatexLabel(n.label || n.id)} aufgedeckt</div>
       ${n.name ? `<div class="composed-info-name">${renderLatexLabel(n.name)}</div>` : ''}
@@ -839,8 +916,10 @@ function updateQuizProgress(anyId) {
   }
   const txt = document.getElementById('prog-text-' + qid);
   const bar = document.getElementById('prog-fill-' + qid);
-  if (txt) txt.textContent = total ? `${revealed} / ${total} aufgedeckt` : 'Alle Strukturen vorgegeben';
+  // "aufgedeckt" is dropped on a phone, where the bar is short of room.
+  if (txt) txt.innerHTML = total ? `${revealed} / ${total}<span class="prog-word"> aufgedeckt</span>` : 'Alle Strukturen vorgegeben';
   if (bar) bar.style.width = (total ? (revealed / total * 100) : 100) + '%';
+  txt?.closest('.q-actionbar')?.classList.toggle('nothing-hidden', !total);
 }
 
 /* Legacy flex-flow renderer kept as a defensive fallback. Identical
@@ -1005,7 +1084,7 @@ window.revealNode = function(slot) {
 window.openNodeInfo = function(slot) {
   document.querySelectorAll('.composed-info.open').forEach(el => el.classList.remove('open'));
   const info = document.getElementById('info-'+slot);
-  if (info) info.classList.add('open');
+  if (info && !info.dataset.empty) info.classList.add('open');
 };
 window.closeNodeInfo = function(slot) {
   const info = document.getElementById('info-'+slot);
@@ -1041,10 +1120,11 @@ function renderMCQ(q) {
       structHtml = `<div id="mcq-svg-${slot}" class="struct-slot"></div>`;
     }
     const marker = String.fromCharCode(65+i);
-    return `<div class="mcq-choice" data-correct="${c.correct?1:0}" data-i="${i}" onclick="pickMCQ(this, '${q.id}')">
+    // Text-only choices get no (empty) structure box — the text takes the row.
+    return `<div class="mcq-choice${structHtml ? ' has-struct' : ''}" data-correct="${c.correct?1:0}" data-i="${i}" onclick="pickMCQ(this, '${q.id}')" role="button" tabindex="0">
       <div class="marker">${marker}</div>
       <div class="lbl">${renderLatexLabel(c.label||'')}</div>
-      <div class="struct">${structHtml}</div>
+      ${structHtml ? `<div class="struct">${structHtml}</div>` : ''}
     </div>`;
   }).join('');
 
@@ -1230,7 +1310,7 @@ function showQuestion(id) {
       <div class="q-breadcrumb">
         <span class="cat-name">${x(q.category)}</span>
         <span class="sep">›</span>
-        <span>${renderLatexLabel(q.name)}</span>
+        <span class="crumb-current">${renderLatexLabel(q.name)}</span>
         ${q.difficulty ? `<span class="diff-badge diff-${q.difficulty}">${q.difficulty}</span>` : ''}
       </div>
       <h1 class="q-title">${renderLatexLabel(q.name)}</h1>
@@ -1243,6 +1323,7 @@ function showQuestion(id) {
   if (hasScheme) setTimeout(() => updateQuizProgress(q.id), 30);
 
   document.getElementById('main').scrollTop = 0;
+  setSidebar(false);
 }
 window.showQuestion = showQuestion;
 
@@ -1254,11 +1335,11 @@ function globalSearch(qstr) {
     links.forEach(link => {
       const id  = link.id.replace('link-','');
       const q   = questions.find(x => x.id === id);
-      const hit = !s
+      const hit = qVisible(q) && (!s
         || q.name.toLowerCase().includes(s)
         || (q.category||'').toLowerCase().includes(s)
         || (TYPE_GROUP_LABEL[qPrimaryType(q)]||'').toLowerCase().includes(s)
-        || (q.intro||'').toLowerCase().includes(s);
+        || (q.intro||'').toLowerCase().includes(s));
       link.classList.toggle('hidden', !hit);
       if (hit) any = true;
     });
@@ -1266,12 +1347,45 @@ function globalSearch(qstr) {
     const header = group.querySelector('.cat-header');
     if (s && any) header.classList.add('open');
   });
+  syncCatHeaders();
+  // The results are the sidebar list — on a phone or tablet, show it.
+  if (s) { setSidebar(true); document.getElementById('sidebar').scrollTop = 0; }
 }
 
-function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('overlay').classList.toggle('open');
+/* ≤ 1023 px the sidebar is a drawer over the page (see the CSS). */
+const drawerQuery = window.matchMedia('(max-width: 1023px)');
+function isDrawerMode() { return drawerQuery.matches; }
+
+function setSidebar(open) {
+  const sb = document.getElementById('sidebar');
+  if (open && !isDrawerMode()) return;
+  if (open === sb.classList.contains('open')) return;
+  sb.classList.toggle('open', open);
+  document.getElementById('overlay').classList.toggle('open', open);
+  const btn = document.getElementById('hamburger');
+  btn.textContent = open ? '✕' : '☰';
+  btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  btn.setAttribute('aria-label', open ? 'Menü schließen' : 'Menü öffnen');
+  const act = open && activeId && document.getElementById('link-'+activeId);
+  if (act && !act.classList.contains('hidden')) {   // centre the current task in the list
+    const r = act.getBoundingClientRect(), top = sb.getBoundingClientRect().top;
+    sb.scrollTop += (r.top - top) - (sb.clientHeight - r.height) / 2;
+  }
 }
+function toggleSidebar() {
+  setSidebar(!document.getElementById('sidebar').classList.contains('open'));
+}
+// Back on a wide screen the sidebar is part of the page again.
+drawerQuery.addEventListener('change', e => { if (!e.matches) setSidebar(false); });
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { setSidebar(false); return; }
+  // Keyboard access for the clickable rows, choices and pills (role="button").
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches?.('[role="button"]')) {
+    e.preventDefault();
+    e.target.click();
+  }
+});
 
 // Keep --header-h CSS var in sync with the actual rendered header height.
 // Without this, the sidebar drawer top + the layout height calc drift apart
