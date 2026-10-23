@@ -1,6 +1,6 @@
 /* Service worker for the OC Reaktionen PWA.
    Bump CACHE when the shell changes — activate drops every other cache. */
-const CACHE = 'oc-oecho-v19';
+const CACHE = 'oc-oecho-v20';
 
 /* App shell. Paths are relative to the SW scope, so the same file works on
    GitHub Pages (/OC-oecho/) and on localhost. Ketcher (vendor/, ~26 MB) and
@@ -15,6 +15,7 @@ const SHELL = [
   './pwa.js',
   './chem-text.js',
   './mol-renderer.js',
+  './mech-arrows.js',
   './scheme-graph-editor.js',
   './manifest.webmanifest',
   './assets/logo.svg',
@@ -22,7 +23,8 @@ const SHELL = [
   './assets/icon-512.png',
   './assets/icon-maskable-512.png',
   './data/reactions.json',
-  './data/questions.json'
+  './data/questions.json',
+  './data/mechanisms.json'
 ];
 
 self.addEventListener('install', e => {

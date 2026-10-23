@@ -17,6 +17,12 @@ const write    = (f, d) => fs.writeFileSync(dataPath(f), JSON.stringify(d, null,
 app.get('/api/reactions',  (_, res) => res.json(read('reactions.json')));
 app.post('/api/reactions', (req, res) => { write('reactions.json', req.body); res.json({ ok: true }); });
 
+// Mechanisms API (data/mechanisms.json, keyed by reaction id)
+app.get('/api/mechanisms',  (_, res) => {
+  try { res.json(read('mechanisms.json')); } catch (_) { res.json({}); }
+});
+app.post('/api/mechanisms', (req, res) => { write('mechanisms.json', req.body); res.json({ ok: true }); });
+
 // Questions API
 app.get('/api/questions',  (_, res) => res.json(read('questions.json')));
 app.post('/api/questions', (req, res) => { write('questions.json', req.body); res.json({ ok: true }); });

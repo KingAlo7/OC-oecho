@@ -25,10 +25,17 @@ function alphaCarbonyl(m, x0, y0, leftLabel, zLabel) {
 
 R({
   id: 'aldol-addition', category: C_EN, name: 'Aldoladdition',
-  difficulty: 'B', reaktionstyp: 'A_N (Enolat)', transformation: '2 R–CH₂–CHO → β-Hydroxyaldehyd',
+  difficulty: 'B', reaktionstyp: 'A_N (Enolat)', transformation: 'R₁–CH₂–CHO + R₂–CHO → β-Hydroxyaldehyd',
   rx: (() => {
     const a = (() => { const m = new Mol(); alphaCarbonyl(m, 0, 0, 'R₁', 'H'); return m; })();
-    const a2 = (() => { const m = new Mol(); alphaCarbonyl(m, 0, 0, 'R₂', 'H'); return m; })();
+    // the electrophile needs no α-H: R₂ sits directly on its carbonyl C,
+    // as on the CH(OH) of the product
+    const a2 = (() => {
+      const m = new Mol();
+      const r2 = m.gen(DX, DY, 'R₂'), c = m.add(2 * DX, 0, 'C'), o = m.add(2 * DX, -B, 'O'), h = m.gen(3 * DX, DY, 'H');
+      m.bond(r2, c, 1); m.bond(c, o, 2); m.bond(c, h, 1);
+      return m;
+    })();
     const b = (() => {
       const m = new Mol();
       // Left half: the former nucleophile, α-C now bonded to the new C.
@@ -47,9 +54,9 @@ R({
     })();
     return { reactants: [a, a2], products: [b] };
   })(),
-  above: 'NaOH (kat.)', below: 'H_2O, 0–5 °C',
+  above: 'Base (kat.)', below: '0–5 °C',
   stereochemistry: 'Bis zu zwei neue Stereozentren; mit Evans-Auxiliaren oder (S)-Prolin steuerbar.',
-  substituents: 'R₁, R₂ = Alkyl, Aryl, H · das Nucleophil BRAUCHT ein α-H, das Elektrophil nicht',
+  substituents: 'R₁, R₂ = Alkyl, Aryl, H · das Nucleophil BRAUCHT ein α-H, das Elektrophil nicht · Base: OH⁻, RO⁻, LDA',
   key_points: [
     'Die Base erzeugt aus dem α-H ein mesomeriestabilisiertes ENOLAT, das als C-Nucleophil das zweite Carbonyl angreift.',
     'Das Produkt ist ein β-Hydroxycarbonyl — die OH-Gruppe steht immer in β-Stellung zum C=O.',
@@ -92,7 +99,7 @@ R({
     })();
     return { reactants: [a], products: [b] };
   })(),
-  above: 'OH^- , Δ', below: '-H_2O',
+  above: 'Base, Δ', below: '-H_2O',
   stereochemistry: 'Fast ausschließlich das (E)-konfigurierte Enon (konjugiert und sterisch günstiger).',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H',
   key_points: [
@@ -137,7 +144,7 @@ R({
     })();
     return { reactants: [mkEster('R₁'), mkEster('R₂')], products: [b] };
   })(),
-  above: '1. NaOEt (1 Äq.)', below: '2. H_3O^+ , -EtOH',
+  above: '1. EtO^- (1 Äq.)', below: '2. H_3O^+ , -EtOH',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H · Et = Ethyl (oder Me bei Methylestern)',
   key_points: [
     'Der Unterschied zur Aldolreaktion: der Ester hat eine ABGANGSGRUPPE (OEt), deshalb folgt auf die Addition eine Eliminierung — es bleibt ein Keton statt eines Alkohols.',
@@ -266,7 +273,7 @@ R({
     })();
     return { reactants: [a, a2], products: [b] };
   })(),
-  above: 'CH_2=CH-CO-CH_3 (MVK)', below: 'NaOH / KOH, Δ',
+  above: 'CH_2=CH-CO-CH_3 (MVK)', below: 'Base, Δ',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H · statt MVK jeder Michael-Akzeptor mit endständiger CH₂=CH-Gruppe',
   key_points: [
     'Drei Schritte in einem Topf: (1) Michael-Addition, (2) intramolekulare Aldol-Addition, (3) Wasserabspaltung.',
@@ -394,7 +401,7 @@ R({
     })();
     return { reactants: [a], products: [b] };
   })(),
-  above: '1. NaOEt  2. R_1-X', below: '3. H_3O^+ , Δ  (-CO_2)',
+  above: '1. Base  2. R_1-X', below: '3. H_3O^+ , Δ  (-CO_2)',
   substituents: 'Z = –CO₂Et (Malonester → Carbonsäure) oder –CO–CH₃ (Acetessigester → Methylketon) · R₁ = primäres Alkyl · X = Br, I, OTs',
   key_points: [
     'Das doppelt aktivierte C–H hat pK_s ≈ 11–13 und ist mit Alkoholat vollständig deprotonierbar.',

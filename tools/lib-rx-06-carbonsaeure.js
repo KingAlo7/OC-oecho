@@ -69,7 +69,7 @@ R({
       const r = m.gen(0, 0, 'R₂'); const o = m.add(DX, DY, 'O'); m.bond(r, o, 1); return m; })();
     return { reactants: [a], products: [b, b2] };
   })(),
-  above: 'NaOH / H_2O, Δ', below: 'dann H_3O^+',
+  above: 'OH^- / H_2O, Δ', below: 'dann H_3O^+',
   substituents: 'R₁ = Alkyl, Aryl · R₂ = Alkyl',
   key_points: [
     'BASISCH ist die Reaktion irreversibel: die Säure wird sofort zum Carboxylat deprotoniert, das kein Elektrophil mehr ist.',
@@ -115,7 +115,7 @@ R({
     })();
     return { reactants: [a, a2], products: [b] };
   })(),
-  above: 'R_2-NH_2', below: 'NaOH bzw. NEt_3 , 0 °C',
+  above: 'R_2-NH_2', below: 'Base (NaOH, NEt_3), 0 °C',
   substituents: 'R₁ = Alkyl, Aryl · R₂ = Alkyl, Aryl, H; auch sekundäre Amine',
   key_points: [
     'Zwei Äquivalente Amin oder eine Hilfsbase sind nötig — sonst protoniert das entstehende HCl das Amin und stoppt die Reaktion.',
@@ -286,7 +286,7 @@ R({
     const b = acid();
     return { reactants: [a], products: [b] };
   })(),
-  above: 'H_3O^+ , Δ', below: 'bzw. NaOH/H_2O, dann H^+',
+  above: 'H_3O^+ , Δ', below: 'bzw. OH^-/H_2O, dann H^+',
   substituents: 'R₁ = Alkyl, Aryl, Benzyl',
   key_points: [
     'Verläuft über das AMID als isolierbare Zwischenstufe — mild geführt bleibt es dort stehen.',

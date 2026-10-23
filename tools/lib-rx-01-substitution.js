@@ -195,7 +195,7 @@ R({
     const b = new Mol(); prim(b, 0, 0, 'R₁', 'N', null);
     return { reactants: [a], products: [b] };
   })(),
-  above: '1. K-Phthalimid', below: '2. N_2H_4  bzw. NaOH/H_2O',
+  above: '1. K-Phthalimid', below: '2. N_2H_4  bzw. OH^-/H_2O',
   stereochemistry: 'Inversion am Halogenid-C (S_N2).',
   substituents: 'R₁ = Alkyl (primär), Benzyl, Allyl, CH(CO₂Et)₂ · X = Cl, Br, I, OTs',
   key_points: [
@@ -268,7 +268,7 @@ R({
     b.bond(s1, d1, 1); b.bond(d1, d2, 2); b.bond(d2, s2, 1);
     return { reactants: [a], products: [b] };
   })(),
-  above: 'starke Base', below: 'KOH/EtOH, Δ',
+  above: 'starke Base', below: 'Δ',
   stereochemistry: 'Anti-periplanare Anordnung von H und X zwingend → aus einem Diastereomer entsteht gezielt das E- oder das Z-Alken.',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H · X = Cl, Br, I, OTs, ⁺NR₃',
   key_points: [

@@ -162,7 +162,7 @@
     "transformation": "R–CH₂–X → R–CH₂–NH₂",
     "reaction_rxn": "$RXN\n\n  OC-oecho\n\n  1  1\n$MOL\n\n  OC-oecho\n\n  3  2  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\nA    1\nR₁\nA    3\nX\nM  END\n$MOL\n\n  OC-oecho\n\n  3  2  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\nA    1\nR₁\nM  END\n",
     "reagent_label": "1. K-Phthalimid",
-    "reagent_label_below": "2. N_2H_4  bzw. NaOH/H_2O",
+    "reagent_label_below": "2. N_2H_4  bzw. OH^-/H_2O",
     "stereochemistry": "Inversion am Halogenid-C (S_N2).",
     "substituents": "R₁ = Alkyl (primär), Benzyl, Allyl, CH(CO₂Et)₂ · X = Cl, Br, I, OTs",
     "key_points": [
@@ -220,7 +220,7 @@
     "transformation": "R₁–CH₂–CHX–R₂ → R₁–CH=CH–R₂",
     "reaction_rxn": "$RXN\n\n  OC-oecho\n\n  1  1\n$MOL\n\n  OC-oecho\n\n  5  4  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  1  0\n  3  5  1  0\nA    1\nR₁\nA    4\nR₂\nA    5\nX\nM  END\n$MOL\n\n  OC-oecho\n\n  4  3  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\nA    1\nR₁\nA    4\nR₂\nM  END\n",
     "reagent_label": "starke Base",
-    "reagent_label_below": "KOH/EtOH, Δ",
+    "reagent_label_below": "Δ",
     "stereochemistry": "Anti-periplanare Anordnung von H und X zwingend → aus einem Diastereomer entsteht gezielt das E- oder das Z-Alken.",
     "substituents": "R₁, R₂ = Alkyl, Aryl, H · X = Cl, Br, I, OTs, ⁺NR₃",
     "key_points": [
@@ -1072,7 +1072,7 @@
     "transformation": "R–CHO → (E)-R–CH=CH–CO₂R′",
     "reaction_rxn": "$RXN\n\n  OC-oecho\n\n  1  1\n$MOL\n\n  OC-oecho\n\n  3  2  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\nA    1\nR₁\nM  END\n$MOL\n\n  OC-oecho\n\n  4  3  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\nA    1\nR₁\nA    4\nCO₂R₂\nM  END\n",
     "reagent_label": "(EtO)_2P(O)CH_2CO_2R_2",
-    "reagent_label_below": "NaH  bzw. NaOEt",
+    "reagent_label_below": "Base (NaH, RO^-)",
     "stereochemistry": "Stark (E)-selektiv — es entsteht das thermodynamisch stabilere Alken.",
     "substituents": "R₁ = Alkyl, Aryl (Aldehyde; Ketone reagieren träger) · R₂ = Me, Et · statt CO₂R₂ auch CN, COR",
     "key_points": [
@@ -1111,7 +1111,7 @@
     "reaktionstyp": "Reduktion",
     "transformation": "R₂C=O → R₂CH₂",
     "reaction_rxn": "$RXN\n\n  OC-oecho\n\n  1  1\n$MOL\n\n  OC-oecho\n\n  4  3  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\nA    1\nR₁\nA    4\nR₂\nM  END\n$MOL\n\n  OC-oecho\n\n  3  2  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\nA    1\nR₁\nA    3\nR₂\nM  END\n",
-    "reagent_label": "N_2H_4 / KOH, Δ",
+    "reagent_label": "N_2H_4 / Base, Δ",
     "reagent_label_below": "bzw. Zn(Hg) / konz. HCl",
     "substituents": "R₁, R₂ = Alkyl, Aryl, H",
     "key_points": [
@@ -1148,12 +1148,12 @@
     "name": "Aldoladdition",
     "difficulty": "B",
     "reaktionstyp": "A_N (Enolat)",
-    "transformation": "2 R–CH₂–CHO → β-Hydroxyaldehyd",
-    "reaction_rxn": "$RXN\n\n  OC-oecho\n\n  2  1\n$MOL\n\n  OC-oecho\n\n  5  4  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\nA    1\nR₁\nA    5\nH\nM  END\n$MOL\n\n  OC-oecho\n\n  5  4  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\nA    1\nR₂\nA    5\nH\nM  END\n$MOL\n\n  OC-oecho\n\n  8  7  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    2.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  2  6  1  0\n  6  7  1  0\n  6  8  1  0\nA    1\nR₁\nA    5\nH\nA    8\nR₂\nM  END\n",
-    "reagent_label": "NaOH (kat.)",
-    "reagent_label_below": "H_2O, 0–5 °C",
+    "transformation": "R₁–CH₂–CHO + R₂–CHO → β-Hydroxyaldehyd",
+    "reaction_rxn": "$RXN\n\n  OC-oecho\n\n  2  1\n$MOL\n\n  OC-oecho\n\n  5  4  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\nA    1\nR₁\nA    5\nH\nM  END\n$MOL\n\n  OC-oecho\n\n  4  3  0  0  0  0            999 V2000\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\nA    1\nR₂\nA    4\nH\nM  END\n$MOL\n\n  OC-oecho\n\n  8  7  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    2.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  2  6  1  0\n  6  7  1  0\n  6  8  1  0\nA    1\nR₁\nA    5\nH\nA    8\nR₂\nM  END\n",
+    "reagent_label": "Base (kat.)",
+    "reagent_label_below": "0–5 °C",
     "stereochemistry": "Bis zu zwei neue Stereozentren; mit Evans-Auxiliaren oder (S)-Prolin steuerbar.",
-    "substituents": "R₁, R₂ = Alkyl, Aryl, H · das Nucleophil BRAUCHT ein α-H, das Elektrophil nicht",
+    "substituents": "R₁, R₂ = Alkyl, Aryl, H · das Nucleophil BRAUCHT ein α-H, das Elektrophil nicht · Base: OH⁻, RO⁻, LDA",
     "key_points": [
       "Die Base erzeugt aus dem α-H ein mesomeriestabilisiertes ENOLAT, das als C-Nucleophil das zweite Carbonyl angreift.",
       "Das Produkt ist ein β-Hydroxycarbonyl — die OH-Gruppe steht immer in β-Stellung zum C=O.",
@@ -1170,7 +1170,7 @@
     "reaktionstyp": "A_N + E1cb",
     "transformation": "β-Hydroxycarbonyl → α,β-ungesättigtes Carbonyl",
     "reaction_rxn": "$RXN\n\n  OC-oecho\n\n  1  1\n$MOL\n\n  OC-oecho\n\n  8  7  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    2.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  2  6  1  0\n  6  7  1  0\n  6  8  1  0\nA    1\nR₁\nA    5\nH\nA    8\nR₂\nM  END\n$MOL\n\n  OC-oecho\n\n  7  6  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  2  6  2  0\n  6  7  1  0\nA    1\nR₁\nA    5\nH\nA    7\nR₂\nM  END\n",
-    "reagent_label": "OH^- , Δ",
+    "reagent_label": "Base, Δ",
     "reagent_label_below": "-H_2O",
     "stereochemistry": "Fast ausschließlich das (E)-konfigurierte Enon (konjugiert und sterisch günstiger).",
     "substituents": "R₁, R₂ = Alkyl, Aryl, H",
@@ -1190,7 +1190,7 @@
     "reaktionstyp": "A_N + Eliminierung",
     "transformation": "2 R–CH₂–CO₂Et → β-Ketoester",
     "reaction_rxn": "$RXN\n\n  OC-oecho\n\n  2  1\n$MOL\n\n  OC-oecho\n\n  6  5  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4641    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  5  6  1  0\nA    1\nR₁\nA    6\nEt\nM  END\n$MOL\n\n  OC-oecho\n\n  6  5  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4641    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  5  6  1  0\nA    1\nR₂\nA    6\nEt\nM  END\n$MOL\n\n  OC-oecho\n\n  9  8  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4641    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    2.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  5  6  1  0\n  2  7  1  0\n  7  8  2  0\n  7  9  1  0\nA    1\nR₁\nA    6\nEt\nA    9\nR₂\nM  END\n",
-    "reagent_label": "1. NaOEt (1 Äq.)",
+    "reagent_label": "1. EtO^- (1 Äq.)",
     "reagent_label_below": "2. H_3O^+ , -EtOH",
     "substituents": "R₁, R₂ = Alkyl, Aryl, H · Et = Ethyl (oder Me bei Methylestern)",
     "key_points": [
@@ -1249,7 +1249,7 @@
     "transformation": "Keton + MVK → Cyclohexenon",
     "reaction_rxn": "$RXN\n\n  OC-oecho\n\n  2  1\n$MOL\n\n  OC-oecho\n\n  5  4  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\nA    1\nR₁\nA    5\nR₂\nM  END\n$MOL\n\n  OC-oecho\n\n  5  4  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\nM  END\n$MOL\n\n  OC-oecho\n\n  8  8  0  0  0  0            999 V2000\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.7321   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  1  1  0\n  1  7  2  0\n  4  8  1  0\nA    8\nR₁\nM  END\n",
     "reagent_label": "CH_2=CH-CO-CH_3 (MVK)",
-    "reagent_label_below": "NaOH / KOH, Δ",
+    "reagent_label_below": "Base, Δ",
     "substituents": "R₁, R₂ = Alkyl, Aryl, H · statt MVK jeder Michael-Akzeptor mit endständiger CH₂=CH-Gruppe",
     "key_points": [
       "Drei Schritte in einem Topf: (1) Michael-Addition, (2) intramolekulare Aldol-Addition, (3) Wasserabspaltung.",
@@ -1307,7 +1307,7 @@
     "reaktionstyp": "S_N2 + Decarboxylierung",
     "transformation": "Malonester → R–CH₂–COOH",
     "reaction_rxn": "$RXN\n\n  OC-oecho\n\n  1  1\n$MOL\n\n  OC-oecho\n\n  6  5  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  1  3  1  0\n  3  4  2  0\n  3  5  1  0\n  5  6  1  0\nA    2\nZ\nA    6\nEt\nM  END\n$MOL\n\n  OC-oecho\n\n  6  5  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  1  0\n  4  5  2  0\n  4  6  1  0\nA    1\nR₁\nA    3\nZ\nM  END\n",
-    "reagent_label": "1. NaOEt  2. R_1-X",
+    "reagent_label": "1. Base  2. R_1-X",
     "reagent_label_below": "3. H_3O^+ , Δ  (-CO_2)",
     "substituents": "Z = –CO₂Et (Malonester → Carbonsäure) oder –CO–CH₃ (Acetessigester → Methylketon) · R₁ = primäres Alkyl · X = Br, I, OTs",
     "key_points": [
@@ -1442,7 +1442,7 @@
     "reaktionstyp": "A_N + Eliminierung",
     "transformation": "R₁–CO–OR₂ → R₁–COOH + R₂–OH",
     "reaction_rxn": "$RXN\n\n  OC-oecho\n\n  1  2\n$MOL\n\n  OC-oecho\n\n  5  4  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\nA    1\nR₁\nA    5\nR₂\nM  END\n$MOL\n\n  OC-oecho\n\n  4  3  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\nA    1\nR₁\nM  END\n$MOL\n\n  OC-oecho\n\n  2  1  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\nA    1\nR₂\nM  END\n",
-    "reagent_label": "NaOH / H_2O, Δ",
+    "reagent_label": "OH^- / H_2O, Δ",
     "reagent_label_below": "dann H_3O^+",
     "substituents": "R₁ = Alkyl, Aryl · R₂ = Alkyl",
     "key_points": [
@@ -1481,7 +1481,7 @@
     "transformation": "R₁–COCl + R₂NH₂ → R₁–CO–NH–R₂",
     "reaction_rxn": "$RXN\n\n  OC-oecho\n\n  2  1\n$MOL\n\n  OC-oecho\n\n  4  3  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 Cl  0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\nA    1\nR₁\nM  END\n$MOL\n\n  OC-oecho\n\n  2  1  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\nA    1\nR₂\nM  END\n$MOL\n\n  OC-oecho\n\n  5  4  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\nA    1\nR₁\nA    5\nR₂\nM  END\n",
     "reagent_label": "R_2-NH_2",
-    "reagent_label_below": "NaOH bzw. NEt_3 , 0 °C",
+    "reagent_label_below": "Base (NaOH, NEt_3), 0 °C",
     "substituents": "R₁ = Alkyl, Aryl · R₂ = Alkyl, Aryl, H; auch sekundäre Amine",
     "key_points": [
       "Zwei Äquivalente Amin oder eine Hilfsbase sind nötig — sonst protoniert das entstehende HCl das Amin und stoppt die Reaktion.",
@@ -1577,7 +1577,7 @@
     "transformation": "R–C≡N → R–COOH",
     "reaction_rxn": "$RXN\n\n  OC-oecho\n\n  1  1\n$MOL\n\n  OC-oecho\n\n  3  2  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    1.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  3  0\nA    1\nR₁\nM  END\n$MOL\n\n  OC-oecho\n\n  4  3  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\nA    1\nR₁\nM  END\n",
     "reagent_label": "H_3O^+ , Δ",
-    "reagent_label_below": "bzw. NaOH/H_2O, dann H^+",
+    "reagent_label_below": "bzw. OH^-/H_2O, dann H^+",
     "substituents": "R₁ = Alkyl, Aryl, Benzyl",
     "key_points": [
       "Verläuft über das AMID als isolierbare Zwischenstufe — mild geführt bleibt es dort stehen.",

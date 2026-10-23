@@ -40,6 +40,8 @@ const MolRenderer = (() => {
     suppressCIPParity:  true,
     suppressESR:        true,
     noStereoProblem:    true,
+    // every atom label in black, as on the printed exam sheets
+    noImplicitAtomLabelColors: true,
     factorTextSize:     1.0
   };
 
@@ -303,9 +305,13 @@ const MolRenderer = (() => {
      So OCL only gets that one symbol, which it centres and clips the
      bonds around correctly; the rest of the label is written beside it
      once the SVG exists, on whichever side is free (see _placeLabels). */
-  function _collapseSuperatoms(m, mol) {
+  function _collapseSuperatoms(m, mol, map) {
     const groups = parseSuperatoms(mol);
     if (!groups.length) return;
+    if (map) {
+      const to = function (a) { return map[a] != null ? map[a] : a; };
+      groups.forEach(function (grp) { grp.atoms = grp.atoms.map(to); if (grp.anchor >= 0) grp.anchor = to(grp.anchor); });
+    }
     m.ensureHelperArrays(window.OCL.Molecule.cHelperNeighbours);
     const drop = [], parts = [];
     groups.forEach(function (grp) {
@@ -340,8 +346,8 @@ const MolRenderer = (() => {
       grp.atoms.forEach(function (a) { if (a !== anchor) drop.push(a); });
     });
     // deleteAtoms renumbers what is left and returns old → new indices
-    const map = drop.length ? m.deleteAtoms(drop) : null;
-    if (map) parts.forEach(function (p) { p.atom = map[p.atom]; });
+    const renum = drop.length ? m.deleteAtoms(drop) : null;
+    if (renum) parts.forEach(function (p) { p.atom = renum[p.atom]; });
     if (parts.length) _labelParts.set(m, parts);
   }
 
@@ -561,19 +567,44 @@ const MolRenderer = (() => {
     return _svgOf(m, w, h, o);
   }
 
-  /* Parse a MOL for drawing: aliases first (they are keyed by the
-     original atom order), then superatoms collapse. */
+  /* Parse a MOL for drawing: aliases first, then superatoms collapse.
+     Both are keyed by the MOLFILE's atom order, but OCL moves explicit
+     hydrogens to the end while parsing — an "X" written after an H
+     would land on the wrong atom. So molfile indices are translated
+     to OCL's through the coordinates, which OCL keeps (y negated). */
   function _molFromMolfile(mol, o) {
     const m = window.OCL.Molecule.fromMolfile(mol);
-    _applyAlias(m, _aliasOpts(mol, o));
-    _collapseSuperatoms(m, mol);
+    const map = _indexMap(mol, m);
+    _applyAlias(m, _aliasOpts(mol, o, map));
+    _collapseSuperatoms(m, mol, map);
     return m;
   }
 
+  /* molfile atom index → OCL atom index (identity where unsure). */
+  function _indexMap(mol, m) {
+    const L = String(mol).split(/\r?\n/);
+    const n = L.length > 3 ? parseInt(L[3].slice(0, 3), 10) || 0 : 0;
+    const key = function (x, y) { return Math.round(x * 1000) + ',' + Math.round(y * 1000); };
+    const ocl = new Map();
+    for (let i = 0; i < m.getAllAtoms(); i++) {
+      const k = key(m.getAtomX(i), -m.getAtomY(i));
+      ocl.set(k, ocl.has(k) ? -1 : i);   // two atoms on one spot: ambiguous
+    }
+    const map = [];
+    for (let i = 0; i < n; i++) {
+      const l = L[4 + i] || '';
+      const j = ocl.get(key(+l.slice(0, 10), +l.slice(10, 20)));
+      map.push(j != null && j >= 0 ? j : i);
+    }
+    return map;
+  }
+
   /* Merge file aliases with any caller-supplied ones (caller wins). */
-  function _aliasOpts(mol, o) {
-    const fromFile = parseMolAliases(mol);
-    if (!Object.keys(fromFile).length) return o;
+  function _aliasOpts(mol, o, map) {
+    const raw = parseMolAliases(mol);
+    if (!Object.keys(raw).length) return o;
+    const fromFile = {};
+    Object.keys(raw).forEach(function (k) { fromFile[map && map[k] != null ? map[k] : k] = raw[k]; });
     return Object.assign({}, o, { alias: Object.assign(fromFile, o.alias || {}) });
   }
 
@@ -967,7 +998,186 @@ const MolRenderer = (() => {
     return isMol(input) ? drawMol(input, target, opts) : drawSmiles(input, target, opts);
   }
 
-  return { ready, drawMol, drawSmiles, drawAuto, drawReaction, reactionSvg, parseReaction,
+  /* ── Mechanism steps ──────────────────────────────────────────────
+     One step of a mechanism is drawn as ONE canvas, the way it was
+     drawn in Ketcher: every molecule of the step in a single molfile
+     (their positions relative to each other kept), plus reaction
+     arrows, "+" signs and text labels at their own coordinates, plus
+     the red curved arrows (mech-arrows.js). All coordinates are molfile
+     coordinates (y up). Format: see data/mechanisms.json / ketcher-mech.js.
+
+     OCL draws the molecules at its usual 24 px per bond; the <circle>
+     hit areas it writes for every atom tell us exactly where each atom
+     landed, so the map from molfile to SVG coordinates is fitted from
+     them and everything else is placed with the same map. */
+
+  const MECH_FONT = "500 12px 'Segoe UI', system-ui, -apple-system, sans-serif";
+
+  function _atomCircles(svg) {
+    const out = [];
+    (svg.match(/<circle\b[^>]*>/g) || []).forEach(function (tag) {
+      const id = /id="[^"]*:Atom:(\d+)"/.exec(tag);
+      if (id) out[+id[1]] = [_num(tag, 'cx'), _num(tag, 'cy')];
+    });
+    return out;
+  }
+
+  function mechanismSvg(step, opts) {
+    const o = Object.assign({}, DEFAULTS, opts || {});
+    let molSvg = '', box = null;
+    // molfile (x, y) → SVG; OCL keeps x and negates y internally
+    let map = function (p) { return [p[0] * 24, -p[1] * 24]; }, unitPx = 24;
+
+    /* Radicals: OCL would print the carbon with its H count next to the
+       dot, so the RAD lines are taken out and the dot is drawn here, on
+       the side of the atom away from its bonds. */
+    const radicals = [];
+    let molText = step.mol || '';
+    if (/^M\s+RAD/m.test(molText)) {
+      const L = molText.split(/\r?\n/);
+      const nA = parseInt(L[3].slice(0, 3), 10), nB = parseInt(L[3].slice(3, 6), 10);
+      const at = L.slice(4, 4 + nA).map(function (l) { return [+l.slice(0, 10), +l.slice(10, 20)]; });
+      const sym = L.slice(4, 4 + nA).map(function (l) { return l.slice(31, 34).trim(); });
+      const nb = at.map(function () { return []; });
+      L.slice(4 + nA, 4 + nA + nB).forEach(function (l) {
+        const a = +l.slice(0, 3) - 1, b = +l.slice(3, 6) - 1;
+        if (nb[a] && nb[b]) { nb[a].push(at[b]); nb[b].push(at[a]); }
+      });
+      /* Only carbon: a heteroatom is labelled anyway, OCL draws its dot
+         well, and it needs the RAD to get the H count right. */
+      const kept = [];
+      L.forEach(function (l) {
+        if (!/^M\s+RAD/.test(l)) return;
+        const f = l.trim().split(/\s+/).slice(3).map(Number);
+        for (let k = 0; k + 1 < f.length; k += 2) {
+          const i = f[k] - 1, p = at[i];
+          if (!p) continue;
+          if (sym[i] !== 'C') { kept.push([f[k], f[k + 1]]); continue; }
+          // away from the sum of the bond directions; straight up if none
+          let v = [0, 0];
+          nb[i].forEach(function (q) { const d = [q[0] - p[0], q[1] - p[1]], l2 = Math.hypot(d[0], d[1]) || 1; v[0] -= d[0] / l2; v[1] -= d[1] / l2; });
+          const lv = Math.hypot(v[0], v[1]);
+          v = lv > 0.2 ? [v[0] / lv, v[1] / lv] : [0, 1];
+          radicals.push({ p: p, v: v });
+        }
+      });
+      molText = L.filter(function (l) { return !/^M\s+RAD/.test(l); }).join('\n');
+      if (kept.length) {
+        molText = molText.replace(/^M {2}END/m, 'M  RAD' + String(kept.length).padStart(3) +
+          kept.map(function (e) { return String(e[0]).padStart(4) + String(e[1]).padStart(4); }).join('') + '\nM  END');
+      }
+    }
+
+    if (molText && /M\s+END/.test(molText)) {
+      const m = _molFromMolfile(molText, o);
+      molSvg = _svgOf(m, RXN_CANVAS_W, RXN_CANVAS_H, Object.assign({}, o, { autoCrop: true, autoCropMargin: 2 }));
+      const vb = /viewBox="\s*(-?[\d.]+)\s+(-?[\d.]+)\s+([\d.]+)\s+([\d.]+)/.exec(molSvg);
+      if (vb) box = [+vb[1], +vb[2], +vb[1] + +vb[3], +vb[2] + +vb[4]];
+      const circ = _atomCircles(molSvg);
+      const P = [];
+      for (let i = 0; i < m.getAllAtoms(); i++) if (circ[i]) P.push([m.getAtomX(i), m.getAtomY(i), circ[i][0], circ[i][1]]);
+      if (P.length) {
+        const mean = function (k) { return P.reduce(function (s, p) { return s + p[k]; }, 0) / P.length; };
+        const mx = mean(0), my = mean(1), sx = mean(2), sy = mean(3);
+        let num = 0, den = 0;
+        P.forEach(function (p) { num += (p[0] - mx) * (p[2] - sx) + (p[1] - my) * (p[3] - sy); den += (p[0] - mx) * (p[0] - mx) + (p[1] - my) * (p[1] - my); });
+        const a = den > 1e-9 ? num / den : 24;
+        unitPx = a;
+        map = function (p) { return [sx + (p[0] - mx) * a, sy + (-p[1] - my) * a]; };
+      }
+    }
+
+    let body = '';
+    const pts = [];
+    const grow = function (x0, y0, x1, y1) { pts.push([x0, y0], [x1, y1]); };
+
+    (step.arrows || []).forEach(function (ar) {
+      const a = map(ar.from), b = map(ar.to);
+      const d = [b[0] - a[0], b[1] - a[1]], l = Math.hypot(d[0], d[1]) || 1, t = [d[0] / l, d[1] / l], q = [-t[1], t[0]];
+      const f = function (v) { return v.toFixed(2); };
+      const line = function (p, r) { return '<line x1="' + f(p[0]) + '" y1="' + f(p[1]) + '" x2="' + f(r[0]) + '" y2="' + f(r[1]) + '" stroke="#3a3a35" stroke-width="1.6"/>'; };
+      if (/equilibrium/.test(ar.mode || '')) {
+        // ⇌ : upper arrow forwards, lower arrow backwards, half heads
+        const g = 2.6;
+        const a1 = [a[0] - q[0] * g, a[1] - q[1] * g], b1 = [b[0] - q[0] * g, b[1] - q[1] * g];
+        const a2 = [a[0] + q[0] * g, a[1] + q[1] * g], b2 = [b[0] + q[0] * g, b[1] + q[1] * g];
+        body += line(a1, b1) + line(a2, b2) +
+          '<path d="M' + f(b1[0]) + ',' + f(b1[1]) + ' L' + f(b1[0] - t[0] * 8 - q[0] * 4.5) + ',' + f(b1[1] - t[1] * 8 - q[1] * 4.5) + '" stroke="#3a3a35" stroke-width="1.6" fill="none"/>' +
+          '<path d="M' + f(a2[0]) + ',' + f(a2[1]) + ' L' + f(a2[0] + t[0] * 8 + q[0] * 4.5) + ',' + f(a2[1] + t[1] * 8 + q[1] * 4.5) + '" stroke="#3a3a35" stroke-width="1.6" fill="none"/>';
+      } else {
+        const e = [b[0] - t[0] * 7, b[1] - t[1] * 7];
+        body += line(a, e) + '<path d="M' + f(b[0] - t[0] * 8 + q[0] * 4.2) + ',' + f(b[1] - t[1] * 8 + q[1] * 4.2) +
+          ' L' + f(b[0]) + ',' + f(b[1]) + ' L' + f(b[0] - t[0] * 8 - q[0] * 4.2) + ',' + f(b[1] - t[1] * 8 - q[1] * 4.2) + ' z" fill="#3a3a35"/>';
+      }
+      grow(Math.min(a[0], b[0]) - 2, Math.min(a[1], b[1]) - 6, Math.max(a[0], b[0]) + 2, Math.max(a[1], b[1]) + 6);
+    });
+
+    (step.pluses || []).forEach(function (p) {
+      const c = map(p);
+      body += '<text x="' + c[0].toFixed(2) + '" y="' + (c[1] + 5).toFixed(2) +
+        '" text-anchor="middle" style="font:400 16px \'Segoe UI\',system-ui,sans-serif;fill:#3a3a35">+</text>';
+      grow(c[0] - 6, c[1] - 9, c[0] + 6, c[1] + 7);
+    });
+
+    (step.texts || []).forEach(function (tx) {
+      const c = map(tx.at);
+      String(tx.text || '').split(/\n/).forEach(function (line, i) {
+        const y = c[1] + 11 + i * 15;
+        body += '<text x="' + c[0].toFixed(2) + '" y="' + y.toFixed(2) + '" style="font:' + MECH_FONT + ';fill:#3a3a35">' + _sub(line) + '</text>';
+        grow(c[0], y - 12, c[0] + _measure(_plain(line), MECH_FONT), y + 5);
+      });
+    });
+
+    radicals.forEach(function (rd) {
+      const c = map(rd.p);
+      const k = 0.36 * unitPx;
+      const x = c[0] + rd.v[0] * k, y = c[1] - rd.v[1] * k;
+      body += '<circle cx="' + x.toFixed(2) + '" cy="' + y.toFixed(2) + '" r="' + (0.075 * unitPx).toFixed(2) + '" fill="#1a1a1a"/>';
+      grow(x - 3, y - 3, x + 3, y + 3);
+    });
+
+    const anchor = function (a) {
+      return a.bond ? { kind: 'bond', a: map(a.bond[0]), b: map(a.bond[1]) } : { kind: 'atom', p: map(a.atom) };
+    };
+    (step.curly || []).forEach(function (cv) {
+      if (!cv.from || !cv.to) return;
+      const s = anchor(cv.from), t = anchor(cv.to);
+      const g = window.MechArrows.geometry(s, t, { unit: unitPx, side: cv.side, arc: cv.arc, type: cv.type });
+      body += window.MechArrows.svg(s, t, { unit: unitPx, side: cv.side, arc: cv.arc, type: cv.type });
+      [g.start, g.end, g.apex].forEach(function (p) { grow(p[0] - 4, p[1] - 4, p[0] + 4, p[1] + 4); });
+    });
+
+    if (box) grow(box[0], box[1], box[2], box[3]);
+    if (!pts.length) return { svg: '', width: 0, height: 0 };
+    const pad = 4;
+    const x0 = Math.min.apply(null, pts.map(function (p) { return p[0]; })) - pad;
+    const y0 = Math.min.apply(null, pts.map(function (p) { return p[1]; })) - pad;
+    const x1 = Math.max.apply(null, pts.map(function (p) { return p[0]; })) + pad;
+    const y1 = Math.max.apply(null, pts.map(function (p) { return p[1]; })) + pad;
+    const W = Math.ceil(x1 - x0), H = Math.ceil(y1 - y0);
+    const inner = molSvg && box ? _nest(molSvg, box[0], box[1], box[2] - box[0], box[3] - box[1]) : '';
+    return {
+      svg: '<svg xmlns="http://www.w3.org/2000/svg" class="mech-svg" width="' + W + '" height="' + H +
+        '" viewBox="' + x0.toFixed(2) + ' ' + y0.toFixed(2) + ' ' + W + ' ' + H + '">' + inner + body + '</svg>',
+      width: W, height: H
+    };
+  }
+
+  function drawMechanism(step, target, opts) {
+    const el = typeof target === 'string' ? document.getElementById(target) : target;
+    if (!el) return null;
+    let out;
+    try { out = mechanismSvg(step, opts); }
+    catch (err) {
+      console.error('MolRenderer.drawMechanism:', err);
+      _renderError(el, 'Mechanismus nicht lesbar: ' + err.message);
+      return null;
+    }
+    el.innerHTML = out.svg;
+    return el.firstElementChild;
+  }
+
+  return { ready, drawMol, drawSmiles, drawAuto, drawReaction, reactionSvg, parseReaction, mechanismSvg, drawMechanism,
            parseMolAliases, parseSuperatoms, mirrorLabel: _mirrorLabel, splitRxn, isMol, isRxn, rxnSource };
 })();
 

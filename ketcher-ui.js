@@ -67,8 +67,15 @@
     // :has() would drop the whole rule above)
     '\ndiv:has(> [data-testid="polymer-toggler"]),hr:has(+ * [data-testid="zoom-selector"]){display:none!important}';
 
-  function src(page) {
-    return page + (page.indexOf('?') < 0 ? '?' : '&') + 'hiddenControls=' + HIDDEN.join(',');
+  /* A mechanism step is a whole scheme on one canvas: there the reaction
+     arrows, "+" and text stay (ketcher-mech.js adds the curved arrows). */
+  const SCHEME_TOOLS = ['reaction-plus', 'arrows', 'text'];
+
+  function src(page, opts) {
+    const hidden = opts && opts.mechanism
+      ? HIDDEN.filter(function (c) { return SCHEME_TOOLS.indexOf(c) < 0; })
+      : HIDDEN;
+    return page + (page.indexOf('?') < 0 ? '?' : '&') + 'hiddenControls=' + hidden.join(',');
   }
 
   /* [label, SMILES with the attachment atom first, name, more search words] */

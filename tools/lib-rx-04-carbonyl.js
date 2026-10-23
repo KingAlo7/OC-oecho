@@ -372,7 +372,7 @@ R({
     b.bond(r, c1, 1); b.bond(c1, c2, 2); b.bond(c2, e, 1);
     return { reactants: [a], products: [b] };
   })(),
-  above: '(EtO)_2P(O)CH_2CO_2R_2', below: 'NaH  bzw. NaOEt',
+  above: '(EtO)_2P(O)CH_2CO_2R_2', below: 'Base (NaH, RO^-)',
   stereochemistry: 'Stark (E)-selektiv — es entsteht das thermodynamisch stabilere Alken.',
   substituents: 'R₁ = Alkyl, Aryl (Aldehyde; Ketone reagieren träger) · R₂ = Me, Et · statt CO₂R₂ auch CN, COR',
   key_points: [
@@ -424,7 +424,7 @@ R({
     })();
     return { reactants: [a], products: [b] };
   })(),
-  above: 'N_2H_4 / KOH, Δ', below: 'bzw. Zn(Hg) / konz. HCl',
+  above: 'N_2H_4 / Base, Δ', below: 'bzw. Zn(Hg) / konz. HCl',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H',
   key_points: [
     'Zwei Methoden für dieselbe Umwandlung, mit komplementären Bedingungen — man wählt nach dem, was der Rest des Moleküls verträgt.',

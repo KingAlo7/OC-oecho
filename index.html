@@ -16,6 +16,7 @@
 <script src="https://cdn.jsdelivr.net/npm/openchemlib/dist/openchemlib-full.js"></script>
 <script src="./chem-text.js"></script>
 <script src="./mol-renderer.js"></script>
+<script src="./mech-arrows.js"></script>
 <style>
 :root {
   /* ÖChO light palette */
@@ -290,6 +291,12 @@ header{
 }
 .section-head::after{content:'';flex:1;height:1px;background:var(--border);}
 
+.mech-title{color:var(--muted);font-weight:600;text-transform:none;letter-spacing:0;}
+.mech-steps{list-style:none;display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1.25rem;padding:0;}
+.mech-step{background:#ffffff;border:1px solid var(--border);border-radius:10px;padding:0.8rem 1rem 1rem;box-shadow:var(--shadow-sm);}
+.mech-caption{font-size:0.85rem;line-height:1.55;color:#4a4f57;margin-bottom:0.6rem;}
+.mech-drawing{display:flex;justify-content:center;overflow-x:auto;}
+.mech-drawing svg{display:block;width:min(100%, calc(var(--nat-w) * var(--draw-scale, 1.25)));height:auto;}
 .key-points{list-style:none;display:flex;flex-direction:column;gap:0.5rem;margin-bottom:0.5rem;}
 .key-points li{
   display:flex;align-items:flex-start;gap:0.7rem;
@@ -504,9 +511,13 @@ const catIcon = cat => CAT_ICONS[cat] ||
 
 const LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="14 52 174 187"><path fill="#ff0000" d="M 153.27953,54.242684 141.3862,76.472852 73.360897,76.250643 39.904024,139.16308 16.228467,139.27419 v 13.11599 l 23.452832,0.22273 34.124015,62.80081 68.025306,0.11111 11.33781,21.56406 10.67067,-6.55826 -11.67113,-22.11958 33.79071,-62.80082 -34.12402,-62.801331 12.11554,-21.897371 z m -12.0804,35.318258 30.29893,56.472008 -30.37747,56.07874 -60.322938,0.1571 -30.220377,-56.35367 30.220377,-56.27563 z m 13.04727,56.216728 -22.51801,41.95092 3.81166,2.31872 22.518,-41.87289 c 0,0 2.9e-4,-0.0192 -3.81165,-2.39675 z"/></svg>`;
 
+let mechanisms = {};
+
 async function init() {
   try {
     reactions = await fetch('./data/reactions.json').then(r => r.json());
+    // optional: a missing file only means no mechanisms yet
+    mechanisms = await fetch('./data/mechanisms.json').then(r => r.ok ? r.json() : {}).catch(() => ({}));
   } catch(e) {
     showError('Reaktionen konnten nicht geladen werden. Bei lokaler Nutzung Server starten: <code>node server.js</code>');
     return;
@@ -658,6 +669,15 @@ function showReaction(id) {
       <div class="detail-value">${ct(r[f.key])}</div>
     </div>`).join('');
 
+  const mech = mechanisms[r.id];
+  const mechHtml = mech && (mech.steps||[]).length ? `
+    <div class="section-head">Mechanismus${mech.title ? ` <span class="mech-title">· ${ct(mech.title)}</span>` : ''}</div>
+    <ol class="mech-steps">${mech.steps.map((st, i) => `
+      <li class="mech-step">
+        ${st.caption ? `<div class="mech-caption">${ct(st.caption)}</div>` : ''}
+        <div class="mech-drawing" id="mech-${r.id}-${i}"></div>
+      </li>`).join('')}</ol>` : '';
+
   const keyPointsHtml = (r.key_points||[]).length ? `
     <div class="section-head">Schlüsselpunkte</div>
     <ul class="key-points">${(r.key_points).map(p=>`<li>${ct(p)}</li>`).join('')}</ul>` : '';
@@ -675,6 +695,8 @@ function showReaction(id) {
       <div class="rxn-drawing">${drawingHtml}${substHtml}</div>
 
       ${detailsHtml ? `<div class="rxn-details">${detailsHtml}</div>` : ''}
+
+      ${mechHtml}
 
       ${keyPointsHtml}
 
@@ -706,6 +728,11 @@ function showReaction(id) {
       // Natural width → CSS scales it by --draw-scale, capped at the box width.
       const w = svg && parseFloat(svg.getAttribute('width'));
       if (w) { svg.style.setProperty('--nat-w', w + 'px'); svg.classList.add('scaled'); }
+      (mech && mech.steps || []).forEach((st, i) => {
+        const el = document.getElementById(`mech-${r.id}-${i}`);
+        const s = el && MolRenderer.drawMechanism(st, el);
+        if (s) s.style.setProperty('--nat-w', s.getAttribute('width') + 'px');
+      });
     }).catch(err => console.error('MolRenderer:', err));
   }
 }

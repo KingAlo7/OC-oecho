@@ -18,6 +18,8 @@
 <script src="./chem-text.js"></script>
 <script src="./mol-renderer.js"></script>
 <script src="./ketcher-ui.js"></script>
+<script src="./mech-arrows.js"></script>
+<script src="./ketcher-mech.js"></script>
 <script src="./rdkit-helper.js"></script>
 <script src="./scheme-graph-editor.js"></script>
 <style>
@@ -147,6 +149,12 @@ select.fi option{background:var(--surface);color:var(--text);}
 .chip button:hover{color:var(--red);}
 .tag-inp{border:none;background:none;color:var(--text);font-size:0.82rem;outline:none;flex:1;min-width:60px;padding:0;}
 
+.mech-ed{display:flex;flex-direction:column;gap:0.6rem;margin-bottom:0.5rem;}
+.mech-ed-step{border:1px solid var(--border);border-radius:8px;padding:0.55rem 0.6rem;background:var(--surface);display:flex;flex-direction:column;gap:0.4rem;}
+.mech-ed-head{display:flex;align-items:center;gap:0.4rem;font-size:0.82rem;}
+.mech-ed-step textarea{min-height:2.6rem;}
+.mech-ed-prev{background:#fff;border:1px dashed var(--border);border-radius:6px;padding:0.4rem;display:flex;justify-content:center;cursor:pointer;min-height:60px;overflow-x:auto;}
+.mech-ed-prev svg{max-width:100%;height:auto;}
 .kp-list{display:flex;flex-direction:column;gap:0.4rem;margin-bottom:0.5rem;}
 .kp-row{display:flex;gap:0.4rem;}
 .kp-row input{flex:1;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:7px;padding:0.42rem 0.7rem;font-size:0.85rem;font-family:inherit;}
@@ -644,7 +652,10 @@ select.fi option{background:var(--surface);color:var(--text);}
 <script>
 let reactions = [], selRxn = null, unsaved = false;
 let questions = [], selQ   = null;
-let shas = { r: null, q: null };
+let shas = { r: null, q: null, m: null };
+// data/mechanisms.json: { <reaction id>: { title, steps: [...] } }
+let mechanisms = {};
+let _mechDraft = null;
 let serverMode = false;
 
 async function detectServer() {
@@ -680,6 +691,7 @@ async function init() {
     } catch (e) {
       // non-fatal — questions.json may not exist yet
     }
+    try { mechanisms = await fetch('/api/mechanisms').then(r => r.json()); } catch (e) {}
   } else {
     try {
       reactions = await fetch('./data/reactions.json').then(r => { if(!r.ok) throw 0; return r.json(); });
@@ -688,6 +700,9 @@ async function init() {
     }
     try {
       questions = await fetch('./data/questions.json').then(r => { if(!r.ok) throw 0; return r.json(); });
+    } catch {}
+    try {
+      mechanisms = await fetch('./data/mechanisms.json').then(r => { if(!r.ok) throw 0; return r.json(); });
     } catch {}
   }
   updateModeBadge();
@@ -779,6 +794,15 @@ function buildForm(r) {
   </div>
 
   <div class="fsec">
+    <div class="fsec-title">Mechanismus</div>
+    <div class="field"><label>Überschrift <small style="color:var(--muted2)">(optional)</small></label>
+      <input class="fi" id="f-mech-title" placeholder="z. B. Basenkatalysierte Aldoladdition" oninput="_mechDraft.title=this.value;mu()"></div>
+    <div class="mech-ed" id="mech-ed"></div>
+    <button class="bxs sec" onclick="addRxMechStep()">＋ Schritt</button>
+    <div class="helper-text" style="margin-top:0.5rem">Jeder Schritt ist EINE Zeichenfläche in Ketcher: Moleküle, Reaktionspfeil, „+“, Text (Reagenzien) — und die roten Mechanismuspfeile mit dem Knopf <b>↷</b> unter <b>FG</b>: erst den Start anklicken (Atom = freies Elektronenpaar, Bindung = Bindungselektronen), dann das Ziel (Atom oder Bindung; <kbd>Shift</kbd> + zwei Atome = neu entstehende Bindung). Ein Klick auf einen Pfeil wählt ihn: Elektronenpaar ⇄ Einzelelektron (<kbd>T</kbd>), Seite (<kbd>F</kbd>), Bogen (<kbd>A</kbd>), Löschen (<kbd>Entf</kbd>). Reagenzien über dem Reaktionspfeil zeichnet man als Moleküle — dann können Pfeile auch dort starten.</div>
+  </div>
+
+  <div class="fsec">
     <div class="fsec-title">Schlüsselpunkte</div>
     <div class="kp-list" id="kp-list">${(r.key_points||[]).map((p,i)=>`
       <div class="kp-row"><input value="${x(p)}" oninput="mu()"><button class="kp-del" onclick="rmKP(${i})">×</button></div>`).join('')}
@@ -795,6 +819,9 @@ function buildForm(r) {
 
   _rxnLabelCache = { above: r.reagent_label || '', below: r.reagent_label_below || '' };
   initRxnEditor(r);
+  _mechDraft = JSON.parse(JSON.stringify(mechanisms[r.id] || { title: '', steps: [] }));
+  document.getElementById('f-mech-title').value = _mechDraft.title || '';
+  renderRxMech();
   drawP(MolRenderer.rxnSource(r), r.reagent_label, r.reagent_label_below);
 }
 
@@ -856,7 +883,11 @@ async function saveRxn() {
   const r=collect();
   if(!r.id||!r.name||!r.category){toast('ID, Name und Kategorie erforderlich','err');return;}
   if(reactions.some((y,i)=>y.id===r.id&&i!==selRxn)){toast('ID bereits vorhanden','err');return;}
+  const oldId = reactions[selRxn] && reactions[selRxn].id;
   reactions[selRxn]=r;
+  if (oldId && oldId !== r.id) delete mechanisms[oldId];
+  if (_mechDraft && (_mechDraft.steps || []).length) mechanisms[r.id] = JSON.parse(JSON.stringify(_mechDraft));
+  else delete mechanisms[r.id];
   renderList(document.getElementById('rxn-search').value);
   unsaved=true; setBadge();
 
@@ -922,6 +953,10 @@ function importRxn(){
 
 async function persist(){
   if(!serverMode) return;
+  try {
+    const mr = await fetch('/api/mechanisms', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(mechanisms) });
+    if (!mr.ok) throw new Error('HTTP ' + mr.status);
+  } catch (e) { throw new Error('mechanisms.json: ' + e.message); }
   let res;
   try {
     res = await fetch('/api/reactions', {
@@ -1531,7 +1566,7 @@ window.openStructEditorForGraphNode = async function(node, editor) {
         hideImplicitHydrogen: true,
         showStereoFlags:     false,
         showValenceWarnings: false,
-        atomColoring:        true
+        atomColoring:        false
       }));
     } catch (e) { console.warn('Ketcher setOptions:', e); }
     if (node.mol)         await k.setMolecule(node.mol);
@@ -2360,6 +2395,52 @@ window.editRxnComponent = function(side, i) {
 
 // Ketcher with only the tools this admin uses (see ketcher-ui.js)
 const KETCHER_URL = KetcherUI.src('./vendor/ketcher/standalone/index.html');
+// a mechanism step keeps reaction arrows, "+" and text
+const KETCHER_MECH_URL = KetcherUI.src('./vendor/ketcher/standalone/index.html', { mechanism: true });
+
+/* ── Mechanism editor (reaction form) ──────────────────────────── */
+function renderRxMech() {
+  const host = document.getElementById('mech-ed');
+  if (!host || !_mechDraft) return;
+  const steps = _mechDraft.steps || (_mechDraft.steps = []);
+  host.innerHTML = steps.length ? steps.map((st, i) => `
+    <div class="mech-ed-step">
+      <div class="mech-ed-head"><b>Schritt ${i + 1}</b>
+        <span style="margin-left:auto;display:flex;gap:0.3rem">
+          <button class="bxs pri" onclick="editRxMechStep(${i})">✎ Ketcher</button>
+          <button class="bxs sec" onclick="moveRxMechStep(${i},-1)" ${i ? '' : 'disabled'} title="nach oben">↑</button>
+          <button class="bxs sec" onclick="moveRxMechStep(${i},1)" ${i < steps.length - 1 ? '' : 'disabled'} title="nach unten">↓</button>
+          <button class="bxs sec" onclick="rmRxMechStep(${i})" title="Schritt löschen">✕</button>
+        </span></div>
+      <textarea class="fi" placeholder="Was in diesem Schritt passiert (erscheint über der Zeichnung)" oninput="_mechDraft.steps[${i}].caption=this.value;mu()">${x(st.caption || '')}</textarea>
+      <div class="mech-ed-prev" id="mech-prev-${i}" onclick="editRxMechStep(${i})" title="Klick: in Ketcher bearbeiten"></div>
+    </div>`).join('') : '<div class="helper-text">Noch kein Mechanismus.</div>';
+  MolRenderer.ready().then(() => steps.forEach((st, i) => {
+    const el = document.getElementById('mech-prev-' + i);
+    if (!el) return;
+    if (!st.mol && !(st.curly || []).length) { el.innerHTML = '<div class="smi-ph">Leer — Klick öffnet Ketcher</div>'; return; }
+    MolRenderer.drawMechanism(st, el);
+  }));
+}
+window.addRxMechStep = function () { _mechDraft.steps.push({ caption: '' }); renderRxMech(); mu(); editRxMechStep(_mechDraft.steps.length - 1); };
+window.rmRxMechStep = function (i) { if (!confirm('Schritt ' + (i + 1) + ' löschen?')) return; _mechDraft.steps.splice(i, 1); renderRxMech(); mu(); };
+window.moveRxMechStep = function (i, d) {
+  const s = _mechDraft.steps, j = i + d;
+  if (j < 0 || j >= s.length) return;
+  [s[i], s[j]] = [s[j], s[i]]; renderRxMech(); mu();
+};
+window.editRxMechStep = function (i) {
+  openStructEditorFor({
+    title: 'Mechanismus — Schritt ' + (i + 1) + ' (Ketcher, ↷ = Mechanismuspfeil)',
+    mechanism: true,
+    step: _mechDraft.steps[i],
+    save: (st) => {
+      st.caption = _mechDraft.steps[i].caption || '';
+      _mechDraft.steps[i] = st;
+      renderRxMech(); mu();
+    }
+  });
+};
 
 window.openStructEditor = async function(nodeIdx) {
   _activeNodeIdx = nodeIdx;
@@ -2387,7 +2468,7 @@ window.openStructEditor = async function(nodeIdx) {
         hideImplicitHydrogen: true,
         showStereoFlags:     false,
         showValenceWarnings: false,
-        atomColoring:        true
+        atomColoring:        false
       }));
     } catch (e) { console.warn('Ketcher setOptions:', e); }
     if (n.mol)         await k.setMolecule(n.mol);
@@ -2450,9 +2531,10 @@ window.openStructEditorFor = async function(target) {
   const status = document.getElementById('ocl-editor-status');
   status.textContent = 'Ketcher wird geladen…';
   const iframe = document.getElementById('ketcher-iframe');
-  iframe.src = KETCHER_URL;
+  iframe.src = target.mechanism ? KETCHER_MECH_URL : KETCHER_URL;
   await _waitForKetcher(iframe);
   KetcherUI.install(iframe);
+  if (target.mechanism) KetcherMech.install(iframe);
   try {
     const k = iframe.contentWindow.ketcher;
     try {
@@ -2461,11 +2543,14 @@ window.openStructEditorFor = async function(target) {
         hideImplicitHydrogen: true,
         showStereoFlags:     false,
         showValenceWarnings: false,
-        atomColoring:        true
+        atomColoring:        false
       }));
     } catch (e) { console.warn('Ketcher setOptions:', e); }
-    const cur = target.load ? target.load() : '';
-    if (cur) await k.setMolecule(cur);
+    if (target.mechanism) await KetcherMech.load(iframe, target.step);
+    else {
+      const cur = target.load ? target.load() : '';
+      if (cur) await k.setMolecule(cur);
+    }
     status.textContent = 'Ketcher bereit';
   } catch (e) {
     status.textContent = 'Strukturladen fehlgeschlagen: ' + e.message;
@@ -2478,7 +2563,10 @@ window.commitStructEditor = async function() {
   if (_structTarget) {
     const iframe0 = document.getElementById('ketcher-iframe');
     const k0 = iframe0 && iframe0.contentWindow && iframe0.contentWindow.ketcher;
-    if (k0) {
+    if (k0 && _structTarget.mechanism) {
+      try { _structTarget.save(await KetcherMech.read(iframe0)); }
+      catch (e) { console.error('mechanism save:', e); toast('Mechanismus nicht lesbar: ' + e.message, 'err'); return; }
+    } else if (k0) {
       let mol = '';
       try { mol = await k0.getMolfile('v2000'); } catch (e) { console.warn('getMolfile:', e); }
       try { _structTarget.save(mol); } catch (e) { console.error('struct save:', e); }
@@ -2995,6 +3083,12 @@ async function doCommit(){
       if (shas.r) body.sha = shas.r;
       const r=await ghFetch(`/repos/${owner}/${repo}/contents/data/reactions.json`,{method:'PUT',body:JSON.stringify(body)});
       shas.r=r.content.sha; pushed.push('reactions.json');
+      if(!shas.m){try{const remote=await ghFetch(`/repos/${owner}/${repo}/contents/data/mechanisms.json`);shas.m=remote.sha;}catch{}}
+      const mcontent=btoa(unescape(encodeURIComponent(JSON.stringify(mechanisms,null,2))));
+      const mbody = { message: msg, content: mcontent, branch: 'main' };
+      if (shas.m) mbody.sha = shas.m;
+      const mres=await ghFetch(`/repos/${owner}/${repo}/contents/data/mechanisms.json`,{method:'PUT',body:JSON.stringify(mbody)});
+      shas.m=mres.content.sha; pushed.push('mechanisms.json');
     }
     if (pickQ) {
       if(!shas.q){try{const remote=await ghFetch(`/repos/${owner}/${repo}/contents/data/questions.json`);shas.q=remote.sha;}catch{}}

@@ -23,6 +23,11 @@ Interaktives Nachschlagewerk für organische Chemie auf IChO-Niveau, mit Quiz-Mo
 - Hash-basierte Direktlinks (`#reaktions-id`), mobil-responsiv
 - Druck-/PDF-Export via `export.html`
 
+### Mechanismen
+- Auf der Reaktionsseite unter **Mechanismus**: Schritt für Schritt, je eine Zeichnung mit roten Elektronenpfeilen (Halbpfeile für Radikale) und einem Satz dazu. Daten: `data/mechanisms.json` (pro Reaktions-ID `{ title, steps }`).
+- Gezeichnet im Admin (Reaktion → *Mechanismus* → ✎ Ketcher): jeder Schritt ist eine Ketcher-Fläche mit Molekülen, Reaktionspfeil, „+“ und Text; der Knopf **↷** links unter dem Text-Werkzeug setzt die Mechanismuspfeile (Start = Atom/Bindung, Ziel = Atom/Bindung, Shift + zwei Atome = neue Bindung). Ketcher selbst bleibt unverändert — `ketcher-mech.js` hängt das Werkzeug von außen ein, `mech-arrows.js` berechnet die Pfeile für Editor und Seite gleich.
+- Startbestand: `node tools/seed-mechanisms.js` (ergänzt nur fehlende, `--force` überschreibt).
+
 ### Quiz (`quiz.html`)
 Jede Frage ist eine **Aufgabe aus Abschnitten** (`type: "composed"`) — so wie eine BW-Angabe aus A., B., C. besteht. Es gibt keinen Fragen-Typ mehr zu wählen; gewählt wird pro Abschnitt:
 
