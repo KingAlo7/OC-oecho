@@ -16,7 +16,7 @@
  * (a "bond" may also be two atoms that are not bonded yet: the bond
  * being formed).
  *
- * Run:  node tools/seed-mechanisms.js [--force]
+ * Run:  node tools/seed-mechanisms.js [--force | --only=id,id]
  */
 const fs = require('fs');
 const path = require('path');
@@ -295,11 +295,20 @@ MECH['radikalische-hbr-addition'] = {
   ]
 };
 
+/* The rest of the library: one file per chapter, tools/mech-NN-*.js,
+   each exporting { id: { title, steps } } built with lib-mech.js. */
+fs.readdirSync(__dirname).filter(f => /^mech-\d+.*\.js$/.test(f)).sort()
+  .forEach(f => Object.assign(MECH, require(path.join(__dirname, f))));
+
+// --only id,id: (re)write just these, overwriting what is there
+const onlyArg = process.argv.find(a => a.startsWith('--only='));
+const only = onlyArg ? onlyArg.slice(7).split(',') : null;
+
 let data = {};
 try { data = JSON.parse(fs.readFileSync(OUT, 'utf8')); } catch (_) { /* first run */ }
 let n = 0;
 for (const [id, mech] of Object.entries(MECH)) {
-  if (data[id] && !force) continue;
+  if (only ? !only.includes(id) : (data[id] && !force)) continue;
   data[id] = mech; n++;
 }
 fs.writeFileSync(OUT, JSON.stringify(data, null, 2) + '\n');
