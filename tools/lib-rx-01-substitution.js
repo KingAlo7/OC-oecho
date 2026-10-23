@@ -3,7 +3,7 @@
    fragment builders. */
 
 module.exports = function (ctx) {
-const { R, Mol, prim, tert, carbonyl, aryl, B, DX, DY } = ctx;
+const { R, Mol, prim, tert, carbonyl, alken, aryl, B, DX, DY } = ctx;
 
 /* ══════════════════════════════════════════════════════════════════
  * 1 — Nucleophile Substitution
@@ -19,7 +19,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'Nu^-', below: 'aprotisch-polar',
-  conditions: 'Starkes Nucleophil, aprotisch-polares Lösungsmittel (DMSO, DMF, Aceton); primäres oder methylisches C-Atom.',
   stereochemistry: 'Rückseitenangriff → Walden-Umkehr, vollständige Inversion am Stereozentrum.',
   substituents: 'R₁ = Alkyl (primär bevorzugt) · X = Cl, Br, I, OTs, OMs · Nu⁻ = OH⁻, RO⁻, CN⁻, N₃⁻, RS⁻, I⁻, R₂NH',
   key_points: [
@@ -40,7 +39,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'Nu-H', below: 'protisch, Δ',
-  conditions: 'Schwaches Nucleophil (oft das Solvens selbst), protisch-polares Lösungsmittel (H₂O, EtOH), Wärme.',
   stereochemistry: 'Planares Carbenium-Ion → Angriff von beiden Seiten → Racemisierung (meist mit leichtem Inversionsüberschuss).',
   substituents: 'R₁, R₂, R₃ = Alkyl/Aryl · X = Cl, Br, I, OTs · Nu–H = H₂O, ROH, RCOOH',
   key_points: [
@@ -68,7 +66,6 @@ R({
     return { reactants: [a, a2], products: [b] };
   })(),
   above: 'Base (NaH, K_2CO_3)', below: 'DMF / Aceton',
-  conditions: 'Alkohol/Phenol wird zuerst deprotoniert (NaH, K₂CO₃, NaOH), dann S_N2 mit dem Halogenid.',
   stereochemistry: 'Inversion am Halogenid-C, falls dort ein Stereozentrum liegt.',
   substituents: 'R₁ = Alkyl, Aryl (Phenolat!) · R₂ = Alkyl · X = Cl, Br, I, OTs; auch (CH₃)₂SO₄ als Methylierungsmittel',
   key_points: [
@@ -80,7 +77,7 @@ R({
 });
 
 R({
-  id: 'alkohol-zu-halogenid', category: C_SN, name: 'Alkohol → Alkylhalogenid (SOCl₂ / PBr₃)',
+  id: 'alkohol-zu-halogenid', category: C_SN, name: 'Alkohole → Halogenalkane (SOCl₂, PBr₃)',
   difficulty: 'A', reaktionstyp: 'S_N2', transformation: 'R–OH → R–Cl bzw. R–Br',
   rx: (() => {
     const a = new Mol(); prim(a, 0, 0, 'R₁', 'O', null);
@@ -88,7 +85,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'SOCl_2  bzw. PBr_3', below: 'Pyridin',
-  conditions: 'SOCl₂ (→ Chlorid, Nebenprodukte SO₂ + HCl gasförmig) oder PBr₃ (→ Bromid); Pyridin fängt die Säure ab.',
   stereochemistry: 'Inversion am Stereozentrum (S_N2 am aktivierten Ester).',
   substituents: 'R₁ = primäres oder sekundäres Alkyl. Für tertiäre Alkohole genügt konz. HX.',
   key_points: [
@@ -100,7 +96,7 @@ R({
 });
 
 R({
-  id: 'tosylierung', category: C_SN, name: 'Tosylierung / Mesylierung (OH → Abgangsgruppe)',
+  id: 'tosylierung', category: C_SN, name: 'Tosylierung und Mesylierung',
   difficulty: 'B', reaktionstyp: 'S_N2 (am S)', transformation: 'R–OH → R–OTs',
   rx: (() => {
     const a = new Mol(); prim(a, 0, 0, 'R₁', 'O', null);
@@ -111,7 +107,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'TsCl  bzw. MsCl', below: 'Pyridin, 0 °C',
-  conditions: 'p-Toluolsulfonylchlorid (TsCl) oder Methansulfonylchlorid (MsCl / MeSO₂Cl) in Pyridin.',
   stereochemistry: 'Die C–O-Bindung wird nicht angetastet → Konfiguration am C bleibt erhalten. Erst die nachfolgende S_N2 invertiert.',
   substituents: 'R₁ = primäres/sekundäres Alkyl · Ts = p-CH₃–C₆H₄–SO₂– · Ms = CH₃–SO₂–',
   key_points: [
@@ -123,7 +118,33 @@ R({
 });
 
 R({
-  id: 'nitril-aus-halogenid', category: C_SN, name: 'Nitrilsynthese aus Alkylhalogenid (C₁-Verlängerung)',
+  id: 'mitsunobu', category: C_SN, name: 'Mitsunobu-Reaktion',
+  difficulty: 'C', reaktionstyp: 'S_N2', transformation: 'R₁R₂CH–OH → R₁R₂CH–Nu (Inversion)',
+  rx: (() => {
+    const a = new Mol();
+    const r1 = a.gen(0, 0, 'R₁'); const c = a.add(DX, DY, 'C'); const r2 = a.gen(2 * DX, 0, 'R₂');
+    const o = a.add(DX, DY + B, 'O');
+    a.bond(r1, c, 1); a.bond(c, r2, 1); a.bond(c, o, 1, 6);
+    const b = new Mol();
+    const s1 = b.gen(0, 0, 'R₁'); const d = b.add(DX, DY, 'C'); const s2 = b.gen(2 * DX, 0, 'R₂');
+    const nu = b.gen(DX, DY + B, 'Nu');
+    b.bond(s1, d, 1); b.bond(d, s2, 1); b.bond(d, nu, 1, 1);
+    return { reactants: [a], products: [b] };
+  })(),
+  above: 'Nu-H, PPh_3', below: 'DEAD bzw. DIAD, THF',
+  stereochemistry: 'Vollständige Inversion am Carbinol-C — der letzte Schritt ist eine S_N2 am Alkoxyphosphonium-Ion.',
+  substituents: 'R₁, R₂ = Alkyl (primäre und sekundäre Alkohole) · Nu–H = RCOOH (→ Ester), Phenole, Phthalimid, HN₃, ArSO₂NHNH₂ — acide genug (pK_s < ~13)',
+  key_points: [
+    'PPh₃ und DEAD (Diethylazodicarboxylat) machen aus der OH-Gruppe ein Alkoxyphosphonium-Ion — eine exzellente Abgangsgruppe. Triebkraft ist das entstehende Ph₃P=O.',
+    'Das Nucleophil wird von der Betain-Zwischenstufe aus PPh₃ + DEAD deprotoniert; deshalb muss Nu–H ausreichend acide sein.',
+    'Ein Schritt statt zweien: entspricht Tosylierung + S_N2, aber unter neutralen, milden Bedingungen.',
+    'Klassischer Einsatz: Inversion eines sekundären Alkohols über den Ester (RCOOH als Nu), danach verseifen.'
+  ],
+  seen_in: 'BW 2022 (Lysergsäure, Myers-Allensynthese)'
+});
+
+R({
+  id: 'nitril-aus-halogenid', category: C_SN, name: 'Kolbe-Nitrilsynthese',
   difficulty: 'B', reaktionstyp: 'S_N2', transformation: 'R–CH₂–X → R–CH₂–C≡N',
   rx: (() => {
     const a = new Mol(); prim(a, 0, 0, 'R₁', null, 'X');
@@ -134,7 +155,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'NaCN / KCN', below: 'DMSO',
-  conditions: 'Cyanid in aprotisch-polarem Lösungsmittel; primäres Halogenid.',
   substituents: 'R₁ = Alkyl, Benzyl · X = Cl, Br, I, OTs',
   key_points: [
     'Eine der wenigen Methoden, die Kohlenstoffkette um genau ein C-Atom zu verlängern.',
@@ -145,7 +165,7 @@ R({
 });
 
 R({
-  id: 'amin-alkylierung', category: C_SN, name: 'N-Alkylierung eines Amins',
+  id: 'amin-alkylierung', category: C_SN, name: 'N-Alkylierung von Aminen',
   difficulty: 'B', reaktionstyp: 'S_N2', transformation: 'R₁–NH₂ + R₂–X → R₁–NH–R₂',
   rx: (() => {
     const a = new Mol();
@@ -158,7 +178,6 @@ R({
     return { reactants: [a, a2], products: [b] };
   })(),
   above: 'Base (K_2CO_3, NEt_3)', below: '- HX',
-  conditions: 'Halogenid + Amin-Überschuss, Hilfsbase bindet das freiwerdende HX.',
   substituents: 'R₁ = Alkyl, Aryl · R₂ = primäres Alkyl · X = Cl, Br, I, OTs',
   key_points: [
     'Problem der Überalkylierung: das gebildete sekundäre Amin ist nucleophiler als das Edukt und reagiert weiter bis zum quartären Ammoniumsalz.',
@@ -166,6 +185,68 @@ R({
     'Bei Anilinen ist die Reaktion langsamer (freies Elektronenpaar ist in den Ring delokalisiert).'
   ],
   seen_in: 'BW 2023 (Lidocain), LW 2026 (Fentanyl, Diphenhydramin), BW 2016 (Chloramphenicol)'
+});
+
+R({
+  id: 'gabriel-synthese', category: C_SN, name: 'Gabriel-Synthese',
+  difficulty: 'B', reaktionstyp: 'S_N2', transformation: 'R–CH₂–X → R–CH₂–NH₂',
+  rx: (() => {
+    const a = new Mol(); prim(a, 0, 0, 'R₁', null, 'X');
+    const b = new Mol(); prim(b, 0, 0, 'R₁', 'N', null);
+    return { reactants: [a], products: [b] };
+  })(),
+  above: '1. K-Phthalimid', below: '2. N_2H_4  bzw. NaOH/H_2O',
+  stereochemistry: 'Inversion am Halogenid-C (S_N2).',
+  substituents: 'R₁ = Alkyl (primär), Benzyl, Allyl, CH(CO₂Et)₂ · X = Cl, Br, I, OTs',
+  key_points: [
+    'Das Phthalimid-Anion ist ein N-Nucleophil, das nur EINMAL alkyliert werden kann — anders als NH₃, das Gemische aus primärem, sekundärem und tertiärem Amin liefert.',
+    'Das N–H des Phthalimids ist durch die zwei Carbonylgruppen acide (pK_s ≈ 8); KOH oder K₂CO₃ genügen zur Deprotonierung.',
+    'Freisetzung des primären Amins durch Hydrazinolyse (Ing-Manske, Nebenprodukt Phthalhydrazid) oder durch Hydrolyse (Nebenprodukt Phthalat).',
+    'Mit Brommalonester als Elektrophil ist es ein Weg zu α-Aminosäuren (Gabriel-Malonester-Synthese).'
+  ],
+  seen_in: 'BW 2024 (Tyr-Asp-Dipeptid)'
+});
+
+R({
+  id: 'michaelis-arbuzov', category: C_SN, name: 'Michaelis-Arbuzov-Reaktion',
+  difficulty: 'C', reaktionstyp: 'S_N2 (zweifach)', transformation: 'R–CH₂–X + P(OR′)₃ → R–CH₂–P(O)(OR′)₂',
+  rx: (() => {
+    const a = new Mol(); prim(a, 0, 0, 'R₁', null, 'X');
+    const b = new Mol(); const f = prim(b, 0, 0, 'R₁', 'P', null);
+    const o = b.add(2 * DX, B, 'O');
+    const o1 = b.gen(3 * DX, -DY, 'OR₂');
+    const o2 = b.gen(2 * DX, -B, 'OR₂');
+    b.bond(f.y, o, 2); b.bond(f.y, o1, 1); b.bond(f.y, o2, 1);
+    return { reactants: [a], products: [b] };
+  })(),
+  above: 'P(OR_2)_3', below: 'Δ, -R_2X',
+  substituents: 'R₁ = Alkyl (primär), Benzyl, CO₂R (aus Bromessigester) · X = Br, I · R₂ = Me, Et, Bn',
+  key_points: [
+    'Zweistufig: S_N2 des Phosphor-Nucleophils am Halogenid → Phosphoniumsalz; dann greift das Halogenid-Ion eine O–R₂-Gruppe an (zweite S_N2) und spaltet R₂–X ab.',
+    'Triebkraft ist die sehr stabile P=O-Bindung des entstehenden Phosphonats.',
+    'Phosphonate mit einer CH₂–EWG-Gruppe sind die Reagenzien der Horner-Wadsworth-Emmons-Reaktion.',
+    'Verwandt mit der Bildung des Wittig-Phosphoniumsalzes aus PPh₃ + R–X — dort fehlt aber die O–R-Gruppe, die zweite Stufe bleibt aus.'
+  ],
+  seen_in: 'BW 2018 (Kaffeesäure)'
+});
+
+R({
+  id: 'gilman-kupplung', category: C_SN, name: 'Kupplung mit Gilman-Cupraten (Corey-House)',
+  difficulty: 'C', reaktionstyp: 'Kupplung', transformation: 'R₁–X + (R₂)₂CuLi → R₁–R₂',
+  rx: (() => {
+    const a = new Mol(); alken(a, 0, 0, 'R₁', 'X');
+    const b = new Mol(); alken(b, 0, 0, 'R₁', 'R₂');
+    return { reactants: [a], products: [b] };
+  })(),
+  above: '(R_2)_2CuLi', below: 'Et_2O, -78 °C',
+  stereochemistry: 'Vinylhalogenide reagieren unter Retention der Doppelbindungsgeometrie — aus (E) wird (E).',
+  substituents: 'R₁–X = Vinyl-, Aryl- oder primäres Alkylhalogenid (X = I, Br) · R₂ = Me, n-Bu, Vinyl, Aryl',
+  key_points: [
+    'Gilman-Reagenzien R₂CuLi entstehen aus 2 R–Li + CuI; sie sind weicher und weniger basisch als R–Li oder R–MgX.',
+    'Anders als Grignard-Reagenzien kuppeln sie direkt mit Halogeniden zu einer neuen C–C-Bindung.',
+    'An α,β-ungesättigten Carbonylen addieren Cuprate 1,4 (Michael-Typ), Grignard-Reagenzien dagegen 1,2.'
+  ],
+  seen_in: 'BW 2025 (Farnesol)'
 });
 
 /* ══════════════════════════════════════════════════════════════════
@@ -188,7 +269,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'starke Base', below: 'KOH/EtOH, Δ',
-  conditions: 'Starke, oft sperrige Base (KOH/EtOH, NaOEt, KO^tBu, LDA, NaNH₂), Wärme.',
   stereochemistry: 'Anti-periplanare Anordnung von H und X zwingend → aus einem Diastereomer entsteht gezielt das E- oder das Z-Alken.',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H · X = Cl, Br, I, OTs, ⁺NR₃',
   key_points: [
@@ -216,7 +296,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'schwache Base', below: 'protisch, Δ',
-  conditions: 'Schwache Base/Nucleophil, protisches Solvens, Hitze — dieselben Bedingungen wie die S_N1.',
   stereochemistry: 'Über das planare Carbenium-Ion; keine anti-periplanare Vorgabe, daher meist E/Z-Gemisch mit E-Überschuss.',
   substituents: 'R₁, R₂, R₃ = Alkyl/Aryl · X = Cl, Br, I, ⁺OH₂',
   key_points: [
@@ -228,7 +307,7 @@ R({
 });
 
 R({
-  id: 'dehydratisierung-alkohol', category: C_EL, name: 'Dehydratisierung eines Alkohols',
+  id: 'dehydratisierung-alkohol', category: C_EL, name: 'Dehydratisierung von Alkoholen',
   difficulty: 'A', reaktionstyp: 'E1', transformation: 'R₁–CH₂–CH(OH)–R₂ → R₁–CH=CH–R₂ + H₂O',
   rx: (() => {
     const a = new Mol();
@@ -242,7 +321,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'konz. H_2SO_4', below: 'Δ, -H_2O',
-  conditions: 'Konz. H₂SO₄ oder H₃PO₄, 140–180 °C; alternativ P₂O₅ / POCl₃ in Pyridin (schonend).',
   stereochemistry: 'Saytzeff-Produkt, überwiegend E-konfiguriert.',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H',
   key_points: [
@@ -255,7 +333,7 @@ R({
 });
 
 R({
-  id: 'alkin-aus-dihalogenid', category: C_EL, name: 'Doppelte Dehydrohalogenierung → Alkin',
+  id: 'alkin-aus-dihalogenid', category: C_EL, name: 'Alkine durch doppelte Dehydrohalogenierung',
   difficulty: 'C', reaktionstyp: 'E2 (2×)', transformation: 'R₁–CHX–CH₂X → R₁–C≡CH',
   rx: (() => {
     const a = new Mol();
@@ -269,15 +347,38 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: '2 NaNH_2', below: 'NH_3(l), dann H_3O^+',
-  conditions: 'Zwei Äquivalente sehr starker Base (NaNH₂ in flüssigem NH₃, KO^tBu/DMSO); das vicinale Dihalogenid stammt meist aus der Br₂-Addition an ein Alken.',
   substituents: 'R₁ = Alkyl, Aryl · X = Br, Cl',
   key_points: [
     'Zwei aufeinanderfolgende E2-Schritte über das Vinylhalogenid als Zwischenstufe.',
     'Das zweite Äquivalent ist nötig, weil die Vinyl-C–X-Bindung deutlich träger ist.',
     'Bei terminalen Alkinen deprotoniert NaNH₂ anschließend zum Acetylid — erst die wässrige Aufarbeitung liefert das Alkin.',
-    'Die Acetylid-Stufe ist der Einstieg in die C–C-Knüpfung mit Alkylhalogeniden.'
+    'Die Acetylid-Stufe ist der Einstieg in die C–C-Knüpfung mit Alkylhalogeniden.',
+    'Auch geminale Dihalogenide eignen sich — z. B. aus einem Keton mit PCl₅.'
   ],
   seen_in: 'LW 2019 (Phenylacetylen-Routen), BW 2022 (Lysergsäure-Allen)'
+});
+
+R({
+  id: 'esterpyrolyse', category: C_EL, name: 'Esterpyrolyse (syn-Eliminierung)',
+  difficulty: 'C', reaktionstyp: 'E_i (syn)', transformation: 'R–CH₂–CH(OAc)–R → R–CH=CH–R',
+  rx: (() => {
+    const a = new Mol();
+    const r1 = a.gen(0, 0, 'R₁'); const c1 = a.add(DX, DY, 'C'); const c2 = a.add(2 * DX, 0, 'C');
+    const r2 = a.gen(3 * DX, DY, 'R₂'); const oac = a.gen(2 * DX, -B, 'OAc');
+    a.bond(r1, c1, 1); a.bond(c1, c2, 1); a.bond(c2, r2, 1); a.bond(c2, oac, 1);
+    const b = new Mol(); alken(b, 0, 0, 'R₁', 'R₂');
+    return { reactants: [a], products: [b] };
+  })(),
+  above: 'Δ (300–500 °C)', below: '-CH_3COOH',
+  stereochemistry: 'syn-Eliminierung über einen cyclischen, sechsgliedrigen ÜZ: das abgespaltene H und die Acetoxygruppe stehen auf derselben Seite — das Gegenteil der anti-periplanaren E2.',
+  substituents: 'R₁, R₂ = Alkyl, Aryl, H · statt Acetat auch Benzoat oder Xanthogenat (Tschugaeff, schon bei ~150 °C)',
+  key_points: [
+    'Intramolekular, ohne Base und ohne Carbenium-Ion — daher keine Umlagerungen.',
+    'Das Carbonyl-O des Esters holt sich das β-H über einen cyclischen Sechsring-ÜZ.',
+    'Bei mehreren β-H entscheidet die Zahl der syn-ständigen H; oft entsteht das weniger substituierte Alken.',
+    'Tschugaeff-Eliminierung: Xanthogenat (–O–C(S)SMe) statt Acetat, gleicher Mechanismus, viel mildere Temperatur. Verwandt ist die Cope-Eliminierung von Aminoxiden.'
+  ],
+  seen_in: 'LW 2016 (Phellandral), BW 2022 (Cantharidin)'
 });
 
 };

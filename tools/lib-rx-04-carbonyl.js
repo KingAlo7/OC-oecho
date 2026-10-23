@@ -14,7 +14,7 @@ const C_CO = 'Carbonyl — Additionen';
 const keton = (z) => { const m = new Mol(); carbonyl(m, 0, 0, 'R₁', { zLabel: z || 'R₂' }); return m; };
 
 R({
-  id: 'nucleophile-addition-carbonyl', category: C_CO, name: 'Nucleophile Addition an C=O — allgemeines Schema',
+  id: 'nucleophile-addition-carbonyl', category: C_CO, name: 'Nucleophile Addition an Carbonylverbindungen (A_N)',
   difficulty: 'A', reaktionstyp: 'A_N', transformation: 'R₂C=O + Nu⁻ → R₂C(OH)–Nu',
   rx: (() => {
     const a = keton();
@@ -33,7 +33,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: '1. Nu^-', below: '2. H_3O^+',
-  conditions: 'Nucleophil addiert an den partiell positiven Carbonyl-C, das Alkoxid wird anschließend protoniert.',
   stereochemistry: 'Angriff senkrecht zur planaren Carbonylebene, von beiden Seiten gleich wahrscheinlich → Racemat (außer bei chiraler Umgebung).',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H · Nu⁻ = H⁻ (NaBH₄/LiAlH₄), R⁻ (RMgX, RLi), CN⁻, R₂N–H, RO–H, Ylide',
   key_points: [
@@ -68,7 +67,6 @@ R({
     return { reactants: [a, a2], products: [b] };
   })(),
   above: '1. R_3-MgX', below: '2. H_3O^+',
-  conditions: 'Grignard-Reagenz aus R–X + Mg in wasserfreiem Ether/THF; die Addition läuft kalt, danach wird sauer aufgearbeitet.',
   stereochemistry: 'Racemat, falls am Carbonyl-C ein Stereozentrum entsteht.',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H · R₃ = Alkyl, Aryl, Vinyl · X = Cl, Br, I',
   key_points: [
@@ -82,7 +80,7 @@ R({
 });
 
 R({
-  id: 'grignard-co2', category: C_CO, name: 'Carboxylierung eines Grignard-Reagenzes',
+  id: 'grignard-co2', category: C_CO, name: 'Carboxylierung von Grignard-Verbindungen',
   difficulty: 'B', reaktionstyp: 'A_N', transformation: 'R–MgX + CO₂ → R–COOH',
   rx: (() => {
     const a = (() => {
@@ -105,7 +103,6 @@ R({
     return { reactants: [a, a2], products: [b] };
   })(),
   above: '1. CO_2 (fest)', below: '2. H_3O^+',
-  conditions: 'Grignard-Lösung auf Trockeneis gießen, dann sauer aufarbeiten.',
   substituents: 'R₁ = Alkyl, Aryl · X = Cl, Br, I',
   key_points: [
     'Verlängert die Kette um genau ein C — die Alternative zum Umweg über das Nitril.',
@@ -116,7 +113,32 @@ R({
 });
 
 R({
-  id: 'cyanhydrin', category: C_CO, name: 'Cyanhydrin-Bildung',
+  id: 'acetylid-addition', category: C_CO, name: 'Addition von Acetyliden an Carbonylverbindungen',
+  difficulty: 'B', reaktionstyp: 'A_N', transformation: 'R₁–CO–R₂ → R₁R₂C(OH)–C≡C–R₃',
+  rx: (() => {
+    const a = new Mol(); carbonyl(a, 0, 0, 'R₁', { zLabel: 'R₂' });
+    const b = new Mol();
+    const r1 = b.gen(0, 0, 'R₁'); const c = b.add(DX, DY, 'C'); const r2 = b.gen(2 * DX, 0, 'R₂');
+    const o = b.add(0, B, 'O');
+    b.bond(r1, c, 1); b.bond(c, r2, 1); b.bond(c, o, 1);
+    const c1 = b.add(2 * DX, 2 * DY, 'C'); const c2 = b.add(3 * DX, 3 * DY, 'C');
+    const r3 = b.gen(4 * DX, 4 * DY, 'R₃');
+    b.bond(c, c1, 1); b.bond(c1, c2, 3); b.bond(c2, r3, 1);
+    return { reactants: [a], products: [b] };
+  })(),
+  above: '1. R_3-C≡C^- Li^+', below: '2. H_3O^+',
+  substituents: 'R₁, R₂ = Alkyl, Aryl, H (Aldehyde → sekundäre, Ketone → tertiäre Propargylalkohole) · R₃ = H, Alkyl · Gegenion Li⁺, Na⁺, MgBr⁺',
+  key_points: [
+    'Terminale Alkine sind mit pK_s ≈ 25 CH-acide: NaNH₂, n-BuLi oder EtMgBr deprotonieren zum Acetylid.',
+    'Das Acetylid addiert wie ein Grignard-Reagenz 1,2 an die C=O-Gruppe (A_N); saure Aufarbeitung liefert den Propargylalkohol.',
+    'Mit Formaldehyd entsteht ein primärer Propargylalkohol (C₁-Verlängerung mit OH).',
+    'Propargylalkohole sind vielseitige Zwischenstufen: Lindlar bzw. Na/NH₃ zum Allylalkohol, Rupe-Umlagerung zum Enon.'
+  ],
+  seen_in: 'BW 2024 (Vitamin E), BW 2025 (Farnesol), BW 2026 (Adrenosteron)'
+});
+
+R({
+  id: 'cyanhydrin', category: C_CO, name: 'Cyanhydrinbildung',
   difficulty: 'B', reaktionstyp: 'A_N', transformation: 'R₂C=O + HCN → R₂C(OH)–C≡N',
   rx: (() => {
     const a = keton();
@@ -135,7 +157,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'NaCN / KCN', below: 'H^+ (kat.)',
-  conditions: 'Cyanid-Salz mit etwas Säure — HCN selbst ist zu wenig dissoziiert und hochgiftig, daher in situ.',
   stereochemistry: 'Racemat; enzymatisch (Oxynitrilasen) oder mit chiralem Katalysator auch enantioselektiv.',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H — Ketone reagieren träger als Aldehyde',
   key_points: [
@@ -148,7 +169,7 @@ R({
 });
 
 R({
-  id: 'carbonyl-reduktion', category: C_CO, name: 'Reduktion zum Alkohol (NaBH₄ / LiAlH₄)',
+  id: 'carbonyl-reduktion', category: C_CO, name: 'Reduktion von Carbonylverbindungen (NaBH₄, LiAlH₄)',
   difficulty: 'A', reaktionstyp: 'A_N (Hydrid)', transformation: 'R₂C=O → R₂CH–OH',
   rx: (() => {
     const a = keton();
@@ -161,7 +182,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: '1. NaBH_4  bzw. LiAlH_4', below: '2. H_3O^+',
-  conditions: 'NaBH₄ in MeOH/EtOH (mild, protische Solventien erlaubt); LiAlH₄ in wasserfreiem Ether/THF (heftig).',
   stereochemistry: 'Racemat am neuen Stereozentrum; mit CBS-Katalysator oder enzymatisch (NADH) enantioselektiv.',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H',
   key_points: [
@@ -174,7 +194,7 @@ R({
 });
 
 R({
-  id: 'acetal-schutz', category: C_CO, name: 'Acetal-Schutzgruppe',
+  id: 'acetal-schutz', category: C_CO, name: 'Acetalbildung (Schutzgruppe)',
   difficulty: 'B', reaktionstyp: 'A_N + Substitution', transformation: 'R₂C=O → cyclisches Acetal',
   rx: (() => {
     const a = keton();
@@ -203,7 +223,6 @@ R({
     return { reactants: [a], products: [p] };
   })(),
   above: 'HO-CH_2CH_2-OH', below: 'H^+ (kat.), -H_2O',
-  conditions: 'Ethylenglykol mit kat. TsOH/H₂SO₄, Wasser wird azeotrop ausgekreist (Wasserabscheider).',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H · statt Glykol auch 2 × MeOH (offenkettiges Dimethylacetal)',
   key_points: [
     'Die wichtigste Schutzgruppe für Aldehyde und Ketone: das Acetal ist gegen Basen, Nucleophile, Grignard und LiAlH₄ völlig inert.',
@@ -215,7 +234,7 @@ R({
 });
 
 R({
-  id: 'iminbildung', category: C_CO, name: 'Imin- (Schiff-Base-) Bildung',
+  id: 'iminbildung', category: C_CO, name: 'Iminbildung',
   difficulty: 'B', reaktionstyp: 'A_N + Kondensation', transformation: 'R₂C=O + R₃NH₂ → R₂C=N–R₃',
   rx: (() => {
     const a = keton();
@@ -233,7 +252,6 @@ R({
     return { reactants: [a, a2], products: [b] };
   })(),
   above: 'R_3-NH_2', below: 'pH ≈ 4–5, -H_2O',
-  conditions: 'Primäres Amin, schwach sauer (pH 4–5), Wasserabscheidung.',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H · R₃ = Alkyl, Aryl · mit H₂N–OH entsteht das Oxim, mit H₂N–NH₂ das Hydrazon',
   key_points: [
     'Der pH ist ein Kompromiss: Säure braucht es, um das Halbaminal-OH zu protonieren, aber zu viel Säure protoniert das Amin und nimmt ihm die Nucleophilie.',
@@ -245,7 +263,7 @@ R({
 });
 
 R({
-  id: 'enaminbildung', category: C_CO, name: 'Enamin-Bildung',
+  id: 'enaminbildung', category: C_CO, name: 'Enaminbildung',
   difficulty: 'C', reaktionstyp: 'A_N + Kondensation', transformation: 'Keton + R₂NH → Enamin',
   rx: (() => {
     const a = (() => {
@@ -270,7 +288,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'R_3R_4NH (Pyrrolidin, Morpholin)', below: 'H^+ (kat.), -H_2O',
-  conditions: 'Sekundäres Amin — meist Pyrrolidin oder Morpholin — mit kat. Säure und Wasserabscheider.',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H · R₃, R₄ = Alkyl, im Ring verbunden (Pyrrolidin, Piperidin, Morpholin)',
   key_points: [
     'Weil dem sekundären Amin das zweite N–H fehlt, wird statt zum Imin zum ENAMIN eliminiert.',
@@ -298,7 +315,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'R_3-NH_2, NaBH_3CN', below: 'pH ≈ 6, MeOH',
-  conditions: 'Amin und Carbonyl in Gegenwart von NaBH₃CN (oder NaBH(OAc)₃); das Imin wird reduziert, sobald es entsteht.',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H · R₃–NH₂ = primäres oder sekundäres Amin, auch NH₃',
   key_points: [
     'Die saubere Alternative zur N-Alkylierung mit R–X: sie bleibt auf der gewünschten Stufe stehen, ohne Überalkylierung.',
@@ -333,20 +349,43 @@ R({
     return { reactants: [a, a2], products: [b] };
   })(),
   above: 'Ph_3P=CR_3R_4', below: 'THF  ·  -Ph_3P=O',
-  conditions: 'Das Ylid entsteht aus Ph₃P + R–X (S_N2) und anschließender Deprotonierung mit starker Base (BuLi, NaH, NaOEt).',
   stereochemistry: 'Nicht stabilisierte Ylide (R = Alkyl) geben überwiegend das (Z)-Alken; stabilisierte Ylide (R = Ester, Keton) überwiegend das (E)-Alken. Die HWE-Variante mit Phosphonaten liefert sehr sauber (E).',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H · R₃, R₄ = H, Alkyl, Aryl, CO₂R',
   key_points: [
     'Der große Vorteil: die Lage der neuen Doppelbindung ist EINDEUTIG — genau dort, wo vorher das O saß. Eine Eliminierung könnte das nicht garantieren.',
     'Triebkraft ist die sehr starke P=O-Bindung im Triphenylphosphinoxid.',
     'Über das viergliedrige Oxaphosphetan als Zwischenstufe.',
-    'Horner-Wadsworth-Emmons (HWE) nutzt Phosphonate (EtO)₂P(O)CHR⁻: wasserlösliches Nebenprodukt und hohe E-Selektivität.'
+    'Horner-Wadsworth-Emmons (HWE) nutzt Phosphonate (EtO)₂P(O)CHR⁻: wasserlösliches Nebenprodukt und hohe E-Selektivität.',
+    'Das Ylid entsteht aus Ph₃P + R–X (S_N2 → Phosphoniumsalz) und anschließender Deprotonierung mit starker Base (BuLi, NaH, NaOEt).'
   ],
   seen_in: 'BW 2019 (Abscisinsäure), BW 2022 (Z-Jasmon), BW 2020 (Prostaglandin), BW 2024 (Vitamin E)'
 });
 
 R({
-  id: 'oxim-hydrazon', category: C_CO, name: 'Oxim- und Hydrazon-Bildung',
+  id: 'horner-wadsworth-emmons', category: C_CO, name: 'Horner-Wadsworth-Emmons-Reaktion',
+  difficulty: 'C', reaktionstyp: 'A_N + Olefinierung', transformation: 'R–CHO → (E)-R–CH=CH–CO₂R′',
+  rx: (() => {
+    const a = new Mol(); carbonyl(a, 0, 0, 'R₁');
+    const b = new Mol();
+    const r = b.gen(0, 0, 'R₁'); const c1 = b.add(DX, DY, 'C'); const c2 = b.add(DX, DY + B, 'C');
+    const e = b.gen(2 * DX, DY + B + DY, 'CO₂R₂');
+    b.bond(r, c1, 1); b.bond(c1, c2, 2); b.bond(c2, e, 1);
+    return { reactants: [a], products: [b] };
+  })(),
+  above: '(EtO)_2P(O)CH_2CO_2R_2', below: 'NaH  bzw. NaOEt',
+  stereochemistry: 'Stark (E)-selektiv — es entsteht das thermodynamisch stabilere Alken.',
+  substituents: 'R₁ = Alkyl, Aryl (Aldehyde; Ketone reagieren träger) · R₂ = Me, Et · statt CO₂R₂ auch CN, COR',
+  key_points: [
+    'Das Phosphonat-Carbanion ist durch die Estergruppe stabilisiert — nucleophiler, aber weniger basisch als ein Wittig-Ylid.',
+    'Das Nebenprodukt (EtO)₂PO₂⁻ ist wasserlöslich und lässt sich auswaschen; Triphenylphosphinoxid aus der Wittig-Reaktion nicht.',
+    'Die Phosphonate gewinnt man durch die Michaelis-Arbuzov-Reaktion aus P(OEt)₃ und α-Halogenester.',
+    'Der Standardweg zu (E)-α,β-ungesättigten Estern: Zimtsäureester, Kaffeesäure-Derivate.'
+  ],
+  seen_in: 'BW 2018 (Kaffeesäure)'
+});
+
+R({
+  id: 'oxim-hydrazon', category: C_CO, name: 'Oxim- und Hydrazonbildung',
   difficulty: 'B', reaktionstyp: 'A_N + Kondensation', transformation: 'R₂C=O → R₂C=N–OH bzw. R₂C=N–NH₂',
   rx: (() => {
     const a = keton();
@@ -362,7 +401,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'H_2N-OH  bzw. H_2N-NH_2', below: 'H^+ (kat.), -H_2O',
-  conditions: 'Hydroxylamin (→ Oxim), Hydrazin (→ Hydrazon) oder ein Sulfonylhydrazid ArSO₂NHNH₂ (→ Tosylhydrazon), jeweils schwach sauer.',
   stereochemistry: 'Oxime treten als E/Z-Isomere auf — bei der Beckmann-Umlagerung wandert der zum OH ANTI stehende Rest.',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H',
   key_points: [
@@ -375,7 +413,7 @@ R({
 });
 
 R({
-  id: 'wolff-kishner-clemmensen', category: C_CO, name: 'C=O → CH₂ — Wolff-Kishner und Clemmensen',
+  id: 'wolff-kishner-clemmensen', category: C_CO, name: 'Wolff-Kishner- und Clemmensen-Reduktion',
   difficulty: 'C', reaktionstyp: 'Reduktion', transformation: 'R₂C=O → R₂CH₂',
   rx: (() => {
     const a = keton();
@@ -387,19 +425,19 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'N_2H_4 / KOH, Δ', below: 'bzw. Zn(Hg) / konz. HCl',
-  conditions: 'Wolff-Kishner: Hydrazin + starke Base (KOH, KO^tBu) in hochsiedendem Solvens, 150–200 °C — für BASENstabile Substrate. Clemmensen: Zinkamalgam in konz. HCl — für SÄUREstabile Substrate.',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H',
   key_points: [
     'Zwei Methoden für dieselbe Umwandlung, mit komplementären Bedingungen — man wählt nach dem, was der Rest des Moleküls verträgt.',
     'Wolff-Kishner läuft über das Hydrazon, das unter N₂-Abspaltung zum Carbanion zerfällt.',
     'Zusammen mit der Friedel-Crafts-Acylierung ergibt das den unverzweigten Alkylaromaten, den die direkte Alkylierung wegen Umlagerung nicht liefert.',
-    'Milde Alternative: Thioacetal bilden und mit Raney-Nickel desulfurieren — neutral, für empfindliche Substrate.'
+    'Milde Alternative: Thioacetal bilden und mit Raney-Nickel desulfurieren — neutral, für empfindliche Substrate.',
+    'Huang-Minlon-Variante der Wolff-Kishner-Reduktion: Hydrazon in situ, KOH in Diethylenglykol bzw. KO^tBu in DMSO.'
   ],
   seen_in: 'BW 2021 (Thymol), BW 2022 (Cantharidin, RaNi), BW 2019 (Twistan, N₂H₄), BW 2018 (Colchicin)'
 });
 
 R({
-  id: 'thioacetal-raney', category: C_CO, name: 'Thioacetal + Raney-Nickel (neutrale C=O → CH₂)',
+  id: 'thioacetal-raney', category: C_CO, name: 'Thioacetalbildung und Entschwefelung (Raney-Ni)',
   difficulty: 'C', reaktionstyp: 'Schutz + Reduktion', transformation: 'R₂C=O → Dithiolan → R₂CH₂',
   rx: (() => {
     const a = keton();
@@ -424,7 +462,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'HS-CH_2CH_2-SH', below: 'BF_3 · Et_2O   (dann Raney-Ni)',
-  conditions: '1,2-Ethandithiol mit BF₃·Et₂O oder Lewis-Säure; anschließend Raney-Nickel in Ethanol.',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H',
   key_points: [
     'Die neutrale dritte Möglichkeit neben Wolff-Kishner (basisch) und Clemmensen (sauer).',

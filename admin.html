@@ -773,8 +773,8 @@ function buildForm(r) {
   </div>
 
   <div class="fsec">
-    <div class="fsec-title">Bedingungen &amp; Umfang</div>
-    <div class="field"><label>Bedingungen</label><textarea class="fi" id="f-cond" oninput="mu()">${x(r.conditions||'')}</textarea></div>
+    <div class="fsec-title">Substituenten &amp; Stereochemie</div>
+    <div class="field"><label>Substituenten</label><textarea class="fi" id="f-subst" oninput="mu()" placeholder="R₁ = Alkyl, Aryl · X = Cl, Br, I">${x(r.substituents||'')}</textarea></div>
     <div class="field"><label>Stereochemie</label><input class="fi" id="f-stereo" value="${x(r.stereochemistry||'')}" oninput="mu()"></div>
   </div>
 
@@ -846,7 +846,7 @@ function collect() {
   s('reaction_rxn',g('f-rxn')); s('reaction_smiles',g('f-smi'));
   s('reagent_label',g('f-rl')); s('reagent_label_below',g('f-rlb'));
   if (_rxnComp.agents.length) r.reagent_mols = _rxnComp.agents.slice();
-  s('conditions',g('f-cond')); s('stereochemistry',g('f-stereo'));
+  s('substituents',g('f-subst')); s('stereochemistry',g('f-stereo'));
   const kps=getKPs(); if(kps.length) r.key_points=kps;
   return r;
 }

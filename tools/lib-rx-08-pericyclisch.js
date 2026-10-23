@@ -11,7 +11,7 @@ const C_PC = 'Pericyclische Reaktionen';
 const C_UM = 'Umlagerungen';
 
 R({
-  id: 'diels-alder', category: C_PC, name: 'Diels-Alder-Reaktion [4+2]',
+  id: 'diels-alder', category: C_PC, name: 'Diels-Alder-Reaktion',
   difficulty: 'B', reaktionstyp: '[4+2]-Cycloaddition', transformation: 'Dien + Dienophil → Cyclohexen',
   rx: (() => {
     const a = (() => {
@@ -45,8 +45,7 @@ R({
     })();
     return { reactants: [a, a2], products: [b] };
   })(),
-  above: 'Δ', below: 'thermisch, konzertiert',
-  conditions: 'Erwärmen; Lewis-Säuren (AlCl₃, ZnCl₂) beschleunigen stark, indem sie das Dienophil weiter verarmen.',
+  above: 'Δ', below: '',
   stereochemistry: 'Streng SUPRAFACIAL an beiden Komponenten → die Konfiguration beider Partner bleibt vollständig erhalten (syn-Addition). Es gilt die ENDO-Regel: der ÜZ mit maximaler Sekundärorbital-Wechselwirkung ist kinetisch bevorzugt.',
   substituents: 'Dien = elektronenREICH (Donoren am Dien), muss s-cis einnehmbar sein · Z = elektronenziehend: –CHO, –COR, –CO₂R, –CN, –NO₂',
   key_points: [
@@ -57,6 +56,39 @@ R({
     'Die Umkehrung (Retro-Diels-Alder) läuft bei hoher Temperatur und wird gezielt zur Freisetzung von Dienen genutzt.'
   ],
   seen_in: 'BW 2022 (Cantharidin), BW 2020 (Aufgabe 5 E), BW 2023 (Hirsuten), BW 2024 (Merrilacton A)'
+});
+
+R({
+  id: 'dipolare-cycloaddition', category: C_PC, name: '1,3-Dipolare Cycloaddition',
+  difficulty: 'C', reaktionstyp: '[3+2]-Cycloaddition', transformation: 'Nitron + Alken → Isoxazolidin',
+  rx: (() => {
+    const a = new Mol();
+    const r1 = a.gen(0, 0, 'R₁'); const c = a.add(DX, DY, 'C'); const n = a.add(2 * DX, 0, 'N');
+    const o = a.add(3 * DX, DY, 'O'); const r2 = a.gen(2 * DX, -B, 'R₂');
+    a.bond(r1, c, 1); a.bond(c, n, 2); a.bond(n, o, 1); a.bond(n, r2, 1);
+    a.charge(n, 1); a.charge(o, -1);
+    const a2 = new Mol();
+    const d1 = a2.add(0, 0, 'C'); const d2 = a2.add(B, 0, 'C'); const r3 = a2.gen(B + DX, DY, 'R₃');
+    a2.bond(d1, d2, 2); a2.bond(d2, r3, 1);
+    const b = new Mol();
+    // v2 = O, v3 = N (N–O oben), v4 = C–R₁, v0 = CH₂, v1 = C–R₃
+    const v = b.ring(5, 0, 0);
+    b.atoms[v[2]].sym = 'O'; b.atoms[v[3]].sym = 'N';
+    [[v[3], 'R₂'], [v[4], 'R₁'], [v[1], 'R₃']].forEach(([vi, lab]) => {
+      const p = b.radial(0, 0, vi, B); b.bond(vi, b.gen(p[0], p[1], lab), 1);
+    });
+    return { reactants: [a, a2], products: [b] };
+  })(),
+  above: 'Δ', below: '',
+  stereochemistry: 'Konzertiert und suprafacial — die Geometrie des Alkens bleibt im Produkt erhalten.',
+  substituents: '1,3-Dipol: Nitron (→ Isoxazolidin), Nitriloxid (→ Isoxazolin), Azid (→ Triazol), Ozon · Dipolarophil: Alken, Alkin · R₁–R₃ = Alkyl, Aryl, H',
+  key_points: [
+    '4 π-Elektronen des Dipols + 2 π-Elektronen des Dipolarophils = 6 Elektronen: thermisch erlaubt wie die Diels-Alder-Reaktion.',
+    'Liefert in EINEM Schritt Fünfring-Heterocyclen; Azid + Alkin → 1,2,3-Triazol ist die bekannteste „Click“-Reaktion.',
+    'Die N–O-Bindung des Isoxazolidins lässt sich reduktiv spalten (Zn/HOAc, H₂/Pd, LiAlH₄) → 1,3-Aminoalkohol.',
+    'Auch der erste Schritt der Ozonolyse (O₃ + Alken → Primärozonid) ist eine 1,3-dipolare Cycloaddition.'
+  ],
+  seen_in: 'BW 2017 (Atropin)'
 });
 
 R({
@@ -88,7 +120,6 @@ R({
     return { reactants: [a, a2], products: [b] };
   })(),
   above: 'hν', below: 'ggf. Sensibilisator',
-  conditions: 'UV-Bestrahlung, oft mit Triplett-Sensibilisator (Benzophenon, Aceton); intramolekular besonders effizient.',
   stereochemistry: 'Thermisch wäre supra/supra verboten — photochemisch ist genau dieser Weg erlaubt, deshalb bleibt die Alkengeometrie erhalten.',
   substituents: 'R₁–R₄ = Alkyl, Aryl, H, Carbonyl · Enone reagieren besonders gut',
   key_points: [
@@ -101,7 +132,40 @@ R({
 });
 
 R({
-  id: 'claisen-umlagerung', category: C_PC, name: 'Claisen-Umlagerung [3,3]',
+  id: 'keten-cycloaddition', category: C_PC, name: '[2+2]-Cycloaddition von Ketenen',
+  difficulty: 'D', reaktionstyp: '[2+2]-Cycloaddition (thermisch)', transformation: 'Keten + Alken → Cyclobutanon',
+  rx: (() => {
+    const a = new Mol();
+    const c1 = a.add(0, 0, 'C'); const c2 = a.add(B, 0, 'C'); const o = a.add(2 * B, 0, 'O');
+    const r1 = a.gen(-DX, DY, 'R₁'); const r2 = a.gen(-DX, -DY, 'R₂');
+    a.bond(c1, c2, 2); a.bond(c2, o, 2); a.bond(c1, r1, 1); a.bond(c1, r2, 1);
+    const a2 = new Mol();
+    const d1 = a2.add(0, 0, 'C'); const d2 = a2.add(B, 0, 'C'); const r3 = a2.gen(B + DX, -DY, 'R₃');
+    a2.bond(d1, d2, 2); a2.bond(d2, r3, 1);
+    const b = new Mol();
+    // v0 = C=O, v1 = CR₁R₂, v2 = CH₂, v3 = CH–R₃
+    const v = b.ring(4, 0, 0, { a0: 45 });
+    const po = b.radial(0, 0, v[0], B); b.bond(v[0], b.add(po[0], po[1], 'O'), 2);
+    const p3 = b.radial(0, 0, v[3], B); b.bond(v[3], b.gen(p3[0], p3[1], 'R₃'), 1);
+    const q = b.atoms[v[1]];
+    [105, 165].forEach((deg, k) => {
+      const t = deg * Math.PI / 180;
+      b.bond(v[1], b.gen(q.x + B * Math.cos(t), q.y + B * Math.sin(t), k ? 'R₂' : 'R₁'), 1);
+    });
+    return { reactants: [a, a2], products: [b] };
+  })(),
+  above: 'Δ', below: 'aus R_1R_2CH-COCl + NEt_3',
+  substituents: 'R₁, R₂ = Alkyl, Aryl, Cl (Dichlorketen) · Alken: elektronenreiche reagieren am besten, auch intramolekular',
+  key_points: [
+    'Die Ausnahme von „[2+2] nur photochemisch“: Ketene reagieren THERMISCH, weil ihr zweites, orthogonales π-System einen antarafacialen Angriff ([π2s + π2a]) erlaubt.',
+    'Ketene sind zu reaktiv zum Lagern; man erzeugt sie in situ aus Säurechloriden mit einer Aminbase (−HCl).',
+    'Produkt sind Cyclobutanone; intramolekular entstehen bicyclische Gerüste (Bergamoten).'
+  ],
+  seen_in: 'BW 2020 (Bergamoten)'
+});
+
+R({
+  id: 'claisen-umlagerung', category: C_PC, name: 'Claisen-Umlagerung',
   difficulty: 'C', reaktionstyp: '[3,3]-sigmatrop', transformation: 'Allylvinylether → γ,δ-ungesättigtes Carbonyl',
   rx: (() => {
     /* Allyl vinyl ether. The six atoms of the [3,3] system are
@@ -135,8 +199,7 @@ R({
     })();
     return { reactants: [a], products: [b] };
   })(),
-  above: 'Δ (150–250 °C)', below: 'konzertiert, sesselartiger ÜZ',
-  conditions: 'Rein thermisch; die Johnson- und Ireland-Varianten erzeugen den Vinylether in situ aus Alkohol + Orthoester bzw. Esterenolat.',
+  above: 'Δ (150–250 °C)', below: '',
   stereochemistry: 'Sechsgliedriger, sesselartiger Übergangszustand → die Stereochemie überträgt sich vorhersagbar von der alten auf die neue Doppelbindung (Chiralitätstransfer).',
   substituents: 'Substituenten an beiden Allylsystemen sind erlaubt · aromatische Variante: Allylphenylether → o-Allylphenol',
   key_points: [
@@ -144,13 +207,14 @@ R({
     'Die Triebkraft ist der Tausch einer C–O- gegen eine C–C-σ-Bindung plus die Bildung der starken C=O.',
     'Die Cope-Umlagerung ist die reine Kohlenstoff-Variante (1,5-Dien → 1,5-Dien) — dort fehlt diese Triebkraft, sie ist ein echtes Gleichgewicht.',
     'Die aromatische Claisen-Umlagerung erzeugt zunächst ein Dienon, das zum o-Allylphenol tautomerisiert.',
-    'Chiralitätstransfer über den geordneten ÜZ macht sie in Totalsynthesen wertvoll.'
+    'Chiralitätstransfer über den geordneten ÜZ macht sie in Totalsynthesen wertvoll.',
+    'Den Allylvinylether erzeugt man oft in situ: aus dem Allylalkohol mit Ethylvinylether/Hg(OAc)₂, mit Orthoessigester (Johnson-Claisen → γ,δ-ungesättigter Ester) oder über ein Silylketenacetal (Ireland-Claisen).'
   ],
   seen_in: 'BW 2024 (Vitamin E, Claisen-Johnson), BW 2020 (Conicein, Bergamoten), BW 2025 (Farnesol)'
 });
 
 R({
-  id: 'cope-umlagerung', category: C_PC, name: 'Cope-Umlagerung [3,3]',
+  id: 'cope-umlagerung', category: C_PC, name: 'Cope-Umlagerung',
   difficulty: 'D', reaktionstyp: '[3,3]-sigmatrop', transformation: '1,5-Dien ⇌ isomeres 1,5-Dien',
   rx: (() => {
     /* The parent 1,5-hexadiene rearranges into itself, so a substituent
@@ -185,8 +249,7 @@ R({
     })();
     return { reactants: [a], products: [b] };
   })(),
-  above: 'Δ', below: 'Gleichgewicht',
-  conditions: 'Thermisch, 150–300 °C; als Oxy-Cope (mit OH am C3) schon bei Raumtemperatur, als Anionen-Oxy-Cope nach Deprotonierung 10¹⁰-fach schneller.',
+  above: 'Δ', below: '',
   stereochemistry: 'Sesselartiger sechsgliedriger ÜZ, damit stereospezifisch.',
   substituents: 'Beliebige Substituenten am 1,5-Dien-Gerüst',
   key_points: [
@@ -199,7 +262,7 @@ R({
 });
 
 R({
-  id: 'elektrocyclisierung', category: C_PC, name: 'Elektrocyclische Reaktion',
+  id: 'elektrocyclisierung', category: C_PC, name: 'Elektrocyclische Reaktionen',
   difficulty: 'D', reaktionstyp: 'elektrocyclisch', transformation: 'Polyen ⇌ Cycloalken',
   rx: (() => {
     const a = (() => {
@@ -221,8 +284,7 @@ R({
     })();
     return { reactants: [a], products: [b] };
   })(),
-  above: 'Δ  bzw. hν', below: 'con- bzw. disrotatorisch',
-  conditions: 'Thermisch oder photochemisch — und die beiden Wege liefern GEGENTEILIGE Stereochemie.',
+  above: 'Δ  bzw. hν', below: '',
   stereochemistry: 'Woodward-Hoffmann: 4n π-Elektronen → thermisch CONrotatorisch, photochemisch DISrotatorisch. 4n+2 π-Elektronen → thermisch DISrotatorisch, photochemisch CONrotatorisch.',
   substituents: 'Substituenten an den Enden des Polyens machen die Rotationsrichtung sichtbar (cis/trans am Ring)',
   key_points: [
@@ -260,7 +322,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'Lewis- oder Brønsted-Säure', below: 'BF_3, TiCl_4, H_2SO_4',
-  conditions: 'Lewis-Säure aktiviert das Keton; das entstehende Pentadienyl-Kation cyclisiert.',
   stereochemistry: 'Vier π-Elektronen im Kation → thermisch CONrotatorischer Ringschluss, daher definierte relative Konfiguration an den beiden neuen Stereozentren.',
   substituents: 'Substituenten an beiden Vinylgruppen sind erlaubt und steuern die Position der Enol-Doppelbindung nach der Eliminierung',
   key_points: [
@@ -295,7 +356,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'H_2SO_4 (konz.)', below: 'bzw. PCl_5 , Δ',
-  conditions: 'Konz. Schwefelsäure, PCl₅, TsCl oder Polyphosphorsäure — alles, was die Oxim-OH-Gruppe in eine Abgangsgruppe verwandelt.',
   stereochemistry: 'Es wandert IMMER der Rest, der ANTI zur Abgangsgruppe (also anti zum OH) steht — die Oxim-Geometrie legt das Produkt eindeutig fest.',
   substituents: 'R₁, R₂ = Alkyl, Aryl · cyclische Ketoxime liefern Lactame mit einem Ringglied mehr',
   key_points: [
@@ -305,6 +365,36 @@ R({
     'Mechanistisch über ein Nitrilium-Ion, das von Wasser abgefangen wird.'
   ],
   seen_in: 'BW 2018 (Colchicin), BW 2021 (Carvon-Vorstufen, Hydroxylamin)'
+});
+
+R({
+  id: 'rupe-umlagerung', category: C_UM, name: 'Rupe-Umlagerung',
+  difficulty: 'D', reaktionstyp: 'säurekatalysierte Umlagerung', transformation: 'tert. Propargylalkohol → α,β-ungesättigtes Methylketon',
+  rx: (() => {
+    const a = new Mol();
+    const r1 = a.gen(0, 0, 'R₁'); const ca = a.add(DX, DY, 'C'); const cb = a.add(2 * DX, 0, 'C');
+    a.bond(r1, ca, 1); a.bond(ca, cb, 1);
+    const k1 = a.add(3 * DX, DY, 'C'); const k2 = a.add(4 * DX, 2 * DY, 'C');
+    a.bond(cb, k1, 1); a.bond(k1, k2, 3);
+    const t1 = 240 * Math.PI / 180, t2 = 300 * Math.PI / 180;
+    a.bond(cb, a.add(2 * DX + B * Math.cos(t1), B * Math.sin(t1), 'O'), 1);
+    a.bond(cb, a.gen(2 * DX + B * Math.cos(t2), B * Math.sin(t2), 'R₂'), 1);
+    const b = new Mol();
+    const s1 = b.gen(0, 0, 'R₁'); const da = b.add(DX, DY, 'C'); const db = b.add(2 * DX, 0, 'C');
+    const ck = b.add(3 * DX, DY, 'C'); const me = b.add(4 * DX, 0, 'C');
+    b.bond(s1, da, 1); b.bond(da, db, 2); b.bond(db, ck, 1); b.bond(ck, me, 1);
+    b.oxo(ck);
+    b.bond(db, b.gen(2 * DX, -B, 'R₂'), 1);
+    return { reactants: [a], products: [b] };
+  })(),
+  above: 'H^+ (HCOOH)', below: 'Δ',
+  substituents: 'R₁, R₂ = Alkyl · tertiärer Propargylalkohol mit H am Nachbar-C · der Acetatester reagiert ebenso',
+  key_points: [
+    'Säurekatalysiert: Wasserabspaltung → Enin, dann Markownikow-Hydratisierung der Dreifachbindung → α,β-ungesättigtes Methylketon.',
+    'Konkurrenz ist die Meyer-Schuster-Umlagerung (1,3-Verschiebung der OH-Gruppe), die den α,β-ungesättigten Aldehyd bzw. das Keton ohne neue Methylgruppe liefert.',
+    'Mit der Acetylid-Addition an ein Keton davor ein kurzer Weg vom Keton zum Enon.'
+  ],
+  seen_in: 'BW 2026 (Adrenosteron)'
 });
 
 R({
@@ -332,8 +422,7 @@ R({
     })();
     return { reactants: [a], products: [b, b2] };
   })(),
-  above: 'Δ (hohe Temperatur)', below: 'entropiegetrieben',
-  conditions: 'Starkes Erhitzen; besonders leicht, wenn eines der Fragmente stabil ist (N₂, CO₂, ein Aromat).',
+  above: 'Δ (hohe Temperatur)', below: '',
   stereochemistry: 'Derselbe suprafaciale ÜZ wie die Hinreaktion, nur rückwärts durchlaufen.',
   substituents: 'Beliebig — die Triebkraft liegt in der Entropie und in der Stabilität der Fragmente',
   key_points: [
