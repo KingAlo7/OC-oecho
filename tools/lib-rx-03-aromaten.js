@@ -35,7 +35,7 @@ function arylWith(build) {
 }
 
 R({
-  id: 'se-aromat-allgemein', category: C_AR, name: 'S_E am Aromaten — allgemeines Schema',
+  id: 'se-aromat-allgemein', category: C_AR, name: 'Elektrophile aromatische Substitution (S_E) — allgemein',
   difficulty: 'A', reaktionstyp: 'S_E(Ar)', transformation: 'Ar–H → Ar–E',
   rx: (() => {
     const a = arylWith();
@@ -43,7 +43,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'E^+', below: 'Katalysator',
-  conditions: 'Elektrophil wird meist erst durch eine Lewis- oder Brønsted-Säure erzeugt (AlCl₃, FeBr₃, H₂SO₄).',
   substituents: 'E⁺ = NO₂⁺, SO₃/SO₃H⁺, Br⁺, R⁺ (Carbenium), RCO⁺ (Acylium), ArN₂⁺',
   key_points: [
     'Immer zweistufig: Angriff des Elektrophils → σ-Komplex (Arenium-Ion, Wheland) → Rückgewinnung der Aromatizität durch H⁺-Abgabe.',
@@ -55,7 +54,7 @@ R({
 });
 
 R({
-  id: 'nitrierung', category: C_AR, name: 'Nitrierung',
+  id: 'nitrierung', category: C_AR, name: 'Nitrierung von Aromaten',
   difficulty: 'A', reaktionstyp: 'S_E(Ar)', transformation: 'Ar–H → Ar–NO₂',
   rx: (() => {
     const a = arylWith();
@@ -72,7 +71,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'HNO_3', below: 'konz. H_2SO_4, < 50 °C',
-  conditions: 'Nitriersäure = HNO₃ + konz. H₂SO₄; die Schwefelsäure erzeugt das Nitronium-Ion NO₂⁺.',
   substituents: 'Ar = Benzol und Derivate. Aktivierte Ringe (Phenol, Anilin) nitrieren schon mit verd. HNO₃.',
   key_points: [
     'Das eigentliche Elektrophil ist NO₂⁺, gebildet aus HNO₃ + 2 H₂SO₄ → NO₂⁺ + H₃O⁺ + 2 HSO₄⁻.',
@@ -84,7 +82,7 @@ R({
 });
 
 R({
-  id: 'sulfonierung', category: C_AR, name: 'Sulfonierung',
+  id: 'sulfonierung', category: C_AR, name: 'Sulfonierung von Aromaten',
   difficulty: 'B', reaktionstyp: 'S_E(Ar)', transformation: 'Ar–H → Ar–SO₃H',
   rx: (() => {
     const a = arylWith();
@@ -100,7 +98,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'SO_3 / konz. H_2SO_4', below: 'bzw. ClSO_3H',
-  conditions: 'Oleum (SO₃ in H₂SO₄) oder Chlorsulfonsäure ClSO₃H (liefert direkt das Sulfonylchlorid).',
   substituents: 'Ar = Benzol und Derivate',
   key_points: [
     'Die einzige S_E am Aromaten, die REVERSIBEL ist — mit heißem verdünntem H₂SO₄/H₂O geht sie wieder weg.',
@@ -111,7 +108,34 @@ R({
 });
 
 R({
-  id: 'halogenierung-aromat', category: C_AR, name: 'Kernhalogenierung',
+  id: 'alkalischmelze', category: C_AR, name: 'Alkalischmelze',
+  difficulty: 'B', reaktionstyp: 'S_N (am Aromaten)', transformation: 'Ar–SO₃H → Ar–OH',
+  rx: (() => {
+    const a = arylWith((m, v0) => {
+      const p = out(1);
+      const s = m.add(p[0], p[1], 'S');
+      const a1 = from(p, 90), a2 = from(p, -30), a3 = out(2);
+      const o1 = m.add(a1[0], a1[1], 'O');
+      const o2 = m.add(a2[0], a2[1], 'O');
+      const o3 = m.add(a3[0], a3[1], 'O');
+      m.bond(v0, s, 1); m.bond(s, o1, 2); m.bond(s, o2, 2); m.bond(s, o3, 1);
+    });
+    const b = arylWith((m, v0) => { const p = out(1); m.bond(v0, m.add(p[0], p[1], 'O'), 1); });
+    return { reactants: [a], products: [b] };
+  })(),
+  above: '1. NaOH (Schmelze), 300 °C', below: '2. H_3O^+',
+  substituents: 'Ar = Benzol, Alkylbenzole, Naphthalin · auch als Natriumsulfonat Ar–SO₃⁻Na⁺',
+  key_points: [
+    'Klassischer Weg zu Phenolen: sulfonieren, dann mit NaOH/KOH verschmelzen — die Sulfonatgruppe wird durch O⁻ ersetzt, Ansäuern liefert das Phenol.',
+    'Die OH-Gruppe landet genau dort, wo die SO₃H-Gruppe saß — die Regiochemie legt also die Sulfonierung fest (Thymol aus p-Cymol).',
+    'Drastische Bedingungen: nur für Substrate ohne basenempfindliche Gruppen.',
+    'Milde Alternative zum Phenol: Diazotierung des Amins und Verkochen des Diazoniumsalzes.'
+  ],
+  seen_in: 'BW 2021 (Thymol), LW 2016 (Phellandral)'
+});
+
+R({
+  id: 'halogenierung-aromat', category: C_AR, name: 'Halogenierung von Aromaten',
   difficulty: 'A', reaktionstyp: 'S_E(Ar)', transformation: 'Ar–H → Ar–Br',
   rx: (() => {
     const a = arylWith();
@@ -119,10 +143,9 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'Br_2', below: 'FeBr_3 (kat.)',
-  conditions: 'Br₂ mit FeBr₃ oder Fe; Cl₂ mit AlCl₃/FeCl₃. Die Lewis-Säure polarisiert das Halogen zu „Br⁺".',
   substituents: 'Ar = Benzol und Derivate · X = Cl, Br (I braucht ein Oxidationsmittel, F ist zu heftig)',
   key_points: [
-    'OHNE Lewis-Säure und MIT Licht läuft stattdessen die radikalische Seitenkettenhalogenierung — die Bedingungen entscheiden, nicht das Substrat.',
+    'OHNE Lewis-Säure und MIT Licht läuft stattdessen die benzylische Halogenierung — die Bedingungen entscheiden, nicht das Substrat.',
     'Phenole und Aniline sind so aktiviert, dass sie ohne Katalysator sofort dreifach bromieren (2,4,6-Tribromphenol).',
     'Halogene sind der Sonderfall: −I desaktiviert den Ring, +M dirigiert trotzdem ortho/para.'
   ],
@@ -142,12 +165,12 @@ R({
     return { reactants: [a, a2], products: [b] };
   })(),
   above: 'AlCl_3 (kat.)', below: 'wasserfrei',
-  conditions: 'R–X mit AlCl₃/FeCl₃; ebenso aus Alkenen + H⁺ oder Alkoholen + Lewis-Säure (jeweils über dasselbe Carbenium-Ion).',
   substituents: 'R₁ = Alkyl (kein Aryl/Vinyl — deren Kationen sind zu instabil) · X = Cl, Br',
   key_points: [
     'Zwei bekannte Schwächen: (1) das Carbenium-Ion LAGERT UM, aus n-Propylchlorid wird Isopropylbenzol; (2) das Produkt ist aktivierter als das Edukt → MEHRFACHALKYLIERUNG.',
     'Beide Probleme umgeht die Friedel-Crafts-Acylierung mit anschließender Reduktion.',
-    'Funktioniert nicht an stark desaktivierten Ringen (Nitrobenzol) und nicht an freien Aminen (das N bindet die Lewis-Säure).'
+    'Funktioniert nicht an stark desaktivierten Ringen (Nitrobenzol) und nicht an freien Aminen (das N bindet die Lewis-Säure).',
+    'Das Carbenium-Ion kann auch aus einem Alken + H⁺ oder einem Alkohol + Säure stammen — intramolekular schließt das Ringe.'
   ],
   seen_in: 'BW 2021 (Thymol aus p-Cymol), BW 2023 (Ibuprofen), LW 2017 (Papaverin)'
 });
@@ -174,7 +197,6 @@ R({
     return { reactants: [a, a2], products: [b] };
   })(),
   above: 'AlCl_3 (stöchiom.)', below: 'wasserfrei',
-  conditions: 'Säurechlorid oder -anhydrid mit AlCl₃; die Lewis-Säure wird vom Produktketon komplexiert, daher STÖCHIOMETRISCH nötig.',
   substituents: 'R₁ = Alkyl, Aryl · statt R–COCl auch (R–CO)₂O',
   key_points: [
     'Das Acylium-Ion R–C≡O⁺ ist mesomeriestabilisiert — es lagert NICHT um.',
@@ -186,7 +208,35 @@ R({
 });
 
 R({
-  id: 'nitro-reduktion', category: C_AR, name: 'Reduktion Ar–NO₂ → Ar–NH₂',
+  id: 'snar', category: C_AR, name: 'Nucleophile aromatische Substitution (S_NAr)',
+  difficulty: 'C', reaktionstyp: 'S_NAr (Addition–Eliminierung)', transformation: 'O₂N–Ar–X → O₂N–Ar–Nu',
+  rx: (() => {
+    const nitro = (m, v) => {
+      const p = m.radial(0, 0, v[3], B);
+      const n = m.add(p[0], p[1], 'N');
+      const a1 = from(p, 150), a2 = from(p, 270);
+      const o1 = m.add(a1[0], a1[1], 'O');
+      const o2 = m.add(a2[0], a2[1], 'O');
+      m.bond(v[3], n, 1); m.bond(n, o1, 2); m.bond(n, o2, 1);
+      m.charge(n, 1); m.charge(o2, -1);
+    };
+    const a = arylWith((m, v0, v) => { const p = out(1); m.bond(v0, m.gen(p[0], p[1], 'X'), 1); nitro(m, v); });
+    const b = arylWith((m, v0, v) => { const p = out(1); m.bond(v0, m.gen(p[0], p[1], 'Nu'), 1); nitro(m, v); });
+    return { reactants: [a], products: [b] };
+  })(),
+  above: 'Nu^-', below: '-X^-',
+  substituents: 'X = F > Cl > Br (F reagiert am schnellsten) · EWG ortho/para zu X: –NO₂, –CN, –COR, Ring-N (Pyridin, Pyrimidin) · Nu⁻ = RO⁻, OH⁻, R₂NH, RS⁻',
+  key_points: [
+    'Additions-Eliminierungs-Mechanismus über den anionischen Meisenheimer-Komplex — weder S_N1 noch S_N2 (ein Rückseitenangriff am Ring ist unmöglich).',
+    'Nur mit elektronenziehenden Gruppen ortho oder para zur Abgangsgruppe: nur dann wird die negative Ladung des Meisenheimer-Komplexes auf die EWG delokalisiert. meta-NO₂ hilft kaum.',
+    'Fluorid ist hier die BESTE Abgangsgruppe: geschwindigkeitsbestimmend ist der Angriff, und den beschleunigt das stark elektronegative F.',
+    'Elektronenarme Heteroaromaten (Chlorpyrimidine, 2-Chlorpyridin) reagieren auch ohne Nitrogruppe.'
+  ],
+  seen_in: 'BW 2025 (Sapropterin)'
+});
+
+R({
+  id: 'nitro-reduktion', category: C_AR, name: 'Reduktion von Nitroaromaten',
   difficulty: 'A', reaktionstyp: 'Reduktion', transformation: 'Ar–NO₂ → Ar–NH₂',
   rx: (() => {
     const a = arylWith((m, v0) => {
@@ -202,7 +252,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'Fe / HCl', below: 'bzw. H_2, Pd/C  ·  SnCl_2  ·  Zn',
-  conditions: 'Fe oder Zn in HCl/Essigsäure, SnCl₂, oder katalytische Hydrierung H₂/Pd-C.',
   substituents: 'Ar = beliebiger Aromat · in Gegenwart empfindlicher Gruppen ist SnCl₂ oder Na₂S selektiver',
   key_points: [
     'Der Standardweg zu aromatischen Aminen, weil eine direkte Aminierung des Rings nicht geht.',
@@ -228,15 +277,38 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'NaNO_2 / HCl', below: '0–5 °C',
-  conditions: 'NaNO₂ + verd. HCl bei 0–5 °C — die Temperatur ist kritisch, oberhalb ~10 °C zerfällt das Diazoniumsalz zu Phenol + N₂.',
   substituents: 'Ar = aromatischer Rest. ALIPHATISCHE Diazoniumsalze sind nicht fassbar — sie verlieren sofort N₂.',
   key_points: [
     'In situ entsteht salpetrige Säure HNO₂ und daraus das Nitrosyl-Kation NO⁺.',
     'Das Diazoniumsalz ist mesomeriestabilisiert und deshalb kurzzeitig haltbar — daher der Unterschied zur aliphatischen Reihe.',
     'N₂ ist die beste Abgangsgruppe überhaupt: Sandmeyer (CuCl/CuBr/CuCN), Hydrolyse zu Phenol, Reduktion mit H₃PO₂ zu Ar–H.',
-    'Oder eben Azokupplung — dann wirkt es als Elektrophil.'
+    'Oder eben Azokupplung — dann wirkt es als Elektrophil.',
+    'Die Temperatur ist kritisch: oberhalb von etwa 10 °C zerfällt das Diazoniumsalz unter N₂-Abgabe zum Phenol (Verkochen).'
   ],
   seen_in: 'BW 2023 (Methylorange), BW 2016 (Prontosil), BW 2021 (Coffein-Vorstufen)'
+});
+
+R({
+  id: 'diazonium-verkochung', category: C_AR, name: 'Verkochen von Diazoniumsalzen (→ Phenol)',
+  difficulty: 'B', reaktionstyp: 'S_N1 (Ar)', transformation: 'Ar–N₂⁺ → Ar–OH',
+  rx: (() => {
+    const a = arylWith((m, v0) => {
+      const p1 = out(1), p2 = out(2);
+      const n1 = m.add(p1[0], p1[1], 'N'); const n2 = m.add(p2[0], p2[1], 'N');
+      m.bond(v0, n1, 1); m.bond(n1, n2, 3); m.charge(n1, 1);
+    });
+    const b = arylWith((m, v0) => { const p = out(1); m.bond(v0, m.add(p[0], p[1], 'O'), 1); });
+    return { reactants: [a], products: [b] };
+  })(),
+  above: 'H_2O, H^+', below: 'Δ, -N_2',
+  substituents: 'Ar = Benzol und Derivate · Ar–N₂⁺ aus Ar–NH₂ + NaNO₂/HCl bei 0–5 °C',
+  key_points: [
+    'Beim Erwärmen der wässrigen Diazoniumsalz-Lösung geht N₂ ab; das Aryl-Kation wird von Wasser abgefangen.',
+    'So kommt eine OH-Gruppe an eine Position, die eine S_E nicht erreicht: nitrieren → reduzieren → diazotieren → verkochen.',
+    'Die Sandmeyer-Reaktionen (CuCl, CuBr, CuCN) ersetzen N₂ auf demselben Weg durch Cl, Br oder CN.',
+    'Eine Nitrogruppe lässt sich NICHT direkt diazotieren — sie muss zuerst zum Amin reduziert werden.'
+  ],
+  seen_in: 'LW 2018 (Oxybuprocain), BW 2026 (Thymol)'
 });
 
 R({
@@ -277,7 +349,6 @@ R({
     return { reactants: [a, a2], products: [b] };
   })(),
   above: 'pH 8–10 (Phenol)', below: 'bzw. pH 4–6 (Amin), 0–5 °C',
-  conditions: 'Diazoniumsalz + elektronenreicher Aromat, 0–5 °C. Phenole kuppeln schwach alkalisch (als Phenolat), Amine schwach sauer.',
   substituents: 'Ar = Aryl aus dem Diazoniumsalz · D = starker Donor: –OH, –O⁻, –NR₂, –NH₂ · Kupplung fast immer in PARA-Stellung zum Donor',
   key_points: [
     'Das Diazonium-Ion ist ein SCHWACHES Elektrophil — es braucht einen stark aktivierten Partner (Phenol, Anilin).',
@@ -289,7 +360,7 @@ R({
 });
 
 R({
-  id: 'seitenketten-oxidation', category: C_AR, name: 'Oxidation der Seitenkette zur Benzoesäure',
+  id: 'seitenketten-oxidation', category: C_AR, name: 'Seitenkettenoxidation zur Benzoesäure',
   difficulty: 'B', reaktionstyp: 'Oxidation', transformation: 'Ar–CH₂–R → Ar–COOH',
   rx: (() => {
     const a = arylWith((m, v0) => {
@@ -310,7 +381,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'KMnO_4 / H^+, Δ', below: 'bzw. K_2Cr_2O_7 / H_2SO_4',
-  conditions: 'Heißes KMnO₄ oder K₂Cr₂O₇ in Säure, oder verdünnte HNO₃; drastische Bedingungen.',
   substituents: 'R₁ = beliebiger Alkylrest — die ganze Kette wird bis auf das benzylische C abgebaut',
   key_points: [
     'Egal wie lang die Seitenkette ist: es bleibt immer genau ein C übrig, die Benzoesäure.',
@@ -322,7 +392,7 @@ R({
 });
 
 R({
-  id: 'benzylische-halogenierung', category: C_AR, name: 'Radikalische Seitenkettenhalogenierung',
+  id: 'benzylische-halogenierung', category: C_AR, name: 'Benzylische Halogenierung (Wohl-Ziegler)',
   difficulty: 'B', reaktionstyp: 'S_R', transformation: 'Ar–CH₃ → Ar–CH₂Br',
   rx: (() => {
     const a = arylWith((m, v0) => { const p = out(1); const c = m.add(p[0], p[1], 'C'); m.bond(v0, c, 1); });
@@ -336,7 +406,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'NBS  bzw. Br_2', below: 'hν / CCl_4, kein AlCl_3',
-  conditions: 'N-Bromsuccinimid (NBS) in CCl₄ mit Licht oder Radikalstarter (AIBN); oder Br₂ mit hν. KEINE Lewis-Säure.',
   substituents: 'Ar = Aromat · greift ausschließlich das BENZYLISCHE C an',
   key_points: [
     'Die Selektivität kommt von der Stabilität des benzylischen Radikals (Delokalisierung in den Ring).',

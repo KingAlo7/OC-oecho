@@ -42,8 +42,7 @@ R({
     })();
     return { reactants: [a, a2], products: [b] };
   })(),
-  above: 'R_2-OH , H^+ (kat.)', below: 'Δ, -H_2O  (Gleichgewicht)',
-  conditions: 'Katalytische H₂SO₄ oder TsOH, Alkohol im Überschuss oder Wasser auskreisen.',
+  above: 'R_2-OH , H^+ (kat.)', below: 'Δ, -H_2O',
   substituents: 'R₁ = Alkyl, Aryl · R₂ = primäres/sekundäres Alkyl (tertiär eliminiert stattdessen)',
   key_points: [
     'Ein GLEICHGEWICHT — es muss durch Alkoholüberschuss oder Wasserentzug (Wasserabscheider) auf die Produktseite gezwungen werden.',
@@ -55,7 +54,7 @@ R({
 });
 
 R({
-  id: 'esterhydrolyse', category: C_CS, name: 'Esterhydrolyse / Verseifung',
+  id: 'esterhydrolyse', category: C_CS, name: 'Esterhydrolyse (Verseifung)',
   difficulty: 'A', reaktionstyp: 'A_N + Eliminierung', transformation: 'R₁–CO–OR₂ → R₁–COOH + R₂–OH',
   rx: (() => {
     const a = (() => {
@@ -71,7 +70,6 @@ R({
     return { reactants: [a], products: [b, b2] };
   })(),
   above: 'NaOH / H_2O, Δ', below: 'dann H_3O^+',
-  conditions: 'Basisch (Verseifung, irreversibel) oder sauer (Gleichgewicht, Umkehr der Fischer-Veresterung).',
   substituents: 'R₁ = Alkyl, Aryl · R₂ = Alkyl',
   key_points: [
     'BASISCH ist die Reaktion irreversibel: die Säure wird sofort zum Carboxylat deprotoniert, das kein Elektrophil mehr ist.',
@@ -83,7 +81,7 @@ R({
 });
 
 R({
-  id: 'saeurechlorid', category: C_CS, name: 'Carbonsäure → Säurechlorid',
+  id: 'saeurechlorid', category: C_CS, name: 'Säurechloridbildung',
   difficulty: 'A', reaktionstyp: 'Substitution', transformation: 'R₁–COOH → R₁–COCl',
   rx: (() => {
     const a = acid();
@@ -91,7 +89,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'SOCl_2', below: 'bzw. (COCl)_2  ·  PCl_5',
-  conditions: 'Thionylchlorid (meist mit kat. DMF), Oxalylchlorid oder PCl₅; Nebenprodukte sind gasförmig.',
   substituents: 'R₁ = Alkyl, Aryl',
   key_points: [
     'Aktiviert die trägste brauchbare Acylstufe zur REAKTIVSTEN — das Säurechlorid reagiert mit praktisch jedem Nucleophil.',
@@ -103,7 +100,7 @@ R({
 });
 
 R({
-  id: 'amidbildung', category: C_CS, name: 'Amidbildung (Schotten-Baumann)',
+  id: 'amidbildung', category: C_CS, name: 'Amidbildung aus Säurechloriden (Schotten-Baumann)',
   difficulty: 'A', reaktionstyp: 'A_N + Eliminierung', transformation: 'R₁–COCl + R₂NH₂ → R₁–CO–NH–R₂',
   rx: (() => {
     const a = (() => { const m = new Mol(); acyl(m, 'R₁', { sym: 'Cl' }); return m; })();
@@ -119,7 +116,6 @@ R({
     return { reactants: [a, a2], products: [b] };
   })(),
   above: 'R_2-NH_2', below: 'NaOH bzw. NEt_3 , 0 °C',
-  conditions: 'Säurechlorid oder Anhydrid mit dem Amin, Hilfsbase (NaOH, Pyridin, NEt₃) fängt das HCl ab.',
   substituents: 'R₁ = Alkyl, Aryl · R₂ = Alkyl, Aryl, H; auch sekundäre Amine',
   key_points: [
     'Zwei Äquivalente Amin oder eine Hilfsbase sind nötig — sonst protoniert das entstehende HCl das Amin und stoppt die Reaktion.',
@@ -147,7 +143,6 @@ R({
     return { reactants: [a, a2], products: [b] };
   })(),
   above: 'DCC  bzw. EDC / HOBt', below: 'CH_2Cl_2 , 0 °C',
-  conditions: 'Dicyclohexylcarbodiimid in CH₂Cl₂/DMF; der Dicyclohexylharnstoff fällt aus und wird abfiltriert.',
   stereochemistry: 'Racemisierungsgefahr am aktivierten α-C — HOBt/HOAt unterdrücken sie.',
   substituents: 'R₁, R₂ = Aminosäure-Reste (mit geschützten Seitenketten) oder beliebige Alkyl/Aryl-Reste',
   key_points: [
@@ -160,7 +155,7 @@ R({
 });
 
 R({
-  id: 'boc-schutz', category: C_CS, name: 'Boc-Schutzgruppe für Amine',
+  id: 'boc-schutz', category: C_CS, name: 'Boc-Schutzgruppe',
   difficulty: 'B', reaktionstyp: 'A_N + Eliminierung', transformation: 'R–NH₂ → R–NH–Boc',
   rx: (() => {
     const a = (() => { const m = new Mol();
@@ -179,7 +174,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'Boc_2O', below: 'NEt_3   (ab: TFA)',
-  conditions: 'Di-tert-butyldicarbonat mit Base; Abspaltung mit Trifluoressigsäure oder HCl/Dioxan.',
   substituents: 'R₁ = Alkyl, Aryl · tBu = tert-Butyl',
   key_points: [
     'Das Carbamat nimmt dem N-Atom die Nucleophilie und Basizität — es stört danach in keiner Folgereaktion mehr.',
@@ -191,7 +185,7 @@ R({
 });
 
 R({
-  id: 'lactonbildung', category: C_CS, name: 'Lactonbildung (intramolekulare Veresterung)',
+  id: 'lactonbildung', category: C_CS, name: 'Lactonisierung',
   difficulty: 'B', reaktionstyp: 'A_N + Eliminierung', transformation: 'γ-Hydroxysäure → γ-Lacton',
   rx: (() => {
     const a = (() => {
@@ -222,7 +216,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'H^+ (kat.)', below: 'Δ, -H_2O',
-  conditions: 'Katalytische Säure, Wärme; bei γ- und δ-Hydroxysäuren läuft sie oft schon spontan.',
   substituents: 'Die Kettenlänge entscheidet: γ (5-Ring) und δ (6-Ring) bilden sich bereitwillig, β (4-Ring) und makrocyclische nur unter Zwang',
   key_points: [
     'Intramolekular gewinnt der Entropieterm — deshalb liegt das Gleichgewicht viel weiter rechts als bei der zwischenmolekularen Veresterung.',
@@ -267,7 +260,6 @@ R({
     return { reactants: [a], products: [b, b2] };
   })(),
   above: 'Δ (ca. 150 °C)', below: '-CO_2',
-  conditions: 'Einfaches Erhitzen; die β-Ketosäure entsteht meist in situ aus der Verseifung eines β-Ketoesters.',
   substituents: 'R₁ = Alkyl, Aryl · funktioniert auch mit Malonsäuren (β-Dicarbonsäuren)',
   key_points: [
     'Nur β-Ketosäuren und Malonsäuren decarboxylieren so leicht — eine gewöhnliche Carbonsäure tut das nicht.',
@@ -295,7 +287,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'H_3O^+ , Δ', below: 'bzw. NaOH/H_2O, dann H^+',
-  conditions: 'Kochen in verdünnter Säure oder Lauge; die Amidstufe lässt sich unter milderen Bedingungen abfangen.',
   substituents: 'R₁ = Alkyl, Aryl, Benzyl',
   key_points: [
     'Verläuft über das AMID als isolierbare Zwischenstufe — mild geführt bleibt es dort stehen.',
@@ -307,7 +298,7 @@ R({
 });
 
 R({
-  id: 'anhydrid-acylierung', category: C_CS, name: 'Acylierung mit Anhydrid (Acetylierung)',
+  id: 'anhydrid-acylierung', category: C_CS, name: 'Acetylierung mit Acetanhydrid',
   difficulty: 'A', reaktionstyp: 'A_N + Eliminierung', transformation: 'R–OH bzw. R–NH₂ → Acetat bzw. Acetamid',
   rx: (() => {
     const a = (() => { const m = new Mol();
@@ -325,7 +316,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'Ac_2O (Essigsäureanhydrid)', below: 'Pyridin bzw. DMAP',
-  conditions: 'Essigsäureanhydrid mit Pyridin oder kat. DMAP; auch Acetylchlorid.',
   substituents: 'R₁ = Alkyl, Aryl · dasselbe funktioniert mit Aminen (→ Acetamid) und Phenolen',
   key_points: [
     'Die gängigste Schutzgruppe für Alkohole und Amine — schnell drauf, mit NaOH/MeOH wieder ab.',

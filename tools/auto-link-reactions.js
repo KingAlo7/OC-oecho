@@ -18,46 +18,46 @@ const questions = JSON.parse(fs.readFileSync(QFILE, 'utf8'));
 // pattern → reaction id  (order matters: more specific first)
 const RULES = [
   // Named reactions — high confidence
-  [/Wolff[- ]?Kishner/i,                                    'wolff-kishner'],
-  [/Eschweiler[- ]?Clarke/i,                                'eschweiler-clarke'],
+  [/Wolff[- ]?Kishner/i,                                    'wolff-kishner-clemmensen'],
+  [/Eschweiler[- ]?Clarke/i,                                'reduktive-aminierung'],
   [/Robinson[- ]?Anelliierung|Robinson[- ]?Annulierung|Robinson[- ]?Annel/i, 'robinson-anellierung'],
   [/Knoevenagel/i,                                          'knoevenagel'],
   [/Reformatsky/i,                                          'reformatsky'],
   [/Mannich/i,                                              'mannich'],
-  [/Henry[- ]Reaktion|Nitroaldol/i,                          'henry-reaktion'],
-  [/Arbuzov/i,                                              'arbuzov'],
+  [/Henry[- ]Reaktion|Nitroaldol/i,                          'henry-nitroaldol'],
+  [/Arbuzov/i,                                              'michaelis-arbuzov'],
   [/Baeyer[- ]?Villiger/i,                                  'baeyer-villiger'],
   [/Wittig[- ]?Reaktion|Ph_?3P\s*=\s*CH/i,                  'wittig'],
-  [/HWE[- ]?Wittig|HWE[- ]?Olefin|Horner[- ]?Wadsworth[- ]?Emmons|HWE\b/i, 'hwe-wittig'],
+  [/HWE[- ]?Wittig|HWE[- ]?Olefin|Horner[- ]?Wadsworth[- ]?Emmons|HWE\b/i, 'horner-wadsworth-emmons'],
   [/Michael[- ]?Addition/i,                                 'michael-addition'],
   [/Claisen[- ]?Umlag|\[3,3\][- ]?sigmatrop/i,              'claisen-umlagerung'],
   [/Diels[- ]?Alder|\[4\+2\][- ]?Cycloadd/i,                'diels-alder'],
-  [/1,3[- ]?dipolar|\[3\+2\][- ]?Cycloadd/i,                'dipolar-32-cycloaddition'],
-  [/\[2\+2\][- ]?Cycloadd|Keten[- ]?Cycloadd/i,             'cycloadd-22'],
-  [/elektrocyclisch|konrotatorisch|disrotatorisch/i,        'elektrocyclisch'],
+  [/1,3[- ]?dipolar|\[3\+2\][- ]?Cycloadd/i,                'dipolare-cycloaddition'],
+  [/\[2\+2\][- ]?Cycloadd|Keten[- ]?Cycloadd/i,             'keten-cycloaddition'],
+  [/elektrocyclisch|konrotatorisch|disrotatorisch/i,        'elektrocyclisierung'],
 
   // Reagent-named, high confidence
   [/DIBAL[- ]?H|i-?Bu_?2AlH/i,                              'dibal-reduktion'],
-  [/SeO_?2/i,                                               'seo2-allyl'],
-  [/DCC|Dicyclohexylcarbodiimid|Carbodiimid/i,              'dcc-amidkupplung'],
-  [/NaIO_?4/i,                                              'periodat-spaltung'],
-  [/OsO_?4/i,                                               'oso4-diol'],
-  [/m[- ]?CPBA|meta[- ]?Chlorperbenzoes/i,                  'epoxidierung'],
+  [/SeO_?2/i,                                               'allylische-oxidation-seo2'],
+  [/DCC|Dicyclohexylcarbodiimid|Carbodiimid/i,              'peptidkupplung-dcc'],
+  [/NaIO_?4/i,                                              'diolspaltung-periodat'],
+  [/OsO_?4/i,                                               'syn-dihydroxylierung'],
+  [/m[- ]?CPBA|meta[- ]?Chlorperbenzoes/i,                  'epoxidierung-mcpba'],
   [/Diazoti|Diazonium|NaNO_?2.*HCl/i,                       'diazotierung'],
-  [/Hydrogenolyse|H_?2\s*\/\s*Pd\(OH\)_?2|Debenzyl/i,       'hydrogenolyse'],
-  [/MsCl|MeSO_?2Cl|Methansulfonylchlorid|Mesyl(?:at|gruppe|ierung)/i, 'mesylierung'],
+  [/Hydrogenolyse|H_?2\s*\/\s*Pd\(OH\)_?2|Debenzyl/i,       'hydrogenolyse-benzyl'],
+  [/MsCl|MeSO_?2Cl|Methansulfonylchlorid|Mesyl(?:at|gruppe|ierung)/i, 'tosylierung'],
   [/NaBH_?3CN.*[Ii]min|reduktive Aminierung/i,              'reduktive-aminierung'],
-  [/Aldol[- ]?Addition\b/i,                                  'aldoladdition'],
+  [/Aldol[- ]?Addition\b/i,                                  'aldol-addition'],
 
   // S_E am Aromaten
-  [/Friedel[- ]?Crafts[- ]?Alkyl|Friedl[- ]?Crafts[- ]?Alkyl/i, 'friedel-crafts-alkyl'],
-  [/Friedel[- ]?Crafts[- ]?Acyl|Friedl[- ]?Crafts[- ]?Acyl/i,  'friedel-crafts-acyl'],
-  [/Sulfonier|Chlorsulfonier|SO_?3\s*\/\s*H_?2SO_?4|ClSO_?3H/i, 'arom-sulfonierung'],
-  [/HNO_?3\s*\/\s*H_?2SO_?4|Nitrierung am Aromat|aromatische\s+Nitrierung|para[- ]?Nitrierung|NO_?2\^?\+/i, 'arom-nitrierung'],
+  [/Friedel[- ]?Crafts[- ]?Alkyl|Friedl[- ]?Crafts[- ]?Alkyl/i, 'friedel-crafts-alkylierung'],
+  [/Friedel[- ]?Crafts[- ]?Acyl|Friedl[- ]?Crafts[- ]?Acyl/i,  'friedel-crafts-acylierung'],
+  [/Sulfonier|Chlorsulfonier|SO_?3\s*\/\s*H_?2SO_?4|ClSO_?3H/i, 'sulfonierung'],
+  [/HNO_?3\s*\/\s*H_?2SO_?4|Nitrierung am Aromat|aromatische\s+Nitrierung|para[- ]?Nitrierung|NO_?2\^?\+/i, 'nitrierung'],
   [/Azokupp/i,                                              'azokupplung'],
 
   // Iodolactonisierung
-  [/Iodolact|Iodonium/i,                                    'iodolactonisierung']
+  [/Iodolact|Iodonium/i,                                    'iodlactonisierung']
 ];
 
 let added = 0;

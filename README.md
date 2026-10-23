@@ -2,11 +2,13 @@
 
 Interaktives Nachschlagewerk für organische Chemie auf IChO-Niveau, mit Quiz-Modus für mehrstufige Synthesen, Mechanismen und Regioselektivität. Schwerpunkt sind die Organik-Aufgaben der ÖChO-Bundeswettbewerbe. Gerendert wird durchgehend mit OpenChemLib, gezeichnet mit Ketcher, Layout-Optimierung über RDKit-JS.
 
-> **Reaktionsbibliothek:** `data/reactions.json` wird von `tools/build-reaction-library.js` erzeugt und enthält 88 Reaktionen in 11 Kategorien — alle Namensreaktionen und alle klar unterscheidbaren unbenannten Reaktionstypen, die in den Quizzes (ÖChO LW/BW 2013–2026) vorkommen. Jeder Eintrag zeigt die **allgemeinste Form** mit R₁, R₂, Ar, X, Nu, E; `substituents` sagt, wofür die Platzhalter stehen (`seen_in` nennt die Angaben, in denen die Reaktion auftaucht — wird nicht angezeigt). Neu bauen mit:
+> **Reaktionsbibliothek:** `data/reactions.json` wird von `tools/build-reaction-library.js` erzeugt und enthält 110 Reaktionen in 11 Kategorien — alle Namensreaktionen und alle klar unterscheidbaren unbenannten Reaktionstypen, die in den Quizzes (ÖChO LW/BW 2013–2026) vorkommen. Jeder Eintrag zeigt die **allgemeinste Form** mit R₁, R₂, Ar, X, Nu, E; `substituents` sagt, wofür die Platzhalter stehen, und steht grau unter dem Schema in derselben Box; Bedingungen, die man wissen muss, stehen am Pfeil (`seen_in` nennt die Angaben, in denen die Reaktion auftaucht — wird nicht angezeigt). Neu bauen mit:
 >
 > ```bash
 > node tools/build-reaction-library.js
 > ```
+>
+> Welche Quiz-Schritte auf welche Reaktion verlinken (`related_reaction_id`), steht als Tabelle in `tools/link-quiz-reactions.js`; nach Änderungen an Bibliothek oder Quiz mit `node tools/link-quiz-reactions.js` neu anwenden.
 
 **Live:** https://kingalo7.github.io/OC-oecho/
 
@@ -168,7 +170,7 @@ Array von Reaktionsobjekten, gerendert via OpenChemLib. Pflichtfelder: `id`, `ca
 | `reagent_label` | `string` | LaTeX-Syntax über Pfeil (`H_2SO_4`, `C_12H_22O_11`, `Fe^3+`, `[Ag(NH_3)_2]^{+}`) — gilt überall, siehe `chem-text.js` |
 | `reagent_label_below` | `string` | LaTeX-Syntax unter Pfeil |
 | `reagent_mols` | `string[]` | Optional: MOL-Blöcke, die (verkleinert) über dem Pfeil gezeichnet werden, über `reagent_label` |
-| `conditions` | `string` | Reaktionsbedingungen |
+| `substituents` | `string` | Wofür R₁, X, Nu … stehen; grau unter dem Schema |
 | `stereochemistry` | `string` | Stereochemischer Ausgang |
 | `key_points` | `string[]` | Mechanismusstichpunkte |
 

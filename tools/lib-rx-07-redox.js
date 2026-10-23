@@ -2,12 +2,12 @@
    Carbonyl- und Additions-Kapiteln geführten Fälle). */
 
 module.exports = function (ctx) {
-const { R, Mol, B, DX, DY } = ctx;
+const { R, Mol, carbonyl, alkin, B, DX, DY } = ctx;
 
 const C_RX = 'Oxidation & Reduktion';
 
 R({
-  id: 'prim-alkohol-zu-aldehyd', category: C_RX, name: 'Primärer Alkohol → Aldehyd (PCC / Swern / Dess-Martin)',
+  id: 'prim-alkohol-zu-aldehyd', category: C_RX, name: 'Oxidation primärer Alkohole zum Aldehyd',
   difficulty: 'B', reaktionstyp: 'Oxidation', transformation: 'R–CH₂–OH → R–CHO',
   rx: (() => {
     const a = (() => {
@@ -24,7 +24,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'PCC / PDC', below: 'CH_2Cl_2 (wasserfrei!)',
-  conditions: 'Pyridiniumchlorochromat (PCC) oder -dichromat (PDC) in wasserfreiem CH₂Cl₂; moderner Swern (DMSO/(COCl)₂/NEt₃, −78 °C) oder Dess-Martin-Periodinan.',
   substituents: 'R₁ = Alkyl, Aryl, Vinyl (C=C bleibt unangetastet)',
   key_points: [
     'Der entscheidende Punkt ist das FEHLEN von Wasser: in Wasser entsteht aus dem Aldehyd das Hydrat, das zur Säure weiteroxidiert wird.',
@@ -36,7 +35,7 @@ R({
 });
 
 R({
-  id: 'sek-alkohol-zu-keton', category: C_RX, name: 'Sekundärer Alkohol → Keton',
+  id: 'sek-alkohol-zu-keton', category: C_RX, name: 'Oxidation sekundärer Alkohole zum Keton',
   difficulty: 'A', reaktionstyp: 'Oxidation', transformation: 'R₁R₂CH–OH → R₁R₂C=O',
   rx: (() => {
     const a = (() => {
@@ -54,7 +53,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'CrO_3 / H_2SO_4 (Jones)', below: 'bzw. K_2Cr_2O_7  ·  PCC  ·  MnO_2',
-  conditions: 'Jones-Reagenz (CrO₃/H₂SO₄/Aceton), Dichromat, PCC oder — für allylische/benzylische Alkohole — MnO₂.',
   substituents: 'R₁, R₂ = Alkyl, Aryl (beide ≠ H, sonst entsteht ein Aldehyd)',
   key_points: [
     'Ein Keton hat am Carbonyl-C kein H mehr und kann deshalb nicht weiteroxidiert werden — anders als ein Aldehyd.',
@@ -66,7 +64,7 @@ R({
 });
 
 R({
-  id: 'prim-alkohol-zu-saeure', category: C_RX, name: 'Primärer Alkohol / Aldehyd → Carbonsäure',
+  id: 'prim-alkohol-zu-saeure', category: C_RX, name: 'Oxidation zur Carbonsäure',
   difficulty: 'A', reaktionstyp: 'Oxidation', transformation: 'R–CH₂–OH → R–COOH',
   rx: (() => {
     const a = (() => {
@@ -83,7 +81,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'KMnO_4 / H^+', below: 'bzw. CrO_3/H_2O  ·  Ag(NH_3)_2^+',
-  conditions: 'Wässriges KMnO₄ oder CrO₃; für die reine Aldehyd→Säure-Stufe reicht Tollens-Reagenz [Ag(NH₃)₂]⁺ oder Fehling.',
   substituents: 'R₁ = Alkyl, Aryl',
   key_points: [
     'In WASSER steht der Aldehyd im Gleichgewicht mit seinem Hydrat R–CH(OH)₂, das ein oxidierbares C–H trägt — deshalb läuft es durch bis zur Säure.',
@@ -114,7 +111,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'm-CPBA  bzw. CF_3CO_3H', below: 'CH_2Cl_2',
-  conditions: 'Persäure (m-CPBA, Peressigsäure, Trifluorperessigsäure) in CH₂Cl₂.',
   stereochemistry: 'Der wandernde Rest behält seine Konfiguration vollständig bei (Retention).',
   substituents: 'R₁, R₂ = Alkyl, Aryl · WANDERUNGSTENDENZ: tertiär > Cyclohexyl ≈ sekundär ≈ Benzyl ≈ Aryl > primär > Methyl',
   key_points: [
@@ -128,7 +124,7 @@ R({
 });
 
 R({
-  id: 'allylische-oxidation-seo2', category: C_RX, name: 'Allylische Oxidation mit SeO₂',
+  id: 'allylische-oxidation-seo2', category: C_RX, name: 'Riley-Oxidation (SeO₂)',
   difficulty: 'D', reaktionstyp: 'Oxidation (En-Typ)', transformation: 'Allyl-CH₃ → Allyl-CH₂OH',
   rx: (() => {
     const a = (() => {
@@ -148,20 +144,20 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'SeO_2', below: 'Dioxan / EtOH, Δ',
-  conditions: 'Katalytisches oder stöchiometrisches SeO₂, oft mit TBHP als Reoxidans.',
   stereochemistry: 'Meist (E)-selektiv; die Doppelbindung bleibt an ihrem Platz.',
   substituents: 'R₁ = Alkyl · greift bevorzugt die höher substituierte Seite des Alkens an',
   key_points: [
     'Führt eine OH-Gruppe in ALLYLSTELLUNG ein, ohne die Doppelbindung zu verschieben.',
     'Mechanistisch eine En-Reaktion gefolgt von einer [2,3]-sigmatropen Umlagerung.',
     'In der Terpenchemie das Standardwerkzeug, um aus einer Methylgruppe eine Hydroxymethylgruppe zu machen.',
-    'Weiteroxidation mit MnO₂ liefert den allylischen Aldehyd.'
+    'Weiteroxidation mit MnO₂ liefert den allylischen Aldehyd.',
+    'Auch die α-CH₂-Gruppe von Ketonen wird von SeO₂ oxidiert → 1,2-Dicarbonylverbindung (z. B. Butanon → Butandion).'
   ],
   seen_in: 'BW 2025 (Farnesol), BW 2019 (Abscisinsäure, SeO₂)'
 });
 
 R({
-  id: 'dibal-reduktion', category: C_RX, name: 'DIBAL-H — Ester/Nitril → Aldehyd',
+  id: 'dibal-reduktion', category: C_RX, name: 'DIBAL-H-Reduktion zum Aldehyd',
   difficulty: 'C', reaktionstyp: 'Reduktion', transformation: 'R–CO₂R′ → R–CHO',
   rx: (() => {
     const a = (() => {
@@ -180,7 +176,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'DIBAL-H (1 Äq.)', below: 'Toluol, -78 °C',
-  conditions: 'Diisobutylaluminiumhydrid, genau ein Äquivalent, bei −78 °C; danach vorsichtig wässrig aufarbeiten.',
   substituents: 'R₁ = Alkyl, Aryl · R₂ = Me, Et · funktioniert ebenso mit Nitrilen (→ Aldehyd) und Lactonen (→ Lactol)',
   key_points: [
     'Der Trick ist die TEMPERATUR: bei −78 °C ist das tetraedrische Aluminium-Alkoxid stabil und kollabiert erst beim Aufarbeiten zum Aldehyd.',
@@ -189,6 +184,70 @@ R({
     'Damit lässt sich die Oxidationsstufe „Aldehyd" direkt aus dem Ester erreichen, ohne den Umweg Alkohol → Oxidation.'
   ],
   seen_in: 'BW 2024 (Vitamin E, DIBAL), BW 2020 (Prostaglandin, iBu₂AlH), BW 2022 (Lysergsäure)'
+});
+
+R({
+  id: 'rosenmund-reduktion', category: C_RX, name: 'Rosenmund-Reduktion',
+  difficulty: 'B', reaktionstyp: 'Reduktion (Hydrogenolyse C–Cl)', transformation: 'R–COCl → R–CHO',
+  rx: (() => {
+    const a = new Mol(); carbonyl(a, 0, 0, 'R₁', { zSym: 'Cl' });
+    const b = new Mol(); carbonyl(b, 0, 0, 'R₁');
+    return { reactants: [a], products: [b] };
+  })(),
+  above: 'H_2', below: 'Pd/BaSO_4, Chinolin',
+  substituents: 'R₁ = Alkyl, Aryl',
+  key_points: [
+    'Selektive Reduktion des Säurechlorids zum Aldehyd: der durch BaSO₄ (und Chinolin/Schwefel) vergiftete Pd-Katalysator ist zu wenig aktiv, um den Aldehyd weiter zum Alkohol zu reduzieren.',
+    'Mit unvergiftetem Pd/C würde bis zum primären Alkohol durchreduziert.',
+    'Dasselbe Prinzip wie beim Lindlar-Katalysator: ein vergifteter Katalysator stoppt auf der Zwischenstufe.',
+    'Andere Wege zum Aldehyd: DIBAL-H aus Ester oder Nitril, Oxidation des primären Alkohols mit PCC.'
+  ],
+  seen_in: 'LW 2016 (Phellandral), BW 2016 (Trimethoprim)'
+});
+
+R({
+  id: 'hydrogenolyse-benzyl', category: C_RX, name: 'Hydrogenolyse von Benzylgruppen',
+  difficulty: 'B', reaktionstyp: 'Reduktion (Hydrogenolyse)', transformation: 'R–O–CH₂Ph → R–OH + PhCH₃',
+  rx: (() => {
+    const a = new Mol();
+    const r = a.gen(0, 0, 'R₁'); const o = a.add(DX, DY, 'O'); const c = a.add(2 * DX, 0, 'C');
+    a.bond(r, o, 1); a.bond(o, c, 1);
+    const v = a.benzene(4 * DX, 2 * DY, B);
+    a.bond(c, v[3], 1);
+    const b = new Mol();
+    const s = b.gen(0, 0, 'R₁'); const p = b.add(DX, DY, 'O'); b.bond(s, p, 1);
+    return { reactants: [a], products: [b] };
+  })(),
+  above: 'H_2', below: 'Pd/C  bzw. Pd(OH)_2,  -PhCH_3',
+  substituents: 'Benzylether R–OBn · Benzylester RCO₂Bn · N-Benzyl- und N-Benzhydrylamine · Cbz-Carbamate (→ R–NH₂ + CO₂)',
+  key_points: [
+    'Benzylische C–O- und C–N-Bindungen werden am Pd-Kontakt durch H₂ gespalten; der Benzylrest geht als Toluol.',
+    'Deshalb ist Benzyl (Bn) eine Schutzgruppe für Alkohole, Säuren und Amine, die unter neutralen Bedingungen wieder abgeht.',
+    'Pd(OH)₂/C (Pearlman-Katalysator) ist besonders aktiv für N-Benzyl- und Benzhydrylgruppen.',
+    'C=C-Doppelbindungen werden unter denselben Bedingungen mithydriert.'
+  ],
+  seen_in: 'BW 2020 (Conicein), BW 2024 (Tyr-Asp-Dipeptid), BW 2017 (Ferruginin)'
+});
+
+R({
+  id: 'glaser-kupplung', category: C_RX, name: 'Glaser-Kupplung',
+  difficulty: 'C', reaktionstyp: 'oxidative Kupplung', transformation: '2 R–C≡C–H → R–C≡C–C≡C–R',
+  rx: (() => {
+    const a = new Mol(); alkin(a, 0, 0, 'R₁', null);
+    const b = new Mol();
+    const at = b.line(6, 0, 0, 0);
+    b.atoms[at[0]].alias = 'R₁'; b.atoms[at[5]].alias = 'R₁';
+    [1, 3, 1, 3, 1].forEach((o, k) => b.bond(at[k], at[k + 1], o));
+    return { reactants: [a], products: [b] };
+  })(),
+  above: 'CuCl, O_2', below: 'Pyridin',
+  substituents: 'R₁ = Alkyl, Aryl (nur terminale Alkine) · liefert symmetrische 1,3-Diine',
+  key_points: [
+    'Oxidative Kupplung zweier Kupfer-Acetylide: es werden 2 e⁻ abgegeben, O₂ (bzw. Cu²⁺) ist das Oxidationsmittel.',
+    'Eglinton-Variante: stöchiometrisch Cu(OAc)₂ in Pyridin; Hay-Variante: katalytisch CuCl/TMEDA mit Luft.',
+    'Aus Phenylacetylen entsteht 1,4-Diphenylbuta-1,3-diin.'
+  ],
+  seen_in: 'LW 2019 (Phenylacetylen-Routen)'
 });
 
 R({
@@ -209,7 +268,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'Na  bzw. Li', below: 'NH_3(l) / EtOH, -78 °C',
-  conditions: 'Alkalimetall in flüssigem Ammoniak mit einem Alkohol als Protonenquelle.',
   substituents: 'Substituenten steuern die Regiochemie: elektronenziehende Gruppen landen AM sp²-C, elektronenschiebende am sp³-C',
   key_points: [
     'Die solvatisierten Elektronen des Alkalimetalls in NH₃ reduzieren den Aromaten über Radikalanionen.',

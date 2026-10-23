@@ -6,7 +6,7 @@
    formed starts from the same place on the page. */
 
 module.exports = function (ctx) {
-const { R, Mol, B, DX, DY } = ctx;
+const { R, Mol, carbonyl, B, DX, DY } = ctx;
 
 const C_EN = 'Enolate & C–C-Knüpfung';
 
@@ -24,7 +24,7 @@ function alphaCarbonyl(m, x0, y0, leftLabel, zLabel) {
 }
 
 R({
-  id: 'aldol-addition', category: C_EN, name: 'Aldol-Addition',
+  id: 'aldol-addition', category: C_EN, name: 'Aldoladdition',
   difficulty: 'B', reaktionstyp: 'A_N (Enolat)', transformation: '2 R–CH₂–CHO → β-Hydroxyaldehyd',
   rx: (() => {
     const a = (() => { const m = new Mol(); alphaCarbonyl(m, 0, 0, 'R₁', 'H'); return m; })();
@@ -48,7 +48,6 @@ R({
     return { reactants: [a, a2], products: [b] };
   })(),
   above: 'NaOH (kat.)', below: 'H_2O, 0–5 °C',
-  conditions: 'Katalytische Base (NaOH, NaOEt, LDA) oder Säure; bei niedriger Temperatur bleibt es beim Aldol.',
   stereochemistry: 'Bis zu zwei neue Stereozentren; mit Evans-Auxiliaren oder (S)-Prolin steuerbar.',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H · das Nucleophil BRAUCHT ein α-H, das Elektrophil nicht',
   key_points: [
@@ -61,7 +60,7 @@ R({
 });
 
 R({
-  id: 'aldol-kondensation', category: C_EN, name: 'Aldol-Kondensation',
+  id: 'aldol-kondensation', category: C_EN, name: 'Aldolkondensation',
   difficulty: 'B', reaktionstyp: 'A_N + E1cb', transformation: 'β-Hydroxycarbonyl → α,β-ungesättigtes Carbonyl',
   rx: (() => {
     const a = (() => {
@@ -94,7 +93,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'OH^- , Δ', below: '-H_2O',
-  conditions: 'Dieselbe Base wie bei der Addition, aber warm — oder direkt sauer.',
   stereochemistry: 'Fast ausschließlich das (E)-konfigurierte Enon (konjugiert und sterisch günstiger).',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H',
   key_points: [
@@ -107,7 +105,7 @@ R({
 });
 
 R({
-  id: 'claisen-kondensation', category: C_EN, name: 'Claisen-Esterkondensation',
+  id: 'claisen-kondensation', category: C_EN, name: 'Claisen-Kondensation',
   difficulty: 'C', reaktionstyp: 'A_N + Eliminierung', transformation: '2 R–CH₂–CO₂Et → β-Ketoester',
   rx: (() => {
     const mkEster = (lbl) => {
@@ -140,19 +138,52 @@ R({
     return { reactants: [mkEster('R₁'), mkEster('R₂')], products: [b] };
   })(),
   above: '1. NaOEt (1 Äq.)', below: '2. H_3O^+ , -EtOH',
-  conditions: 'Stöchiometrisches Alkoholat, dessen Alkylrest zum Ester passt (NaOEt zu Ethylestern — sonst Umesterung).',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H · Et = Ethyl (oder Me bei Methylestern)',
   key_points: [
     'Der Unterschied zur Aldolreaktion: der Ester hat eine ABGANGSGRUPPE (OEt), deshalb folgt auf die Addition eine Eliminierung — es bleibt ein Keton statt eines Alkohols.',
     'Die Base wird STÖCHIOMETRISCH gebraucht: die eigentliche Triebkraft ist die Deprotonierung des sehr aciden β-Ketoesters am Ende (pK_s ≈ 11).',
     'Intramolekular heißt dieselbe Reaktion DIECKMANN-Kondensation und liefert cyclische β-Ketoester (bevorzugt Fünf- und Sechsringe).',
-    'Der β-Ketoester ist der Einstieg in die Acetessigester-Synthese: alkylieren, verseifen, decarboxylieren.'
+    'Der β-Ketoester ist der Einstieg in die Acetessigester-Synthese: alkylieren, verseifen, decarboxylieren.',
+    'Das Alkoholat muss zum Ester passen (NaOEt zu Ethylestern), sonst kommt es zur Umesterung.'
   ],
   seen_in: 'BW 2025 (Fettsäure-Biosynthese), BW 2020 (Aspidospermin), BW 2022 (Lysergsäure), BW 2013 (Grandisol)'
 });
 
 R({
-  id: 'michael-addition', category: C_EN, name: 'Michael-Addition (1,4-Addition)',
+  id: 'dieckmann-kondensation', category: C_EN, name: 'Dieckmann-Kondensation',
+  difficulty: 'C', reaktionstyp: 'intramolekulare Claisen-Kondensation', transformation: '1,6-Diester → 2-Oxocyclopentancarbonsäureester',
+  rx: (() => {
+    const a = new Mol();
+    const l = a.gen(0, 0, 'R₁O');
+    const ch = a.chain(6, DX, DY, false);
+    a.bond(l, ch[0], 1);
+    a.oxo(ch[0]);
+    const od = a.add(a.atoms[ch[5]].x, a.atoms[ch[5]].y - B, 'O'); a.bond(ch[5], od, 2);
+    const rr = a.gen(7 * DX, DY, 'OR₁'); a.bond(ch[5], rr, 1);
+    const b = new Mol();
+    const v = b.ring(5, 0, 0, { a0: 90 });
+    b.oxo(v[0]);
+    const pe = b.radial(0, 0, v[4], B);
+    const ce = b.add(pe[0], pe[1], 'C'); b.bond(v[4], ce, 1);
+    const at = (deg) => [pe[0] + B * Math.cos(deg * Math.PI / 180), pe[1] + B * Math.sin(deg * Math.PI / 180)];
+    const po = at(78), pr = at(-42);
+    b.bond(ce, b.add(po[0], po[1], 'O'), 2);
+    b.bond(ce, b.gen(pr[0], pr[1], 'OR₁'), 1);
+    return { reactants: [a], products: [b] };
+  })(),
+  above: '1. NaOR_1', below: '2. H_3O^+ , -R_1OH',
+  substituents: '1,6-Diester → Fünfring · 1,7-Diester → Sechsring · R₁ = Me, Et (Alkoholat passend zum Ester)',
+  key_points: [
+    'Die intramolekulare Claisen-Kondensation: ein Esterenolat greift die zweite Estergruppe desselben Moleküls an.',
+    'Bevorzugt entstehen spannungsfreie Fünf- und Sechsringe (aus Adipin- bzw. Pimelinsäureestern).',
+    'Triebkraft ist auch hier die Deprotonierung des cyclischen β-Ketoesters — die Base wird stöchiometrisch gebraucht.',
+    'Verseifen und Decarboxylieren liefert das Cycloalkanon (Cyclopentanon aus Adipinsäurediester).'
+  ],
+  seen_in: 'BW 2018 (Colchicin), BW 2026 (Adrenosteron)'
+});
+
+R({
+  id: 'michael-addition', category: C_EN, name: 'Michael-Addition',
   difficulty: 'C', reaktionstyp: 'A_N (konjugiert)', transformation: 'Enon + Nu⁻ → 1,5-Dicarbonyl',
   rx: (() => {
     const a = (() => {
@@ -183,8 +214,7 @@ R({
     })();
     return { reactants: [a, a2], products: [b] };
   })(),
-  above: 'Nu^- (Malonat, Enamin, R_2CuLi)', below: 'EtOH  ·  1,4-Addition',
-  conditions: 'Weiches, stabilisiertes Nucleophil mit katalytischer Base; Cuprate addieren ebenfalls 1,4.',
+  above: 'Nu^- (Malonat, Enamin, R_2CuLi)', below: 'EtOH',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H · Nu⁻ = Malonat, Acetessigester, Enamin, Nitronat, RS⁻, R₂NH, R₂CuLi',
   key_points: [
     'Das Nucleophil greift NICHT den Carbonyl-C an, sondern den β-C — daher 1,4- oder konjugierte Addition.',
@@ -237,13 +267,13 @@ R({
     return { reactants: [a, a2], products: [b] };
   })(),
   above: 'CH_2=CH-CO-CH_3 (MVK)', below: 'NaOH / KOH, Δ',
-  conditions: 'Base im Überschuss, warm — Michael-Addition und intramolekulare Aldolkondensation laufen in einem Topf.',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H · statt MVK jeder Michael-Akzeptor mit endständiger CH₂=CH-Gruppe',
   key_points: [
     'Drei Schritte in einem Topf: (1) Michael-Addition, (2) intramolekulare Aldol-Addition, (3) Wasserabspaltung.',
     'Ergebnis ist immer ein anelliertes Cyclohex-2-enon — der Standardzugang zum Steroid- und Terpengerüst.',
     'Die enantioselektive Variante mit (S)-Prolin ist die Hajos-Parrish/Wieland-Miescher-Reaktion, der Einstieg in Steroidsynthesen.',
-    'In Klausuren erkennt man sie am Reagenzienpaar „Keton + MVK + Base".'
+    'In Klausuren erkennt man sie am Reagenzienpaar „Keton + MVK + Base".',
+    'Mit (S)-Prolin als Organokatalysator verläuft der Aldol-Ringschluss enantioselektiv (Hajos-Parrish) → Wieland-Miescher-Keton, ein Baustein für Steroide.'
   ],
   seen_in: 'BW 2026 (Adrenosteron, (S)-Prolin), BW 2020 (Aspidospermin), BW 2023 (Hirsuten)'
 });
@@ -286,13 +316,13 @@ R({
     return { reactants: [a, a2], products: [b] };
   })(),
   above: 'CH_2O + R_3R_4NH', below: 'H^+ (kat.)',
-  conditions: 'Formaldehyd und sekundäres (oder primäres) Amin, schwach sauer.',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H · R₃, R₄ = Alkyl, H · statt CH₂O auch andere Aldehyde',
   key_points: [
     'Das eigentliche Elektrophil ist das IMINIUM-Ion CH₂=NR₂⁺ aus Aldehyd + Amin — deutlich reaktiver als der Aldehyd selbst.',
     'Das Enol des Ketons greift dieses Iminium an; Ergebnis ist eine β-Aminocarbonylverbindung (Mannich-Base).',
     'Die Mannich-Base eliminiert leicht zum Enon und ist so eine geschützte Michael-Akzeptor-Vorstufe.',
-    'Biomimetisch enorm wichtig: Tropinon (Robinson-Synthese) und viele Alkaloide entstehen über genau diese Verknüpfung.'
+    'Biomimetisch enorm wichtig: Tropinon (Robinson-Synthese) und viele Alkaloide entstehen über genau diese Verknüpfung.',
+    'Robinson-Schöpf-Tropinonsynthese: Butandial + Methylamin + Aceton(dicarbonsäure) → Tropinon über eine doppelte Mannich-Reaktion.'
   ],
   seen_in: 'BW 2017 (Atropin, Ferruginin — Tropinon), BW 2020 (Aspidospermin)'
 });
@@ -325,7 +355,6 @@ R({
     return { reactants: [a, a2], products: [b] };
   })(),
   above: 'Base (Piperidin, Pyridin)', below: '-H_2O',
-  conditions: 'Schwache Aminbase, oft Piperidin in Pyridin; Wasser wird abgeschieden.',
   substituents: 'R₁ = Alkyl, Aryl · Z₁, Z₂ = elektronenziehend: –CO₂R, –CN, –NO₂, –COR (Malonester, Cyanessigester, Meldrumsäure)',
   key_points: [
     'Die CH-acide Komponente hat ZWEI elektronenziehende Gruppen — ihr Carbanion ist so stabil, dass eine schwache Aminbase genügt.',
@@ -366,7 +395,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: '1. NaOEt  2. R_1-X', below: '3. H_3O^+ , Δ  (-CO_2)',
-  conditions: 'Deprotonieren (NaOEt), alkylieren (S_N2 mit R–X), verseifen und schließlich decarboxylieren durch Erhitzen.',
   substituents: 'Z = –CO₂Et (Malonester → Carbonsäure) oder –CO–CH₃ (Acetessigester → Methylketon) · R₁ = primäres Alkyl · X = Br, I, OTs',
   key_points: [
     'Das doppelt aktivierte C–H hat pK_s ≈ 11–13 und ist mit Alkoholat vollständig deprotonierbar.',
@@ -375,6 +403,55 @@ R({
     'Merksatz: Malonester → Essigsäure-Derivat, Acetessigester → Aceton-Derivat.'
   ],
   seen_in: 'BW 2020 (Aspidospermin), BW 2013 (Grandisol), BW 2022 (Lysergsäure)'
+});
+
+R({
+  id: 'enolat-alkylierung', category: C_EN, name: 'α-Alkylierung von Enolaten',
+  difficulty: 'B', reaktionstyp: 'S_N2 (am Enolat-C)', transformation: 'R₁–CO–CH₂–R₂ → R₁–CO–CH(R₃)–R₂',
+  rx: (() => {
+    const mk = (sub) => {
+      const m = new Mol();
+      const f = carbonyl(m, 0, 0, 'R₁', { zSym: 'C' });
+      m.bond(f.z, m.gen(3 * DX, DY, 'R₂'), 1);
+      if (sub) m.bond(f.z, m.gen(2 * DX, -B, sub), 1);
+      return m;
+    };
+    return { reactants: [mk(null)], products: [mk('R₃')] };
+  })(),
+  above: '1. LDA, THF, -78 °C', below: '2. R_3-X',
+  substituents: 'R₁ = Alkyl, Aryl, OR (Esterenolat) · R₂ = H, Alkyl · analog Nitrile (α-C–H neben C≡N) · R₃–X = CH₃I, primäres Halogenid, Allyl-, Benzylbromid, Mesylat',
+  key_points: [
+    'LDA (stark, sperrig, kaum nucleophil) deprotoniert bei −78 °C vollständig und irreversibel — es entsteht das KINETISCHE Enolat an der weniger substituierten α-Position.',
+    'Mit schwächeren Basen im Gleichgewicht (NaOEt, KO^tBu, Raumtemperatur) bildet sich das THERMODYNAMISCHE, höher substituierte Enolat.',
+    'Die Alkylierung selbst ist eine S_N2 → nur Methyl-, primäre, Allyl- und Benzylhalogenide; sekundäre eliminieren.',
+    'Doppelt aktivierte Verbindungen (β-Ketoester, Malonester) sind so acide, dass NaOEt genügt — das ist die Malonester- bzw. Acetessigester-Synthese.',
+    'Intramolekular schließt die Enolat-Alkylierung Ringe (Twistan, Aspidospermin).'
+  ],
+  seen_in: 'BW 2026 (Adrenosteron), BW 2022 (Z-Jasmon), BW 2019 (Twistan), BW 2013 (Grandisol)'
+});
+
+R({
+  id: 'alpha-halogenierung', category: C_EN, name: 'α-Halogenierung von Ketonen',
+  difficulty: 'B', reaktionstyp: 'S_E (am Enol)', transformation: 'R₁–CO–CH₂–R₂ → R₁–CO–CHBr–R₂',
+  rx: (() => {
+    const mk = (br) => {
+      const m = new Mol();
+      const f = carbonyl(m, 0, 0, 'R₁', { zSym: 'C' });
+      m.bond(f.z, m.gen(3 * DX, DY, 'R₂'), 1);
+      if (br) m.bond(f.z, m.add(2 * DX, -B, 'Br'), 1);
+      return m;
+    };
+    return { reactants: [mk(false)], products: [mk(true)] };
+  })(),
+  above: 'Br_2', below: 'H^+  bzw. HOAc',
+  substituents: 'R₁ = Alkyl, Aryl · R₂ = H, Alkyl · X₂ = Cl₂, Br₂, I₂',
+  key_points: [
+    'Sauer verläuft die Reaktion über das Enol; geschwindigkeitsbestimmend ist die Enolisierung, daher ist die Rate unabhängig von [Br₂].',
+    'Sauer bleibt es bei der Monohalogenierung, weil das eingeführte Halogen die weitere Enolbildung erschwert.',
+    'Basisch macht jedes Halogen die verbliebenen α-H acider → Mehrfachhalogenierung; bei Methylketonen bis zur Haloform-Reaktion.',
+    'Anschließende HBr-Eliminierung mit Base liefert das α,β-ungesättigte Keton.'
+  ],
+  seen_in: 'BW 2013 (Grandisol)'
 });
 
 R({
@@ -408,7 +485,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: '1. R_5-X  bzw. Michael-Akzeptor', below: '2. H_3O^+   (Hydrolyse)',
-  conditions: 'Enamin (aus Keton + Pyrrolidin) mit reaktivem Halogenid oder Michael-Akzeptor, danach wässrige Hydrolyse.',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H · R₃, R₄ = Pyrrolidin/Morpholin-Ring · R₅ = Allyl, Benzyl, α-Halogencarbonyl',
   key_points: [
     'Das Enamin ersetzt das Enolat: es ist neutral, es braucht keine starke Base und es alkyliert nur EINMAL.',
@@ -459,7 +535,6 @@ R({
     return { reactants: [a, a2], products: [b] };
   })(),
   above: '1. Zn', below: '2. H_3O^+',
-  conditions: 'Zinkstaub in Ether/Benzol; das Zink-Enolat ist deutlich milder als ein Grignard-Reagenz.',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H · Et = Ethyl · statt Br auch I',
   key_points: [
     'Das Zink-Enolat ist so wenig basisch, dass es die Esterfunktion im eigenen Molekül NICHT angreift — ein Grignard-Reagenz würde sich selbst zerstören.',
@@ -507,7 +582,6 @@ R({
     return { reactants: [a, a2], products: [b] };
   })(),
   above: 'R′CH_2NO_2 , Base', below: 'EtOH, 0 °C',
-  conditions: 'Katalytische Base (NaOEt, Et₃N, KF); das Nitroalkan ist mit pK_s ≈ 10 CH-acide genug.',
   stereochemistry: 'Zwei benachbarte Stereozentren; mit Cu-Bisoxazolin-Katalysatoren enantioselektiv führbar.',
   substituents: 'R₁ = Alkyl, Aryl · R′ = H, Alkyl',
   key_points: [

@@ -42,7 +42,7 @@ function R(spec) {
   e.reaction_rxn = rxn(spec.rx.reactants, spec.rx.products);
   if (spec.above) e.reagent_label = spec.above;
   if (spec.below) e.reagent_label_below = spec.below;
-  if (spec.conditions)     e.conditions = spec.conditions;
+
   if (spec.stereochemistry) e.stereochemistry = spec.stereochemistry;
   if (spec.substituents)   e.substituents = spec.substituents;
   if (spec.key_points)     e.key_points = spec.key_points;

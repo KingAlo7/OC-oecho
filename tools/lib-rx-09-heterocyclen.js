@@ -9,7 +9,7 @@ const C_HZ = 'Heterocyclen & Biochemie';
 const C_UM = 'Umlagerungen';
 
 R({
-  id: 'bischler-napieralski', category: C_HZ, name: 'Bischler-Napieralski-Cyclisierung',
+  id: 'bischler-napieralski', category: C_HZ, name: 'Bischler-Napieralski-Reaktion',
   difficulty: 'D', reaktionstyp: 'intramolekulare S_E(Ar)', transformation: 'β-Arylethylamid → 3,4-Dihydroisochinolin',
   rx: (() => {
     /* β-Arylethylamid: Ar–CH₂–CH₂–NH–CO–R₁, die Kette verlässt den Ring
@@ -46,7 +46,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'POCl_3  bzw. P_2O_5', below: 'Δ, -H_2O',
-  conditions: 'POCl₃, P₂O₅ oder PPA (Polyphosphorsäure) unter Rückfluss.',
   substituents: 'R₁ = Alkyl, Aryl (aus dem Acylrest) · der Aromat muss AKTIVIERT sein — Methoxygruppen sind fast immer nötig',
   key_points: [
     'Das Amid wird zum Nitrilium-Ion dehydratisiert, das dann intramolekular den eigenen Ring elektrophil angreift.',
@@ -94,7 +93,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'ZnCl_2  bzw. H^+', below: 'Δ, -NH_3',
-  conditions: 'Arylhydrazin + Keton/Aldehyd, dann Lewis- oder Brønsted-Säure unter Erhitzen.',
   substituents: 'R₁, R₂ = Alkyl, Aryl, H — sie bestimmen die Substituenten an C2 und C3 des Indols',
   key_points: [
     'Die Schlüsselstufe ist eine [3,3]-sigmatrope Umlagerung der En-Hydrazin-Tautomeren — dieselbe Orbitalsymmetrie wie bei der Claisen-Umlagerung.',
@@ -134,7 +132,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'PLP (Pyridoxalphosphat)', below: 'Transaminase  ·  + α-Ketoglutarat',
-  conditions: 'Enzymatisch, Cofaktor Pyridoxal-5′-phosphat; der Akzeptor ist meist α-Ketoglutarat.',
   stereochemistry: 'Streng enantioselektiv — es entsteht ausschließlich die L-Aminosäure.',
   substituents: 'R₁ = Aminosäure-Seitenkette (bei Phenylalanin: Benzyl)',
   key_points: [
@@ -178,7 +175,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'R_2-NH_2 (Lysin-Seitenkette)', below: 'Δ, -H_2O',
-  conditions: 'Reduzierender Zucker und Aminogruppe beim Erhitzen; die eigentliche Bräunungskaskade folgt danach.',
   substituents: 'R₁ = restliche Zuckerkette · R₂ = Aminosäure- oder Protein-Rest (meist die ε-Aminogruppe von Lysin)',
   key_points: [
     'Erster Schritt ist eine ganz normale Iminbildung aus der offenkettigen Aldehydform des Zuckers (Glycosylamin).',
@@ -219,8 +215,7 @@ R({
     })();
     return { reactants: [a], products: [b] };
   })(),
-  above: 'H_2O, H^+ (kat.)', below: 'Gleichgewicht  ·  α ⇌ β',
-  conditions: 'Wässrige Lösung, säure- oder basenkatalysiert; stellt sich spontan ein.',
+  above: 'H_2O, H^+ (kat.)', below: '',
   stereochemistry: 'Am ANOMEREN C entsteht ein neues Stereozentrum → α- und β-Anomer. Ihre Umwandlung ineinander über die offene Form ist die Mutarotation.',
   substituents: 'Gilt für alle Aldosen mit passender Kettenlänge: 5-Ring = Furanose, 6-Ring = Pyranose',
   key_points: [
@@ -269,7 +264,6 @@ R({
     return { reactants: [a], products: [b] };
   })(),
   above: 'H_2SO_4 (konz.)', below: 'Δ, -H_2O',
-  conditions: 'Konzentrierte Säure, Wärme.',
   substituents: 'R₁–R₄ = Alkyl, Aryl, H · WANDERUNGSTENDENZ: Aryl > tertiäres Alkyl > sekundär > primär > H',
   key_points: [
     'Eine OH-Gruppe wird protoniert und geht als Wasser ab — es bildet sich das STABILERE der beiden möglichen Carbenium-Ionen.',

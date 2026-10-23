@@ -841,13 +841,17 @@ function renderComposedScheme(q, scheme) {
   }
 
   const containerId = 'sg-view-' + q.id;
-  const infoPanels = nodes.filter(n => !n.given).map(n => {
+  // A given structure gets a panel too when it says how it was made, so
+  // the link to its reaction is one tap away like for a revealed one.
+  const givenInfo = n => n.given && (n.explanation || n.related_reaction_id);
+  const infoPanels = nodes.filter(n => !n.given || givenInfo(n)).map(n => {
     const slot = q.id + '-n-' + n.id;
     // Nothing to tell beyond "revealed" → the panel is never opened.
     const empty = !(n.name || n.explanation || n.note || n.related_reaction_id);
+    const head = (n.label || n.id) ? renderLatexLabel(n.label || n.id) + (n.given ? ' (vorgegeben)' : ' aufgedeckt') : 'Vorgegeben';
     return `<div class="composed-info" id="info-${x(slot)}"${empty ? ' data-empty="1"' : ''}>
       <button class="composed-info-close" onclick="closeNodeInfo('${x(slot)}')">×</button>
-      <div class="composed-info-head">${renderLatexLabel(n.label || n.id)} aufgedeckt</div>
+      <div class="composed-info-head">${head}</div>
       ${n.name ? `<div class="composed-info-name">${renderLatexLabel(n.name)}</div>` : ''}
       ${n.explanation ? `<div class="composed-info-expl">${renderLatexLabel(n.explanation)}</div>` : ''}
       ${n.note ? `<div class="composed-info-expl" style="font-style:italic;color:var(--muted)">${renderLatexLabel(n.note)}</div>` : ''}
@@ -870,13 +874,17 @@ function renderComposedScheme(q, scheme) {
     updateQuizProgress(q.id);
   }, 0);
 
-  return `<div id="${containerId}" class="sg-viewer-host"></div>` + infoPanels;
+  const tappable = nodes.filter(givenInfo)
+    .map(n => `#${containerId} .sg-node.given[data-node="${x(n.id)}"]`).join(',');
+  const style = tappable ? `<style>${tappable}{cursor:pointer;}</style>` : '';
+  return `<div id="${containerId}" class="sg-viewer-host"></div>` + style + infoPanels;
 }
 
 /* Tap on a node: hidden → reveal; revealed → show its explanation. */
 window.onQuizNodeClick = function(qid, node) {
   const v = _quizGraphViewers[qid];
-  if (!v || node.given) return;
+  if (!v) return;
+  if (node.given) { openNodeInfo(qid + '-n-' + node.id); return; }
   if (!v.revealedIds.has(node.id)) {
     v.setRevealed(node.id, true);
     updateQuizProgress(qid);
