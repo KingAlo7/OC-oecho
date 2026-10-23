@@ -152,7 +152,7 @@ function scene() {
         const L = Math.max(sp.len || 1.1, label + 0.4);
         const ya = sp.y != null ? sp.y : yArrow;
         const x0 = x + 0.25, x1 = x0 + L;
-        arrows.push({ from: [r4(x0), r4(ya)], to: [r4(x1), r4(ya)], mode: sp.arrow === '⇌' ? 'equilibrium' : 'open-angle' });
+        arrows.push({ from: [r4(x0), r4(ya)], to: [r4(x1), r4(ya)], mode: sp.arrow === '⇌' ? 'equilibrium-open-angle' : 'open-angle' });
         const tw = s => s.length * 0.26;
         if (sp.above) texts.push({ at: [r4((x0 + x1) / 2 - tw(sp.above) / 2), r4(ya + 0.75)], text: sp.above });
         if (sp.below) texts.push({ at: [r4((x0 + x1) / 2 - tw(sp.below) / 2), r4(ya - 0.2)], text: sp.below });

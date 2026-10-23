@@ -6776,7 +6776,7 @@
               5.0641,
               0.5
             ],
-            "mode": "equilibrium"
+            "mode": "equilibrium-open-angle"
           }
         ],
         "texts": [
@@ -9444,7 +9444,7 @@
               5.3721,
               0.8
             ],
-            "mode": "equilibrium"
+            "mode": "equilibrium-open-angle"
           }
         ],
         "texts": [
@@ -11725,7 +11725,7 @@
               5.7281,
               0.5
             ],
-            "mode": "equilibrium"
+            "mode": "equilibrium-open-angle"
           }
         ],
         "texts": [
@@ -11975,7 +11975,7 @@
               4.3381,
               0
             ],
-            "mode": "equilibrium"
+            "mode": "equilibrium-open-angle"
           }
         ],
         "texts": [
@@ -13922,7 +13922,7 @@
               6.6321,
               0.5
             ],
-            "mode": "equilibrium"
+            "mode": "equilibrium-open-angle"
           }
         ],
         "texts": [
@@ -15684,7 +15684,7 @@
               6.2282,
               0.5
             ],
-            "mode": "equilibrium"
+            "mode": "equilibrium-open-angle"
           }
         ],
         "texts": [
@@ -16305,7 +16305,7 @@
               6.2282,
               0.5
             ],
-            "mode": "equilibrium"
+            "mode": "equilibrium-open-angle"
           }
         ],
         "texts": [
@@ -17244,6 +17244,3164 @@
             "type": "pair",
             "side": -1,
             "arc": "auto"
+          }
+        ]
+      }
+    ]
+  },
+  "diels-alder": {
+    "title": "Konzertierte [4+2]-Cycloaddition",
+    "steps": [
+      {
+        "caption": "Drei Elektronenpaare verschieben sich gleichzeitig in einem cyclischen Übergangszustand — keine Zwischenstufe. Das Dien muss s-cis stehen. Thermisch erlaubt ([π4s+π2s], 6 Elektronen, Hückel-aromatischer ÜZ). Beide neuen σ-Bindungen entstehen auf derselben Seite: Die Geometrie des Dienophils bleibt erhalten (cis → cis), und elektronenziehende Gruppen Z stehen bevorzugt endo (sekundäre Orbitalwechselwirkung).",
+        "mol": "\n  OC-oecho\n\n 14 12  0  0  0  0            999 V2000\n    0.9699    0.5600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9699   -0.5600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.5500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660   -1.0500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -2.5500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.5020    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.6360    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.7699    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.7699   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.6360   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.5020   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.6360   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  4  3  2  0\n  3  2  1  0\n  2  1  2  0\n  5  6  2  0\n  5  7  1  0\n  8  9  1  0\n  9 10  2  0\n 10 11  1  0\n 11 12  1  0\n 12 13  1  0\n 13  8  1  0\n 12 14  1  0\nA    7\nZ\nA   14\nZ\nM  END",
+        "arrows": [
+          {
+            "from": [
+              1.2699,
+              -0.1
+            ],
+            "to": [
+              2.3699,
+              -0.1
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "curly": [
+          {
+            "from": {
+              "bond": [
+                [
+                  0.9699,
+                  0.56
+                ],
+                [
+                  0,
+                  1
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  0,
+                  1
+                ],
+                [
+                  -0.866,
+                  0.5
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  -0.866,
+                  0.5
+                ],
+                [
+                  -0.9699,
+                  -0.56
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  -0.9699,
+                  -0.56
+                ],
+                [
+                  0,
+                  -1.55
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  0,
+                  -1.55
+                ],
+                [
+                  0.866,
+                  -1.05
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  0.866,
+                  -1.05
+                ],
+                [
+                  0.9699,
+                  0.56
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          }
+        ]
+      }
+    ]
+  },
+  "retro-diels-alder": {
+    "title": "Diels-Alder rückwärts — bei hoher Temperatur",
+    "steps": [
+      {
+        "caption": "Dieselben drei Elektronenpaare wie bei der Diels-Alder-Reaktion, in umgekehrter Richtung: Das Cyclohexen zerfällt in Dien und Dienophil. Bei hoher Temperatur gewinnt die Entropie (aus einem Molekül werden zwei); besonders leicht, wenn ein Bruchstück sehr stabil ist (N₂, CO₂, ein Aromat) oder flüchtig entweicht. Klassisch: Dicyclopentadien → Cyclopentadien.",
+        "mol": "\n  OC-oecho\n\n 12 10  0  0  0  0            999 V2000\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.6059    0.5600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.6360    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.7699    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.6660   -0.5600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.6360   -1.6000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.5020   -1.1000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  1  1  0\n 10  9  2  0\n  9  8  1  0\n  8  7  2  0\n 11 12  2  0\nM  END",
+        "arrows": [
+          {
+            "from": [
+              1.166,
+              -0.1
+            ],
+            "to": [
+              2.266,
+              -0.1
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "texts": [
+          {
+            "at": [
+              1.586,
+              0.65
+            ],
+            "text": "Δ"
+          }
+        ],
+        "curly": [
+          {
+            "from": {
+              "bond": [
+                [
+                  0,
+                  1
+                ],
+                [
+                  -0.866,
+                  0.5
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  -0.866,
+                  0.5
+                ],
+                [
+                  -0.866,
+                  -0.5
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  -0.866,
+                  -0.5
+                ],
+                [
+                  0,
+                  -1
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  0,
+                  -1
+                ],
+                [
+                  0.866,
+                  -0.5
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  0.866,
+                  -0.5
+                ],
+                [
+                  0.866,
+                  0.5
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  0.866,
+                  0.5
+                ],
+                [
+                  0,
+                  1
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          }
+        ]
+      }
+    ]
+  },
+  "dipolare-cycloaddition": {
+    "title": "Konzertierte [3+2]-Cycloaddition",
+    "steps": [
+      {
+        "caption": "Das Nitron ist ein 1,3-Dipol (vier π-Elektronen über C, N, O). Mit dem Alken (Dipolarophil) verschieben sich drei Elektronenpaare in einem Schritt — wie bei der Diels-Alder-Reaktion ein thermisch erlaubter 6-Elektronen-Prozess. Es entsteht der Fünfring Isoxazolidin; die Stereochemie des Alkens bleibt erhalten. Analog: Azide + Alkine → Triazole, Ozon + Alkene (Ozonolyse).",
+        "mol": "\n  OC-oecho\n\n 16 14  0  0  0  0            999 V2000\n    0.2500   -1.4007    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0590   -0.8129    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4000    0.8382    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.6000    0.8382    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9090   -0.1129    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.1878    1.6472    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.8601   -0.4219    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0101   -1.1219    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.2501   -0.8507    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.0592   -0.2629    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.7501    0.6882    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.7501    0.6882    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4411   -0.2629    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1624    1.4972    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4901   -0.5719    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.0102   -0.5719    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  5  4  2  0\n  4  3  1  0\n  1  2  2  0\n  4  6  1  0\n  5  7  1  0\n  2  8  1  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 12 13  1  0\n 13  9  1  0\n 12 14  1  0\n 13 15  1  0\n 10 16  1  0\nA    6\nR₂\nA    7\nR₁\nA    8\nR₃\nA   14\nR₂\nA   15\nR₁\nA   16\nR₃\nM  CHG  2   3  -1   4   1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              2.6501,
+              0
+            ],
+            "to": [
+              3.7501,
+              0
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "texts": [
+          {
+            "at": [
+              3.0701,
+              0.75
+            ],
+            "text": "Δ"
+          }
+        ],
+        "curly": [
+          {
+            "from": {
+              "atom": [
+                0.4,
+                0.8382
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  0.4,
+                  0.8382
+                ],
+                [
+                  1.059,
+                  -0.8129
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  1.059,
+                  -0.8129
+                ],
+                [
+                  0.25,
+                  -1.4007
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  0.25,
+                  -1.4007
+                ],
+                [
+                  -0.909,
+                  -0.1129
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  -0.909,
+                  -0.1129
+                ],
+                [
+                  -0.6,
+                  0.8382
+                ]
+              ]
+            },
+            "to": {
+              "atom": [
+                -0.6,
+                0.8382
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          }
+        ]
+      }
+    ]
+  },
+  "photo-2plus2": {
+    "title": "Photochemisch erlaubt, thermisch verboten",
+    "steps": [
+      {
+        "caption": "Thermisch ist die suprafaciale [2+2]-Cycloaddition verboten (4 Elektronen, die HOMO/LUMO-Phasen passen nicht). Nach Anregung mit Licht steht ein Elektron im π*-Orbital, dessen Symmetrie zum LUMO des Partners passt: [π2s+π2s] wird erlaubt — es entsteht der Cyclobutanring. Enone reagieren meist schrittweise über ein Triplett-1,4-Diradikal (Sensibilisator z. B. Benzophenon); dann kann die Alkengeometrie verloren gehen.",
+        "mol": "\n  OC-oecho\n\n 16 14  0  0  0  0            999 V2000\n    0.5000    0.9500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5000    0.9500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5000   -0.9500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5000   -0.9500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2071    1.6571    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2071    1.6571    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2071   -1.6571    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2071   -1.6571    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.3942    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.3942    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.3942   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.3942   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.1013    1.2071    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.6871    1.2071    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.6871   -1.2071    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.1013   -1.2071    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  3  4  2  0\n  1  5  1  0\n  2  6  1  0\n  3  7  1  0\n  4  8  1  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 12  9  1  0\n  9 13  1  0\n 10 14  1  0\n 11 15  1  0\n 12 16  1  0\nA    5\nR₂\nA    6\nR₁\nA    7\nR₃\nA    8\nR₄\nA   13\nR₂\nA   14\nR₁\nA   15\nR₃\nA   16\nR₄\nM  END",
+        "arrows": [
+          {
+            "from": [
+              1.8471,
+              0
+            ],
+            "to": [
+              2.9471,
+              0
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "texts": [
+          {
+            "at": [
+              2.1371,
+              0.75
+            ],
+            "text": "hν"
+          }
+        ],
+        "curly": [
+          {
+            "from": {
+              "bond": [
+                [
+                  0.5,
+                  0.95
+                ],
+                [
+                  -0.5,
+                  0.95
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  -0.5,
+                  0.95
+                ],
+                [
+                  -0.5,
+                  -0.95
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  -0.5,
+                  -0.95
+                ],
+                [
+                  0.5,
+                  -0.95
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  0.5,
+                  -0.95
+                ],
+                [
+                  0.5,
+                  0.95
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          }
+        ]
+      }
+    ]
+  },
+  "keten-cycloaddition": {
+    "title": "Thermische [2+2] — dank des Ketens erlaubt",
+    "steps": [
+      {
+        "caption": "Ketene (R₁R₂C=C=O, z. B. aus Säurechlorid + NEt₃) reagieren schon thermisch mit Alkenen: Das zentrale sp-C hat ein leeres, senkrecht stehendes π*(C=O)-Orbital, an das das Alken angreifen kann. Das erlaubt eine [π2s+π2a]-Geometrie, in der das Keten antarafacial reagiert. Die Alkengeometrie bleibt erhalten; das Produkt ist ein Cyclobutanon.",
+        "mol": "\n  OC-oecho\n\n 16 14  0  0  0  0            999 V2000\n    0.5000    0.9500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5000    0.9500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5000   -0.9500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5000   -0.9500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2071    1.6571    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7588    1.9159    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4659    1.2088    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2071   -1.6571    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.6530    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.6530    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.6530   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.6530   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.3601    1.2071    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.3942    1.4659    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.6871    0.7588    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.3601   -1.2071    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  3  4  2  0\n  1  5  2  0\n  2  6  1  0\n  2  7  1  0\n  4  8  1  0\n  9 10  1  0\n 10 11  1  0\n 11 12  1  0\n 12  9  1  0\n  9 13  2  0\n 10 14  1  0\n 10 15  1  0\n 12 16  1  0\nA    6\nR₁\nA    7\nR₂\nA    8\nR₃\nA   14\nR₁\nA   15\nR₂\nA   16\nR₃\nM  END",
+        "arrows": [
+          {
+            "from": [
+              1.8471,
+              0
+            ],
+            "to": [
+              2.9471,
+              0
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "texts": [
+          {
+            "at": [
+              2.2671,
+              0.75
+            ],
+            "text": "Δ"
+          }
+        ],
+        "curly": [
+          {
+            "from": {
+              "bond": [
+                [
+                  -0.5,
+                  -0.95
+                ],
+                [
+                  0.5,
+                  -0.95
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  0.5,
+                  -0.95
+                ],
+                [
+                  0.5,
+                  0.95
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  0.5,
+                  0.95
+                ],
+                [
+                  -0.5,
+                  0.95
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  -0.5,
+                  0.95
+                ],
+                [
+                  -0.5,
+                  -0.95
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          }
+        ]
+      }
+    ]
+  },
+  "claisen-umlagerung": {
+    "title": "[3,3]-sigmatrope Umlagerung",
+    "steps": [
+      {
+        "caption": "Beim Erhitzen wandert die σ-Bindung O–C1′ in einem Schritt über sechs Atome: Die neue C–C-Bindung entsteht zwischen den beiden Enden, die alte C–O-Bindung bricht, beide π-Bindungen verschieben sich. Hier in der sesselartigen Anordnung des Übergangszustands gezeichnet (das Produkt ist der γ,δ-ungesättigte Aldehyd des Schemas). Triebkraft: die starke C=O-Bindung. Aryl-allylether lagern zu o-Allylphenolen um.",
+        "mol": "\n  OC-oecho\n\n 12 10  0  0  0  0            999 V2000\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.1200    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9699    0.5600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660   -0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.7321    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.7321   -1.1200    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.7020   -0.5600    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  6  1  1  0\n  1  2  2  0\n  6  5  1  0\n  5  4  1  0\n  4  3  2  0\n 12  7  2  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  2  0\nM  END",
+        "arrows": [
+          {
+            "from": [
+              1.366,
+              0
+            ],
+            "to": [
+              2.466,
+              0
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "texts": [
+          {
+            "at": [
+              1.786,
+              0.75
+            ],
+            "text": "Δ"
+          }
+        ],
+        "curly": [
+          {
+            "from": {
+              "bond": [
+                [
+                  0.866,
+                  0.5
+                ],
+                [
+                  0,
+                  1.12
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  0,
+                  1.12
+                ],
+                [
+                  -0.9699,
+                  0.56
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  -0.9699,
+                  0.56
+                ],
+                [
+                  -0.866,
+                  -0.5
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  -0.866,
+                  -0.5
+                ],
+                [
+                  0,
+                  -1
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  0,
+                  -1
+                ],
+                [
+                  0.866,
+                  -0.5
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  0.866,
+                  -0.5
+                ],
+                [
+                  0.866,
+                  0.5
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          }
+        ]
+      }
+    ]
+  },
+  "cope-umlagerung": {
+    "title": "[3,3]-sigmatrope Umlagerung eines 1,5-Diens",
+    "steps": [
+      {
+        "caption": "Die σ-Bindung C3–C4 bricht, C1–C6 bildet sich, beide Doppelbindungen wandern nach innen — über einen sesselförmigen Sechsring-ÜZ (deshalb hoch stereospezifisch). Das unsubstituierte Hexa-1,5-dien lagert in sich selbst um; R₁ zeigt die Verschiebung. Das Gleichgewicht liegt beim stabileren Dien (höher substituierte Doppelbindungen); bei der Oxy-Cope-Variante treibt die Tautomerie Enol → Keton.",
+        "mol": "\n  OC-oecho\n\n 14 12  0  0  0  0            999 V2000\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.1200    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9699    0.5600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.6041    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.7381    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8721    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8721   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.7381   -1.1200    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.7080   -0.5600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.5741   -1.0600    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  2  1  2  0\n  1  6  1  0\n  6  5  1  0\n  5  4  1  0\n  4  3  2  0\n  6  7  1  0\n  9  8  1  0\n  8 13  2  0\n 12 11  2  0\n 11 10  1  0\n 10  9  1  0\n 13 14  1  0\nA    7\nR₁\nA   14\nR₁\nM  END",
+        "arrows": [
+          {
+            "from": [
+              2.3721,
+              0
+            ],
+            "to": [
+              3.4721,
+              0
+            ],
+            "mode": "equilibrium-open-angle"
+          }
+        ],
+        "texts": [
+          {
+            "at": [
+              2.7921,
+              0.75
+            ],
+            "text": "Δ"
+          }
+        ],
+        "curly": [
+          {
+            "from": {
+              "bond": [
+                [
+                  -0.866,
+                  -0.5
+                ],
+                [
+                  -0.9699,
+                  0.56
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  -0.9699,
+                  0.56
+                ],
+                [
+                  0,
+                  1.12
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  0,
+                  1.12
+                ],
+                [
+                  0.866,
+                  0.5
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  0.866,
+                  0.5
+                ],
+                [
+                  0.866,
+                  -0.5
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  0.866,
+                  -0.5
+                ],
+                [
+                  0,
+                  -1
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  0,
+                  -1
+                ],
+                [
+                  -0.866,
+                  -0.5
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          }
+        ]
+      }
+    ]
+  },
+  "elektrocyclisierung": {
+    "title": "Ringschluss eines Polyens — Woodward-Hoffmann",
+    "steps": [
+      {
+        "caption": "Hexatrien → Cyclohexa-1,3-dien: Die Enden des π-Systems schließen eine σ-Bindung, die Doppelbindungen wandern. Ob sich die Enden dabei gleichsinnig (konrotatorisch) oder gegensinnig (disrotatorisch) drehen, bestimmt die Symmetrie des HOMO: 6π-Elektronen thermisch disrotatorisch, photochemisch konrotatorisch; bei 4π (Butadien ⇌ Cyclobuten) genau umgekehrt. Das legt die relative Konfiguration der Substituenten an den Enden fest (E,Z,E-Trien → cis-Produkt thermisch).",
+        "mol": "\n  OC-oecho\n\n 12 11  0  0  0  0            999 V2000\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.1500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9959   -0.5750    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.1680    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.3020    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4359    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4359   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.3020   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.1680   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  6  1  2  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  2  0\n  7  8  2  0\n  8  9  1  0\n  9 10  2  0\n 10 11  1  0\n 11 12  1  0\n 12  7  1  0\nM  END",
+        "arrows": [
+          {
+            "from": [
+              1.2959,
+              0
+            ],
+            "to": [
+              4.0359,
+              0
+            ],
+            "mode": "equilibrium-open-angle"
+          }
+        ],
+        "texts": [
+          {
+            "at": [
+              1.4959,
+              0.75
+            ],
+            "text": "Δ bzw. hν"
+          }
+        ],
+        "curly": [
+          {
+            "from": {
+              "bond": [
+                [
+                  -0.866,
+                  -0.5
+                ],
+                [
+                  0,
+                  -1.15
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  0,
+                  -1.15
+                ],
+                [
+                  0.9959,
+                  -0.575
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  0.9959,
+                  -0.575
+                ],
+                [
+                  0.866,
+                  0.5
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  0.866,
+                  0.5
+                ],
+                [
+                  0,
+                  1
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  0,
+                  1
+                ],
+                [
+                  -0.866,
+                  0.5
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  -0.866,
+                  0.5
+                ],
+                [
+                  -0.866,
+                  -0.5
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          }
+        ]
+      }
+    ]
+  },
+  "nazarov-cyclisierung": {
+    "title": "Kationische 4π-Elektrocyclisierung",
+    "steps": [
+      {
+        "caption": "1. Die Säure (H⁺ oder eine Lewis-Säure wie BF₃) aktiviert die Carbonylgruppe: Es entsteht ein Pentadienyl-Kation, über fünf C-Atome delokalisiert (4 π-Elektronen).",
+        "mol": "\n  OC-oecho\n\n 16 12  0  0  0  0            999 V2000\n    0.0000    0.8507    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8090    0.2629    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5882   -0.8095    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5882   -0.8095    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8090    0.2629    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.8507    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9959    2.4257    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8620    2.9257    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.7310    0.8507    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.9220    0.2629    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1428   -0.8095    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.3191   -0.8095    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.5400    0.2629    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.7310    1.8507    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4671    2.2757    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    7.2671    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  4  5  2  0\n  5  1  1  0\n  1  6  2  0\n  7  8  1  0\n  9 10  1  0\n 10 11  2  0\n 12 13  2  0\n 13  9  1  0\n  9 14  1  0\n 14 15  1  0\nA    8\nA\nA   16\nA\nM  CHG  2   9   1  16  -1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              2.422,
+              0.2
+            ],
+            "to": [
+              3.522,
+              0.2
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "pluses": [
+          [
+            6.2171,
+            0.2
+          ]
+        ],
+        "curly": [
+          {
+            "from": {
+              "atom": [
+                0,
+                1.8507
+              ]
+            },
+            "to": {
+              "atom": [
+                0.9959,
+                2.4257
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  0.9959,
+                  2.4257
+                ],
+                [
+                  1.862,
+                  2.9257
+                ]
+              ]
+            },
+            "to": {
+              "atom": [
+                1.862,
+                2.9257
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          }
+        ]
+      },
+      {
+        "caption": "2. Elektrocyclischer Ringschluss: 4π-Elektronen, thermisch → konrotatorisch. Die neue C–C-Bindung schließt den Fünfring; es bleibt ein Oxyallyl-Kation.",
+        "mol": "\n  OC-oecho\n\n 15 14  0  0  0  0            999 V2000\n    0.0000    0.8507    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8090    0.2629    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5882   -0.8095    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5882   -0.8095    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8090    0.2629    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.8507    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7361    2.2757    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    3.9357    0.8507    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.1267    0.2629    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4357   -0.6882    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4357   -0.6882    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.7448    0.2629    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.9357    1.8507    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.6719    2.2757    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    2.9361   -1.3759    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  4  5  2  0\n  5  1  1  0\n  1  6  1  0\n  6  7  1  0\n  8  9  1  0\n  9 10  1  0\n 11 12  1  0\n 12  8  2  0\n 10 11  1  0\n  8 13  1  0\n 13 14  1  0\n 10 15  1  0\nM  CHG  2   1   1   9   1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              1.2361,
+              0.2
+            ],
+            "to": [
+              2.3361,
+              0.2
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "curly": [
+          {
+            "from": {
+              "bond": [
+                [
+                  -0.809,
+                  0.2629
+                ],
+                [
+                  -0.5882,
+                  -0.8095
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  -0.5882,
+                  -0.8095
+                ],
+                [
+                  0.5882,
+                  -0.8095
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  0.5882,
+                  -0.8095
+                ],
+                [
+                  0.809,
+                  0.2629
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  0.809,
+                  0.2629
+                ],
+                [
+                  0,
+                  0.8507
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          }
+        ]
+      },
+      {
+        "caption": "3. Eliminierung eines Protons neben dem Kation: Dienol.",
+        "mol": "\n  OC-oecho\n\n 17 15  0  0  0  0            999 V2000\n    0.0000    0.8507    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8090    0.2629    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5000   -0.6882    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5000   -0.6882    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8090    0.2629    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.8507    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7361    2.2757    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9996   -1.3759    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.6462   -2.2658    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.5451    0.8507    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.7361    0.2629    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.0451   -0.6882    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.0451   -0.6882    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.3542    0.2629    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.5451    1.8507    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.2813    2.2757    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    6.3413    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  4  5  1  0\n  5  1  2  0\n  3  4  1  0\n  1  6  1  0\n  6  7  1  0\n  3  8  1  0\n 10 11  1  0\n 11 12  2  0\n 13 14  1  0\n 14 10  2  0\n 12 13  1  0\n 10 15  1  0\n 15 16  1  0\nA    9\nA\nA   17\nH–A\nM  CHG  2   2   1   9  -1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              1.2361,
+              0.2
+            ],
+            "to": [
+              2.3361,
+              0.2
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "pluses": [
+          [
+            5.0313,
+            0.2
+          ]
+        ],
+        "curly": [
+          {
+            "from": {
+              "atom": [
+                -1.6462,
+                -2.2658
+              ]
+            },
+            "to": {
+              "atom": [
+                -0.9996,
+                -1.3759
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  -0.5,
+                  -0.6882
+                ],
+                [
+                  -0.9996,
+                  -1.3759
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  -0.809,
+                  0.2629
+                ],
+                [
+                  -0.5,
+                  -0.6882
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          }
+        ]
+      },
+      {
+        "caption": "4. Keto-Enol-Tautomerie: Cyclopent-2-enon — die C=C-Bindung konjugiert zur C=O-Gruppe, an der Stelle, an der das Proton abgegeben wurde. Mit Substituenten bildet sich bevorzugt die höher substituierte Doppelbindung.",
+        "mol": "\n  OC-oecho\n\n 13 13  0  0  0  0            999 V2000\n    0.0000    0.8507    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8090    0.2629    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5000   -0.6882    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5000   -0.6882    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8090    0.2629    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.8507    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7361    2.2757    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4451    0.8507    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.6361    0.2629    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.9451   -0.6882    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.9451   -0.6882    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.2542    0.2629    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4451    1.8507    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  4  5  1  0\n  5  1  2  0\n  3  4  1  0\n  1  6  1  0\n  6  7  1  0\n  8  9  1  0\n  9 10  2  0\n 11 12  1  0\n 12  8  1  0\n 10 11  1  0\n  8 13  2  0\nM  END",
+        "arrows": [
+          {
+            "from": [
+              1.2361,
+              0.2
+            ],
+            "to": [
+              4.2361,
+              0.2
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "texts": [
+          {
+            "at": [
+              1.4361,
+              0.95
+            ],
+            "text": "Tautomerie"
+          }
+        ]
+      }
+    ]
+  },
+  "beckmann-umlagerung": {
+    "title": "Anti-Wanderung zum Nitrilium-Ion",
+    "steps": [
+      {
+        "caption": "1. Konzentrierte Schwefelsäure protoniert die OH-Gruppe (mit PCl₅ oder TsCl wird sie stattdessen verestert) — eine gute Abgangsgruppe entsteht.",
+        "mol": "\n  OC-oecho\n\n 16 12  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    2.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    2.8500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9959    1.4250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.4020    0.6132    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.8082    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.6742    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.5402    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.6742    1.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    4.8082    2.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.8082    2.8500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    4.0721    1.5750    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    8.9402    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  2  0\n  4  5  1  0\n  5  6  1  0\n  7  8  1  0\n  9 10  1  0\n 10 11  1  0\n 10 12  2  0\n 12 13  1  0\n 13 14  1  0\n 13 15  1  0\nA    1\nR₁\nA    3\nR₂\nA    8\nHO₃SO\nA    9\nR₁\nA   11\nR₂\nA   16\nHSO₄\nM  CHG  2  13   1  16  -1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              2.3721,
+              1
+            ],
+            "to": [
+              3.4721,
+              1
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "pluses": [
+          [
+            7.4302,
+            1
+          ]
+        ],
+        "curly": [
+          {
+            "from": {
+              "atom": [
+                0,
+                2
+              ]
+            },
+            "to": {
+              "atom": [
+                -0.9959,
+                1.425
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  -0.9959,
+                  1.425
+                ],
+                [
+                  -2.402,
+                  0.6132
+                ]
+              ]
+            },
+            "to": {
+              "atom": [
+                -2.402,
+                0.6132
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          }
+        ]
+      },
+      {
+        "caption": "2. Konzertiert: Der Rest, der anti-periplanar zur Abgangsgruppe steht (hier R₂), wandert mit seinem Bindungselektronenpaar vom C zum N, während Wasser das N verlässt. Es entsteht ein lineares Nitrilium-Ion. Die Konfiguration des wandernden Restes bleibt erhalten.",
+        "mol": "\n  OC-oecho\n\n 12  9  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    2.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    2.8500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7361    1.5750    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    5.0781    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.9441    0.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    4.2121    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8101   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.9001    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  2  0\n  4  5  1  0\n  5  6  1  0\n  5  7  1  0\n  8  9  3  0\n  8 10  1  0\n  9 11  1  0\nA    1\nR₁\nA    3\nR₂\nA   10\nR₁\nA   11\nR₂\nA   12\nH₂O\nM  CHG  2   5   1   9   1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              2.3721,
+              0.8
+            ],
+            "to": [
+              3.4721,
+              0.8
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "pluses": [
+          [
+            7.7001,
+            0.8
+          ]
+        ],
+        "curly": [
+          {
+            "from": {
+              "bond": [
+                [
+                  0.866,
+                  0.5
+                ],
+                [
+                  1.7321,
+                  0
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  1.7321,
+                  0
+                ],
+                [
+                  0.866,
+                  1.5
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  0.866,
+                  1.5
+                ],
+                [
+                  0,
+                  2
+                ]
+              ]
+            },
+            "to": {
+              "atom": [
+                0,
+                2
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          }
+        ]
+      },
+      {
+        "caption": "3. Wasser greift das Nitrilium-C an; nach Abgabe eines Protons liegt die Imidsäure vor.",
+        "mol": "\n  OC-oecho\n\n 13 10  0  0  0  0            999 V2000\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2160    1.9000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4799    2.3250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9521    2.3250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1581    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.0241    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.0241    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8901    0.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    7.7562    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.2880    1.9250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  3  0\n  1  3  1  0\n  2  4  1  0\n  5  6  1  0\n  5  7  1  0\n  8  9  1  0\n  9 10  1  0\n  9 11  2  0\n 11 12  1  0\n 10 13  1  0\nA    3\nR₁\nA    4\nR₂\nA    8\nR₁\nA   12\nR₂\nM  CHG  1   2   1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              3.2381,
+              0.5
+            ],
+            "to": [
+              4.4181,
+              0.5
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "texts": [
+          {
+            "at": [
+              3.4381,
+              0.3
+            ],
+            "text": "−H⁺"
+          }
+        ],
+        "curly": [
+          {
+            "from": {
+              "atom": [
+                1.216,
+                1.9
+              ]
+            },
+            "to": {
+              "atom": [
+                0.866,
+                0.5
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  0.866,
+                  0.5
+                ],
+                [
+                  1.7321,
+                  0
+                ]
+              ]
+            },
+            "to": {
+              "atom": [
+                1.7321,
+                0
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          }
+        ]
+      },
+      {
+        "caption": "4. Tautomerie zum Amid. Aus cyclischen Ketoximen entstehen Lactame — technisch: Cyclohexanonoxim → ε-Caprolactam → Nylon-6.",
+        "mol": "\n  OC-oecho\n\n 12 10  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.1299    1.9250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    6.9781    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.8441    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.8441    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    8.7101    0.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    9.5762    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.7101   -0.8500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  2  0\n  4  5  1  0\n  3  6  1  0\n  7  8  1  0\n  8  9  2  0\n  8 10  1  0\n 10 11  1  0\n 10 12  1  0\nA    1\nR₁\nA    5\nR₂\nA    7\nR₁\nA   11\nR₂\nM  END",
+        "arrows": [
+          {
+            "from": [
+              3.2381,
+              0.5
+            ],
+            "to": [
+              6.2381,
+              0.5
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "texts": [
+          {
+            "at": [
+              3.4381,
+              1.25
+            ],
+            "text": "Tautomerie"
+          }
+        ]
+      }
+    ]
+  },
+  "rupe-umlagerung": {
+    "title": "Dehydratisierung zum Enin, dann Hydratisierung der Dreifachbindung",
+    "steps": [
+      {
+        "caption": "1. Die Säure protoniert die OH-Gruppe, Wasser geht: ein tertiäres, propargylisch stabilisiertes Carbenium-Ion.",
+        "mol": "\n  OC-oecho\n\n 17 15  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.3500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4641    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2321   -0.8660    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.3821   -0.8660    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6571   -1.6021    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    2.2321   -0.8660    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.9441    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8101    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.6762    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8101    1.3500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    8.5422    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4082    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.6762   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  1  0\n  3  5  1  0\n  5  6  3  0\n  3  7  1  0\n  7  8  1  0\n  7  9  1  0\n  3 10  1  0\n 11 12  1  0\n 12 13  1  0\n 12 14  1  0\n 13 15  1  0\n 15 16  3  0\n 13 17  1  0\nA    1\nR₁\nA   10\nR₂\nA   11\nR₁\nA   17\nR₂\nM  CHG  2   7   1  13   1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              3.7641,
+              0.2
+            ],
+            "to": [
+              5.2041,
+              0.2
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "texts": [
+          {
+            "at": [
+              3.9641,
+              0
+            ],
+            "text": "−H₂O"
+          }
+        ],
+        "curly": [
+          {
+            "from": {
+              "bond": [
+                [
+                  1.7321,
+                  0
+                ],
+                [
+                  1.2321,
+                  -0.866
+                ]
+              ]
+            },
+            "to": {
+              "atom": [
+                1.2321,
+                -0.866
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          }
+        ]
+      },
+      {
+        "caption": "2. Abgabe des benachbarten Protons (E1): konjugiertes Enin. (Tertiäre Propargylalkohole ohne α-H gehen stattdessen die Meyer-Schuster-Umlagerung zum Enal ein.)",
+        "mol": "\n  OC-oecho\n\n 17 13  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.3500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4641    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0866    1.9000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0866    2.7500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8227    1.4750    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    5.6041    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4701    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.3362    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.2022    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.0682    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.3362   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   10.9382    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  1  0\n  3  5  1  0\n  5  6  3  0\n  3  7  1  0\n  8  9  1  0\n  8 10  1  0\n 11 12  1  0\n 12 13  2  0\n 13 14  1  0\n 14 15  3  0\n 13 16  1  0\nA    1\nR₁\nA    7\nR₂\nA   11\nR₁\nA   16\nR₂\nA   17\nH₃O\nM  CHG  2   3   1  17   1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              3.7641,
+              0.2
+            ],
+            "to": [
+              4.8641,
+              0.2
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "pluses": [
+          [
+            9.6182,
+            0.2
+          ]
+        ],
+        "curly": [
+          {
+            "from": {
+              "atom": [
+                -0.0866,
+                1.9
+              ]
+            },
+            "to": {
+              "atom": [
+                0.866,
+                1.35
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  0.866,
+                  0.5
+                ],
+                [
+                  0.866,
+                  1.35
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  0.866,
+                  0.5
+                ],
+                [
+                  1.7321,
+                  0
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          }
+        ]
+      },
+      {
+        "caption": "3. Die Dreifachbindung wird am endständigen C protoniert (Markownikow): Das Vinyl-Kation am inneren C ist durch die konjugierte Doppelbindung stabilisiert.",
+        "mol": "\n  OC-oecho\n\n 17 13  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4641    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.0391    0.0041    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    4.5391   -0.8620    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.3891   -0.8620    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    4.1141   -1.5981    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    7.7291    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.5951    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4612    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   10.3272    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   11.1932    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4612   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   12.9432    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  3  0\n  3  6  1  0\n  7  8  1  0\n  8  9  1  0\n  8 10  1  0\n 11 12  1  0\n 12 13  2  0\n 13 14  1  0\n 14 15  2  0\n 13 16  1  0\nA    1\nR₁\nA    6\nR₂\nA   11\nR₁\nA   16\nR₂\nA   17\nH₂O\nM  CHG  2   8   1  14   1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              5.8891,
+              0.2
+            ],
+            "to": [
+              6.9891,
+              0.2
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "pluses": [
+          [
+            11.7432,
+            0.2
+          ]
+        ],
+        "curly": [
+          {
+            "from": {
+              "bond": [
+                [
+                  2.5981,
+                  0.5
+                ],
+                [
+                  3.4641,
+                  1
+                ]
+              ]
+            },
+            "to": {
+              "atom": [
+                4.0391,
+                0.0041
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  4.0391,
+                  0.0041
+                ],
+                [
+                  4.5391,
+                  -0.862
+                ]
+              ]
+            },
+            "to": {
+              "atom": [
+                4.5391,
+                -0.862
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          }
+        ]
+      },
+      {
+        "caption": "4. Wasser addiert an das Kation; nach Abgabe des Protons entsteht ein Enol, das zum Keton tautomerisiert: das α,β-ungesättigte Methylketon.",
+        "mol": "\n  OC-oecho\n\n 16 13  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4641    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    1.8500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3342    2.2750    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8620    2.2750    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    8.8742    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.7402    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   10.6062    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   11.4723    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   12.3383    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   11.4723    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   10.6062   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  2  0\n  3  6  1  0\n  7  8  1  0\n  7  9  1  0\n 10 11  1  0\n 11 12  2  0\n 12 13  1  0\n 13 14  1  0\n 13 15  2  0\n 12 16  1  0\nA    1\nR₁\nA    6\nR₂\nA   10\nR₁\nA   16\nR₂\nM  CHG  1   4   1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              3.8342,
+              0.2
+            ],
+            "to": [
+              8.1342,
+              0.2
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "texts": [
+          {
+            "at": [
+              4.0342,
+              0
+            ],
+            "text": "−H⁺, Tautomerie"
+          }
+        ],
+        "curly": [
+          {
+            "from": {
+              "atom": [
+                2.5981,
+                1.85
+              ]
+            },
+            "to": {
+              "atom": [
+                2.5981,
+                0.5
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          }
+        ]
+      }
+    ]
+  },
+  "pinakol-umlagerung": {
+    "title": "Carbenium-Ion und 1,2-Verschiebung",
+    "steps": [
+      {
+        "caption": "1. Protoniert wird bevorzugt die OH-Gruppe, deren Abgang das stabilere Carbenium-Ion liefert.",
+        "mol": "\n  OC-oecho\n\n 24 20  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7361    1.4250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000    1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7361    1.4250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000    2.2000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    2.4060    3.0118    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4560    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.4560    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4560    1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.7199    1.4250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    7.4560    1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    8.1921    1.4250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    7.4560    1.8500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4560    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4560   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.4560    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.4560   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   10.8560    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  1  3  1  0\n  3  4  1  0\n  2  5  1  0\n  5  6  1  0\n  1  7  1  0\n  1  8  1  0\n  2  9  1  0\n  2 10  1  0\n 11 12  1  0\n 13 14  1  0\n 13 15  1  0\n 15 16  1  0\n 14 17  1  0\n 17 18  1  0\n 17 19  1  0\n 13 20  1  0\n 13 21  1  0\n 14 22  1  0\n 14 23  1  0\nA    7\nR₁\nA    8\nR₂\nA    9\nR₃\nA   10\nR₄\nA   12\nOSO₃H\nA   20\nR₁\nA   21\nR₂\nA   22\nR₃\nA   23\nR₄\nA   24\nHSO₄\nM  CHG  2  17   1  24  -1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              3.616,
+              0.2
+            ],
+            "to": [
+              4.716,
+              0.2
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "pluses": [
+          [
+            9.346,
+            0.2
+          ]
+        ],
+        "curly": [
+          {
+            "from": {
+              "atom": [
+                1,
+                1
+              ]
+            },
+            "to": {
+              "atom": [
+                1,
+                2.2
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  1,
+                  2.2
+                ],
+                [
+                  2.406,
+                  3.0118
+                ]
+              ]
+            },
+            "to": {
+              "atom": [
+                2.406,
+                3.0118
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          }
+        ]
+      },
+      {
+        "caption": "2. Wasser geht ab: tertiäres Carbenium-Ion.",
+        "mol": "\n  OC-oecho\n\n 20 17  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7361    1.4250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000    1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7361    1.4250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000    1.8500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4800    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4800    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4800    1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.7439    1.4250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4800    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4800   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.4800    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4800   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.5700    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  1  3  1  0\n  3  4  1  0\n  2  5  1  0\n  5  6  1  0\n  5  7  1  0\n  1  8  1  0\n  1  9  1  0\n  2 10  1  0\n  2 11  1  0\n 12 13  1  0\n 12 14  1  0\n 14 15  1  0\n 12 16  1  0\n 12 17  1  0\n 13 18  1  0\n 13 19  1  0\nA    8\nR₁\nA    9\nR₂\nA   10\nR₃\nA   11\nR₄\nA   16\nR₁\nA   17\nR₂\nA   18\nR₃\nA   19\nR₄\nA   20\nH₂O\nM  CHG  2   5   1  13   1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              2.64,
+              0.2
+            ],
+            "to": [
+              3.74,
+              0.2
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "pluses": [
+          [
+            8.37,
+            0.2
+          ]
+        ],
+        "curly": [
+          {
+            "from": {
+              "bond": [
+                [
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ]
+              ]
+            },
+            "to": {
+              "atom": [
+                1,
+                1
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          }
+        ]
+      },
+      {
+        "caption": "3. 1,2-Verschiebung: R₂ wandert mit seinem Bindungselektronenpaar zum kationischen Nachbar-C; das freie Elektronenpaar des O stabilisiert das neue Kation sofort als protoniertes Keton (Oxocarbenium-Ion) — das ist die Triebkraft. Wanderungsfreudigkeit: H > Aryl > Alkyl.",
+        "mol": "\n  OC-oecho\n\n 16 14  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7361    1.4250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4800    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4800    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4800    1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.7439    1.4250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4800    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4800    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.4800    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4800   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  1  3  1  0\n  3  4  1  0\n  1  5  1  0\n  1  6  1  0\n  2  7  1  0\n  2  8  1  0\n  9 10  1  0\n  9 11  2  0\n 11 12  1  0\n  9 13  1  0\n 10 14  1  0\n 10 15  1  0\n 10 16  1  0\nA    5\nR₁\nA    6\nR₂\nA    7\nR₃\nA    8\nR₄\nA   13\nR₁\nA   14\nR₂\nA   15\nR₃\nA   16\nR₄\nM  CHG  2   2   1  11   1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              2.64,
+              0.2
+            ],
+            "to": [
+              3.74,
+              0.2
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "curly": [
+          {
+            "from": {
+              "bond": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  -1
+                ]
+              ]
+            },
+            "to": {
+              "atom": [
+                1,
+                0
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "atom": [
+                0,
+                1
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  1
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          }
+        ]
+      },
+      {
+        "caption": "4. Abgabe des Protons: Keton (aus Pinakol: Pinakolon, tBu–CO–CH₃).",
+        "mol": "\n  OC-oecho\n\n 15 13  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7361    1.4250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.5600    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.5600    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.5600    1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.5600    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.5600    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.5600    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.5600   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  1  3  2  0\n  3  4  1  0\n  1  5  1  0\n  2  6  1  0\n  2  7  1  0\n  2  8  1  0\n  9 10  1  0\n  9 11  2  0\n  9 12  1  0\n 10 13  1  0\n 10 14  1  0\n 10 15  1  0\nA    5\nR₁\nA    6\nR₂\nA    7\nR₃\nA    8\nR₄\nA   12\nR₁\nA   13\nR₂\nA   14\nR₃\nA   15\nR₄\nM  CHG  1   3   1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              2.64,
+              0.2
+            ],
+            "to": [
+              3.82,
+              0.2
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "texts": [
+          {
+            "at": [
+              2.84,
+              0.95
+            ],
+            "text": "−H⁺"
+          }
+        ]
+      }
+    ]
+  },
+  "bischler-napieralski": {
+    "title": "Nitrilium-Ion und intramolekulare S_E(Ar)",
+    "steps": [
+      {
+        "caption": "1. POCl₃ aktiviert das Amid: Der Carbonyl-Sauerstoff greift das P an, Chlorid geht. Nach Abgabe des N–H-Protons (−HCl) liegt ein Imidoylphosphat vor. Die Kette ist schon so gezeichnet, wie sie den Ring schließt.",
+        "mol": "\n  OC-oecho\n\n 31 30  0  0  0  0            999 V2000\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981   -0.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8821   -1.2598    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.3821   -2.1258    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3342   -0.0750    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.3821   -2.1258    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7071   -3.2950    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n    0.7071   -4.2950    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.2929   -3.2950    0.0000 Cl  0  0  0  0  0  0  0  0  0  0  0  0\n    1.5731   -3.7950    0.0000 Cl  0  0  0  0  0  0  0  0  0  0  0  0\n    0.7071   -2.2950    0.0000 Cl  0  0  0  0  0  0  0  0  0  0  0  0\n    7.4742    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.6082    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.7421    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.7421   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.6082   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.4742   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.3402    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.2062    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.2062   -0.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    8.4902   -1.2598    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.9902   -2.1258    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.9902   -2.1258    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    6.5842   -2.9376    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  2  0\n  6  1  1  0\n  1  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  1  0\n 10 11  1  0\n  9 12  1  0\n 10 13  2  0\n 14 15  2  0\n 14 16  1  0\n 14 17  1  0\n 14 18  1  0\n 19 20  2  0\n 20 21  1  0\n 21 22  2  0\n 22 23  1  0\n 23 24  2  0\n 24 19  1  0\n 19 25  1  0\n 25 26  1  0\n 26 27  1  0\n 27 28  2  0\n 28 29  1  0\n 28 30  1  0\n 30 31  1  0\nA   11\nR₁\nA   29\nR₁\nA   31\nPOCl₂\nM  END",
+        "arrows": [
+          {
+            "from": [
+              3.8342,
+              0
+            ],
+            "to": [
+              5.2742,
+              0
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "texts": [
+          {
+            "at": [
+              4.0342,
+              -0.2
+            ],
+            "text": "−HCl"
+          }
+        ],
+        "curly": [
+          {
+            "from": {
+              "atom": [
+                1.3821,
+                -2.1258
+              ]
+            },
+            "to": {
+              "atom": [
+                0.7071,
+                -3.295
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  0.7071,
+                  -3.295
+                ],
+                [
+                  1.5731,
+                  -3.795
+                ]
+              ]
+            },
+            "to": {
+              "atom": [
+                1.5731,
+                -3.795
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          }
+        ]
+      },
+      {
+        "caption": "2. Das freie Elektronenpaar des N stößt die Phosphat-Abgangsgruppe aus: Nitrilium-Ion R₁–C≡N⁺–R — ein sehr starkes Elektrophil.",
+        "mol": "\n  OC-oecho\n\n 25 24  0  0  0  0            999 V2000\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981   -0.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8821   -1.2598    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.3821   -2.1258    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.3821   -2.1258    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0240   -2.9376    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.3301    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4641    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.5981   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4641   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.3301   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.1962    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.0622    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.0622   -0.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    7.3462   -1.2598    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.8462   -2.1258    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   10.7422    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  2  0\n  6  1  1  0\n  1  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  2  0\n 10 11  1  0\n 10 12  1  0\n 12 13  1  0\n 14 15  2  0\n 15 16  1  0\n 16 17  2  0\n 17 18  1  0\n 18 19  2  0\n 19 14  1  0\n 14 20  1  0\n 20 21  1  0\n 21 22  1  0\n 22 23  3  0\n 23 24  1  0\nA   11\nR₁\nA   13\nPOCl₂\nA   24\nR₁\nA   25\nCl₂PO₂\nM  CHG  2  22   1  25  -1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              3.0981,
+              0
+            ],
+            "to": [
+              4.1981,
+              0
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "pluses": [
+          [
+            8.9622,
+            0
+          ]
+        ],
+        "curly": [
+          {
+            "from": {
+              "atom": [
+                2.5981,
+                -0.5
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  2.5981,
+                  -0.5
+                ],
+                [
+                  1.8821,
+                  -1.2598
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  1.8821,
+                  -1.2598
+                ],
+                [
+                  1.3821,
+                  -2.1258
+                ]
+              ]
+            },
+            "to": {
+              "atom": [
+                1.3821,
+                -2.1258
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          }
+        ]
+      },
+      {
+        "caption": "3. Intramolekulare elektrophile aromatische Substitution: Die ortho-Position des Arylrings greift das Nitrilium-C an und schließt den Sechsring (σ-Komplex). Elektronenreiche Arylreste (OMe) reagieren am besten.",
+        "mol": "\n  OC-oecho\n\n 23 24  0  0  0  0            999 V2000\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981   -0.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8821   -1.2598    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.3821   -2.1258    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4801    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.6141    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.7481    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.7481   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.6141   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4801   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.3462    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.2122    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.2122   -0.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    7.3462   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.8462   -1.8660    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4801   -1.3500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  2  0\n  6  1  1  0\n  1  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  3  0\n 10 11  1  0\n 12 13  2  0\n 13 14  1  0\n 14 15  2  0\n 15 16  1  0\n 16 17  1  0\n 17 12  1  0\n 12 18  1  0\n 18 19  1  0\n 19 20  1  0\n 20 21  2  0\n 21 17  1  0\n 21 22  1  0\n 17 23  1  0\nA   11\nR₁\nA   22\nR₁\nM  CHG  2   9   1  16   1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              3.2481,
+              0
+            ],
+            "to": [
+              4.3481,
+              0
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "curly": [
+          {
+            "from": {
+              "bond": [
+                [
+                  0,
+                  -1
+                ],
+                [
+                  0.866,
+                  -0.5
+                ]
+              ]
+            },
+            "to": {
+              "atom": [
+                1.8821,
+                -1.2598
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  1.8821,
+                  -1.2598
+                ],
+                [
+                  2.5981,
+                  -0.5
+                ]
+              ]
+            },
+            "to": {
+              "atom": [
+                2.5981,
+                -0.5
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          }
+        ]
+      },
+      {
+        "caption": "4. Rearomatisierung: 1-substituiertes 3,4-Dihydroisochinolin (C=N direkt am Aromaten). Mit NaBH₄ reduziert entsteht das Tetrahydroisochinolin-Gerüst vieler Alkaloide (z. B. Papaverin).",
+        "mol": "\n  OC-oecho\n\n 25 25  0  0  0  0            999 V2000\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981   -0.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.2321   -1.8660    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660   -1.3500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4898   -2.3837    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.3301    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4641    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.5981   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.4641   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.3301   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.1962    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.0622    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.0622   -0.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    7.1962   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.6962   -1.8660    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   10.2422    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  3  4  2  0\n  4  5  1  0\n  5  6  1  0\n  6  1  1  0\n  1  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  2  0\n 10  6  1  0\n 10 11  1  0\n  6 12  1  0\n 14 15  2  0\n 15 16  1  0\n 16 17  2  0\n 17 18  1  0\n 18 19  2  0\n 19 14  1  0\n 14 20  1  0\n 20 21  1  0\n 21 22  1  0\n 22 23  2  0\n 23 19  1  0\n 23 24  1  0\nA   11\nR₁\nA   13\nB\nA   24\nR₁\nA   25\nH–B\nM  CHG  2   5   1  25   1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              3.0981,
+              0
+            ],
+            "to": [
+              4.1981,
+              0
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "pluses": [
+          [
+            8.8122,
+            0
+          ]
+        ],
+        "curly": [
+          {
+            "from": {
+              "atom": [
+                0.4898,
+                -2.3837
+              ]
+            },
+            "to": {
+              "atom": [
+                0.866,
+                -1.35
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  0.866,
+                  -0.5
+                ],
+                [
+                  0.866,
+                  -1.35
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  0,
+                  -1
+                ],
+                [
+                  0.866,
+                  -0.5
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          }
+        ]
+      }
+    ]
+  },
+  "fischer-indol": {
+    "title": "Enhydrazin, [3,3]-Umlagerung, Ringschluss, NH₃-Abspaltung",
+    "steps": [
+      {
+        "caption": "1. Das Arylhydrazon (aus Arylhydrazin + Keton) tautomerisiert säurekatalysiert zum Enhydrazin — wie ein Imin zum Enamin. Dafür braucht das Keton ein α-H. Ab hier in der Lage des entstehenden Rings gezeichnet.",
+        "mol": "\n  OC-oecho\n\n 28 28  0  0  0  0            999 V2000\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    1.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.3000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4641   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -2.3000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    1.8500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9959   -1.7250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    7.3362    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4701    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.6041    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.6041   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4701   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.3362   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.2022    1.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    9.0682    0.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    9.0682   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.2022   -1.3000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.9342   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.2022   -2.3000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.2022    1.8500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    9.8043    0.9250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  1  2  0\n  1  7  1  0\n  8  9  2  0\n  9 10  1  0\n  7  8  1  0\n  9 11  1  0\n 10 12  1  0\n  7 13  1  0\n 10 14  1  0\n 15 16  1  0\n 16 17  2  0\n 17 18  1  0\n 18 19  2  0\n 19 20  1  0\n 20 15  2  0\n 15 21  1  0\n 22 23  1  0\n 23 24  2  0\n 21 22  1  0\n 23 25  1  0\n 24 26  1  0\n 21 27  1  0\n 22 28  1  0\nA   11\nR₁\nA   12\nR₂\nA   25\nR₁\nA   26\nR₂\nM  END",
+        "arrows": [
+          {
+            "from": [
+              4.1041,
+              0
+            ],
+            "to": [
+              5.2041,
+              0
+            ],
+            "mode": "equilibrium-open-angle"
+          }
+        ],
+        "texts": [
+          {
+            "at": [
+              4.3941,
+              0.75
+            ],
+            "text": "H⁺"
+          }
+        ]
+      },
+      {
+        "caption": "2. [3,3]-Sigmatrope Umlagerung (nach Protonierung von N2): Die schwache N–N-Bindung bricht, zwischen dem ortho-C des Rings und dem Enamin-C entsteht die neue C–C-Bindung. Der Aromat ist vorübergehend aufgehoben.",
+        "mol": "\n  OC-oecho\n\n 29 29  0  0  0  0            999 V2000\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    1.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.3000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4641   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -2.3000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    1.8500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3342    0.9250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    7.9362    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.0701    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.2041    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.2041   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.0701   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.9362   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.8022    1.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    9.6682    0.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    9.6682   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.8022   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   10.5342   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.8022   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.8022    1.8500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n   10.4043    0.9250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    7.9362   -1.3500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  1  2  0\n  1  7  1  0\n  8  9  1  0\n  9 10  2  0\n  7  8  1  0\n  9 11  1  0\n 10 12  1  0\n  7 13  1  0\n  8 14  1  0\n 15 16  1  0\n 16 17  2  0\n 17 18  1  0\n 18 19  2  0\n 19 20  1  0\n 20 15  1  0\n 15 21  2  0\n 22 23  2  0\n 23 24  1  0\n 24 20  1  0\n 23 25  1  0\n 24 26  1  0\n 21 27  1  0\n 22 28  1  0\n 20 29  1  0\nA   11\nR₁\nA   12\nR₂\nA   25\nR₁\nA   26\nR₂\nM  END",
+        "arrows": [
+          {
+            "from": [
+              4.1041,
+              0
+            ],
+            "to": [
+              5.8041,
+              0
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "texts": [
+          {
+            "at": [
+              4.3041,
+              0.75
+            ],
+            "text": "H⁺, Δ"
+          }
+        ],
+        "curly": [
+          {
+            "from": {
+              "bond": [
+                [
+                  2.5981,
+                  -0.5
+                ],
+                [
+                  1.7321,
+                  -1.3
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  1.7321,
+                  -1.3
+                ],
+                [
+                  0.866,
+                  -0.5
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  0.866,
+                  -0.5
+                ],
+                [
+                  0.866,
+                  0.5
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  0.866,
+                  0.5
+                ],
+                [
+                  1.7321,
+                  1
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  1.7321,
+                  1
+                ],
+                [
+                  2.5981,
+                  0.5
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  2.5981,
+                  0.5
+                ],
+                [
+                  2.5981,
+                  -0.5
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          }
+        ]
+      },
+      {
+        "caption": "3. Rearomatisierung durch Tautomerie (das H am sp³-C wandert zum N): Anilin und Iminium-Ion im selben Molekül.",
+        "mol": "\n  OC-oecho\n\n 30 30  0  0  0  0            999 V2000\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    1.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4641   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    1.8500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3342    0.9250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660   -1.3500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n   10.2762    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4101    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.5441    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.5441   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4101   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   10.2762   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   11.1422    1.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   12.0082    0.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   12.0082   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   11.1422   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   12.8742   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   11.1422   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   11.1422    1.8500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n   10.4061    1.4250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n   12.7443    0.9250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  1  1  0\n  1  7  2  0\n  8  9  2  0\n  9 10  1  0\n 10  6  1  0\n  9 11  1  0\n 10 12  1  0\n  7 13  1  0\n  8 14  1  0\n  6 15  1  0\n 16 17  1  0\n 17 18  2  0\n 18 19  1  0\n 19 20  2  0\n 20 21  1  0\n 21 16  2  0\n 16 22  1  0\n 23 24  2  0\n 24 25  1  0\n 25 21  1  0\n 24 26  1  0\n 25 27  1  0\n 22 28  1  0\n 22 29  1  0\n 23 30  1  0\nA   11\nR₁\nA   12\nR₂\nA   26\nR₁\nA   27\nR₂\nM  CHG  1  23   1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              4.1041,
+              0
+            ],
+            "to": [
+              8.1441,
+              0
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "texts": [
+          {
+            "at": [
+              4.3041,
+              0.75
+            ],
+            "text": "Tautomerie, H⁺"
+          }
+        ]
+      },
+      {
+        "caption": "4. Das Anilin-N greift das Iminium-C an: Der Fünfring schließt sich (cyclisches Aminal).",
+        "mol": "\n  OC-oecho\n\n 29 30  0  0  0  0            999 V2000\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    1.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4641   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    1.8500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9959    1.4250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3342    0.9250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    7.3362    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4701    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.6041    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.6041   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4701   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.3362   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.2872    0.8090    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    8.8750    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.2872   -0.8090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.7813   -0.4226    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.8750   -1.6180    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.9965    1.6078    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    9.5821    0.7071    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    7.7876   -1.4967    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  1  2  0\n  1  7  1  0\n  8  9  2  0\n  9 10  1  0\n 10  6  1  0\n  9 11  1  0\n 10 12  1  0\n  7 13  1  0\n  7 14  1  0\n  8 15  1  0\n 16 17  1  0\n 17 18  2  0\n 18 19  1  0\n 19 20  2  0\n 20 21  1  0\n 21 16  2  0\n 16 22  1  0\n 22 23  1  0\n 23 24  1  0\n 24 21  1  0\n 23 25  1  0\n 24 26  1  0\n 22 27  1  0\n 23 28  1  0\n 24 29  1  0\nA   11\nR₁\nA   12\nR₂\nA   25\nR₁\nA   26\nR₂\nM  CHG  2   8   1  22   1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              4.1041,
+              0
+            ],
+            "to": [
+              5.2041,
+              0
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "curly": [
+          {
+            "from": {
+              "atom": [
+                1.7321,
+                1
+              ]
+            },
+            "to": {
+              "atom": [
+                2.5981,
+                -0.5
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  2.5981,
+                  -0.5
+                ],
+                [
+                  2.5981,
+                  0.5
+                ]
+              ]
+            },
+            "to": {
+              "atom": [
+                2.5981,
+                0.5
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          }
+        ]
+      },
+      {
+        "caption": "5. Nach Protonierung geht NH₃ ab (als NH₄⁺), und Abgabe des H am C3 macht den Fünfring aromatisch: Indol. Gesamtbilanz: Arylhydrazon → Indol + NH₃. (Das N steht hier oben, weil die neue C–C-Bindung zur unteren ortho-Position geknüpft wurde — dasselbe Molekül wie im Schema.)",
+        "mol": "\n  OC-oecho\n\n 27 28  0  0  0  0            999 V2000\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8171    0.8090    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    2.4049    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.8171   -0.8090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.3112   -0.4226    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.4049   -1.6180    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.5264    1.6078    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    3.1120    0.7071    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.3175   -1.4967    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    7.3940    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.5280    1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.6620    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.6620   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.5280   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.3940   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.3451    0.8090    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    8.9329    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.3451   -0.8090    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.9329    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.9329   -1.6180    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.8447    1.4967    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n   12.1429    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  1  2  0\n  1  7  1  0\n  7  8  1  0\n  8  9  1  0\n  9  6  1  0\n  8 10  1  0\n  9 11  1  0\n  7 12  1  0\n  8 13  1  0\n  9 14  1  0\n 15 16  1  0\n 16 17  2  0\n 17 18  1  0\n 18 19  2  0\n 19 20  1  0\n 20 15  2  0\n 15 21  1  0\n 21 22  1  0\n 22 23  2  0\n 23 20  1  0\n 22 24  1  0\n 23 25  1  0\n 21 26  1  0\nA   10\nR₁\nA   11\nR₂\nA   24\nR₁\nA   25\nR₂\nA   27\nNH₄\nM  CHG  2  13   1  27   1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              4.162,
+              0
+            ],
+            "to": [
+              5.262,
+              0
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "pluses": [
+          [
+            10.8229,
+            0
+          ]
+        ],
+        "curly": [
+          {
+            "from": {
+              "bond": [
+                [
+                  1.8171,
+                  -0.809
+                ],
+                [
+                  1.3175,
+                  -1.4967
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  2.4049,
+                  0
+                ],
+                [
+                  1.8171,
+                  -0.809
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  2.4049,
+                  0
+                ],
+                [
+                  3.112,
+                  0.7071
+                ]
+              ]
+            },
+            "to": {
+              "atom": [
+                3.112,
+                0.7071
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          }
+        ]
+      }
+    ]
+  },
+  "transaminierung-plp": {
+    "title": "Aldimin → chinoides Intermediat → Ketimin",
+    "steps": [
+      {
+        "caption": "1. Das Coenzym Pyridoxalphosphat (PLP) ist im Enzym als Imin an ein Lysin gebunden. Die Aminosäure verdrängt das Lysin (Transiminierung): externes Aldimin. Der Pyridin-Ring ist hier vereinfacht (ohne OH, CH₃, CH₂OPO₃²⁻); wichtig ist nur das protonierte Ring-N — die Elektronenfalle.",
+        "mol": "\n  OC-oecho\n\n 22 21  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    6.2081    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.0741    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.9401    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.9401   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    8.8062    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    7.0741    1.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    7.9401    2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.3380    0.9250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    8.6762    1.5750    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    7.9401    3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.8062    3.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.8062    4.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.9401    5.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    7.0741    4.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.0741    3.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.9401    5.8500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  2  6  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  2  0\n  9 11  1  0\n  8 12  1  0\n 12 13  2  0\n  8 14  1  0\n 13 15  1  0\n 16 17  1  0\n 17 18  2  0\n 18 19  1  0\n 19 20  2  0\n 20 21  1  0\n 21 16  2  0\n 13 16  1  0\n 19 22  1  0\nA    1\nR₁\nA    7\nR₁\nM  CHG  4   5  -1   6   1  11  -1  19   1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              3.2481,
+              1
+            ],
+            "to": [
+              5.4681,
+              1
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "texts": [
+          {
+            "at": [
+              3.4481,
+              1.75
+            ],
+            "text": "PLP–Lys"
+          },
+          {
+            "at": [
+              3.8381,
+              0.8
+            ],
+            "text": "−Lys"
+          }
+        ]
+      },
+      {
+        "caption": "2. Das α-H der Aminosäure wird abgespalten (Lysin als Base). Das Elektronenpaar fließt über die C=N-Bindung bis in den Pyridinring, dessen N⁺ es aufnimmt: chinoides Intermediat. Ohne PLP wäre dieses C–H nicht acide.",
+        "mol": "\n  OC-oecho\n\n 33 31  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.1299    0.9250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    2.4682    1.5750    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    3.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    4.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    5.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    4.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    3.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    5.8500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3701    0.9250    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.0881    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.9541    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8201    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8201   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    7.6862    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.9541    1.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8201    2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.5562    1.5750    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8201    3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.6862    3.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.6862    4.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8201    5.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    5.9541    4.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.9541    3.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8201    5.8500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n   10.6662    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  2  6  1  0\n  6  7  2  0\n  2  8  1  0\n  7  9  1  0\n 10 11  1  0\n 11 12  2  0\n 12 13  1  0\n 13 14  2  0\n 14 15  1  0\n 15 10  2  0\n  7 10  1  0\n 13 16  1  0\n 18 19  1  0\n 19 20  1  0\n 20 21  2  0\n 20 22  1  0\n 19 23  2  0\n 23 24  1  0\n 24 25  1  0\n 26 27  1  0\n 27 28  2  0\n 28 29  1  0\n 29 30  1  0\n 30 31  2  0\n 31 26  1  0\n 24 26  2  0\n 29 32  1  0\nA    1\nR₁\nA   17\nLys–NH₂\nA   18\nR₁\nA   33\nLys–NH₃\nM  CHG  4   5  -1  13   1  22  -1  33   1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              3.2481,
+              1
+            ],
+            "to": [
+              4.3481,
+              1
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "pluses": [
+          [
+            8.5862,
+            1
+          ]
+        ],
+        "curly": [
+          {
+            "from": {
+              "atom": [
+                -1.3701,
+                0.925
+              ]
+            },
+            "to": {
+              "atom": [
+                0.1299,
+                0.925
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  0.866,
+                  0.5
+                ],
+                [
+                  0.1299,
+                  0.925
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  0.866,
+                  0.5
+                ],
+                [
+                  0.866,
+                  1.5
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  0.866,
+                  1.5
+                ],
+                [
+                  1.7321,
+                  2
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  1.7321,
+                  2
+                ],
+                [
+                  1.7321,
+                  3
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  1.7321,
+                  3
+                ],
+                [
+                  0.866,
+                  3.5
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  0.866,
+                  3.5
+                ],
+                [
+                  0.866,
+                  4.5
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  0.866,
+                  4.5
+                ],
+                [
+                  1.7321,
+                  5
+                ]
+              ]
+            },
+            "to": {
+              "atom": [
+                1.7321,
+                5
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          }
+        ]
+      },
+      {
+        "caption": "3. Das Lysin gibt das Proton zurück — aber an C4′ statt an Cα: Ketimin. Die C=N-Bindung ist damit vom Aminosäure-C zum Coenzym-C gewandert.",
+        "mol": "\n  OC-oecho\n\n 34 32  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.4682    1.5750    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    3.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    4.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    5.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    4.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    3.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    5.8500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    2.7713    1.4000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    4.3573    0.4843    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.7173    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.5833    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4494    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4494   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   10.3154    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    8.5833    1.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4494    2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   10.1855    1.5750    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n   10.1855    2.4250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4494    3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   10.3154    3.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   10.3154    4.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4494    5.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    8.5833    4.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.5833    3.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4494    5.8500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n   13.1754    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  2  6  2  0\n  6  7  1  0\n  7  8  1  0\n  9 10  1  0\n 10 11  2  0\n 11 12  1  0\n 12 13  1  0\n 13 14  2  0\n 14  9  1  0\n  7  9  2  0\n 12 15  1  0\n 16 17  1  0\n 18 19  1  0\n 19 20  1  0\n 20 21  2  0\n 20 22  1  0\n 19 23  2  0\n 23 24  1  0\n 24 25  1  0\n 24 26  1  0\n 27 28  1  0\n 28 29  2  0\n 29 30  1  0\n 30 31  2  0\n 31 32  1  0\n 32 27  2  0\n 24 27  1  0\n 30 33  1  0\nA    1\nR₁\nA   17\nNH₂Lys\nA   18\nR₁\nA   34\nLys–NH₂\nM  CHG  4   5  -1  17   1  22  -1  30   1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              5.8773,
+              1
+            ],
+            "to": [
+              6.9773,
+              1
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "pluses": [
+          [
+            11.2154,
+            1
+          ]
+        ],
+        "curly": [
+          {
+            "from": {
+              "atom": [
+                1.7321,
+                5
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  1.7321,
+                  5
+                ],
+                [
+                  0.866,
+                  4.5
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  0.866,
+                  3.5
+                ],
+                [
+                  0.866,
+                  4.5
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  1.7321,
+                  3
+                ],
+                [
+                  0.866,
+                  3.5
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  1.7321,
+                  2
+                ],
+                [
+                  1.7321,
+                  3
+                ]
+              ]
+            },
+            "to": {
+              "atom": [
+                2.7713,
+                1.4
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  2.7713,
+                  1.4
+                ],
+                [
+                  4.3573,
+                  0.4843
+                ]
+              ]
+            },
+            "to": {
+              "atom": [
+                4.3573,
+                0.4843
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          }
+        ]
+      },
+      {
+        "caption": "4. Hydrolyse des Ketimins (Umkehrung der Iminbildung) setzt die α-Ketosäure frei; das Coenzym bleibt als Pyridoxaminphosphat (PMP) zurück. In der zweiten Halbreaktion läuft alles rückwärts mit α-Ketoglutarat: PMP gibt die NH₂-Gruppe ab, es entsteht Glutamat und PLP.",
+        "mol": "\n  OC-oecho\n\n 23 21  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.4682    1.5750    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    2.4682    2.4250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    3.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    4.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    5.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    4.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    3.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    5.8500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    5.1681    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.0341    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.9001    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.9001   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    7.7662    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    6.0341    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    9.9762    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  2  6  2  0\n  6  7  1  0\n  7  8  1  0\n  7  9  1  0\n 10 11  1  0\n 11 12  2  0\n 12 13  1  0\n 13 14  2  0\n 14 15  1  0\n 15 10  2  0\n  7 10  1  0\n 13 16  1  0\n 17 18  1  0\n 18 19  1  0\n 19 20  2  0\n 19 21  1  0\n 18 22  2  0\nA    1\nR₁\nA   17\nR₁\nA   23\nPMP\nM  CHG  3   5  -1  13   1  21  -1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              3.2481,
+              1
+            ],
+            "to": [
+              4.4281,
+              1
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "pluses": [
+          [
+            8.6662,
+            1
+          ]
+        ],
+        "texts": [
+          {
+            "at": [
+              3.4481,
+              1.75
+            ],
+            "text": "H₂O"
+          }
+        ]
+      }
+    ]
+  },
+  "maillard-amadori": {
+    "title": "Iminium-Ion, Enaminol, Keto-Amin",
+    "steps": [
+      {
+        "caption": "1. Die offenkettige Aldose bildet mit einer Aminogruppe (z. B. der Lysin-Seitenkette eines Proteins) — wie bei der Iminbildung — ein Iminium-Ion (Schiff-Base, protoniert).",
+        "mol": "\n  OC-oecho\n\n 15 13  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8981    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.7641    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.6301    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.7641    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    7.0280    1.9250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4962    0.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   10.3622    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4962    1.3500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    7.0280    0.9250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  1  0\n  3  5  2  0\n  3  6  1  0\n  7  8  1  0\n  8  9  1  0\n  8 10  1  0\n 10 11  1  0\n  9 12  2  0\n 12 13  1  0\n 12 14  1  0\n  8 15  1  0\nA    1\nR₁\nA    6\nH\nA    7\nR₁\nA   13\nR₂\nM  CHG  1  12   1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              3.1581,
+              0.5
+            ],
+            "to": [
+              6.1581,
+              0.5
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "texts": [
+          {
+            "at": [
+              3.3581,
+              1.25
+            ],
+            "text": "R₂–NH₂, H⁺"
+          },
+          {
+            "at": [
+              4.1381,
+              0.3
+            ],
+            "text": "−H₂O"
+          }
+        ]
+      },
+      {
+        "caption": "2. Das H an C2 (neben dem Iminium-C) wird abgespalten: 1,2-Enaminol — ein Enol, das zugleich ein Enamin ist.",
+        "mol": "\n  OC-oecho\n\n 19 15  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.1299    1.9250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4641    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    1.3500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    0.1299    0.9250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8227    0.3750    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.9441    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8101    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.6762    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8101    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    6.0740    1.9250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    8.5422    0.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4082    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.5422    1.3500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n   11.7282    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  1  0\n  4  5  1  0\n  3  6  2  0\n  6  7  1  0\n  6  8  1  0\n  2  9  1  0\n 11 12  1  0\n 12 13  2  0\n 12 14  1  0\n 14 15  1  0\n 13 16  1  0\n 16 17  1  0\n 16 18  1  0\nA    1\nR₁\nA    7\nR₂\nA   10\nB\nA   11\nR₁\nA   17\nR₂\nA   19\nH–B\nM  CHG  2   6   1  19   1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              4.1041,
+              0.5
+            ],
+            "to": [
+              5.2041,
+              0.5
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "pluses": [
+          [
+            10.2982,
+            0.5
+          ]
+        ],
+        "curly": [
+          {
+            "from": {
+              "atom": [
+                -0.8227,
+                0.375
+              ]
+            },
+            "to": {
+              "atom": [
+                0.1299,
+                0.925
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  0.866,
+                  0.5
+                ],
+                [
+                  0.1299,
+                  0.925
+                ]
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  0.866,
+                  0.5
+                ],
+                [
+                  1.7321,
+                  0
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  1.7321,
+                  0
+                ],
+                [
+                  2.5981,
+                  0.5
+                ]
+              ]
+            },
+            "to": {
+              "atom": [
+                2.5981,
+                0.5
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          }
+        ]
+      },
+      {
+        "caption": "3. Keto-Enol-Tautomerie: C1 wird protoniert, das O-Elektronenpaar bildet die C=O-Bindung an C2.",
+        "mol": "\n  OC-oecho\n\n 19 15  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.1299    1.9250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4641    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    1.3500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -1.2000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321   -2.2000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.9441    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8101    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.6762    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8101    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    6.0740    1.9250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    8.5422    0.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4082    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.5422    1.3500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n   11.2282    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  2  4  1  0\n  4  5  1  0\n  3  6  1  0\n  6  7  1  0\n  6  8  1  0\n  9 10  1  0\n 11 12  1  0\n 12 13  1  0\n 12 14  2  0\n 14 15  1  0\n 13 16  1  0\n 16 17  1  0\n 16 18  1  0\nA    1\nR₁\nA    7\nR₂\nA   10\nB\nA   11\nR₁\nA   17\nR₂\nA   19\nB\nM  CHG  2  10   1  14   1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              4.1041,
+              0.5
+            ],
+            "to": [
+              5.2041,
+              0.5
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "pluses": [
+          [
+            10.2982,
+            0.5
+          ]
+        ],
+        "curly": [
+          {
+            "from": {
+              "atom": [
+                0.866,
+                1.5
+              ]
+            },
+            "to": {
+              "bond": [
+                [
+                  0.866,
+                  0.5
+                ],
+                [
+                  0.866,
+                  1.5
+                ]
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  0.866,
+                  0.5
+                ],
+                [
+                  1.7321,
+                  0
+                ]
+              ]
+            },
+            "to": {
+              "atom": [
+                1.7321,
+                -1.2
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  1.7321,
+                  -1.2
+                ],
+                [
+                  1.7321,
+                  -2.2
+                ]
+              ]
+            },
+            "to": {
+              "atom": [
+                1.7321,
+                -2.2
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          }
+        ]
+      },
+      {
+        "caption": "4. Abgabe des Protons: das Amadori-Produkt, eine 1-Amino-1-desoxy-2-ketose. Es ist der Ausgangspunkt der Maillard-Reaktion (Bräunung, Röstaromen) — und im Blut die Grundlage des HbA1c-Werts.",
+        "mol": "\n  OC-oecho\n\n 15 13  0  0  0  0            999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.1299    1.9250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    0.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    3.4641    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.5981    1.3500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    6.0241    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8901    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.7562    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8901    1.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    8.6222    0.5000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n    9.4882    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.6222    1.3500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  2  4  2  0\n  4  5  1  0\n  3  6  1  0\n  6  7  1  0\n  6  8  1  0\n  9 10  1  0\n 10 11  1  0\n 10 12  2  0\n 11 13  1  0\n 13 14  1  0\n 13 15  1  0\nA    1\nR₁\nA    7\nR₂\nA    9\nR₁\nA   14\nR₂\nM  CHG  1   4   1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              4.1041,
+              0.5
+            ],
+            "to": [
+              5.2841,
+              0.5
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "texts": [
+          {
+            "at": [
+              4.3041,
+              1.25
+            ],
+            "text": "−H⁺"
+          }
+        ]
+      }
+    ]
+  },
+  "mutarotation-halbacetal": {
+    "title": "Intramolekulare Halbacetalbildung — von beiden Seiten",
+    "steps": [
+      {
+        "caption": "1. Die offene Kette (hier schon in Ringform gefaltet) wird am Carbonyl-O protoniert (Säure katalysiert, auch Basen beschleunigen).",
+        "mol": "\n  OC-oecho\n\n 20 16  0  0  0  0            999 V2000\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.3000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7361    1.7250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.7280    0.4250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    3.5940   -0.0750    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.4562    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.5901    1.3000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.7241    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.7241   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.5901   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    7.4562   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8540    1.7250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    8.3222    1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    8.3222    1.8500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n   10.2722    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  1  1  0\n  2  7  1  0\n  1  8  2  0\n  9 10  1  0\n 12 13  1  0\n 13 14  1  0\n 14 15  1  0\n 15 16  1  0\n 16 11  1  0\n 12 17  1  0\n 11 18  2  0\n 18 19  1  0\nA   10\nA\nA   20\nA\nM  CHG  2  18   1  20  -1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              4.154,
+              0
+            ],
+            "to": [
+              5.254,
+              0
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "pluses": [
+          [
+            9.2222,
+            0
+          ]
+        ],
+        "curly": [
+          {
+            "from": {
+              "atom": [
+                1.7321,
+                1
+              ]
+            },
+            "to": {
+              "atom": [
+                2.728,
+                0.425
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  2.728,
+                  0.425
+                ],
+                [
+                  3.594,
+                  -0.075
+                ]
+              ]
+            },
+            "to": {
+              "atom": [
+                3.594,
+                -0.075
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          }
+        ]
+      },
+      {
+        "caption": "2. Die OH-Gruppe an C5 greift das Carbonyl-C an: Sechsring (Pyranose). Das planare C=O wird von oben oder von unten angegriffen — so entstehen zwei Anomere.",
+        "mol": "\n  OC-oecho\n\n 18 17  0  0  0  0            999 V2000\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.3000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.7361    1.7250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    1.8500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    5.6842    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.8182    1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    3.9521    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.9521   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.8182   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    5.6842   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.0821    1.4250    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    6.5502    1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    6.5502    1.8500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  1  1  0\n  2  7  1  0\n  1  8  2  0\n  8  9  1  0\n 11 12  1  0\n 12 13  1  0\n 13 14  1  0\n 14 15  1  0\n 15 10  1  0\n 10 11  1  0\n 11 16  1  0\n 10 17  1  0\n 17 18  1  0\nM  CHG  2   8   1  11   1\nM  END",
+        "arrows": [
+          {
+            "from": [
+              2.3821,
+              0
+            ],
+            "to": [
+              3.4821,
+              0
+            ],
+            "mode": "open-angle"
+          }
+        ],
+        "curly": [
+          {
+            "from": {
+              "atom": [
+                0,
+                1.3
+              ]
+            },
+            "to": {
+              "atom": [
+                0.866,
+                0.5
+              ]
+            },
+            "type": "pair",
+            "side": -1,
+            "arc": "auto"
+          },
+          {
+            "from": {
+              "bond": [
+                [
+                  0.866,
+                  0.5
+                ],
+                [
+                  1.7321,
+                  1
+                ]
+              ]
+            },
+            "to": {
+              "atom": [
+                1.7321,
+                1
+              ]
+            },
+            "type": "pair",
+            "side": 1,
+            "arc": "auto"
+          }
+        ]
+      },
+      {
+        "caption": "3. Nach Abgabe des Protons: das cyclische Halbacetal, als β-Anomer (OH am anomeren C hier nach vorn) oder α-Anomer. In Lösung wandeln sich beide über die offene Form ineinander um — der Drehwert ändert sich, bis das Gleichgewicht erreicht ist (Mutarotation; Glucose: ca. 64 % β, 36 % α, < 1 % offen).",
+        "mol": "\n  OC-oecho\n\n 16 16  0  0  0  0            999 V2000\n    0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.7321    1.8500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    9.9641    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.0981    1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    8.2321    0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.2321   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.0981   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    9.9641   -0.5000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   10.8301    1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   10.8301    1.8500    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n  2  3  1  0\n  3  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  1  1  0\n  1  2  1  0\n  1  7  1  1\n  7  8  1  0\n 10 11  1  0\n 11 12  1  0\n 12 13  1  0\n 13 14  1  0\n 14  9  1  0\n  9 10  1  0\n  9 15  1  6\n 15 16  1  0\nM  END",
+        "arrows": [
+          {
+            "from": [
+              2.2321,
+              0
+            ],
+            "to": [
+              7.8321,
+              0
+            ],
+            "mode": "equilibrium-open-angle"
+          }
+        ],
+        "texts": [
+          {
+            "at": [
+              2.4321,
+              0.75
+            ],
+            "text": "über die offene Form"
           }
         ]
       }
