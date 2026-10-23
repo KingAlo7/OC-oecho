@@ -148,6 +148,11 @@ function scene() {
         if (sp.below) texts.push({ at: [r4((x0 + x1) / 2 - tw(sp.below) / 2), r4(ya - 0.2)], text: sp.below });
         x = x1 + 0.25 - gap + 0.1;
       });
+      // two atoms on one spot garble the labels — say so while seeding
+      for (let i = 0; i < m.atoms.length; i++) for (let j = i + 1; j < m.atoms.length; j++) {
+        const A = m.atoms[i], C = m.atoms[j];
+        if (Math.hypot(A.x - C.x, A.y - C.y) < 0.3) console.warn('  ⚠ Atome übereinander (' + (A.alias || A.sym) + '/' + (C.alias || C.sym) + '): ' + String(spec.caption).slice(0, 50));
+      }
       out.mol = S.mol();
       if (arrows.length) out.arrows = arrows;
       if (pluses.length) out.pluses = pluses;
