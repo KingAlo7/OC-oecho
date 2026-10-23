@@ -28,7 +28,17 @@ const rad = d => d * Math.PI / 180;
 const polar = (p, deg, l) => [p[0] + (l == null ? 1 : l) * Math.cos(rad(deg)), p[1] + (l == null ? 1 : l) * Math.sin(rad(deg))];
 
 /* Rough half-width of what is printed at an atom, in bond lengths. */
-function halfWidth(a) {
+const VALENCE = { N: 3, O: 2, S: 2, P: 3, Se: 2 };
+function halfWidth(a, m, i) {
+  // a heteroatom drawn with implicit H ("OH", "NH₂") is wider on the right
+  if (!a.alias && VALENCE[a.sym] && m) {
+    const used = m.bonds.reduce((t, b) => t + (b.a === i || b.b === i ? b.order : 0), 0);
+    const nh = VALENCE[a.sym] + (a.sym === 'N' && a.charge > 0 ? 1 : 0) - (a.charge < 0 ? 1 : 0) - used;
+    if (nh > 0) return 0.25 + 0.3 * Math.min(nh, 1) + (nh > 1 ? 0.1 : 0) + (a.charge ? 0.15 : 0);
+  }
+  return halfWidthPlain(a);
+}
+function halfWidthPlain(a) {
   if (a.alias) return 0.12 + 0.19 * [...a.alias.replace(/[₀-₉⁰-⁹⁺⁻]/g, '')].length + 0.08 * (a.alias.match(/[₀-₉]/g) || []).length + (a.charge ? 0.12 : 0);
   if (a.sym === 'C') return a.charge ? 0.3 : 0.05;
   return 0.25 + (a.charge ? 0.15 : 0);
@@ -115,7 +125,7 @@ function scene() {
       const gap = spec.gap == null ? 0.45 : spec.gap;
       const box = f => {
         let x0 = Infinity, x1 = -Infinity;
-        f.atoms.forEach(i => { const a = m.atoms[i], h = halfWidth(a); x0 = Math.min(x0, a.x - h); x1 = Math.max(x1, a.x + h); });
+        f.atoms.forEach(i => { const a = m.atoms[i], h = halfWidth(a, m, i); x0 = Math.min(x0, a.x - h); x1 = Math.max(x1, a.x + h); });
         return [x0, x1];
       };
       const allY = m.atoms.map(a => a.y);
