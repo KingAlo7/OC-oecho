@@ -37,10 +37,11 @@ R({
       const m = new Mol();
       const v = m.benzene(0, 0, B);
       const w = m.fuse(v[0], v[5], 6);          // w[0]…w[3], w[0] hängt an v[0]
+      // Ar–CH₂(w0)–CH₂(w1)–N(w2)=C(w3)(R₁)–Ar: the C=N sits next to the arene
       m.atoms[w[2]].sym = 'N';
-      m.bonds.find(x => (x.a === w[1] && x.b === w[2]) || (x.a === w[2] && x.b === w[1])).order = 2;
-      const rp = m.radial(w.cx, w.cy, w[1], B);
-      m.bond(w[1], m.gen(rp[0], rp[1], 'R₁'), 1);
+      m.bonds.find(x => (x.a === w[2] && x.b === w[3]) || (x.a === w[3] && x.b === w[2])).order = 2;
+      const rp = m.radial(w.cx, w.cy, w[3], B);
+      m.bond(w[3], m.gen(rp[0], rp[1], 'R₁'), 1);
       return m;
     })();
     return { reactants: [a], products: [b] };
