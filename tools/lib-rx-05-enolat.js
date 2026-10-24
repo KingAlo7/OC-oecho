@@ -266,6 +266,9 @@ R({
       const op = m.radial(0, 0, v[0], B);
       const o = m.add(op[0], op[1], 'O');
       m.bond(v[0], o, 2);
+      // R₂ of the ketone sits on the C=C carbon next to it
+      const r2p = m.radial(0, 0, v[2], B);
+      m.bond(v[2], m.gen(r2p[0], r2p[1], 'R₂'), 1);
       const rp = m.radial(0, 0, v[3], B);
       const r1 = m.gen(rp[0], rp[1], 'R₁');
       m.bond(v[3], r1, 1);
@@ -391,18 +394,18 @@ R({
       const m = new Mol();
       const r = m.gen(0, 0, 'R₁');
       const ca = m.add(DX, DY, 'C');
-      const z = m.gen(DX, DY + B, 'Z');
+      // Z (the second CO₂Et) leaves as CO₂ — what remains is R₁–CH₂–COOH
       const c = m.add(2 * DX, 0, 'C');
       const o1 = m.add(2 * DX, -B, 'O');
       const o2 = m.add(3 * DX, DY, 'O');
-      m.bond(r, ca, 1); m.bond(ca, z, 1); m.bond(ca, c, 1);
+      m.bond(r, ca, 1); m.bond(ca, c, 1);
       m.bond(c, o1, 2); m.bond(c, o2, 1);
       return m;
     })();
     return { reactants: [a], products: [b] };
   })(),
   above: '1. Base  2. R_1-X', below: '3. H_3O^+ , Δ  (-CO_2)',
-  substituents: 'Z = –CO₂Et (Malonester → Carbonsäure) oder –CO–CH₃ (Acetessigester → Methylketon) · R₁ = primäres Alkyl · X = Br, I, OTs',
+  substituents: 'Z = –CO₂Et (Malonester → Carbonsäure, gezeichnet) oder –CO–CH₃ (Acetessigester → Methylketon R₁–CH₂–CO–CH₃) · R₁ = primäres Alkyl · X = Br, I, OTs',
   key_points: [
     'Das doppelt aktivierte C–H hat pK_s ≈ 11–13 und ist mit Alkoholat vollständig deprotonierbar.',
     'Die Decarboxylierung gelingt nur, weil eine β-STÄNDIGE Carbonylgruppe da ist — über einen cyclischen sechsgliedrigen Übergangszustand.',

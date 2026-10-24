@@ -312,7 +312,8 @@ R({
     const b = (() => {
       const m = new Mol();
       const v = m.ring(5, 0, 0);
-      const bo = m.bonds.find(x => (x.a === v[2] && x.b === v[3]) || (x.a === v[3] && x.b === v[2]));
+      // cyclopent-2-enone: the C=C conjugated with the C=O (v0 carbonyl, v1=v2)
+      const bo = m.bonds.find(x => (x.a === v[1] && x.b === v[2]) || (x.a === v[2] && x.b === v[1]));
       bo.order = 2;
       const op = m.radial(0, 0, v[0], B);
       const o = m.add(op[0], op[1], 'O');
@@ -340,7 +341,8 @@ R({
     const a = (() => {
       const m = new Mol();
       const r1 = m.gen(0, 0, 'R₁'); const c = m.add(DX, DY, 'C');
-      const n = m.add(DX, DY + B, 'N'); const o = m.add(2 * DX, DY + B + DY, 'O');
+      // OH anti to R₂ — the anti group migrates, giving the N–R₂ amide
+      const n = m.add(DX, DY + B, 'N'); const o = m.add(0, DY + B + DY, 'O');
       const r2 = m.gen(2 * DX, 0, 'R₂');
       m.bond(r1, c, 1); m.bond(c, n, 2); m.bond(n, o, 1); m.bond(c, r2, 1);
       return m;
