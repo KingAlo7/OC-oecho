@@ -13,9 +13,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="OC Reaktionen">
 <script src="./pwa.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/openchemlib/dist/openchemlib-full.js"></script>
 <script src="./chem-text.js"></script>
 <script src="./mol-renderer.js"></script>
+<!-- OpenChemLib (~500 KB) loads in the background instead of blocking the
+     first paint; schemes and structures wait for MolRenderer.ready(). -->
+<script>MolRenderer.ready().catch(() => {});</script>
 <script src="./scheme-graph-editor.js"></script>
 <style>
 :root {
@@ -64,8 +66,14 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .brand-sub{font-size:0.72rem;font-weight:600;color:var(--accent);letter-spacing:0.04em;text-transform:uppercase;padding:0.15rem 0.45rem;background:var(--accent-soft);border:1px solid var(--accent);border-radius:6px;}
 .search-wrap{flex:1;max-width:380px;position:relative;}
 .search-icon{position:absolute;left:0.7rem;top:50%;transform:translateY(-50%);color:var(--muted2);font-size:0.95rem;pointer-events:none;}
-#search{width:100%;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:0.42rem 0.8rem 0.42rem 2.1rem;font-size:0.86rem;transition:all 0.15s;}
+#search{width:100%;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:0.42rem 2rem 0.42rem 2.1rem;font-size:0.86rem;transition:all 0.15s;}
 #search:focus{outline:none;border-color:var(--accent);background:var(--surface);box-shadow:0 0 0 3px var(--accent-soft);}
+.search-clear{position:absolute;right:0.3rem;top:50%;transform:translateY(-50%);width:26px;height:26px;display:flex;align-items:center;justify-content:center;border:none;border-radius:6px;background:transparent;color:var(--muted);font-size:1.15rem;line-height:1;cursor:pointer;font-family:inherit;}
+.search-clear:hover{background:var(--surface3);color:var(--text);}
+.search-clear[hidden]{display:none;}
+/* Phones: header button that opens the drawer with the search field */
+.search-btn{display:none;align-items:center;justify-content:center;width:40px;height:40px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);cursor:pointer;flex-shrink:0;padding:0;-webkit-tap-highlight-color:transparent;}
+.search-btn:active{background:var(--surface2);}
 .header-right{margin-left:auto;display:flex;align-items:center;gap:0.5rem;}
 .nav-link{font-size:0.82rem;font-weight:600;text-decoration:none;color:var(--accent);border:1px solid var(--accent);border-radius:7px;padding:0.32rem 0.78rem;transition:all 0.15s;white-space:nowrap;}
 .nav-link:hover{background:var(--accent);color:#fff;}
@@ -85,9 +93,13 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .sidebar::-webkit-scrollbar{width:6px;}
 .sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
 .sidebar-top{padding:0.85rem;border-bottom:1px solid var(--border);flex-shrink:0;}
-.sidebar-foot{margin-top:auto;padding:0.9rem 1rem;font-size:0.72rem;color:var(--muted2);text-decoration:none;flex-shrink:0;}
+.sidebar-foot{margin-top:auto;padding:0.9rem 1rem;font-size:0.72rem;color:var(--muted);text-decoration:none;flex-shrink:0;}
 .sidebar-foot:hover{color:var(--accent);}
-.sidebar-label{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted2);padding:0 0.25rem;margin-bottom:0.4rem;}
+.sidebar-label{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);padding:0 0.25rem;margin-bottom:0.4rem;}
+/* the search field, when it sits in the drawer (phones) */
+.sidebar .search-wrap{max-width:none;margin-bottom:0.85rem;}
+.no-results{padding:1.2rem 1rem;font-size:0.84rem;line-height:1.5;color:var(--muted);}
+.no-results[hidden]{display:none;}
 .diff-filter{display:flex;gap:0.3rem;margin-top:0.4rem;}
 .diff-pill{flex:1;padding:0.32rem 0;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-size:0.72rem;font-weight:700;text-align:center;border-radius:5px;cursor:pointer;transition:all 0.12s;user-select:none;}
 .diff-pill:hover{color:var(--text);}
@@ -125,6 +137,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .main{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
 .main::-webkit-scrollbar{width:8px;}
 .main::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+.loading{margin:auto;padding:3rem 1rem;color:var(--muted);font-size:0.9rem;}
 
 .welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem;text-align:center;}
 .welcome-logo{width:96px;height:96px;color:var(--accent);margin-bottom:1.5rem;opacity:0.92;}
@@ -134,6 +147,24 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .welcome-stats{display:flex;gap:0.6rem;flex-wrap:wrap;justify-content:center;}
 .stat-pill{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.6rem 1rem;font-size:0.8rem;color:var(--text-soft);}
 .stat-pill b{color:var(--accent);font-size:0.95rem;}
+/* Tablet + phone: the task list is in the drawer — say where to start */
+.welcome-cta{display:none;margin-top:1.6rem;align-items:center;gap:0.5rem;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:0 1.3rem;min-height:46px;font:inherit;font-size:0.95rem;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.welcome-cta:hover{background:#c2001a;}
+
+/* prev | counter | next at the end of a task — the counter stays centred */
+.q-nav{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:1rem;margin-top:2.2rem;padding-top:1.4rem;border-top:1px solid var(--border);}
+.q-nav-count{font-size:0.76rem;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;}
+.nav-btn{background:var(--surface);border:1px solid var(--border);color:var(--text-soft);padding:0.55rem 0.95rem;border-radius:8px;font-size:0.84rem;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:0.65rem;font-family:inherit;min-width:0;max-width:100%;text-align:left;justify-self:start;}
+.nav-btn.next{text-align:right;justify-self:end;justify-content:flex-end;}
+.nav-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
+/* No neighbour: keep the slot so the other button stays on its side. */
+.nav-btn:disabled{visibility:hidden;}
+.nav-arrow{flex-shrink:0;font-size:1rem;line-height:1;}
+.nav-btn-text{display:flex;flex-direction:column;gap:0.1rem;min-width:0;}
+.nav-btn.next .nav-btn-text{align-items:flex-end;}
+.nav-btn-kicker{font-size:0.66rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);}
+.nav-btn-label{font-size:0.82rem;color:var(--text-soft);max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.nav-btn:hover:not(:disabled) .nav-btn-label{color:inherit;}
 
 .q-wrap{padding:1.5rem 1.5rem 3rem;width:100%;}
 /* The whole task sits on ONE sheet, like the exam paper: every scheme,
@@ -279,6 +310,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 /* Scheme empty-state (no nodes yet) */
 .scheme-empty{padding:3rem 2rem;text-align:center;color:var(--muted);background:var(--surface2);border-radius:8px;border:1px dashed var(--border2);}
 .scheme-empty .upl-hint{margin-top:0.5rem;font-size:0.82rem;color:var(--muted2);}
+.scheme-loading{min-height:140px;display:flex;align-items:center;justify-content:center;color:var(--muted2);font-size:0.82rem;}
 @keyframes reveal-fade { from { background:rgba(255,251,232,0.92);} to { background:transparent;} }
 
 /* Scheme progress + toolbar */
@@ -403,24 +435,26 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
   .sidebar.open{transform:translateX(0);visibility:visible;transition:transform 0.22s ease-out;}
   .overlay{top:var(--header-h);}
   .q-wrap{padding:1.25rem 1.25rem 3rem;}
+  .welcome-cta{display:inline-flex;}
 }
 
 /* ════════════════════════════════════════════════════════════════════
    PHONE (≤ 760px)
    ════════════════════════════════════════════════════════════════════ */
 @media(max-width:760px){
-  :root{--header-h:100px;}
+  :root{--header-h:56px;}
 
-  /* Header: two-row layout — brand + actions on row 1, search full-width on row 2 */
-  header{flex-wrap:wrap;row-gap:0.45rem;column-gap:0.6rem;padding:0.5rem 0.85rem;height:auto;min-height:56px;
-    padding-top:max(0.5rem, env(safe-area-inset-top));align-items:center;}
-  .brand{gap:0.5rem;min-width:0;}
-  .brand-name{font-size:0.95rem;}
+  /* One header row. The search field moves to the top of the drawer, next
+     to its results (see placeSearch); the header keeps a search button. */
+  header{padding:0 0.75rem;gap:0.5rem;}
+  .brand{gap:0.5rem;min-width:0;flex-shrink:1;}
+  .brand-name{font-size:0.95rem;min-width:0;overflow:hidden;text-overflow:ellipsis;}
   .brand-sub{display:none;}
-  .search-wrap{flex-basis:100%;order:10;max-width:none;}
   /* 16 px — anything smaller makes iOS zoom the page when the field is focused */
-  #search{padding:0.5rem 0.8rem 0.5rem 2.1rem;font-size:16px;border-radius:9px;}
+  #search{padding:0.55rem 2.3rem 0.55rem 2.1rem;font-size:16px;border-radius:9px;}
+  .search-clear{width:36px;height:36px;right:0.15rem;}
   .header-right{gap:0.4rem;}
+  .search-btn{display:inline-flex;}
   .count-badge{display:none;}
   /* Admin is a desktop tool — keep only the link to the reactions */
   .nav-link.muted{display:none;}
@@ -509,6 +543,12 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 
   /* Hide answer-struct overflow gracefully */
   .answer-struct{padding:0.6rem;}
+
+  /* prev / next task: counter on top, two equal buttons */
+  .q-nav{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0.5rem;margin-top:1.75rem;padding-top:1rem;}
+  .q-nav-count{order:-1;grid-column:1 / -1;text-align:center;}
+  .nav-btn,.nav-btn.next{justify-self:stretch;padding:0.6rem 0.75rem;}
+  .nav-btn-label{white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-height:1.3;}
 }
 
 /* Tiny phones (≤ 380px) */
@@ -535,6 +575,34 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
   .composed-info-close{min-width:40px;min-height:40px;}
   .related-link,.expl-toggle{display:inline-flex;align-items:center;min-height:36px;}
 }
+
+/* Phones held sideways: little height — sheet edge to edge, compact spacing */
+@media (max-height:500px) and (max-width:1023px){
+  .q-wrap{padding:0 0 3rem;}
+  .q-page{padding:0.8rem 1.25rem 1.4rem;border:none;border-radius:0;box-shadow:none;}
+  .q-actionbar{margin:-0.8rem -1.25rem 0.8rem;padding:0.35rem 1.25rem;}
+  .q-title{font-size:1.3rem;}
+  .welcome{padding:1.25rem 1rem 2rem;justify-content:flex-start;}
+  .welcome-logo{width:56px;height:56px;margin-bottom:0.75rem;}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition-duration:0.01ms !important;animation-duration:0.01ms !important;}
+}
+
+/* Printing a task: the exam sheet only — schemes as they stand (letters
+   still to fill in stay letters), answer fields as boxes to write in. */
+@media print{
+  html,body{height:auto;overflow:visible;display:block;background:#fff;}
+  header,.sidebar,.overlay,.q-actionbar,.sg-rail,.composed-info,.q-nav,.reveal-btn,.answer-extra,.expl-toggle{display:none !important;}
+  .layout,.main{display:block;overflow:visible;height:auto;}
+  .q-wrap{padding:0;}
+  .q-page{max-width:none;padding:0;border:none;border-radius:0;box-shadow:none;}
+  .sg-host,.mcq-choice,.mech-step,.sec-hints{break-inside:avoid;}
+  /* the viewer is sized in pixels; beforeprint gives it a viewBox to scale with */
+  .sg-readonly .sg-canvas{min-height:0;}
+  .sa-area{resize:none;}
+}
 </style>
 </head>
 <body>
@@ -550,10 +618,14 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
   </a>
   <div class="search-wrap">
     <span class="search-icon">⌕</span>
-    <input id="search" type="text" placeholder="Fragen suchen…" oninput="globalSearch(this.value)" autocomplete="off">
+    <input id="search" type="text" placeholder="Fragen suchen…" oninput="globalSearch(this.value)" autocomplete="off" enterkeyhint="search" aria-label="Fragen suchen">
+    <button class="search-clear" type="button" onclick="clearSearch()" aria-label="Suche löschen" title="Suche löschen" hidden>×</button>
   </div>
   <div class="header-right">
     <span class="count-badge" id="count-badge">— Fragen</span>
+    <button class="search-btn" type="button" onclick="openSearch()" aria-label="Fragen suchen" title="Suchen">
+      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/></svg>
+    </button>
     <a href="./index.html" class="nav-link" title="Reaktionen nachschlagen">Reaktionen ↗</a>
     <a href="./admin.html" class="nav-link muted" title="Adminbereich">Admin</a>
   </div>
@@ -574,10 +646,11 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
       <div class="sidebar-label" style="margin-top:0.85rem">Kategorien</div>
     </div>
     <div id="cat-list"></div>
+    <div class="no-results" id="no-results" hidden></div>
     <a class="sidebar-foot" href="./lizenzen.html">Lizenzen und Hinweise</a>
   </nav>
 
-  <main class="main" id="main"></main>
+  <main class="main" id="main"><div class="loading" role="status">Aufgaben werden geladen…</div></main>
 </div>
 
 <script>
@@ -728,13 +801,42 @@ function showWelcome() {
     .concat(Object.entries(byType).map(([t,n]) =>
       `<div class="stat-pill"><b>${n}</b> ${TYPE_LABEL[t]||t}</div>`))
     .join('');
+  destroyViewers();
+  activeId = null;
+  document.querySelectorAll('.q-link.active').forEach(el => el.classList.remove('active'));
   document.getElementById('main').innerHTML = `
     <div class="welcome">
       <div class="welcome-logo">${LOGO_SVG}</div>
       <h1>OC <span class="red">Quiz</span></h1>
       <p>Interaktive Aufgaben rund um organische Chemie: mehrstufige Synthesen mit schrittweisem Lösungspfad, Regioselektivität, Mechanismen und Theorie. Jede Lösung verlinkt zurück auf die passende Reaktion unter Reaktionen.</p>
       <div class="welcome-stats">${statsHtml}</div>
+      <button class="welcome-cta" type="button" onclick="setSidebar(true)">Aufgabe auswählen</button>
     </div>`;
+}
+
+/* Neighbours of a task in the sidebar's order: same category, by name,
+   within the difficulty filter (the task itself always counts). */
+function neighbours(q) {
+  const cat = q.category || 'Theorie';
+  const list = questions
+    .filter(x => (x.category || 'Theorie') === cat && (qVisible(x) || x.id === q.id))
+    .sort(byName);
+  const i = list.findIndex(x => x.id === q.id);
+  return { prev: list[i - 1] || null, next: list[i + 1] || null, i, n: list.length };
+}
+
+function destroyViewers() {
+  Object.keys(_quizGraphViewers).forEach(k => {
+    try { _quizGraphViewers[k].destroy(); } catch (_) {}
+    delete _quizGraphViewers[k];
+  });
+}
+
+/* Bring a just-revealed answer into view (it opens below the fold on a phone). */
+function revealIntoView(el) {
+  if (!el) return;
+  const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  el.scrollIntoView({ block: 'nearest', behavior: smooth ? 'smooth' : 'auto' });
 }
 
 /* ── Renderers per type ──────────────────────────────────────────── */
@@ -855,7 +957,9 @@ function renderComposedScheme(q, scheme) {
     </div>`;
   }).join('');
 
-  setTimeout(() => {
+  // The viewer measures every structure with OpenChemLib, so it is built
+  // once the library is there (at once, after the first scheme).
+  setTimeout(() => MolRenderer.ready().then(() => {
     const container = document.getElementById(containerId);
     if (!container) return;
     if (_quizGraphViewers[q.id]) { try { _quizGraphViewers[q.id].destroy(); } catch (_) {} }
@@ -868,9 +972,13 @@ function renderComposedScheme(q, scheme) {
     // Structures arrive asynchronously; fit again once they are drawn.
     setTimeout(() => viewer.fitToContent(), 350);
     updateQuizProgress(q.id);
-  }, 0);
+  }).catch(err => {
+    console.error('OpenChemLib:', err);
+    const container = document.getElementById(containerId);
+    if (container) container.innerHTML = '<div class="scheme-empty">Die Strukturen konnten nicht geladen werden — bitte die Internetverbindung prüfen und die Seite neu laden.</div>';
+  }), 0);
 
-  return `<div id="${containerId}" class="sg-viewer-host"></div>` + infoPanels;
+  return `<div id="${containerId}" class="sg-viewer-host"><div class="scheme-loading">Schema wird gezeichnet…</div></div>` + infoPanels;
 }
 
 /* Tap on a node: hidden → reveal; revealed → show its explanation. */
@@ -1156,6 +1264,7 @@ window.pickMCQ = function(el, qid) {
   const isCorrect = el.dataset.correct === '1';
   const head = document.getElementById('mcq-head-'+qid);
   if (head) head.textContent = isCorrect ? '✓ Richtig' : '✗ Falsch — richtige Antwort markiert';
+  revealIntoView(ab);
 };
 
 function renderShortAnswer(q) {
@@ -1176,6 +1285,7 @@ function renderShortAnswer(q) {
 window.revealSA = function(qid) {
   const el = document.getElementById('sa-exp-'+qid);
   if (el) el.classList.add('open');
+  revealIntoView(el);
 };
 
 function renderMechanism(q) {
@@ -1216,6 +1326,7 @@ function renderMechanism(q) {
 window.revealMech = function(slot) {
   const c = document.getElementById('mech-step-'+slot);
   if (c) c.classList.add('revealed');
+  revealIntoView(c && c.querySelector('.answer-block'));
 };
 
 /* ── Modular sections ─────────────────────────────────────────────
@@ -1266,7 +1377,9 @@ function showQuestion(id) {
   const lnk = document.getElementById('link-'+id);
   if (lnk) lnk.classList.add('active');
   openSidebarFor(id);
-  history.replaceState(null,'','#'+id);
+  // A history entry per task: the back gesture / button steps back through
+  // the tasks instead of leaving the quiz (see popstate below).
+  if (location.hash !== '#' + id) history.pushState(null, '', '#' + id);
 
   let body = '';
   if (Array.isArray(q.sections) && q.sections.length) {
@@ -1300,10 +1413,21 @@ function showQuestion(id) {
       </div>
     </div>` : '';
 
-  Object.keys(_quizGraphViewers).forEach(k => {
-    try { _quizGraphViewers[k].destroy(); } catch (_) {}
-    delete _quizGraphViewers[k];
-  });
+  const nb = neighbours(q);
+  const navBtn = (t, dir) => `
+        <button class="nav-btn ${dir}" onclick="${t ? `showQuestion('${x(t.id)}')` : 'void 0'}" ${t ? '' : 'disabled'}>
+          ${dir === 'prev' ? '<span class="nav-arrow" aria-hidden="true">←</span>' : ''}
+          <span class="nav-btn-text"><span class="nav-btn-kicker">${dir === 'prev' ? 'Vorherige' : 'Nächste'}</span><span class="nav-btn-label">${renderLatexLabel(t ? t.name : '')}</span></span>
+          ${dir === 'next' ? '<span class="nav-arrow" aria-hidden="true">→</span>' : ''}
+        </button>`;
+  const navHtml = (nb.prev || nb.next) ? `
+      <nav class="q-nav" aria-label="Weitere Aufgaben">
+        ${navBtn(nb.prev, 'prev')}
+        <span class="q-nav-count">${nb.i + 1} / ${nb.n}</span>
+        ${navBtn(nb.next, 'next')}
+      </nav>` : '';
+
+  destroyViewers();
   document.getElementById('main').innerHTML = `
     <div class="q-wrap"><div class="q-page">
       ${actionBar}
@@ -1319,6 +1443,7 @@ function showQuestion(id) {
       ${hasScheme ? '' : hintsHtml}
       ${body}
       ${hasScheme ? hintsHtml : ''}
+      ${navHtml}
     </div></div>`;
   if (hasScheme) setTimeout(() => updateQuizProgress(q.id), 30);
 
@@ -1329,9 +1454,10 @@ window.showQuestion = showQuestion;
 
 function globalSearch(qstr) {
   const s = qstr.toLowerCase().trim();
+  let hits = 0;
   document.querySelectorAll('.cat-group').forEach(group => {
     const links = group.querySelectorAll('.q-link');
-    let any = false;
+    let n = 0;
     links.forEach(link => {
       const id  = link.id.replace('link-','');
       const q   = questions.find(x => x.id === id);
@@ -1341,15 +1467,44 @@ function globalSearch(qstr) {
         || (TYPE_GROUP_LABEL[qPrimaryType(q)]||'').toLowerCase().includes(s)
         || (q.intro||'').toLowerCase().includes(s));
       link.classList.toggle('hidden', !hit);
-      if (hit) any = true;
+      if (hit) n++;
     });
-    group.style.display = any ? '' : 'none';
+    hits += n;
+    group.style.display = n ? '' : 'none';
+    group.querySelector('.cat-count').textContent = n;   // matches, not the category's size
     const header = group.querySelector('.cat-header');
-    if (s && any) header.classList.add('open');
+    if (s && n) header.classList.add('open');
   });
   syncCatHeaders();
+  const none = document.getElementById('no-results');
+  none.hidden = !(s && !hits);
+  none.textContent = `Keine Aufgabe zu „${qstr.trim()}“.`;
+  document.querySelector('.search-clear').hidden = !qstr;
   // The results are the sidebar list — on a phone or tablet, show it.
   if (s) { setSidebar(true); document.getElementById('sidebar').scrollTop = 0; }
+}
+
+function clearSearch() {
+  const input = document.getElementById('search');
+  input.value = '';
+  globalSearch('');
+  input.focus();
+}
+
+/* Phones (≤ 760 px): the search field sits at the top of the drawer, where
+   its results appear; the header shows a search button instead. */
+const phoneQuery = window.matchMedia('(max-width: 760px)');
+function placeSearch() {
+  const wrap = document.querySelector('.search-wrap');
+  if (phoneQuery.matches) document.querySelector('.sidebar-top').prepend(wrap);
+  else document.querySelector('header').insertBefore(wrap, document.querySelector('.header-right'));
+}
+phoneQuery.addEventListener('change', placeSearch);
+placeSearch();
+
+function openSearch() {
+  setSidebar(true);
+  document.getElementById('search').focus();   // in the tap itself, so iOS shows the keyboard
 }
 
 /* ≤ 1023 px the sidebar is a drawer over the page (see the CSS). */
@@ -1379,12 +1534,49 @@ function toggleSidebar() {
 drawerQuery.addEventListener('change', e => { if (!e.matches) setSidebar(false); });
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { setSidebar(false); return; }
+  if (e.key === 'Escape') {
+    const input = document.getElementById('search');
+    if (e.target === input && input.value) { input.value = ''; globalSearch(''); return; }
+    setSidebar(false);
+    return;
+  }
   // Keyboard access for the clickable rows, choices and pills (role="button").
   if ((e.key === 'Enter' || e.key === ' ') && e.target.matches?.('[role="button"]')) {
     e.preventDefault();
     e.target.click();
+    return;
   }
+  // ← / → : previous / next task of the category
+  if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !e.altKey && !e.ctrlKey && !e.metaKey && !e.shiftKey
+      && !e.target.closest?.('input, textarea, select, [contenteditable]')) {
+    const btn = document.querySelector('.q-nav .nav-btn.' + (e.key === 'ArrowLeft' ? 'prev' : 'next'));
+    if (btn && !btn.disabled) { e.preventDefault(); btn.click(); }
+  }
+});
+
+// Back / forward between the tasks opened (each one is a history entry).
+window.addEventListener('popstate', () => {
+  const id = decodeURIComponent(location.hash.slice(1));
+  if (id && questions.some(q => q.id === id)) showQuestion(id);
+  else { showWelcome(); setSidebar(false); }
+});
+
+/* The scheme viewer draws in screen pixels. For printing, each canvas gets
+   a viewBox of what it shows, so the scheme scales to the paper width. */
+window.addEventListener('beforeprint', () => {
+  document.querySelectorAll('.sg-readonly .sg-canvas').forEach(svg => {
+    const w = svg.clientWidth, h = svg.clientHeight;
+    if (!w || !h) return;
+    svg.dataset.screenH = svg.style.height;
+    svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+    svg.style.height = 'auto';
+  });
+});
+window.addEventListener('afterprint', () => {
+  document.querySelectorAll('.sg-readonly .sg-canvas[viewBox]').forEach(svg => {
+    svg.removeAttribute('viewBox');
+    svg.style.height = svg.dataset.screenH || '';
+  });
 });
 
 // Keep --header-h CSS var in sync with the actual rendered header height.

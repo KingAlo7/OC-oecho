@@ -51,7 +51,8 @@ const MolRenderer = (() => {
       s.src = 'https://cdn.jsdelivr.net/npm/openchemlib/dist/openchemlib-full.js';
       s.async = true;
       s.onload  = () => window.OCL ? resolve(window.OCL) : reject(new Error('OCL loaded but global missing'));
-      s.onerror = () => reject(new Error('Failed to load OpenChemLib from CDN'));
+      // (forget the failure, so the next drawing tries again — e.g. back online)
+      s.onerror = () => { _readyP = null; s.remove(); reject(new Error('Failed to load OpenChemLib from CDN')); };
       document.head.appendChild(s);
     });
     return _readyP;
