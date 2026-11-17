@@ -80,6 +80,56 @@
     return el;
   }
 
+  // Edge-label spacing: min distance between a label's measured box and
+  // its own arrow, and half-thickness of arrow segments in the registry.
+  const LABEL_GAP = 5;
+  const LINE_HALF = 2;
+
+  /* Render LaTeX-light reagent markup (`H_2SO_4`, `_{12}`, `H^+`,
+     `^{2-}`) as real sub/superscript tspans. Shifts are kept modest
+     (sub ≈ 0.2 em down, sup ≈ 0.38 em up, both at 72 % size) so a
+     subscript stays inside the label's line box instead of dropping
+     onto the arrow. After every script run the baseline is restored. */
+  const SCRIPT_RE = /_\{([^}]*)\}|\^\{([^}]*)\}|_([A-Za-z0-9+\-=()*])|\^([A-Za-z0-9+\-=()*])/g;
+  const SCRIPT_SIZE = 0.72;
+  const SUB_SHIFT = 0.2;    // base em, + = down
+  const SUP_SHIFT = -0.38;
+
+  function setRichText(el, s) {
+    while (el.firstChild) el.removeChild(el.firstChild);
+    let cur = 0, last = 0, m;
+    const emit = (txt, shift, size) => {
+      if (!txt) return;
+      const dyBase = shift - cur;
+      if (!dyBase && size === 1) { el.appendChild(document.createTextNode(txt)); return; }
+      const ts = document.createElementNS(NS, 'tspan');
+      if (size !== 1) ts.setAttribute('font-size', (size * 100) + '%');
+      // dy in the tspan's own em → divide by its size factor
+      if (dyBase) ts.setAttribute('dy', +(dyBase / size).toFixed(3) + 'em');
+      ts.textContent = txt;
+      el.appendChild(ts);
+      cur = shift;
+    };
+    SCRIPT_RE.lastIndex = 0;
+    while ((m = SCRIPT_RE.exec(s))) {
+      emit(s.slice(last, m.index), 0, 1);
+      const sub = m[1] !== undefined ? m[1] : m[3];
+      const sup = m[2] !== undefined ? m[2] : m[4];
+      if (sub !== undefined) emit(sub, SUB_SHIFT, SCRIPT_SIZE);
+      else                   emit(sup, SUP_SHIFT, SCRIPT_SIZE);
+      last = SCRIPT_RE.lastIndex;
+    }
+    emit(s.slice(last), 0, 1);
+  }
+
+  // Vertices of an "M x y L x y …" polyline
+  function pathPoints(d) {
+    const n = (d.match(/-?\d*\.?\d+(?:e[-+]?\d+)?/gi) || []).map(Number);
+    const pts = [];
+    for (let i = 0; i + 1 < n.length; i += 2) pts.push({ x: n[i], y: n[i + 1] });
+    return pts;
+  }
+
   class SchemeGraphEditor {
     constructor(container, scheme, opts) {
       this.container = container;
@@ -232,38 +282,10 @@
       // Clear viewport
       while (this.viewport.firstChild) this.viewport.removeChild(this.viewport.firstChild);
       this._applyView();
-      // Reset label collision registry for this render pass
-      this._labelBoxes = [];
-
-      // Edges layer first (drawn behind nodes). Reserve the node
-      // bounding boxes in the registry so labels never overlap nodes.
+      // Edges layer first (drawn behind nodes)
       const edgesG = svg('g', { class: 'sg-edges' });
       this.viewport.appendChild(edgesG);
-      for (const n of this.scheme.nodes) {
-        this._labelBoxes.push({ x: n.x || 0, y: n.y || 0, w: NODE_W, h: NODE_H, kind: 'node' });
-      }
-
-      this.scheme.edges.forEach((e, idx) => {
-        const fromIds = e.from || [];
-        const toNode = this._nodeById(e.to);
-        if (!toNode) return;
-        // For multi-input edges, draw one line per source converging on the target
-        fromIds.forEach(fid => {
-          const fn = this._nodeById(fid);
-          if (!fn) return;
-          edgesG.appendChild(this._edgeEl(fn, toNode, e, idx, fid));
-        });
-        if (fromIds.length === 0) {
-          // Orphan edge with no source — render dashed stub from above for visibility
-          const stub = svg('line', {
-            class: 'sg-edge-line sg-edge-orphan',
-            x1: toNode.x + NODE_W / 2, y1: toNode.y - 40,
-            x2: toNode.x + NODE_W / 2, y2: toNode.y,
-            'data-idx': idx, 'stroke-dasharray': '4 3'
-          });
-          edgesG.appendChild(stub);
-        }
-      });
+      this._renderEdges(edgesG);
 
       // Nodes layer
       const nodesG = svg('g', { class: 'sg-nodes' });
@@ -509,13 +531,65 @@
       return { sExit, tEntry, dpath, labelSeg };
     }
 
-    _edgeEl(fromN, toN, edge, idx, fromId) {
-      const geo = this._edgeGeometry(fromN, toN);
+    /* Draw all edges into `edgesG` (which must already be in the DOM so
+       labels can be measured). Two passes: first every obstacle goes
+       into the registry — node boxes, every arrow segment and arrowhead,
+       orphan stubs — then lines are drawn and labels placed against that
+       complete registry, so a label can't land on an arrow drawn later. */
+    _renderEdges(edgesG) {
+      this._labelBoxes = [];
+      for (const n of this.scheme.nodes) {
+        this._labelBoxes.push({ x: n.x || 0, y: n.y || 0, w: NODE_W, h: NODE_H, kind: 'node' });
+      }
+      const lineBox = (a, b) => ({
+        x: Math.min(a.x, b.x) - LINE_HALF, y: Math.min(a.y, b.y) - LINE_HALF,
+        w: Math.abs(b.x - a.x) + 2 * LINE_HALF, h: Math.abs(b.y - a.y) + 2 * LINE_HALF,
+        kind: 'line'
+      });
+
+      const items = [];
+      this.scheme.edges.forEach((e, idx) => {
+        const fromIds = e.from || [];
+        const toNode = this._nodeById(e.to);
+        if (!toNode) return;
+        // For multi-input edges, draw one line per source converging on the target
+        fromIds.forEach(fid => {
+          const fn = this._nodeById(fid);
+          if (!fn) return;
+          const geo = this._edgeGeometry(fn, toNode);
+          const pts = pathPoints(geo.dpath);
+          for (let i = 1; i < pts.length; i++) this._labelBoxes.push(lineBox(pts[i - 1], pts[i]));
+          const end = pts[pts.length - 1];
+          if (end) {
+            const hs = ARROW_HEAD / 2 + 1;
+            this._labelBoxes.push({ x: end.x - hs, y: end.y - hs, w: 2 * hs, h: 2 * hs, kind: 'line' });
+          }
+          items.push({ e, idx, fid, geo });
+        });
+        if (fromIds.length === 0) {
+          // Orphan edge with no source — render dashed stub from above for visibility
+          const x = toNode.x + NODE_W / 2;
+          edgesG.appendChild(svg('line', {
+            class: 'sg-edge-line sg-edge-orphan',
+            x1: x, y1: toNode.y - 40, x2: x, y2: toNode.y,
+            'data-idx': idx, 'stroke-dasharray': '4 3'
+          }));
+          this._labelBoxes.push(lineBox({ x, y: toNode.y - 40 }, { x, y: toNode.y }));
+        }
+      });
+
+      items.forEach(it => this._edgeEl(it, edgesG));
+    }
+
+    _edgeEl(item, parent) {
+      const { e: edge, idx, fid: fromId, geo } = item;
 
       const g = svg('g', {
         class: 'sg-edge' + (this._isSelected('edge', idx) ? ' selected' : ''),
         'data-edge-idx': idx, 'data-edge-from': fromId
       });
+      // Attach before adding labels — getBBox needs a rendered element
+      parent.appendChild(g);
 
       g.appendChild(svg('path', {
         class: 'sg-edge-line',
@@ -533,75 +607,71 @@
         'stroke-width': 14
       }));
 
-      // Place above/below labels along the chosen segment, with
-      // collision avoidance against all previously placed labels and
-      // against node bounding boxes (registry seeded in refresh()).
+      // Above/below labels at the midpoint of the chosen segment
       const seg = geo.labelSeg;
-      const segLen = Math.hypot(seg.x2 - seg.x1, seg.y2 - seg.y1);
-      // Place labels relative to the midpoint of the chosen segment
       const mx = (seg.x1 + seg.x2) / 2;
       const my = (seg.y1 + seg.y2) / 2;
-
-      if (edge.reagent_above) {
-        const pos = this._placeEdgeLabel(edge.reagent_above, mx, my, seg.dir, 'above', segLen);
-        const t = svg('text', { class: 'sg-edge-label above', x: pos.x, y: pos.y, 'text-anchor': 'middle' });
-        t.textContent = edge.reagent_above;
-        g.appendChild(t);
-      }
-      if (edge.reagent_below) {
-        const pos = this._placeEdgeLabel(edge.reagent_below, mx, my, seg.dir, 'below', segLen);
-        const t = svg('text', { class: 'sg-edge-label below', x: pos.x, y: pos.y, 'text-anchor': 'middle' });
-        t.textContent = edge.reagent_below;
-        g.appendChild(t);
-      }
+      if (edge.reagent_above) this._addEdgeLabel(g, edge.reagent_above, 'above', seg.dir, mx, my);
+      if (edge.reagent_below) this._addEdgeLabel(g, edge.reagent_below, 'below', seg.dir, mx, my);
 
       return g;
     }
 
-    /* Approximate label bounding box and shift away from collisions.
-       Above-labels sit ~10px over the line, below-labels ~16px under.
-       For horizontal segments we shift further along the y-axis on
-       overlap; for vertical segments we shift along the x-axis. */
-    _placeEdgeLabel(text, mx, my, dir, side, segLen) {
-      // Crude width approximation. SVG <text> measure-by-getBBox would
-      // be exact but requires a render pass — this is good enough to
-      // avoid most overlaps and keeps render deterministic.
-      const charW = 6.4;
-      const lineH = 14;
-      const w = Math.min(160, Math.max(28, text.length * charW + 4));
-      const h = lineH + 2;
+    /* Render a label, measure its real box (sub/superscripts included)
+       and position it so the box keeps LABEL_GAP from its arrow:
+       horizontal segment → above/below the line, vertical → left/right.
+       On collision with the registry (nodes, arrows, other labels) try
+       candidates stepping away from the line and along it, cheapest
+       displacement first. */
+    _addEdgeLabel(g, text, side, dir, mx, my) {
+      const t = svg('text', { class: 'sg-edge-label ' + side, x: 0, y: 0, 'text-anchor': 'middle' });
+      setRichText(t, text);
+      g.appendChild(t);
+      const m = this._measureLabel(t, text, side);
 
-      // Initial offset perpendicular to segment
-      const offAbove = 9;
-      const offBelow = 15;
-      let x = mx, y = my;
-      if (dir === 'h') {
-        y = my + (side === 'above' ? -offAbove : offBelow);
+      const horiz = dir === 'h';
+      const out = side === 'above' ? -1 : 1;   // above → up/left, below → down/right
+      let x0, y0;
+      if (horiz) {
+        x0 = mx - (m.bx + m.w / 2);
+        y0 = out < 0 ? my - LABEL_GAP - (m.by + m.h) : my + LABEL_GAP - m.by;
       } else {
-        // Vertical segment: place labels to the LEFT (above) and RIGHT (below)
-        x = mx + (side === 'above' ? -(w / 2 + 8) : (w / 2 + 8));
-        y = my + 4;
+        x0 = out < 0 ? mx - LABEL_GAP - (m.bx + m.w) : mx + LABEL_GAP - m.bx;
+        y0 = my - (m.by + m.h / 2);
       }
 
-      const bbox = () => ({ x: x - w / 2, y: y - lineH + 2, w, h });
-      const shiftStep = (side === 'above' ? -lineH : lineH);
-      const altShiftStep = (side === 'above' ? -w * 0.55 : w * 0.55);
-
-      // Up to 8 shift attempts: alternate perpendicular and along-segment
-      for (let attempt = 0; attempt < 8; attempt++) {
-        if (!this._collidesWithRegistry(bbox())) break;
-        if (attempt < 4) {
-          if (dir === 'h') y += shiftStep;
-          else             x += (side === 'above' ? -lineH : lineH);
-        } else {
-          // Switch to shifting along the segment direction
-          if (dir === 'h') x += altShiftStep;
-          else             y += altShiftStep;
+      const perpStep  = horiz ? m.h + 2 : 10;
+      const alongStep = horiz ? Math.max(12, m.w * 0.5) : m.h + 2;
+      const cands = [];
+      for (let k = 0; k <= 5; k++) {
+        for (const j of [0, 1, -1, 2, -2, 3, -3]) {
+          const p = out * k * perpStep, a = j * alongStep;
+          cands.push({
+            x: horiz ? x0 + a : x0 + p,
+            y: horiz ? y0 + p : y0 + a,
+            cost: k * perpStep + Math.abs(a) * 0.8
+          });
         }
       }
+      cands.sort((p, q) => p.cost - q.cost);
+      const boxAt = c => ({ x: c.x + m.bx, y: c.y + m.by, w: m.w, h: m.h });
+      const pick = cands.find(c => !this._collidesWithRegistry(boxAt(c))) || cands[0];
 
-      this._labelBoxes.push(Object.assign(bbox(), { kind: 'label' }));
-      return { x, y };
+      t.setAttribute('x', +pick.x.toFixed(1));
+      t.setAttribute('y', +pick.y.toFixed(1));
+      this._labelBoxes.push(Object.assign(boxAt(pick), { kind: 'label' }));
+    }
+
+    // Box of a label rendered at (0,0), relative to its anchor point.
+    // Falls back to an estimate when the SVG isn't laid out (hidden host).
+    _measureLabel(t, text, side) {
+      let b = null;
+      try { b = t.getBBox(); } catch (_) {}
+      if (b && b.width > 0) return { bx: b.x, by: b.y, w: b.width, h: b.height };
+      const fs = side === 'below' ? 10 : 11;
+      const scripts = /[_^]/.test(text);
+      const w = Math.max(10, text.replace(/[_^{}]/g, '').length * fs * 0.58);
+      return { bx: -w / 2, by: -fs * (scripts ? 1.15 : 0.95), w, h: fs * (scripts ? 1.55 : 1.25) };
     }
 
     _collidesWithRegistry(b) {
@@ -758,6 +828,14 @@
         maxX = Math.max(maxX, (n.x || 0) + NODE_W);
         maxY = Math.max(maxY, (n.y || 0) + NODE_H);
       });
+      // Include edge labels so none are cut off at the canvas border
+      for (const b of this._labelBoxes) {
+        if (b.kind !== 'label') continue;
+        minX = Math.min(minX, b.x);
+        minY = Math.min(minY, b.y);
+        maxX = Math.max(maxX, b.x + b.w);
+        maxY = Math.max(maxY, b.y + b.h);
+      }
       const r = this.svg.getBoundingClientRect();
       const pad = 30;
       const wantW = maxX - minX + 2 * pad;
@@ -1062,19 +1140,13 @@
 
     _redrawEdgesTouching(nodeId) {
       // Replace the edges layer entirely (cheap relative to a full refresh).
+      // Swap in first so labels can be measured, then rebuild with a
+      // fresh collision registry (the old one would keep stale boxes).
       const oldG = this.container.querySelector('.sg-edges');
       const fresh = svg('g', { class: 'sg-edges' });
-      this.scheme.edges.forEach((e, idx) => {
-        const fromIds = e.from || [];
-        const toN = this._nodeById(e.to);
-        if (!toN) return;
-        fromIds.forEach(fid => {
-          const fn = this._nodeById(fid);
-          if (!fn) return;
-          fresh.appendChild(this._edgeEl(fn, toN, e, idx, fid));
-        });
-      });
       if (oldG && oldG.parentNode) oldG.parentNode.replaceChild(fresh, oldG);
+      else this.viewport.insertBefore(fresh, this.viewport.firstChild);
+      this._renderEdges(fresh);
     }
 
     destroy() {

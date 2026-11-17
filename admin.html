@@ -148,8 +148,6 @@ select.fi option{background:var(--surface);color:var(--text);}
 .kp-del{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:0.3rem 0.5rem;border-radius:6px;cursor:pointer;font-size:0.74rem;flex-shrink:0;transition:all 0.15s;}
 .kp-del:hover{color:var(--red);border-color:var(--red);background:var(--red-soft);}
 
-.smi-prev{background:#fff;border:1px solid var(--border);border-radius:8px;padding:1rem;min-height:100px;display:flex;align-items:center;justify-content:center;margin-top:0.5rem;overflow-x:auto;box-shadow:var(--shadow-sm);}
-.smi-ph{font-size:0.8rem;color:var(--muted2);font-style:italic;}
 
 .act-bar{display:flex;gap:0.5rem;padding:1.2rem 0 0;border-top:1px solid var(--border);margin-top:1rem;flex-wrap:wrap;}
 .btn{padding:0.5rem 1.1rem;border-radius:8px;border:none;cursor:pointer;font-size:0.86rem;font-weight:600;transition:all 0.15s;font-family:inherit;}
@@ -314,7 +312,7 @@ select.fi option{background:var(--surface);color:var(--text);}
 .sg-edge-line{stroke:#3a3a35;stroke-width:1.8;}
 .sg-edge.selected .sg-edge-line{stroke:#e2001a;stroke-width:2.6;}
 .sg-edge-hit{cursor:pointer;}
-.sg-edge-label{font:500 11px 'Segoe UI',system-ui,sans-serif;fill:#3a3a35;pointer-events:none;}
+.sg-edge-label{font:500 11px 'Segoe UI',system-ui,sans-serif;fill:#3a3a35;pointer-events:none;paint-order:stroke;stroke:#fdfcf6;stroke-width:3px;stroke-linejoin:round;}
 .sg-edge-label.below{fill:#6b6a5d;font-size:10px;}
 .sg-edge-orphan{stroke:#b87a00;}
 .sg-edge-draft{stroke:#5a8a2a;stroke-width:2;stroke-dasharray:6 3;pointer-events:none;}
@@ -515,6 +513,26 @@ select.fi option{background:var(--surface);color:var(--text);}
 </div>
 <div class="toast" id="toast"></div>
 
+<!-- Ketcher Reaction SMILES editor modal: for reactions.json editing -->
+<div class="ocl-modal" id="rxn-ketcher-modal">
+  <div class="ocl-modal-inner" style="width:min(1100px,98vw);max-height:96vh">
+    <div class="ocl-modal-head">
+      <span>Reaktions-SMILES bearbeiten</span>
+      <span style="margin-left:auto;font-size:0.74rem;color:var(--muted);font-weight:500" id="rxn-ketcher-status">Ketcher wird geladen…</span>
+      <button class="close" onclick="closeRxnKetcher()" aria-label="Schließen">×</button>
+    </div>
+    <div style="padding:0;background:#fff">
+      <iframe id="ketcher-rxn-iframe" style="width:100%;height:70vh;min-height:480px;border:0;display:block"
+              title="Ketcher Reaktionszeichner"></iframe>
+    </div>
+    <div class="ocl-modal-foot">
+      <span class="mol-meta" id="rxn-ketcher-meta">—</span>
+      <button class="sec" onclick="closeRxnKetcher()">Abbrechen</button>
+      <button class="pri" onclick="commitRxnKetcher()">Übernehmen</button>
+    </div>
+  </div>
+</div>
+
 <!-- Ketcher StructureEditor modal: shared by all node-edit buttons -->
 <div class="ocl-modal" id="ocl-modal">
   <div class="ocl-modal-inner" style="width:min(1100px,98vw);max-height:96vh">
@@ -662,14 +680,16 @@ function buildForm(r) {
   <div class="fsec">
     <div class="fsec-title">Struktur</div>
     <div class="field"><label>Reaktions-SMILES <small style="color:var(--muted2)">Reaktanten&gt;Reagenz&gt;Produkte</small></label>
-      <input class="fi" id="f-smi" value="${x(r.reaction_smiles||'')}" placeholder="CC(C)(C)Br&gt;H2O&gt;CC(C)(C)OH" oninput="mu();schedP()">
+      <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap">
+        <input class="fi" id="f-smi" value="${x(r.reaction_smiles||'')}" placeholder="CC(C)(C)Br&gt;H2O&gt;CC(C)(C)OH" oninput="mu()" style="flex:1;min-width:0">
+        <button type="button" class="bxs sec" onclick="openRxnKetcher()" style="white-space:nowrap;flex-shrink:0">Ketcher öffnen</button>
+      </div>
     </div>
-    <div class="smi-prev" id="smi-prev"><div class="smi-ph">SMILES oben eingeben zur Vorschau</div></div>
     <div class="row2" style="margin-top:0.75rem">
       <div class="field"><label>Reagenzbeschriftung <small style="color:var(--muted2)">(über Pfeil — LaTeX: <code>H_2SO_4</code>, <code>[Ag(NH_3)_2]^{1+}</code>)</small></label>
-        <input class="fi" id="f-rl" value="${x(r.reagent_label||'')}" placeholder="H_2SO_4 / Δ" oninput="mu();schedP()"></div>
+        <input class="fi" id="f-rl" value="${x(r.reagent_label||'')}" placeholder="H_2SO_4 / Δ" oninput="mu()"></div>
       <div class="field"><label>Beschriftung unter Pfeil <small style="color:var(--muted2)">(optional)</small></label>
-        <input class="fi" id="f-rlb" value="${x(r.reagent_label_below||'')}" placeholder="Δ / 80 °C" oninput="mu();schedP()"></div>
+        <input class="fi" id="f-rlb" value="${x(r.reagent_label_below||'')}" placeholder="Δ / 80 °C" oninput="mu()"></div>
     </div>
     <div class="field" style="margin-top:0.75rem"><label>Allgemeines Schema <small style="color:var(--muted2)">(Textfallback)</small></label>
       <input class="fi" id="f-gs" value="${x(r.general_scheme||'')}" placeholder="R-X → R-OH" oninput="mu()"></div>
@@ -701,7 +721,6 @@ function buildForm(r) {
   </div>
   <div class="helper-text">„Übernehmen" speichert lokal im Browser. Im Server-Modus wird zusätzlich data/reactions.json geschrieben. Zur dauerhaften Veröffentlichung auf GitHub Pages: <strong>Commit &amp; Push</strong> Tab.</div>`;
 
-  if (r.reaction_smiles) drawP(r.reaction_smiles, r.reagent_label, r.reagent_label_below);
 }
 
 function catToggle(sel) {
@@ -733,8 +752,6 @@ function addKP() { const l=document.getElementById('kp-list'); const i=l.childre
 function rmKP(i) { document.getElementById('kp-list').children[i]?.remove(); mu(); }
 function getKPs() { return [...document.querySelectorAll('#kp-list input')].map(i=>i.value.trim()).filter(Boolean); }
 
-let pt; function schedP(){clearTimeout(pt);pt=setTimeout(()=>{const s=document.getElementById('f-smi')?.value?.trim();const l=document.getElementById('f-rl')?.value?.trim();const lb=document.getElementById('f-rlb')?.value?.trim();if(s)drawP(s,l,lb);else{const b=document.getElementById('smi-prev');if(b)b.innerHTML='<div class="smi-ph">SMILES oben eingeben zur Vorschau</div>';}},500);}
-function drawP(smiles,label,labelBelow){const b=document.getElementById('smi-prev');if(!b)return;b.innerHTML='<svg id="psv" xmlns="http://www.w3.org/2000/svg"></svg>';requestAnimationFrame(()=>{const svg=document.getElementById('psv');if(svg)ReactionRenderer.draw(smiles,svg,'light',label||'{reagents}',labelBelow||'');});}
 
 function collect() {
   const r={}, g=id=>document.getElementById(id)?.value?.trim(), s=(k,v)=>{if(v)r[k]=v;};
@@ -2073,6 +2090,53 @@ window.commitStructEditor = async function() {
   // in the editor. We do NOT re-run RDKit here — that would discard the
   // hand-drawn layout. For automatic CoordGen layout, the user clicks the
   // explicit "Layout neu" button per node.
+};
+
+/* ── Ketcher Reaction SMILES editor ─────────────────────────────── */
+window.openRxnKetcher = async function() {
+  const modal  = document.getElementById('rxn-ketcher-modal');
+  const status = document.getElementById('rxn-ketcher-status');
+  modal.classList.add('open');
+  status.textContent = 'Ketcher wird geladen…';
+  const iframe = document.getElementById('ketcher-rxn-iframe');
+  iframe.src = KETCHER_URL;
+  await _waitForKetcher(iframe);
+  try {
+    const k = iframe.contentWindow.ketcher;
+    try {
+      k.editor.setOptions(JSON.stringify({
+        hideTerminalLabels:   true,
+        hideImplicitHydrogen: true,
+        showStereoFlags:      false,
+        showValenceWarnings:  false,
+        atomColoring:         true
+      }));
+    } catch (e) { console.warn('Ketcher setOptions:', e); }
+    const smi = document.getElementById('f-smi')?.value?.trim();
+    if (smi) await k.setMolecule(smi);
+    status.textContent = 'Ketcher bereit';
+    document.getElementById('rxn-ketcher-meta').textContent = smi ? 'SMILES: ' + smi : '—';
+  } catch (e) {
+    status.textContent = 'Fehler: ' + e.message;
+    console.error('openRxnKetcher:', e);
+  }
+};
+
+window.closeRxnKetcher = function() {
+  document.getElementById('rxn-ketcher-modal').classList.remove('open');
+  const iframe = document.getElementById('ketcher-rxn-iframe');
+  if (iframe) iframe.src = 'about:blank';
+};
+
+window.commitRxnKetcher = async function() {
+  const iframe = document.getElementById('ketcher-rxn-iframe');
+  const k = iframe && iframe.contentWindow && iframe.contentWindow.ketcher;
+  if (!k) { closeRxnKetcher(); return; }
+  let smiles = '';
+  try { smiles = await k.getSmiles(); } catch (e) { console.warn('getSmiles:', e); }
+  const field = document.getElementById('f-smi');
+  if (field && smiles) { field.value = smiles; mu(); }
+  closeRxnKetcher();
 };
 
 /* Decide whether to auto-bake on commit. Small structures (≤6 heavy atoms)
