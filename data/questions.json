@@ -13066,7 +13066,7 @@
     "category": "Biochemie",
     "name": "Glykolyse — von Glucose zu Pyruvat",
     "difficulty": "B",
-    "intro": "Die Glykolyse (Embden-Meyerhof-Parnas-Weg) ist der zentrale Abbauweg der Glucose und läuft im Cytosol praktisch aller Zellen ab. In zehn enzymkatalysierten Schritten wird ein Molekül Glucose (C_6) in zwei Moleküle Pyruvat (C_3) zerlegt.\n\nVorbereitungsphase (Schritte 1–5): Unter Einsatz von 2 ATP wird Glucose zweimal phosphoryliert und in zwei Triosephosphate gespalten.\nErtragsphase (Schritte 6–10): Jedes Glycerinaldehyd-3-phosphat wird oxidiert; dabei entstehen pro Triose 1 NADH und 2 ATP.\n\nHinweis: Phosphatgruppen sind vereinfacht als –OPO_3H_2 gezeichnet.",
+    "intro": "Die Glykolyse (Embden-Meyerhof-Parnas-Weg) ist der zentrale Abbauweg der Glucose und läuft im Cytosol praktisch aller Zellen ab. In zehn enzymkatalysierten Schritten wird ein Molekül Glucose (C_6) in zwei Moleküle Pyruvat (C_3) zerlegt.\n\nVorbereitungsphase (Schritte 1–5): Unter Einsatz von 2 ATP wird Glucose zweimal phosphoryliert und in zwei Triosephosphate gespalten.\nErtragsphase (Schritte 6–10): Jedes Glycerinaldehyd-3-phosphat wird oxidiert; dabei entstehen pro Triose 1 NADH und 2 ATP.\n\nHinweis: Alle Verbindungen sind offenkettig in der Fischer-Projektion gezeichnet (C1 oben). Ⓟ steht für eine Phosphatgruppe –PO_3H_2 (bei pH 7 überwiegend –PO_3^2−).",
     "sections": [
       {
         "type": "synthesis",
@@ -13075,38 +13075,42 @@
           "nodes": [
             {
               "id": "Glc",
-              "label": "α-D-Glucose",
+              "label": "D-Glucose",
               "given": true,
-              "name": "α-D-Glucopyranose",
-              "smiles": "OC[C@H]1O[C@H](O)[C@H](O)[C@@H](O)[C@@H]1O",
-              "explanation": "Ausgangsstoff. Gelangt über GLUT-Transporter in die Zelle."
+              "name": "D-Glucose (offenkettige Form)",
+              "smiles": "O=C[C@H](O)[C@@H](O)[C@H](O)[C@H](O)CO",
+              "explanation": "Ausgangsstoff. Gelangt über GLUT-Transporter in die Zelle.",
+              "mol": "\n  OC-oecho Fischer\n\n 17 16  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0000   -1.0000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0000   -2.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -2.0000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0000   -3.0000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -3.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -4.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0000   -4.0000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -4.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -5.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4100   -5.4300    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  1  3  1  0\n  1  4  1  0\n  4  5  1  0\n  4  6  1  0\n  4  7  1  0\n  7  8  1  0\n  7  9  1  0\n  7 10  1  0\n 10 11  1  0\n 10 12  1  0\n 10 13  1  0\n 13 14  1  0\n 13 15  1  0\n 16 17  1  0\n 13 16  1  0\nM  STY  1   1 SUP\nM  SAL   1  2  16  17\nM  SMT   1 CH2OH\nM  SAP   1  1  16   0 1 \nM  END\n"
             },
             {
               "id": "A",
               "label": "A",
               "given": false,
               "name": "Glucose-6-phosphat (G6P)",
-              "smiles": "O=P(O)(O)OC[C@H]1O[C@H](O)[C@H](O)[C@@H](O)[C@@H]1O",
+              "smiles": "O=C[C@H](O)[C@@H](O)[C@H](O)[C@H](O)COP(=O)(O)O",
               "caption": "C_6H_13O_9P",
-              "explanation": "Schritt 1 — Hexokinase (Leber: Glucokinase) überträgt die γ-Phosphatgruppe von ATP auf die primäre 6-OH-Gruppe (Transferase, Mg^2+-abhängig). Irreversibel. Das geladene G6P kann die Zelle nicht mehr verlassen („Glucose-Falle“). Hexokinase wird durch ihr Produkt G6P gehemmt."
+              "explanation": "Schritt 1 — Hexokinase (Leber: Glucokinase) überträgt die γ-Phosphatgruppe von ATP auf die primäre 6-OH-Gruppe (Transferase, Mg^2+-abhängig). Irreversibel. Das geladene G6P kann die Zelle nicht mehr verlassen („Glucose-Falle“). Hexokinase wird durch ihr Produkt G6P gehemmt.",
+              "mol": "\n  OC-oecho Fischer\n\n 21 20  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0000   -1.0000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0000   -2.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -2.0000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0000   -3.0000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -3.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -4.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0000   -4.0000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -4.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -5.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4100   -5.4300    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8300   -5.7900    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1400   -5.4200    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2000   -6.1000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5000   -6.1400    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  1  3  1  0\n  1  4  1  0\n  4  5  1  0\n  4  6  1  0\n  4  7  1  0\n  7  8  1  0\n  7  9  1  0\n  7 10  1  0\n 10 11  1  0\n 10 12  1  0\n 10 13  1  0\n 13 14  1  0\n 13 15  1  0\n 16 17  1  0\n 17 18  1  0\n 18 19  2  0\n 18 20  1  0\n 18 21  1  0\n 13 16  1  0\nM  STY  1   1 SUP\nM  SAL   1  6  16  17  18  19  20  21\nM  SMT   1 CH2OⓅ\nM  SAP   1  1  16   0 1 \nM  END\n"
             },
             {
               "id": "B",
               "label": "B",
               "given": false,
-              "name": "Fructose-6-phosphat (F6P), β-Furanose",
-              "smiles": "O=P(O)(O)OC[C@@H]1[C@H]([C@@H]([C@](O1)(CO)O)O)O",
+              "name": "Fructose-6-phosphat (F6P)",
+              "smiles": "OCC(=O)[C@@H](O)[C@H](O)[C@H](O)COP(=O)(O)O",
               "caption": "C_6H_13O_9P",
-              "explanation": "Schritt 2 — Phosphoglucose-Isomerase: Ringöffnung, Aldose → Ketose über ein cis-Endiol(at)-Intermediat, Ringschluss zur Furanose (Isomerase). Reversibel. Aus dem Aldehyd an C1 wird die Ketogruppe an C2 — Voraussetzung für die spätere Aldolspaltung zwischen C3 und C4."
+              "explanation": "Schritt 2 — Phosphoglucose-Isomerase: Aldose → Ketose über ein cis-Endiol(at)-Intermediat (Isomerase; das Enzym öffnet dazu den Pyranosering und schließt danach den Furanosering). Reversibel. Aus dem Aldehyd an C1 wird die Ketogruppe an C2 — Voraussetzung für die spätere Aldolspaltung zwischen C3 und C4.",
+              "mol": "\n  OC-oecho Fischer\n\n 19 18  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4100   -0.4300    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0000   -2.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -2.0000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0000   -3.0000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -3.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -4.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0000   -4.0000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -4.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -5.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4100   -5.4300    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8300   -5.7900    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1400   -5.4200    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2000   -6.1000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5000   -6.1400    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  1  3  1  0\n  3  4  2  0\n  3  5  1  0\n  5  6  1  0\n  5  7  1  0\n  5  8  1  0\n  8  9  1  0\n  8 10  1  0\n  8 11  1  0\n 11 12  1  0\n 11 13  1  0\n 14 15  1  0\n 15 16  1  0\n 16 17  2  0\n 16 18  1  0\n 16 19  1  0\n 11 14  1  0\nM  STY  1   1 SUP\nM  SAL   1  2   1   2\nM  SMT   1 CH2OH\nM  SAP   1  1   1   0 1 \nM  STY  1   2 SUP\nM  SAL   2  6  14  15  16  17  18  19\nM  SMT   2 CH2OⓅ\nM  SAP   2  1  14   0 1 \nM  END\n"
             },
             {
               "id": "C",
               "label": "C",
               "given": false,
               "name": "Fructose-1,6-bisphosphat (F1,6BP)",
-              "smiles": "O=P(O)(O)OC[C@@H]1[C@H]([C@@H]([C@](O1)(COP(=O)(O)O)O)O)O",
+              "smiles": "O=P(O)(O)OCC(=O)[C@@H](O)[C@H](O)[C@H](O)COP(=O)(O)O",
               "caption": "C_6H_14O_12P_2",
-              "explanation": "Schritt 3 — Phosphofructokinase-1 (PFK-1) phosphoryliert die 1-OH-Gruppe mit ATP. Irreversibel und geschwindigkeitsbestimmend: der wichtigste Regulationspunkt der Glykolyse (Schrittmacherenzym)."
+              "explanation": "Schritt 3 — Phosphofructokinase-1 (PFK-1) phosphoryliert die 1-OH-Gruppe mit ATP. Irreversibel und geschwindigkeitsbestimmend: der wichtigste Regulationspunkt der Glykolyse (Schrittmacherenzym).",
+              "mol": "\n  OC-oecho Fischer\n\n 23 22  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4100   -0.4300    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8300   -0.7900    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1400   -0.4200    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2000   -1.1000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5000   -1.1400    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0000   -2.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -2.0000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -3.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0000   -3.0000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -3.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -4.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0000   -4.0000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -4.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -5.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4100   -5.4300    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8300   -5.7900    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1400   -5.4200    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2000   -6.1000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5000   -6.1400    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  1  0\n  3  4  2  0\n  3  5  1  0\n  3  6  1  0\n  1  7  1  0\n  7  8  2  0\n  7  9  1  0\n  9 10  1  0\n  9 11  1  0\n  9 12  1  0\n 12 13  1  0\n 12 14  1  0\n 12 15  1  0\n 15 16  1  0\n 15 17  1  0\n 18 19  1  0\n 19 20  1  0\n 20 21  2  0\n 20 22  1  0\n 20 23  1  0\n 15 18  1  0\nM  STY  1   1 SUP\nM  SAL   1  6   1   2   3   4   5   6\nM  SMT   1 CH2OⓅ\nM  SAP   1  1   1   0 1 \nM  STY  1   2 SUP\nM  SAL   2  6  18  19  20  21  22  23\nM  SMT   2 CH2OⓅ\nM  SAP   2  1  18   0 1 \nM  END\n"
             },
             {
               "id": "D",
@@ -13115,7 +13119,8 @@
               "name": "Dihydroxyacetonphosphat (DHAP)",
               "smiles": "OCC(=O)COP(=O)(O)O",
               "caption": "C_3H_7O_6P",
-              "explanation": "Schritt 4 — Aldolase spaltet F1,6BP in einer Retro-Aldol-Reaktion zwischen C3 und C4. C1–C3 werden zu DHAP. (Tier-Aldolase = Klasse I: Schiff-Base mit einem Lysin; Bakterien/Pilze: Klasse II, Zn^2+.)"
+              "explanation": "Schritt 4 — Aldolase spaltet F1,6BP in einer Retro-Aldol-Reaktion zwischen C3 und C4. C1–C3 werden zu DHAP. (Tier-Aldolase = Klasse I: Schiff-Base mit einem Lysin; Bakterien/Pilze: Klasse II, Zn^2+.)",
+              "mol": "\n  OC-oecho Fischer\n\n 10  9  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4100   -0.4300    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4100   -2.4300    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8300   -2.7900    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1400   -2.4200    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2000   -3.1000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5000   -3.1400    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  1  3  1  0\n  3  4  2  0\n  5  6  1  0\n  6  7  1  0\n  7  8  2  0\n  7  9  1  0\n  7 10  1  0\n  3  5  1  0\nM  STY  1   1 SUP\nM  SAL   1  2   1   2\nM  SMT   1 CH2OH\nM  SAP   1  1   1   0 1 \nM  STY  1   2 SUP\nM  SAL   2  6   5   6   7   8   9  10\nM  SMT   2 CH2OⓅ\nM  SAP   2  1   5   0 1 \nM  END\n"
             },
             {
               "id": "E",
@@ -13124,7 +13129,8 @@
               "name": "D-Glycerinaldehyd-3-phosphat (GAP)",
               "smiles": "O=C[C@H](O)COP(=O)(O)O",
               "caption": "C_3H_7O_6P",
-              "explanation": "Schritt 4 liefert C4–C6 als GAP; Schritt 5 — Triosephosphat-Isomerase (TIM) wandelt auch DHAP über ein Endiol-Intermediat in GAP um. Im Gleichgewicht liegt DHAP vor (~96 %), aber GAP wird laufend verbraucht. Damit entstehen pro Glucose 2 GAP. TIM ist ein „katalytisch perfektes“ (diffusionskontrolliertes) Enzym."
+              "explanation": "Schritt 4 liefert C4–C6 als GAP; Schritt 5 — Triosephosphat-Isomerase (TIM) wandelt auch DHAP über ein Endiol-Intermediat in GAP um. Im Gleichgewicht liegt DHAP vor (~96 %), aber GAP wird laufend verbraucht. Damit entstehen pro Glucose 2 GAP. TIM ist ein „katalytisch perfektes“ (diffusionskontrolliertes) Enzym.",
+              "mol": "\n  OC-oecho Fischer\n\n 12 11  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0000   -1.0000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4100   -2.4300    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8300   -2.7900    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1400   -2.4200    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2000   -3.1000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5000   -3.1400    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  1  3  1  0\n  1  4  1  0\n  4  5  1  0\n  4  6  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  2  0\n  9 11  1  0\n  9 12  1  0\n  4  7  1  0\nM  STY  1   1 SUP\nM  SAL   1  6   7   8   9  10  11  12\nM  SMT   1 CH2OⓅ\nM  SAP   1  1   7   0 1 \nM  END\n"
             },
             {
               "id": "F",
@@ -13133,7 +13139,8 @@
               "name": "1,3-Bisphosphoglycerat (1,3-BPG)",
               "smiles": "O=C(OP(=O)(O)O)[C@H](O)COP(=O)(O)O",
               "caption": "C_3H_8O_10P_2",
-              "explanation": "Schritt 6 — Glycerinaldehyd-3-phosphat-Dehydrogenase (GAPDH): Oxidation des Aldehyds mit NAD^+ und Einbau von anorganischem Phosphat (P_i) → gemischtes Carbonsäure-Phosphorsäure-Anhydrid (Acylphosphat) mit sehr hohem Gruppenübertragungspotential."
+              "explanation": "Schritt 6 — Glycerinaldehyd-3-phosphat-Dehydrogenase (GAPDH): Oxidation des Aldehyds mit NAD^+ und Einbau von anorganischem Phosphat (P_i) → gemischtes Carbonsäure-Phosphorsäure-Anhydrid (Acylphosphat) mit sehr hohem Gruppenübertragungspotential.",
+              "mol": "\n  OC-oecho Fischer\n\n 16 15  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.7320    1.0000    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.4220    1.3700    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3620    0.6900    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.0620    0.6500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0000   -1.0000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4100   -2.4300    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8300   -2.7900    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1400   -2.4200    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2000   -3.1000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5000   -3.1400    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  1  3  1  0\n  3  4  1  0\n  4  5  2  0\n  4  6  1  0\n  4  7  1  0\n  1  8  1  0\n  8  9  1  0\n  8 10  1  0\n 11 12  1  0\n 12 13  1  0\n 13 14  2  0\n 13 15  1  0\n 13 16  1  0\n  8 11  1  0\nM  STY  1   1 SUP\nM  SAL   1  4   4   5   6   7\nM  SMT   1 Ⓟ\nM  SAP   1  1   4   0 1 \nM  STY  1   2 SUP\nM  SAL   2  6  11  12  13  14  15  16\nM  SMT   2 CH2OⓅ\nM  SAP   2  1  11   0 1 \nM  END\n"
             },
             {
               "id": "G",
@@ -13142,7 +13149,8 @@
               "name": "3-Phosphoglycerat (3-PG)",
               "smiles": "OC(=O)[C@H](O)COP(=O)(O)O",
               "caption": "C_3H_7O_7P",
-              "explanation": "Schritt 7 — Phosphoglycerat-Kinase überträgt die Acylphosphatgruppe auf ADP → ATP. Erste Substratkettenphosphorylierung. (Trotz des Namens „Kinase“ läuft die Reaktion physiologisch in Richtung ATP-Bildung.)"
+              "explanation": "Schritt 7 — Phosphoglycerat-Kinase überträgt die Acylphosphatgruppe auf ADP → ATP. Erste Substratkettenphosphorylierung. (Trotz des Namens „Kinase“ läuft die Reaktion physiologisch in Richtung ATP-Bildung.)",
+              "mol": "\n  OC-oecho Fischer\n\n 12 11  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0000   -1.0000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4100   -2.4300    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8300   -2.7900    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1400   -2.4200    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2000   -3.1000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5000   -3.1400    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  1  3  1  0\n  1  4  1  0\n  4  5  1  0\n  4  6  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  2  0\n  9 11  1  0\n  9 12  1  0\n  4  7  1  0\nM  STY  1   1 SUP\nM  SAL   1  6   7   8   9  10  11  12\nM  SMT   1 CH2OⓅ\nM  SAP   1  1   7   0 1 \nM  END\n"
             },
             {
               "id": "H",
@@ -13151,7 +13159,8 @@
               "name": "2-Phosphoglycerat (2-PG)",
               "smiles": "OC(=O)[C@H](OP(=O)(O)O)CO",
               "caption": "C_3H_7O_7P",
-              "explanation": "Schritt 8 — Phosphoglycerat-Mutase verschiebt die Phosphatgruppe von C3 nach C2 (über 2,3-Bisphosphoglycerat als Intermediat, phosphoryliertes His im aktiven Zentrum)."
+              "explanation": "Schritt 8 — Phosphoglycerat-Mutase verschiebt die Phosphatgruppe von C3 nach C2 (über 2,3-Bisphosphoglycerat als Intermediat, phosphoryliertes His im aktiven Zentrum).",
+              "mol": "\n  OC-oecho Fischer\n\n 12 11  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0000   -1.0000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0000   -1.0000    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n    2.3100   -0.6300    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.3700   -1.3100    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6700   -1.3500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4100   -2.4300    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  1  3  1  0\n  1  4  1  0\n  4  5  1  0\n  4  6  1  0\n  6  7  1  0\n  7  8  2  0\n  7  9  1  0\n  7 10  1  0\n 11 12  1  0\n  4 11  1  0\nM  STY  1   1 SUP\nM  SAL   1  4   7   8   9  10\nM  SMT   1 Ⓟ\nM  SAP   1  1   7   0 1 \nM  STY  1   2 SUP\nM  SAL   2  2  11  12\nM  SMT   2 CH2OH\nM  SAP   2  1  11   0 1 \nM  END\n"
             },
             {
               "id": "I",
@@ -13160,7 +13169,8 @@
               "name": "Phosphoenolpyruvat (PEP)",
               "smiles": "OC(=O)C(=C)OP(=O)(O)O",
               "caption": "C_3H_5O_6P",
-              "explanation": "Schritt 9 — Enolase spaltet Wasser ab (Lyase, Mg^2+-abhängig; Eliminierung über ein Carbanion/Enolat). Das Enolphosphat PEP hat das höchste Phosphatgruppen-Übertragungspotential im Stoffwechsel (ΔG°' der Hydrolyse ≈ −62 kJ/mol). Enolase wird durch Fluorid gehemmt."
+              "explanation": "Schritt 9 — Enolase spaltet Wasser ab (Lyase, Mg^2+-abhängig; Eliminierung über ein Carbanion/Enolat). Das Enolphosphat PEP hat das höchste Phosphatgruppen-Übertragungspotential im Stoffwechsel (ΔG°' der Hydrolyse ≈ −62 kJ/mol). Enolase wird durch Fluorid gehemmt.",
+              "mol": "\n  OC-oecho Fischer\n\n 10  9  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0000   -1.0000    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n    2.3100   -0.6300    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.3700   -1.3100    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6700   -1.3500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  1  3  1  0\n  1  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\n  6  8  1  0\n  6  9  1  0\n  4 10  2  0\nM  STY  1   1 SUP\nM  SAL   1  4   6   7   8   9\nM  SMT   1 Ⓟ\nM  SAP   1  1   6   0 1 \nM  STY  1   2 SUP\nM  SAL   2  1  10\nM  SMT   2 CH2\nM  SAP   2  1  10   0 1 \nM  END\n"
             },
             {
               "id": "J",
@@ -13169,7 +13179,8 @@
               "name": "Pyruvat (Brenztraubensäure)",
               "smiles": "CC(=O)C(=O)O",
               "caption": "C_3H_4O_3",
-              "explanation": "Schritt 10 — Pyruvatkinase überträgt die Phosphatgruppe von PEP auf ADP → ATP (zweite Substratkettenphosphorylierung). Das entstehende Enol tautomerisiert spontan zum Keton — diese Tautomerie macht den Schritt stark exergon und irreversibel."
+              "explanation": "Schritt 10 — Pyruvatkinase überträgt die Phosphatgruppe von PEP auf ADP → ATP (zweite Substratkettenphosphorylierung). Das entstehende Enol tautomerisiert spontan zum Keton — diese Tautomerie macht den Schritt stark exergon und irreversibel.",
+              "mol": "\n  OC-oecho Fischer\n\n  6  5  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  1  3  1  0\n  1  4  1  0\n  4  5  2  0\n  4  6  1  0\nM  STY  1   1 SUP\nM  SAL   1  1   6\nM  SMT   1 CH3\nM  SAP   1  1   6   0 1 \nM  END\n"
             }
           ],
           "edges": [
@@ -13179,15 +13190,16 @@
               ],
               "to": "A",
               "reagent_above": "Hexokinase",
-              "reagent_below": "ATP → ADP"
+              "curve": true,
+              "curve_in": "ATP",
+              "curve_out": "ADP"
             },
             {
               "from": [
                 "A"
               ],
               "to": "B",
-              "reagent_above": "Phosphoglucose-Isomerase",
-              "reagent_below": ""
+              "reagent_above": "Phosphoglucose-Isomerase"
             },
             {
               "from": [
@@ -13195,31 +13207,30 @@
               ],
               "to": "C",
               "reagent_above": "PFK-1",
-              "reagent_below": "ATP → ADP"
+              "curve": true,
+              "curve_in": "ATP",
+              "curve_out": "ADP"
             },
             {
               "from": [
                 "C"
               ],
               "to": "D",
-              "reagent_above": "Aldolase",
-              "reagent_below": ""
+              "reagent_above": "Aldolase"
             },
             {
               "from": [
                 "C"
               ],
               "to": "E",
-              "reagent_above": "Aldolase",
-              "reagent_below": ""
+              "reagent_above": "Aldolase"
             },
             {
               "from": [
                 "D"
               ],
               "to": "E",
-              "reagent_above": "TIM",
-              "reagent_below": ""
+              "reagent_above": "TIM"
             },
             {
               "from": [
@@ -13227,7 +13238,9 @@
               ],
               "to": "F",
               "reagent_above": "GAPDH",
-              "reagent_below": "NAD^+ + P_i → NADH + H^+"
+              "curve": true,
+              "curve_in": "NAD^+ + P_i",
+              "curve_out": "NADH + H^+"
             },
             {
               "from": [
@@ -13235,15 +13248,16 @@
               ],
               "to": "G",
               "reagent_above": "Phosphoglycerat-Kinase",
-              "reagent_below": "ADP → ATP"
+              "curve": true,
+              "curve_in": "ADP",
+              "curve_out": "ATP"
             },
             {
               "from": [
                 "G"
               ],
               "to": "H",
-              "reagent_above": "Phosphoglycerat-Mutase",
-              "reagent_below": ""
+              "reagent_above": "Phosphoglycerat-Mutase"
             },
             {
               "from": [
@@ -13251,7 +13265,8 @@
               ],
               "to": "I",
               "reagent_above": "Enolase",
-              "reagent_below": "− H_2O"
+              "curve": true,
+              "curve_out": "H_2O"
             },
             {
               "from": [
@@ -13259,7 +13274,9 @@
               ],
               "to": "J",
               "reagent_above": "Pyruvatkinase",
-              "reagent_below": "ADP → ATP"
+              "curve": true,
+              "curve_in": "ADP",
+              "curve_out": "ATP"
             }
           ]
         }
@@ -13352,33 +13369,31 @@
         "type": "multiple_choice",
         "title": "Enolase",
         "givens": {
-          "smiles": "OC(=O)[C@H](OP(=O)(O)O)CO",
-          "reagent_label": "Enolase, Mg^2+",
-          "reagent_label_below": ""
+          "smiles": "\n  OC-oecho Fischer\n\n 12 11  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0000   -1.0000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0000   -1.0000    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n    2.3100   -0.6300    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.3700   -1.3100    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6700   -1.3500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4100   -2.4300    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  1  3  1  0\n  1  4  1  0\n  4  5  1  0\n  4  6  1  0\n  6  7  1  0\n  7  8  2  0\n  7  9  1  0\n  7 10  1  0\n 11 12  1  0\n  4 11  1  0\nM  STY  1   1 SUP\nM  SAL   1  4   7   8   9  10\nM  SMT   1 Ⓟ\nM  SAP   1  1   7   0 1 \nM  STY  1   2 SUP\nM  SAL   2  2  11  12\nM  SMT   2 CH2OH\nM  SAP   2  1  11   0 1 \nM  END\n"
         },
-        "prompt": "Welches Produkt bildet die Enolase aus 2-Phosphoglycerat?",
+        "prompt": "Welches Produkt bildet die Enolase (Mg^2+) aus dem gezeigten 2-Phosphoglycerat?",
         "choices": [
           {
             "id": "a",
-            "smiles": "OC(=O)C(=C)OP(=O)(O)O",
+            "smiles": "\n  OC-oecho Fischer\n\n 10  9  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0000   -1.0000    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n    2.3100   -0.6300    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    2.3700   -1.3100    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.6700   -1.3500    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  1  3  1  0\n  1  4  1  0\n  4  5  1  0\n  5  6  1  0\n  6  7  2  0\n  6  8  1  0\n  6  9  1  0\n  4 10  2  0\nM  STY  1   1 SUP\nM  SAL   1  4   6   7   8   9\nM  SMT   1 Ⓟ\nM  SAP   1  1   6   0 1 \nM  STY  1   2 SUP\nM  SAL   2  1  10\nM  SMT   2 CH2\nM  SAP   2  1  10   0 1 \nM  END\n",
             "label": "Phosphoenolpyruvat",
             "correct": true
           },
           {
             "id": "b",
-            "smiles": "CC(=O)C(=O)O",
+            "smiles": "\n  OC-oecho Fischer\n\n  6  5  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  1  3  1  0\n  1  4  1  0\n  4  5  2  0\n  4  6  1  0\nM  STY  1   1 SUP\nM  SAL   1  1   6\nM  SMT   1 CH3\nM  SAP   1  1   6   0 1 \nM  END\n",
             "label": "Pyruvat",
             "correct": false
           },
           {
             "id": "c",
-            "smiles": "OC(=O)[C@H](O)COP(=O)(O)O",
+            "smiles": "\n  OC-oecho Fischer\n\n 12 11  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.0000   -1.0000    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4100   -2.4300    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8300   -2.7900    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1400   -2.4200    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2000   -3.1000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5000   -3.1400    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  1  3  1  0\n  1  4  1  0\n  4  5  1  0\n  4  6  1  0\n  7  8  1  0\n  8  9  1  0\n  9 10  2  0\n  9 11  1  0\n  9 12  1  0\n  4  7  1  0\nM  STY  1   1 SUP\nM  SAL   1  6   7   8   9  10  11  12\nM  SMT   1 CH2OⓅ\nM  SAP   1  1   7   0 1 \nM  END\n",
             "label": "3-Phosphoglycerat",
             "correct": false
           },
           {
             "id": "d",
-            "smiles": "OC(=O)C(=O)COP(=O)(O)O",
+            "smiles": "\n  OC-oecho Fischer\n\n 11 10  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8660    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.8660    0.5000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -1.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000   -1.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000   -2.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.4100   -2.4300    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.8300   -2.7900    0.0000 P   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1400   -2.4200    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.2000   -3.1000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.5000   -3.1400    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  1  3  1  0\n  1  4  1  0\n  4  5  2  0\n  6  7  1  0\n  7  8  1  0\n  8  9  2  0\n  8 10  1  0\n  8 11  1  0\n  4  6  1  0\nM  STY  1   1 SUP\nM  SAL   1  6   6   7   8   9  10  11\nM  SMT   1 CH2OⓅ\nM  SAP   1  1   6   0 1 \nM  END\n",
             "label": "3-Phosphohydroxypyruvat",
             "correct": false
           }

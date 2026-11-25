@@ -214,7 +214,7 @@ const MolRenderer = (() => {
   /* "OMe" bonded to something on its RIGHT reads "MeO" in a textbook:
      the atom that carries the bond is written next to it. Spellings the
      general rule below would not pick: */
-  const MIRRORED = { OSO2Me: 'MeSO2O' };
+  const MIRRORED = { OSO2Me: 'MeSO2O', 'CH2OⓅ': 'ⓅOH2C' };
 
   /* Two-letter element symbols a label may start or end with ("MgBr",
      "SiMe3", "ClMg"); every other label is split after one letter. */
@@ -296,6 +296,39 @@ const MolRenderer = (() => {
      [{ atom, cands: { L?, R? }, natural }] (see _placeLabels). */
   const _labelParts = new WeakMap();
 
+  /* Phosphate as biochemistry writes it: a P in a circle. A superatom
+     labelled "Ⓟ" (alone, or inside a label such as "CH2OⓅ") is drawn as
+     a plain P with a real SVG circle around it — the Unicode glyph alone
+     looks different in every font. Inside a label the P is padded with
+     no-break spaces so the ring clears its neighbours. */
+  const CIRCLED_P = 'Ⓟ';
+  const CIRCLE_PAD = '\u00A0\u200A';
+  const _circledAtoms = new WeakMap();
+  function _uncircle(s) { return String(s).split(CIRCLED_P).join(CIRCLE_PAD + 'P' + CIRCLE_PAD); }
+  function _circleTag(cx, cy, r, color, sw) {
+    return '<circle class="circled-p" cx="' + +cx.toFixed(2) + '" cy="' + +cy.toFixed(2) + '" r="' + +r.toFixed(2) +
+      '" fill="none" stroke="' + color + '" stroke-width="' + sw + '"/>';
+  }
+  function _svgStroke(svg) {
+    const l = /<line\b[^>]*\sstroke-width="([\d.]+)"/.exec(svg);
+    return l ? +l[1] : 1;
+  }
+  function _textColor(attrs) {
+    const c = /\sfill="([^"]+)"/.exec(attrs || '');
+    return c && c[1] !== 'none' ? c[1] : 'currentColor';
+  }
+  /* Rings for every Ⓟ in a label run that starts at x0 (baseline y). */
+  function _labelCircles(text, x0, y, fs, color, sw) {
+    let out = '';
+    const s = String(text);
+    for (let j = s.indexOf(CIRCLED_P); j >= 0; j = s.indexOf(CIRCLED_P, j + 1)) {
+      const wP = _labelWidth(CIRCLED_P, fs);
+      const cx = x0 + _labelWidth(s.slice(0, j), fs) + wP / 2;
+      out += _circleTag(cx, y - 0.34 * fs, Math.min(0.56 * fs, wP / 2), color, sw);
+    }
+    return out;
+  }
+
   /* Collapse superatoms to a single labelled atom: the attachment atom
      keeps its bond and position, the rest of the group is deleted.
 
@@ -313,7 +346,7 @@ const MolRenderer = (() => {
       groups.forEach(function (grp) { grp.atoms = grp.atoms.map(to); if (grp.anchor >= 0) grp.anchor = to(grp.anchor); });
     }
     m.ensureHelperArrays(window.OCL.Molecule.cHelperNeighbours);
-    const drop = [], parts = [];
+    const drop = [], parts = [], circled = [];
     groups.forEach(function (grp) {
       const inGrp = new Set(grp.atoms);
       if (grp.atoms.some(function (a) { return a >= m.getAllAtoms(); })) return;
@@ -340,6 +373,13 @@ const MolRenderer = (() => {
       // colour — only the label is drawn, in the bond colour.
       m.setAtomicNo(anchor, 0);
       m.setAtomCharge(anchor, 0);
+      if (grp.label === CIRCLED_P) {
+        // a phosphate on its own: OCL draws the P, _circleAtoms the ring
+        m.setAtomCustomLabel(anchor, 'P');
+        circled.push(anchor);
+        grp.atoms.forEach(function (a) { if (a !== anchor) drop.push(a); });
+        return;
+      }
       m.setAtomCustomLabel(anchor, part.anchor);
       const more = function (k) { return k && (k.pre || k.post); };
       if (more(cands.L) || more(cands.R)) parts.push({ atom: anchor, cands: cands, natural: natural });
@@ -349,6 +389,7 @@ const MolRenderer = (() => {
     const renum = drop.length ? m.deleteAtoms(drop) : null;
     if (renum) parts.forEach(function (p) { p.atom = renum[p.atom]; });
     if (parts.length) _labelParts.set(m, parts);
+    if (circled.length) _circledAtoms.set(m, renum ? circled.map(function (a) { return renum[a]; }) : circled);
   }
 
   /* Counts match OCL's own "H2N": at symbol size 14 the "2" is 9 px
@@ -362,6 +403,7 @@ const MolRenderer = (() => {
 
   /* Label text as <tspan>s, digits set as subscripts. */
   function _labelTspans(text, fs) {
+    text = _uncircle(text);
     const drop = +(fs * LABEL_SUB_DROP).toFixed(2);
     const small = +(fs * LABEL_SUB_SIZE).toFixed(2);
     let out = '', low = false;
@@ -375,7 +417,7 @@ const MolRenderer = (() => {
 
   function _labelWidth(text, fs) {
     let w = 0;
-    String(text).split(/(\d+)/).forEach(function (run, i) {
+    _uncircle(text).split(/(\d+)/).forEach(function (run, i) {
       if (run) w += _measure(run, (i % 2 ? fs * LABEL_SUB_SIZE : fs) + 'px sans-serif');
     });
     return w;
@@ -516,8 +558,14 @@ const MolRenderer = (() => {
         : f.tx.attrs.replace(/\sx="[^"]*"/, ' x="' + +g.ax.toFixed(2) + '"');
       let html = '<text' + attrs + '>' + _escText(k.anchor) + _labelTspans(k.post, fs) + '</text>';
       if (k.pre) html = '<text' + attrs + ' text-anchor="end">' + _labelTspans(k.pre, fs) + '</text>' + html;
+      const ring = k.pre + k.post;
+      if (ring.indexOf(CIRCLED_P) >= 0) {
+        const color = _textColor(attrs), sw = _svgStroke(svg);
+        html += _labelCircles(k.post, g.ax + _labelWidth(k.anchor, fs), f.tx.y, fs, color, sw) +
+                _labelCircles(k.pre, g.ax - _labelWidth(k.pre, fs), f.tx.y, fs, color, sw);
+      }
       edits.push({ tx: f.tx, html: html });
-      boxes.push([g.box[0], f.tx.y - fs * 0.8, g.box[2], f.tx.y + fs * 0.35]);
+      boxes.push([g.box[0], f.tx.y - fs * (ring.indexOf(CIRCLED_P) >= 0 ? 0.95 : 0.8), g.box[2], f.tx.y + fs * 0.35]);
     });
     edits.sort(function (a, b) { return b.tx.from - a.tx.from; }).forEach(function (e) {
       svg = svg.slice(0, e.tx.from) + e.html + svg.slice(e.tx.to);
@@ -554,6 +602,47 @@ const MolRenderer = (() => {
      back as OCL's own centred label rather than losing all but its
      first letter. */
   function _svgOf(m, w, h, o) {
+    return _circleAtoms(m, _svgOfLabels(m, w, h, o), o);
+  }
+
+  /* A ring around every standalone Ⓟ: centred on the atom (OCL centres
+     the P there), sized from the P's own font. */
+  function _circleAtoms(m, svg, o) {
+    const list = _circledAtoms.get(m);
+    if (!list || !list.length) return svg;
+    const at = {};
+    (svg.match(/<circle\b[^>]*>/g) || []).forEach(function (tag) {
+      const id = /\sid="[^"]*:Atom:(\d+)"/.exec(tag), cx = _num(tag, 'cx'), cy = _num(tag, 'cy');
+      if (id && cx != null && cy != null) at[id[1]] = { x: cx, y: cy };
+    });
+    const texts = [];
+    const re = /<text\b([^>]*)>P<\/text>/g;
+    let t;
+    while ((t = re.exec(svg))) texts.push({ attrs: t[1], x: _num(t[1], 'x'), y: _num(t[1], 'y'), fs: _num(t[1], 'font-size') || 14 });
+    const sw = _svgStroke(svg);
+    let rings = '';
+    const boxes = [];
+    list.forEach(function (a) {
+      const c = at[a];
+      if (!c) return;
+      let best = null, bd = Infinity;
+      texts.forEach(function (tx) {
+        const d = Math.hypot(tx.x - c.x, tx.y - c.y);
+        if (d < bd) { bd = d; best = tx; }
+      });
+      const fs = best ? best.fs : 14, r = 0.62 * fs;
+      // the P's visual centre: OCL sets it on the atom horizontally, the
+      // baseline sits below the centre by about a third of the font size
+      const cy = best ? best.y - 0.36 * fs : c.y;
+      rings += _circleTag(c.x, cy, r, _textColor(best && best.attrs), sw);
+      boxes.push([c.x - r - 1, cy - r - 1, c.x + r + 1, cy + r + 1]);
+    });
+    if (!rings) return svg;
+    svg = svg.replace(/<\/svg>\s*$/, rings + '</svg>');
+    return _growViewBox(svg, boxes, o);
+  }
+
+  function _svgOfLabels(m, w, h, o) {
     const svg = m.toSVG(w, h, undefined, o);
     const parts = _labelParts.get(m);
     if (!parts) return svg;
@@ -564,7 +653,7 @@ const MolRenderer = (() => {
       if (p.atom >= 0) m.setAtomCustomLabel(p.atom, k.pre + k.anchor + k.post);
     });
     _labelParts.set(m, parts.filter(function (p) { return r.missed.indexOf(p) < 0; }));
-    return _svgOf(m, w, h, o);
+    return _svgOfLabels(m, w, h, o);
   }
 
   /* Parse a MOL for drawing: aliases first, then superatoms collapse.

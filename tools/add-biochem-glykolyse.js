@@ -4,14 +4,17 @@
  *   + Multiple-Choice- und Kurzantwortfragen zu Enzymen, Bilanz,
  *     Regulation und Mechanismen.
  *
- * Phosphatgruppen sind in der freien Säureform (–OPO_3H_2) gezeichnet;
- * bei pH 7 liegen sie überwiegend als Dianion vor.
+ * Alle Strukturen sind offenkettig in Fischer-Projektion als Molfile
+ * gespeichert (tools/lib-fischer.js); Phosphat erscheint als Ⓟ (P im Kreis,
+ * gezeichnet von mol-renderer.js). Coenzyme stehen an halbkreisförmigen
+ * Cofaktor-Pfeilen (edge.curve). Das Skript ersetzt einen vorhandenen
+ * Eintrag gleicher id.
  */
 const fs = require('fs');
 const path = require('path');
 const QFILE = path.join(__dirname, '..', 'data', 'questions.json');
 const data = JSON.parse(fs.readFileSync(QFILE, 'utf8'));
-const existing = new Set(data.map(q => q.id));
+const { build } = require('./lib-fischer');
 
 const ENTRIES = [
   {
@@ -19,7 +22,7 @@ const ENTRIES = [
     category: 'Biochemie',
     name: 'Glykolyse — von Glucose zu Pyruvat',
     difficulty: 'B',
-    intro: 'Die Glykolyse (Embden-Meyerhof-Parnas-Weg) ist der zentrale Abbauweg der Glucose und läuft im Cytosol praktisch aller Zellen ab. In zehn enzymkatalysierten Schritten wird ein Molekül Glucose (C_6) in zwei Moleküle Pyruvat (C_3) zerlegt.\n\nVorbereitungsphase (Schritte 1–5): Unter Einsatz von 2 ATP wird Glucose zweimal phosphoryliert und in zwei Triosephosphate gespalten.\nErtragsphase (Schritte 6–10): Jedes Glycerinaldehyd-3-phosphat wird oxidiert; dabei entstehen pro Triose 1 NADH und 2 ATP.\n\nHinweis: Phosphatgruppen sind vereinfacht als –OPO_3H_2 gezeichnet.',
+    intro: 'Die Glykolyse (Embden-Meyerhof-Parnas-Weg) ist der zentrale Abbauweg der Glucose und läuft im Cytosol praktisch aller Zellen ab. In zehn enzymkatalysierten Schritten wird ein Molekül Glucose (C_6) in zwei Moleküle Pyruvat (C_3) zerlegt.\n\nVorbereitungsphase (Schritte 1–5): Unter Einsatz von 2 ATP wird Glucose zweimal phosphoryliert und in zwei Triosephosphate gespalten.\nErtragsphase (Schritte 6–10): Jedes Glycerinaldehyd-3-phosphat wird oxidiert; dabei entstehen pro Triose 1 NADH und 2 ATP.\n\nHinweis: Alle Verbindungen sind offenkettig in der Fischer-Projektion gezeichnet (C1 oben). Ⓟ steht für eine Phosphatgruppe –PO_3H_2 (bei pH 7 überwiegend –PO_3^2−).',
     sections: [
       /* ── 1. Schema ─────────────────────────────────────────────── */
       {
@@ -27,8 +30,8 @@ const ENTRIES = [
         title: 'Die zehn Schritte der Glykolyse',
         scheme: {
           nodes: [
-            { id: 'Glc', label: 'α-D-Glucose', given: true,
-              name: 'α-D-Glucopyranose',
+            { id: 'Glc', label: 'D-Glucose', given: true,
+              name: 'D-Glucose (offenkettige Form)',
               smiles: 'OC[C@H]1O[C@H](O)[C@H](O)[C@@H](O)[C@@H]1O',
               explanation: 'Ausgangsstoff. Gelangt über GLUT-Transporter in die Zelle.' },
             { id: 'A', label: 'A', given: false,
@@ -37,10 +40,10 @@ const ENTRIES = [
               caption: 'C_6H_13O_9P',
               explanation: 'Schritt 1 — Hexokinase (Leber: Glucokinase) überträgt die γ-Phosphatgruppe von ATP auf die primäre 6-OH-Gruppe (Transferase, Mg^2+-abhängig). Irreversibel. Das geladene G6P kann die Zelle nicht mehr verlassen („Glucose-Falle“). Hexokinase wird durch ihr Produkt G6P gehemmt.' },
             { id: 'B', label: 'B', given: false,
-              name: 'Fructose-6-phosphat (F6P), β-Furanose',
+              name: 'Fructose-6-phosphat (F6P)',
               smiles: 'O=P(O)(O)OC[C@@H]1[C@H]([C@@H]([C@](O1)(CO)O)O)O',
               caption: 'C_6H_13O_9P',
-              explanation: 'Schritt 2 — Phosphoglucose-Isomerase: Ringöffnung, Aldose → Ketose über ein cis-Endiol(at)-Intermediat, Ringschluss zur Furanose (Isomerase). Reversibel. Aus dem Aldehyd an C1 wird die Ketogruppe an C2 — Voraussetzung für die spätere Aldolspaltung zwischen C3 und C4.' },
+              explanation: 'Schritt 2 — Phosphoglucose-Isomerase: Aldose → Ketose über ein cis-Endiol(at)-Intermediat (Isomerase; das Enzym öffnet dazu den Pyranosering und schließt danach den Furanosering). Reversibel. Aus dem Aldehyd an C1 wird die Ketogruppe an C2 — Voraussetzung für die spätere Aldolspaltung zwischen C3 und C4.' },
             { id: 'C', label: 'C', given: false,
               name: 'Fructose-1,6-bisphosphat (F1,6BP)',
               smiles: 'O=P(O)(O)OC[C@@H]1[C@H]([C@@H]([C@](O1)(COP(=O)(O)O)O)O)O',
@@ -83,17 +86,17 @@ const ENTRIES = [
               explanation: 'Schritt 10 — Pyruvatkinase überträgt die Phosphatgruppe von PEP auf ADP → ATP (zweite Substratkettenphosphorylierung). Das entstehende Enol tautomerisiert spontan zum Keton — diese Tautomerie macht den Schritt stark exergon und irreversibel.' }
           ],
           edges: [
-            { from: ['Glc'], to: 'A', reagent_above: 'Hexokinase',            reagent_below: 'ATP → ADP' },
-            { from: ['A'],   to: 'B', reagent_above: 'Phosphoglucose-Isomerase', reagent_below: '' },
-            { from: ['B'],   to: 'C', reagent_above: 'PFK-1',                 reagent_below: 'ATP → ADP' },
-            { from: ['C'],   to: 'D', reagent_above: 'Aldolase',              reagent_below: '' },
-            { from: ['C'],   to: 'E', reagent_above: 'Aldolase',              reagent_below: '' },
-            { from: ['D'],   to: 'E', reagent_above: 'TIM',                   reagent_below: '' },
-            { from: ['E'],   to: 'F', reagent_above: 'GAPDH',                 reagent_below: 'NAD^+ + P_i → NADH + H^+' },
-            { from: ['F'],   to: 'G', reagent_above: 'Phosphoglycerat-Kinase', reagent_below: 'ADP → ATP' },
-            { from: ['G'],   to: 'H', reagent_above: 'Phosphoglycerat-Mutase', reagent_below: '' },
-            { from: ['H'],   to: 'I', reagent_above: 'Enolase',               reagent_below: '− H_2O' },
-            { from: ['I'],   to: 'J', reagent_above: 'Pyruvatkinase',         reagent_below: 'ADP → ATP' }
+            { from: ['Glc'], to: 'A', reagent_above: 'Hexokinase',             curve: true, curve_in: 'ATP', curve_out: 'ADP' },
+            { from: ['A'],   to: 'B', reagent_above: 'Phosphoglucose-Isomerase' },
+            { from: ['B'],   to: 'C', reagent_above: 'PFK-1',                  curve: true, curve_in: 'ATP', curve_out: 'ADP' },
+            { from: ['C'],   to: 'D', reagent_above: 'Aldolase' },
+            { from: ['C'],   to: 'E', reagent_above: 'Aldolase' },
+            { from: ['D'],   to: 'E', reagent_above: 'TIM' },
+            { from: ['E'],   to: 'F', reagent_above: 'GAPDH',                  curve: true, curve_in: 'NAD^+ + P_i', curve_out: 'NADH + H^+' },
+            { from: ['F'],   to: 'G', reagent_above: 'Phosphoglycerat-Kinase', curve: true, curve_in: 'ADP', curve_out: 'ATP' },
+            { from: ['G'],   to: 'H', reagent_above: 'Phosphoglycerat-Mutase' },
+            { from: ['H'],   to: 'I', reagent_above: 'Enolase',                curve: true, curve_out: 'H_2O' },
+            { from: ['I'],   to: 'J', reagent_above: 'Pyruvatkinase',          curve: true, curve_in: 'ADP', curve_out: 'ATP' }
           ]
         }
       },
@@ -144,8 +147,8 @@ const ENTRIES = [
       {
         type: 'multiple_choice',
         title: 'Enolase',
-        givens: { smiles: 'OC(=O)[C@H](OP(=O)(O)O)CO', reagent_label: 'Enolase, Mg^2+', reagent_label_below: '' },
-        prompt: 'Welches Produkt bildet die Enolase aus 2-Phosphoglycerat?',
+        givens: { smiles: 'OC(=O)[C@H](OP(=O)(O)O)CO' },
+        prompt: 'Welches Produkt bildet die Enolase (Mg^2+) aus dem gezeigten 2-Phosphoglycerat?',
         choices: [
           { id: 'a', smiles: 'OC(=O)C(=C)OP(=O)(O)O', label: 'Phosphoenolpyruvat', correct: true },
           { id: 'b', smiles: 'CC(=O)C(=O)O', label: 'Pyruvat', correct: false },
@@ -210,11 +213,61 @@ const ENTRIES = [
   }
 ];
 
+/* Fischer projections, top (C1) to bottom, and the matching open-chain
+   SMILES (stereo checked with RDKit: D-Glucose 2R,3S,4R,5R; D-Fructose
+   3S,4R,5R; D-GAP, 1,3-BPG, 3-PG, 2-PG all R). */
+const FISCHER = {
+  glc:   { smiles: 'O=C[C@H](O)[C@@H](O)[C@H](O)[C@H](O)CO',
+           chain: [{ top: 'CHO' }, { L: 'H', R: 'OH' }, { L: 'OH', R: 'H' }, { L: 'H', R: 'OH' }, { L: 'H', R: 'OH' }, { group: 'CH2OH' }] },
+  g6p:   { smiles: 'O=C[C@H](O)[C@@H](O)[C@H](O)[C@H](O)COP(=O)(O)O',
+           chain: [{ top: 'CHO' }, { L: 'H', R: 'OH' }, { L: 'OH', R: 'H' }, { L: 'H', R: 'OH' }, { L: 'H', R: 'OH' }, { group: 'CH2OP' }] },
+  f6p:   { smiles: 'OCC(=O)[C@@H](O)[C@H](O)[C@H](O)COP(=O)(O)O',
+           chain: [{ group: 'CH2OH' }, { keto: true }, { L: 'OH', R: 'H' }, { L: 'H', R: 'OH' }, { L: 'H', R: 'OH' }, { group: 'CH2OP' }] },
+  f16bp: { smiles: 'O=P(O)(O)OCC(=O)[C@@H](O)[C@H](O)[C@H](O)COP(=O)(O)O',
+           chain: [{ group: 'CH2OP' }, { keto: true }, { L: 'OH', R: 'H' }, { L: 'H', R: 'OH' }, { L: 'H', R: 'OH' }, { group: 'CH2OP' }] },
+  dhap:  { smiles: 'OCC(=O)COP(=O)(O)O',
+           chain: [{ group: 'CH2OH' }, { keto: true }, { group: 'CH2OP' }] },
+  gap:   { smiles: 'O=C[C@H](O)COP(=O)(O)O',
+           chain: [{ top: 'CHO' }, { L: 'H', R: 'OH' }, { group: 'CH2OP' }] },
+  bpg:   { smiles: 'O=C(OP(=O)(O)O)[C@H](O)COP(=O)(O)O',
+           chain: [{ top: 'COOP' }, { L: 'H', R: 'OH' }, { group: 'CH2OP' }] },
+  pg3:   { smiles: 'OC(=O)[C@H](O)COP(=O)(O)O',
+           chain: [{ top: 'COOH' }, { L: 'H', R: 'OH' }, { group: 'CH2OP' }] },
+  pg2:   { smiles: 'OC(=O)[C@H](OP(=O)(O)O)CO',
+           chain: [{ top: 'COOH' }, { L: 'H', R: 'OP' }, { group: 'CH2OH' }] },
+  pep:   { smiles: 'OC(=O)C(=C)OP(=O)(O)O',
+           chain: [{ top: 'COOH' }, { R: 'OP', double: true }, { group: 'CH2' }] },
+  pyr:   { smiles: 'CC(=O)C(=O)O',
+           chain: [{ top: 'COOH' }, { keto: true }, { group: 'CH3' }] },
+  php:   { smiles: 'OC(=O)C(=O)COP(=O)(O)O',
+           chain: [{ top: 'COOH' }, { keto: true }, { group: 'CH2OP' }] }
+};
+const MOL = {};
+for (const k of Object.keys(FISCHER)) MOL[k] = build(FISCHER[k].chain);
+
+const NODE = { Glc: 'glc', A: 'g6p', B: 'f6p', C: 'f16bp', D: 'dhap', E: 'gap', F: 'bpg', G: 'pg3', H: 'pg2', I: 'pep', J: 'pyr' };
+const BY_SMILES = {
+  'OC(=O)[C@H](OP(=O)(O)O)CO': 'pg2', 'OC(=O)C(=C)OP(=O)(O)O': 'pep', 'CC(=O)C(=O)O': 'pyr',
+  'OC(=O)[C@H](O)COP(=O)(O)O': 'pg3', 'OC(=O)C(=O)COP(=O)(O)O': 'php'
+};
+
+for (const e of ENTRIES) {
+  for (const sec of e.sections) {
+    if (sec.scheme) for (const n of sec.scheme.nodes) {
+      const k = NODE[n.id];
+      if (k) { n.smiles = FISCHER[k].smiles; n.mol = MOL[k]; }
+    }
+    // MCQ structures: the quiz draws a molfile given in place of SMILES
+    if (sec.givens && BY_SMILES[sec.givens.smiles]) sec.givens.smiles = MOL[BY_SMILES[sec.givens.smiles]];
+    for (const c of sec.choices || []) if (c.smiles && BY_SMILES[c.smiles]) c.smiles = MOL[BY_SMILES[c.smiles]];
+  }
+}
+
 let added = 0;
 for (const e of ENTRIES) {
-  if (existing.has(e.id)) { console.log('skip:', e.id); continue; }
-  data.push(e); existing.add(e.id); added++;
-  console.log('added:', e.id);
+  const i = data.findIndex(q => q.id === e.id);
+  if (i >= 0) { data[i] = e; console.log('replaced:', e.id); }
+  else { data.push(e); added++; console.log('added:', e.id); }
 }
 fs.writeFileSync(QFILE, JSON.stringify(data, null, 2) + '\n');
 console.log('\nTotal entries:', data.length, '(+' + added + ')');
