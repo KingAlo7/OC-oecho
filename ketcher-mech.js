@@ -13,7 +13,11 @@
  *     ordinary molecules on the canvas, so arrows start from them too.
  *   · a click on an arrow selects it; the bar at the top then switches
  *     pair / single electron, bulge side and arc, or deletes it
- *     (keys: T, F, A, Entf)
+ *     (keys: T, F, A, Entf). Side and arc are placed automatically
+ *     (MechArrows.layout); setting one by hand locks it, "Auto" frees it.
+ *   · "Neue Bindung": start, then the two atoms of the bond being formed
+ *     (same as Shift). "2 Radikale": click two radicals — one fishhook
+ *     from each meets in the new bond between them.
  *
  * The arrows are drawn into Ketcher's own SVG, in its canvas coordinates
  * (model × microModeScale + offset), so they follow zoom and scrolling,
@@ -45,8 +49,10 @@
     '<path d="M5 17 A7.5 7.5 0 0 1 18.5 9.5" stroke="#ff0d0d" stroke-width="2" fill="none" stroke-linecap="round"/>' +
     '<path d="M20.3 13.4 L19.6 7.6 L15.2 10.6 Z" fill="#ff0d0d" stroke="#ff0d0d" stroke-width="0.8" stroke-linejoin="round"/></svg>';
 
-  const ARCS = ['auto', 'flat', 'deep'];
-  const ARC_NAME = { auto: 'Bogen: auto', flat: 'Bogen: flach', deep: 'Bogen: halbkreis' };
+  // arc = sweep angle of the curve; 'auto' lets the layout choose
+  const ARCS = ['auto', 90, 120, 150, 180, 210, 240];
+  const arcName = function (a) { return typeof a === 'number' ? 'Bogen: ' + a + '°' : 'Bogen: auto'; };
+  const locked = function (ar, key) { return (ar.lock || []).indexOf(key) >= 0; };
 
   /* ── LaTeX-lite (H_2O, OH^-) ⇄ Ketcher's rich text (draft.js) ── */
   function toDraft(text) {
@@ -142,24 +148,48 @@
       });
       if (S.selected >= S.arrows.length) S.selected = -1;
       const u = R().options.microModeScale;
-      const ids = [];
-      S.arrows.forEach(function (ar) { [ar.from, ar.to].forEach(function (a) { ids.push.apply(ids, a.atom != null ? [a.atom] : a.pair); }); });
-      if (S.pending) ids.push.apply(ids, S.pending.atom != null ? [S.pending.atom] : S.pending.pair || []);
-      const sig = JSON.stringify([S.arrows, S.selected, S.pending, S.half, u, R().options.offset,
-        ids.map(function (id) { const p = atomPP(id); return p ? [p.x, p.y] : 0; })]);
+      // the layout looks at the whole drawing, so any atom or bond change counts
+      const atomSig = [];
+      st.atoms.forEach(function (a, id) { atomSig.push(id, a.pp.x, a.pp.y, a.label, a.charge || 0, a.alias || ''); });
+      const bondSig = [];
+      st.bonds.forEach(function (b) { bondSig.push(b.begin, b.end, b.type); });
+      const sig = JSON.stringify([S.arrows, S.selected, S.pending, S.half, S.radA, S.form, u, R().options.offset, atomSig, bondSig]);
       if (!force && sig === S.sig) return;
       S.sig = sig;
 
-      let html = '';
+      /* All arrows are placed together, clear of labels, bonds and each
+         other — the same MechArrows.layout the page uses. */
+      const MA = window.MechArrows;
+      const idx = new Map(), mol = { atoms: [], bonds: [] }, degree = new Map();
+      st.bonds.forEach(function (b) { [b.begin, b.end].forEach(function (id) { degree.set(id, (degree.get(id) || 0) + 1); }); });
+      st.atoms.forEach(function (a, id) {
+        const c = toCanvas(a.pp);
+        idx.set(id, mol.atoms.length);
+        // Ketcher prints terminal and radical carbons ("CH₃", "H₂C", "Ċ")
+        let alias = a.alias || null;
+        if (!alias && a.label === 'C' && ((degree.get(id) || 0) <= 1 || a.radical)) alias = (degree.get(id) || 0) <= 1 ? 'CH3' : 'C';
+        mol.atoms.push({ x: c[0], y: c[1], sym: a.label, charge: a.charge || 0, alias: alias, rad: false });
+      });
+      st.bonds.forEach(function (b) {
+        if (idx.has(b.begin) && idx.has(b.end)) mol.bonds.push({ a: idx.get(b.begin), b: idx.get(b.end), order: b.type >= 1 && b.type <= 3 ? b.type : 1 });
+      });
+      const scene = MA.sceneFromMol(mol, function (p) { return p; }, u);
+      const list = [], where = [];
       S.arrows.forEach(function (ar, i) {
         const s = anchorOf(ar.from), t = anchorOf(ar.to);
         if (!s || !t) return;
-        const o = { unit: u, side: ar.side, arc: ar.arc, type: ar.type };
-        const g = window.MechArrows.geometry(s, t, o);
+        list.push(Object.assign({}, ar, { from: s, to: t }));
+        where.push(i);
+      });
+      S.placed = [];
+      let html = '';
+      MA.layout(list, scene).forEach(function (r, n) {
+        const i = where[n], g = r.g;
+        S.placed[i] = r.o;
         if (i === S.selected) {
           html += '<path d="' + g.path + '" fill="none" stroke="#ffd54f" stroke-width="' + (0.28 * u) + '" stroke-linecap="round" opacity="0.7"/>';
         }
-        html += window.MechArrows.svg(s, t, o);
+        html += MA.svg(r.src, r.tgt, r.o);
         // wide, invisible hit area
         html += '<path class="km-hit" data-i="' + i + '" d="' + g.path + '" fill="none" stroke="transparent" stroke-width="' + (0.3 * u) +
           '" style="pointer-events:stroke;cursor:pointer"/>';
@@ -171,7 +201,8 @@
         return '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="' + (0.22 * u) + '" fill="rgba(255,13,13,0.12)" stroke="#ff0d0d" stroke-width="1.5" stroke-dasharray="3 2"/>';
       };
       if (S.pending) html += mark(S.pending);
-      if (S.half) html += mark({ atom: S.half });
+      if (S.half != null) html += mark({ atom: S.half });
+      if (S.radA != null) html += mark({ atom: S.radA });
       S.layer.innerHTML = html;
     }
 
@@ -183,29 +214,48 @@
         const ar = S.arrows[S.selected];
         h = '<b>Pfeil ' + (S.selected + 1) + '</b>' +
           '<button data-a="type" title="T">' + (ar.type === 'single' ? 'Einzelelektron ⇀' : 'Elektronenpaar →') + '</button>' +
-          '<button data-a="side" title="F">Seite ⇅</button>' +
-          '<button data-a="arc" title="A">' + ARC_NAME[ar.arc || 'auto'] + '</button>' +
+          '<button data-a="side" title="F" aria-pressed="' + locked(ar, 'side') + '">Seite ⇅</button>' +
+          '<button data-a="arc" title="A" aria-pressed="' + locked(ar, 'arc') + '">' + arcName(ar.arc) + '</button>' +
+          ((ar.lock || []).length ? '<button data-a="auto" title="Seite und Bogen wieder automatisch wählen">Auto</button>' : '') +
           '<span class="km-sep"></span><button data-a="del" title="Entf">Löschen</button>' +
           '<button data-a="done">Fertig</button>';
       } else {
-        const step = S.half ? 'zweites Atom der neuen Bindung' : S.pending ? '<b>Ziel</b> anklicken (Atom / Bindung; Shift + 2 Atome = neue Bindung)'
+        const step = S.radA != null ? '<b>zweites Radikal</b> anklicken'
+          : S.form === 'radicals' ? '<b>erstes Radikal</b> anklicken — je ein Einzelelektronenpfeil in die neue Bindung'
+          : S.half != null ? '<b>zweites Atom</b> der neuen Bindung'
+          : S.pending ? (S.form === 'bond' ? '<b>erstes Atom</b> der neuen Bindung anklicken' : '<b>Ziel</b> anklicken (Atom / Bindung; Shift + 2 Atome = neue Bindung)')
           : '<b>Start</b> anklicken: Atom = freies Elektronenpaar, Bindung = Bindungselektronen';
         h = '<span class="km-hint">' + step + '</span><span class="km-sep"></span>' +
-          '<button data-a="newtype" aria-pressed="' + (S.type === 'pair') + '">Paar</button>' +
-          '<button data-a="newsingle" aria-pressed="' + (S.type === 'single') + '">Einzelelektron</button>';
+          '<button data-a="newtype" aria-pressed="' + (S.type === 'pair' && S.form !== 'radicals') + '">Paar</button>' +
+          '<button data-a="newsingle" aria-pressed="' + (S.type === 'single' && S.form !== 'radicals') + '">Einzelelektron</button>' +
+          '<span class="km-sep"></span>' +
+          '<button data-a="form" title="Ziel ist eine Bindung, die erst entsteht: Start, dann die zwei Atome" aria-pressed="' + (S.form === 'bond') + '">Neue Bindung</button>' +
+          '<button data-a="radicals" title="Zwei Radikale anklicken: je ein Einzelelektronenpfeil in die neue Bindung" aria-pressed="' + (S.form === 'radicals') + '">2 Radikale</button>';
       }
       bar.innerHTML = h;
       bar.classList.add('open');
     }
 
+    /* A side or arc set by hand is locked: the layout keeps it and only
+       places the rest. "Auto" hands both back. */
+    const lock = function (ar, key) { ar.lock = (ar.lock || []).filter(function (x) { return x !== key; }).concat([key]); };
     function act(a) {
       const ar = S.arrows[S.selected];
-      if (a === 'newtype') S.type = 'pair';
-      else if (a === 'newsingle') S.type = 'single';
+      const shown = S.placed && S.placed[S.selected];
+      if (a === 'newtype') { S.type = 'pair'; if (S.form === 'radicals') S.form = null; }
+      else if (a === 'newsingle') { S.type = 'single'; if (S.form === 'radicals') S.form = null; }
+      else if (a === 'form') { S.form = S.form === 'bond' ? null : 'bond'; S.radA = null; }
+      else if (a === 'radicals') { S.form = S.form === 'radicals' ? null : 'radicals'; S.pending = null; S.half = null; S.radA = null; }
       else if (a === 'done') S.selected = -1;
       else if (ar && a === 'type') ar.type = ar.type === 'single' ? 'pair' : 'single';
-      else if (ar && a === 'side') ar.side = -(ar.side || 1);
-      else if (ar && a === 'arc') ar.arc = ARCS[(ARCS.indexOf(ar.arc || 'auto') + 1) % ARCS.length];
+      else if (ar && a === 'side') { ar.side = -((shown && shown.side) || ar.side || 1); lock(ar, 'side'); }
+      else if (ar && a === 'arc') {
+        const cur = typeof ar.arc === 'number' ? ar.arc : 'auto';
+        ar.arc = ARCS[(ARCS.indexOf(cur) + 1) % ARCS.length];
+        if (ar.arc === 'auto') ar.lock = (ar.lock || []).filter(function (x) { return x !== 'arc'; });
+        else lock(ar, 'arc');
+      }
+      else if (ar && a === 'auto') { ar.lock = []; ar.arc = 'auto'; }
       else if (ar && a === 'del') { S.arrows.splice(S.selected, 1); S.selected = -1; }
       renderBar(); draw(true);
     }
@@ -217,7 +267,7 @@
 
     function setOn(on) {
       S.on = on;
-      S.pending = null; S.half = null; S.selected = -1;
+      S.pending = null; S.half = null; S.radA = null; S.selected = -1;
       button.classList.toggle('km-on', on);
       if (on) { try { k.editor.tool('select'); } catch (_) {} }
       renderBar(); draw(true);
@@ -241,12 +291,23 @@
         if (b) anc = { pair: [b.begin, b.end] };
       }
       S.selected = -1;
-      if (!anc) { S.pending = null; S.half = null; renderBar(); draw(true); return; }
-      if (!S.pending) {
+      if (!anc) { S.pending = null; S.half = null; S.radA = null; renderBar(); draw(true); return; }
+      if (S.form === 'radicals') {
+        // two radicals → one fishhook from each into the bond between them
+        if (anc.atom == null) return;
+        if (S.radA == null) S.radA = anc.atom;
+        else if (anc.atom !== S.radA) {
+          const A = S.radA, B = anc.atom;
+          S.arrows.push({ from: { atom: A }, to: { pair: [A, B] }, type: 'single', side: 1, arc: 'auto' });
+          S.arrows.push({ from: { atom: B }, to: { pair: [A, B] }, type: 'single', side: 1, arc: 'auto' });
+          S.radA = null;
+          S.selected = S.arrows.length - 1;
+        }
+      } else if (!S.pending) {
         S.pending = anc;
       } else if (S.half != null) {
         if (anc.atom != null && anc.atom !== S.half) finish({ pair: [S.half, anc.atom] });
-      } else if (e.shiftKey && anc.atom != null) {
+      } else if ((e.shiftKey || S.form === 'bond') && anc.atom != null) {
         S.half = anc.atom;
       } else {
         finish(anc);
@@ -255,7 +316,7 @@
     }
     function finish(target) {
       S.arrows.push({ from: S.pending, to: target, type: S.type, side: 1, arc: 'auto' });
-      S.pending = null; S.half = null;
+      S.pending = null; S.half = null; S.radA = null;
       S.selected = S.arrows.length - 1;
     }
     ['pointerdown', 'mousedown', 'pointerup', 'mouseup', 'click', 'dblclick'].forEach(function (t) {
@@ -266,7 +327,7 @@
       const tag = (e.target && e.target.tagName) || '';
       if (/INPUT|TEXTAREA/.test(tag) || (e.target && e.target.isContentEditable)) return;
       let a = null;
-      if (e.key === 'Escape') { if (S.pending || S.selected >= 0) { S.pending = null; S.half = null; S.selected = -1; renderBar(); draw(true); } else setOn(false); }
+      if (e.key === 'Escape') { if (S.pending || S.radA != null || S.selected >= 0) { S.pending = null; S.half = null; S.radA = null; S.selected = -1; renderBar(); draw(true); } else setOn(false); }
       else if (S.selected >= 0 && (e.key === 'Delete' || e.key === 'Backspace')) a = 'del';
       else if (S.selected >= 0 && /^[tT]$/.test(e.key)) a = 'type';
       else if (S.selected >= 0 && /^[fF]$/.test(e.key)) a = 'side';
@@ -376,7 +437,7 @@
       };
       (step.curly || []).forEach(function (c) {
         const f = anc(c.from), t = anc(c.to);
-        if (f && t) S.arrows.push({ from: f, to: t, type: c.type || 'pair', side: c.side || 1, arc: c.arc || 'auto' });
+        if (f && t) S.arrows.push({ from: f, to: t, type: c.type || 'pair', side: c.side || 1, arc: c.arc || 'auto', lock: (c.lock || []).slice() });
       });
     }
     S.sig = '';
@@ -391,9 +452,13 @@
     // atom ids only hold on the canvas as it is now: take coordinates first
     const st = k.editor.struct();
     const kat = function (id) { const a = st.atoms.get(id); return [a.pp.x, -a.pp.y]; };
-    const curlyKet = S.arrows.map(function (ar) {
+    const curlyKet = S.arrows.map(function (ar, i) {
       const conv = function (a) { return a.atom != null ? { atom: kat(a.atom) } : { bond: [kat(a.pair[0]), kat(a.pair[1])] }; };
-      return { from: conv(ar.from), to: conv(ar.to), type: ar.type, side: ar.side, arc: ar.arc };
+      // the side as drawn now is stored (it is the layout's hint next time)
+      const shown = S.placed && S.placed[i];
+      const c = { from: conv(ar.from), to: conv(ar.to), type: ar.type, side: (shown && shown.side) || ar.side, arc: ar.arc };
+      if (ar.lock && ar.lock.length) c.lock = ar.lock.slice();
+      return c;
     });
     /* Ketcher refuses to write a MOL while reaction arrows are on the
        canvas, and indigo's converter only gives V3000. So: molecules
@@ -422,7 +487,7 @@
     });
     curlyKet.forEach(function (c) {
       const conv = function (a) { return a.atom ? { atom: F(a.atom[0], a.atom[1]) } : { bond: [F(a.bond[0][0], a.bond[0][1]), F(a.bond[1][0], a.bond[1][1])] }; };
-      step.curly.push({ from: conv(c.from), to: conv(c.to), type: c.type, side: c.side, arc: c.arc });
+      step.curly.push(Object.assign({ from: conv(c.from), to: conv(c.to), type: c.type, side: c.side, arc: c.arc }, c.lock ? { lock: c.lock } : {}));
     });
     ['arrows', 'pluses', 'texts', 'curly'].forEach(function (key) { if (!step[key].length) delete step[key]; });
     if (mols.length) {

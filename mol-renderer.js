@@ -1229,13 +1229,19 @@ const MolRenderer = (() => {
     const anchor = function (a) {
       return a.bond ? { kind: 'bond', a: map(a.bond[0]), b: map(a.bond[1]) } : { kind: 'atom', p: map(a.atom) };
     };
-    (step.curly || []).forEach(function (cv) {
-      if (!cv.from || !cv.to) return;
-      const s = anchor(cv.from), t = anchor(cv.to);
-      const g = window.MechArrows.geometry(s, t, { unit: unitPx, side: cv.side, arc: cv.arc, type: cv.type });
-      body += window.MechArrows.svg(s, t, { unit: unitPx, side: cv.side, arc: cv.arc, type: cv.type });
-      [g.start, g.end, g.apex].forEach(function (p) { grow(p[0] - 4, p[1] - 4, p[0] + 4, p[1] + 4); });
-    });
+    /* All curly arrows of the step are placed together, clear of labels,
+       bonds, dots and each other (MechArrows.layout). */
+    const curly = (step.curly || []).filter(function (cv) { return cv.from && cv.to; });
+    if (curly.length) {
+      const MA = window.MechArrows;
+      const scene = MA.sceneFromMol(MA.parseMolfile(step.mol || ''), map, unitPx, step);
+      MA.layout(curly.map(function (cv) {
+        return Object.assign({}, cv, { from: anchor(cv.from), to: anchor(cv.to) });
+      }), scene).forEach(function (r) {
+        body += MA.svg(r.src, r.tgt, r.o);
+        r.g.samples.concat(r.g.headPts).forEach(function (p) { grow(p[0] - 3, p[1] - 3, p[0] + 3, p[1] + 3); });
+      });
+    }
 
     if (box) grow(box[0], box[1], box[2], box[3]);
     if (!pts.length) return { svg: '', width: 0, height: 0 };
