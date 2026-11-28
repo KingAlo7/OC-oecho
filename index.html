@@ -104,6 +104,16 @@ header{
 .nav-link.muted{color:var(--muted);border-color:var(--border2);}
 .nav-link.muted:hover{background:var(--surface2);color:var(--text);border-color:var(--muted);}
 
+/* Mode switch: the two halves of the app, always in the same spot */
+.mode-switch{display:flex;flex-shrink:0;gap:2px;padding:3px;background:var(--surface2);
+  border:1px solid var(--border);border-radius:10px;}
+.mode-tab{display:inline-flex;align-items:center;font-size:0.84rem;font-weight:600;
+  text-decoration:none;color:var(--text-soft);padding:0.3rem 0.9rem;border-radius:7px;
+  white-space:nowrap;transition:background 0.15s,color 0.15s;-webkit-tap-highlight-color:transparent;}
+.mode-tab:hover{background:var(--surface3);color:var(--text);}
+.mode-tab[aria-current="page"]{background:var(--accent);color:#fff;box-shadow:var(--shadow-sm);}
+.mode-tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
 /* Sized by the body's flex column, not by 100vh — on phones 100vh is the
    height with the browser bars hidden, which would push the bottom of the
    page under the toolbar. */
@@ -333,6 +343,19 @@ header{
   margin-bottom:1.5rem;
 }
 
+/* "Üben": the quiz tasks that use this reaction, right before prev/next */
+.rxn-practice{margin-top:2.25rem;padding:1rem 1.15rem 1.1rem;background:var(--accent-soft);
+  border:1px solid #f7c6cc;border-radius:10px;}
+.rxn-practice-head{font-weight:700;font-size:0.95rem;color:var(--text);margin-bottom:0.65rem;}
+.rxn-practice-head span{font-weight:500;font-size:0.82rem;color:var(--muted);}
+.practice-list{display:flex;flex-wrap:wrap;gap:0.45rem;}
+.practice-link{display:inline-flex;align-items:center;gap:0.45rem;min-height:36px;
+  font-size:0.84rem;font-weight:600;color:var(--text-soft);text-decoration:none;
+  background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:0.35rem 0.75rem;
+  transition:border-color 0.15s,color 0.15s;}
+.practice-link:hover{border-color:var(--accent);color:var(--accent);}
+.practice-arrow{color:var(--accent);}
+
 /* prev | counter | next — the counter stays centred whatever the names' length */
 .rxn-nav{
   display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:1rem;
@@ -385,6 +408,9 @@ header{
    PHONE (≤ 760px)
    ════════════════════════════════════════════════════════════════════ */
 @media(max-width:760px){
+  /* Mode switch: the logo stays as the home link, the switch names the mode */
+  .brand-name{display:none;}
+  .mode-tab{min-height:36px;padding:0 0.8rem;font-size:0.82rem;}
   :root{--header-h:56px;--draw-scale:1.15;}
 
   /* One header row. The search field moves to the top of the drawer, next
@@ -437,6 +463,7 @@ header{
 
 /* Tiny phones (≤ 380px) */
 @media(max-width:380px){
+  .mode-tab{padding:0 0.6rem;font-size:0.78rem;}
   .nav-link{padding:0 0.65rem;font-size:0.76rem;}
   .brand-name{font-size:0.88rem;}
   .brand-logo{width:26px;height:26px;}
@@ -479,7 +506,7 @@ header{
    and the whole page instead of the visible part of the scroll area. */
 @media print{
   html,body{height:auto;overflow:visible;display:block;background:#fff;}
-  header,.sidebar,.overlay,.rxn-nav{display:none !important;}
+  header,.sidebar,.overlay,.rxn-nav,.rxn-practice{display:none !important;}
   .layout,.main{display:block;overflow:visible;height:auto;}
   .rxn-page{max-width:none;margin:0;padding:0;}
   .rxn-drawing{box-shadow:none;break-inside:avoid;}
@@ -500,6 +527,10 @@ header{
     <span class="brand-name">OC Reaktionen</span>
     <span class="brand-sub">ÖChO</span>
   </a>
+  <nav class="mode-switch" aria-label="Bereich wechseln">
+    <a href="./index.html" class="mode-tab" aria-current="page" title="Reaktionen nachschlagen">Reaktionen</a>
+    <a href="./quiz.html" class="mode-tab" title="Aufgaben üben">Quiz</a>
+  </nav>
   <div class="search-wrap">
     <span class="search-icon">⌕</span>
     <input id="search" type="text" placeholder="Reaktionen suchen…" oninput="globalSearch(this.value)" autocomplete="off" enterkeyhint="search" aria-label="Reaktionen suchen">
@@ -510,7 +541,6 @@ header{
     <button class="search-btn" type="button" onclick="openSearch()" aria-label="Reaktionen suchen" title="Suchen">
       <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/></svg>
     </button>
-    <a href="./quiz.html" class="nav-link" title="Quiz / Aufgaben">Quiz ↗</a>
     <a href="./export.html" class="nav-link muted" title="Exportieren (PDF/Druck)">Export</a>
     <a href="./admin.html" class="nav-link muted" title="Adminbereich">Admin</a>
   </div>
@@ -584,6 +614,49 @@ async function init() {
   showWelcome();
   const hash = location.hash.slice(1);
   if (hash) { const r = reactions.find(x => x.id === hash); if (r) showReaction(hash); }
+  loadPractice();
+}
+
+/* Quiz tasks per reaction: every task that names the reaction in a
+   related_reaction_id (anywhere in its sections). Optional — without
+   questions.json the reaction pages simply show no "Üben" box. */
+let practiceIdx = null;  // reaction id → [task]
+async function loadPractice() {
+  const idx = {};
+  try {
+    const qs = await fetch('./data/questions.json').then(r => r.ok ? r.json() : []);
+    const walk = (v, ids) => {
+      if (Array.isArray(v)) v.forEach(e => walk(e, ids));
+      else if (v && typeof v === 'object')
+        for (const [k, e] of Object.entries(v))
+          if (k === 'related_reaction_id' && typeof e === 'string') ids.add(e); else walk(e, ids);
+    };
+    qs.forEach(q => {
+      const ids = new Set(); walk(q, ids);
+      ids.forEach(id => (idx[id] = idx[id] || []).push(q));
+    });
+    Object.values(idx).forEach(list => list.sort((a, b) =>
+      (a.name || '').localeCompare(b.name || '', 'de', { numeric: true, sensitivity: 'base' })));
+  } catch {}
+  practiceIdx = idx;
+  if (activeId) renderPractice(activeId);
+}
+
+function renderPractice(id) {
+  const slot = document.getElementById('rxn-practice');
+  if (!slot || !practiceIdx) return;
+  const list = practiceIdx[id] || [];
+  slot.hidden = !list.length;
+  if (!list.length) return;
+  const n = list.length;
+  slot.innerHTML = `
+    <div class="rxn-practice-head">Üben <span>· ${n === 1 ? '1 Aufgabe verwendet' : n + ' Aufgaben verwenden'} diese Reaktion</span></div>
+    <div class="practice-list">${list.map(q => `
+      <a class="practice-link" href="./quiz.html#${encodeURIComponent(q.id)}">
+        ${/^[A-D]$/.test(q.difficulty || '') ? `<span class="diff-badge diff-${q.difficulty}">${q.difficulty}</span>` : ''}
+        <span>${ct(q.name)}</span><span class="practice-arrow" aria-hidden="true">→</span>
+      </a>`).join('')}
+    </div>`;
 }
 
 function categories() { return [...new Set(reactions.map(r => r.category))]; }
@@ -765,6 +838,8 @@ function showReaction(id) {
 
       ${keyPointsHtml}
 
+      <section class="rxn-practice" id="rxn-practice" aria-label="Übungsaufgaben" hidden></section>
+
       <nav class="rxn-nav" aria-label="Weitere Reaktionen dieser Kategorie">
         <button class="nav-btn prev" onclick="${prev?`showReaction('${prev.id}')`:'void 0'}" ${prev?'':'disabled'}>
           <span class="nav-arrow" aria-hidden="true">←</span>
@@ -778,6 +853,7 @@ function showReaction(id) {
       </nav>
     </div>`;
 
+  renderPractice(id);
   document.getElementById('main').scrollTop = 0;
   setSidebar(false);
 
